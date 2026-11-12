@@ -16,21 +16,21 @@ Credits and power levels are shown but do nothing: Frosty, Luna and Pixel can on
 with a hack, and power 22 is just a number. This spec lets players earn credits in matches,
 spend them to unlock fighters and upgrade power levels, and makes power levels change health and
 damage in matches — so the hack codes "unlimited credits" and "power 22" really pay off. It is F6
-in the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
+in the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [Hack codes spec](done/2026_11_12_hack_codes_spec.md) — `INFINITY` (credits shown as ∞),
+- [Hack codes spec](2026_11_12_hack_codes_spec.md) — `INFINITY` (credits shown as ∞),
   `OPENSESAME` (all unlocked), `POWER22` (max power 22); rules in `ui/src/lib/hacks.ts`
   (`credits`, `isUnlocked`, `maxPower`). Its S12 said power 22 only changes what is shown
   "until F6" — this spec is F6.
-- [Basic UI spec](done/2026_11_12_basic_ui_spec.md) — credits (500 at start), power levels and
+- [Basic UI spec](2026_11_12_basic_ui_spec.md) — credits (500 at start), power levels and
   unlocked fighters in the saved progress (`ui/src/lib/progress.ts`); fighter list and fighter
   screen (`FighterList.svelte`, `FighterDetail.svelte`).
-- [First match spec](done/2026_11_12_first_match_spec.md) and
-  [trophies spec](done/2026_11_12_trophies_spec.md) — matches, fixed health 3200 and damage
+- [First match spec](2026_11_12_first_match_spec.md) and
+  [trophies spec](2026_11_12_trophies_spec.md) — matches, fixed health 3200 and damage
   480 (`game/world.ts`), settings (`game/settings.ts`), rewards after a match
   (`game/trophies.ts`, `Arena.svelte`).
-- [docs/architecture.md](../../docs/architecture.md) — where the parts are.
+- [docs/architecture.md](../../../docs/architecture.md) — where the parts are.
 
 **New:**
 - Credit prices for unlocking (by rarity) and upgrading (by level), credits earned in matches,
@@ -38,9 +38,9 @@ in the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md)
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and the questions to Mattia |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to Mattia |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
