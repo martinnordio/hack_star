@@ -3,8 +3,8 @@
 > **An example of [spec-nx](https://github.com/martinnordio/spec-nx) in use.** spec-nx is a
 > small spec kit for building software with an AI coding assistant: every feature starts as a
 > spec (requirements, then a plan in steps), each step is implemented, checked and committed,
-> and the spec and the documentation are kept up to date along the way. All the specs of this
-> game are in [.specs/features/done/](.specs/features/done/).
+> and the spec and the documentation are kept up to date along the way. How it was used here,
+> the generated kit and links to every spec: **[SPEC-NX.md](SPEC-NX.md)**.
 
 A top-down arena browser game for kids, with **hack codes** that give unlimited
 credits, unlock every fighter and allow power levels up to 22. It runs on a desktop, iPad and
