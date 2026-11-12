@@ -10,17 +10,21 @@
   import Panel from './lib/Panel.svelte'
   import ShopScreen from './lib/ShopScreen.svelte'
   import SettingsScreen from './lib/SettingsScreen.svelte'
+  import FriendsScreen from './lib/FriendsScreen.svelte'
+  import { leaveRoom } from './lib/net/room'
   import { progress } from './lib/progress'
   import { wornSkin } from './lib/game/shop'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'settings' | 'match' | 'training'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
 
-  // A QR code scanned with the camera app opens the game with `?hack=<CODE>`.
-  const codeInLink = new URLSearchParams(location.search).get('hack') ?? undefined
-  if (codeInLink) history.replaceState(null, '', location.pathname)
+  // A QR code scanned with the camera app opens the game with `?hack=<CODE>` or `?room=<CODE>`.
+  const params = new URLSearchParams(location.search)
+  const codeInLink = params.get('hack') ?? undefined
+  const roomInLink = params.get('room') ?? undefined
+  if (codeInLink || roomInLink) history.replaceState(null, '', location.pathname)
   let linkedCode = $state(codeInLink)
 
-  let screen = $state<Screen>(codeInLink ? 'hack' : 'home')
+  let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
   let openFighter = $state<Fighter>()
   let fighters = $state<Fighter[]>()
   let hacks = $state<Hack[]>()
@@ -96,6 +100,16 @@
 {:else if screen === 'settings'}
   <Panel title="Settings" onBack={() => (screen = 'home')}>
     <SettingsScreen />
+  </Panel>
+{:else if screen === 'friends'}
+  <Panel
+    title="Play with friends"
+    onBack={() => {
+      leaveRoom()
+      screen = 'home'
+    }}
+  >
+    <FriendsScreen {fighters} initialCode={roomInLink} onStart={() => {}} />
   </Panel>
 {:else if screen === 'hack'}
   <Panel

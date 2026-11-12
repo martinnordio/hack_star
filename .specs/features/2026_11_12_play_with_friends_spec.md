@@ -76,7 +76,7 @@ is the biggest change so far; it is F11 in the
 |------|-------------|--------|--------|
 | **1** | Teams in the rules | ✅ Done | [→ Step 1](#step-1--teams-in-the-rules) |
 | **2** | Rooms on the server | ✅ Done | [→ Step 2](#step-2--rooms-on-the-server) |
-| **3** | Friends screen and lobby | ⬜ Not started | [→ Step 3](#step-3--friends-screen-and-lobby) |
+| **3** | Friends screen and lobby | ✅ Done | [→ Step 3](#step-3--friends-screen-and-lobby) |
 | **4** | Shared match | ⬜ Not started | [→ Step 4](#step-4--shared-match) |
 | **5** | Final check and documentation | ⬜ Not started | [→ Step 5](#step-5--final-check-and-documentation) |
 
@@ -140,11 +140,11 @@ The server creates rooms, lets friends join and passes messages (S1, S2, S7, S8)
 - [x] Check: `pytest` — create gives a code, join shows both members, 4th device refused, unknown code refused, input reaches only the host, state reaches only friends, friend leaving → `left`, host leaving → `closed` and the room is gone.
 
 ### Notes
-Started: 2026-11-12 13:59
+Started: 2026-11-12 13:57
 
 A member is `{fighter, skin, power, hyper}` (fighter checked against the catalogue, power 1–22); players are shown as "Player 1–3" with their fighter, so no names are sent. Also: a started room cannot be joined until the host sends `lobby` (back to the room); friends cannot send `state` or `start`; at most 100 rooms. First run: a friend leaving a room its host had already closed crashed the handler — fixed.
 
-**Done (2026-11-12 · ~5m)** — `pytest` 27 passed (9 new in `tests/test_rooms.py`); browser: a WebSocket through the Vite proxy created room "ZKJF".
+**Done (2026-11-12 · ~3m)** — `pytest` 27 passed (9 new in `tests/test_rooms.py`); browser: a WebSocket through the Vite proxy created room "ZKJF".
 
 ---
 
@@ -154,14 +154,18 @@ A member is `{fighter, skin, power, hyper}` (fighter checked against the catalog
 Kids create or join a room and see who is in it (S1, S2).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `lib/net/room.ts`: room connection (connect, create, join, send, events).
-- [ ] Home: **Friends** button; `FriendsScreen.svelte`: Create room / Join (code or Scan QR); lobby with the code, a QR code (`?room=CODE` link), members with portraits, **Start** for the host, "Waiting for the host…" for friends, **Leave**.
-- [ ] A `?room=CODE` link opens the game joining that room.
-- [ ] Check (browser, two pages): create on one, join on the other with the code; both lobbies list both fighters; leaving updates the other.
+- [x] Record the start time in Notes below.
+- [x] `lib/net/room.ts`: room connection (connect, create, join, send, events).
+- [x] Home: **Friends** button; `FriendsScreen.svelte`: Create room / Join (code or Scan QR); lobby with the code, a QR code (`?room=CODE` link), members with portraits, **Start** for the host, "Waiting for the host…" for friends, **Leave**.
+- [x] A `?room=CODE` link opens the game joining that room.
+- [x] Check (browser, two pages): create on one, join on the other with the code; both lobbies list both fighters; leaving updates the other.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 14:00
+
+Home's side buttons are now 3 per row (7 buttons). The Start button says how many players and bots will play. Start itself is wired in Step 4. First browser try: joining from a link joined again whenever the code box or the progress changed (the join ran in a Svelte effect that tracked them), leaving two extra connections in the room; fixed by joining once on mount and dropping any connection that a newer create/join replaced.
+
+**Done (2026-11-12 · ~4m)** — `npm test` 120 passed (2 new in `net/room.test.ts`), `svelte-check` 0 errors; browser with two pages: page 1 created room LCNG (QR shown, "START · 1 player + 3 bots"); page 2 opened `?room=LCNG` → both lobbies list Player 1 👑 and Player 2 ("you" on each), host button "2 players + 2 bots"; page 2 left and rejoined by typing "lcng" → still exactly 2 players.
 
 ---
 
