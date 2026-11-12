@@ -16,17 +16,17 @@ Matches can be won and lost, but nothing is earned. The kids' favourite part of 
 pushing a fighter's trophies and reaching **Prestige** at 1000 trophies ("if I win, the
 fighter gets 10 trophies; at 1000 it gets a diamond with a number"). This spec gives trophies
 after each match and celebrates Prestige. It is F5 in the
-[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md), and with it the
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md), and with it the
 first playable version (F0–F5) is complete.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [First match spec](done/2026_11_12_first_match_spec.md) — matches with a result (victory,
+- [First match spec](2026_11_12_first_match_spec.md) — matches with a result (victory,
   defeat with place, time's up) and the result screen (`ui/src/lib/Arena.svelte`); match
   settings in `ui/src/lib/game/settings.ts`.
-- [Basic UI spec](done/2026_11_12_basic_ui_spec.md) — trophies per fighter in the saved
+- [Basic UI spec](2026_11_12_basic_ui_spec.md) — trophies per fighter in the saved
   progress (`ui/src/lib/progress.ts`), total trophies on home, the Prestige badge
   (`PrestigeBadge.svelte`, `prestigeLevel()` in `fighters.ts`) on home, list and fighter screen.
-- [docs/architecture.md](../../docs/architecture.md) — where the parts are.
+- [docs/architecture.md](../../../docs/architecture.md) — where the parts are.
 
 **New:**
 - Trophy rules for each result, saving them, and showing them on the result screen with a
@@ -34,9 +34,9 @@ first playable version (F0–F5) is complete.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and the questions to Mattia |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to Mattia |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
