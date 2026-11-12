@@ -44,7 +44,19 @@ cd server; uv run hack-star-server   # http://localhost:8180
 cd ui; npm run dev                   # http://localhost:5180
 ```
 
-Open <http://localhost:5180>. The top bar shows "Server online" when both parts run.
+Open <http://localhost:5180>. If the server is not running, the game shows "Cannot reach the
+Hack star server" with a **Try again** button.
+
+### What is there
+
+- **Home:** the selected fighter in 3D with an entrance animation (tap to skip), trophies,
+  credits, Prestige badge, Play (coming soon).
+- **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D and
+  choose a skin.
+- **Info:** the words kids use in the game.
+
+Progress (chosen fighter and skins, trophies) is saved in the browser of each device. Open
+<http://localhost:5180/?gallery> to see every fighter and skin side by side.
 
 ### Play on an iPad or phone
 
@@ -59,6 +71,9 @@ Open <http://localhost:5180>. The top bar shows "Server online" when both parts 
 cd server; uv run pytest
 cd ui; npm test; npm run check
 ```
+
+While the server is running on Windows, use `uv run --no-sync pytest` (the running server
+locks its launcher, so `uv` cannot re-install it).
 
 ## Art
 

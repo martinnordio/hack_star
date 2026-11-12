@@ -1,7 +1,7 @@
 # Basic UI Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/basic-ui`
@@ -118,7 +118,7 @@ of this spec (see Deferred Items in the plan)._
 | **3** | Home screen with entrance | ✅ Done | [→ Step 3](#step-3--home-screen-with-entrance) |
 | **4** | Fighter list and fighter screen | ✅ Done | [→ Step 4](#step-4--fighter-list-and-fighter-screen) |
 | **5** | Info page | ✅ Done | [→ Step 5](#step-5--info-page) |
-| **6** | Final check | ⬜ Not started | [→ Step 6](#step-6--final-check) |
+| **6** | Final check | ✅ Done | [→ Step 6](#step-6--final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -253,13 +253,15 @@ Started: 2026-11-12 09:55
 Everything works on desktop, iPad and phone sizes and the F0 foundation still works.
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Browser check at 390×844, 844×390, 1024×768, 768×1024, 1440×900: nothing cut off, ≥ 30 FPS, all buttons reachable by touch.
-- [ ] `uv run pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: mention the screens; asset list still "none" (shapes only).
+- [x] Record the start time in Notes below.
+- [x] Browser check at 390×844, 844×390, 1024×768, 768×1024, 1440×900: nothing cut off, ≥ 30 FPS, all buttons reachable by touch.
+- [x] `uv run pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: mention the screens; asset list still "none" (shapes only).
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:56
+
+**Done (2026-11-12 · ~2m)** — all 5 sizes: 60–61 FPS, no element outside the screen, no overlapping buttons/labels; `pytest` 5 passed, `npm test` 16 passed, `svelte-check` 0 errors, build ok. README lists the screens and `?gallery`.
 
 ---
 
@@ -284,5 +286,5 @@ Everything works on desktop, iPad and phone sizes and the F0 foundation still wo
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`
