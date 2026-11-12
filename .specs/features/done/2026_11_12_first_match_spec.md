@@ -15,17 +15,17 @@
 Hack star can be played: the player runs and shoots in the canyon, but nothing shoots back and
 nobody wins. This spec adds the first real match, a "last fighter standing" fight against bots,
 like Showdown in Brawl Stars. It is F4 in the
-[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md). The numbers Mattia
-still has to choose (see "Questions to Mattia" in [overall_req.md](../overall_req.md)) are
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md). The numbers Mattia
+still has to choose (see "Questions to Mattia" in [overall_req.md](../../overall_req.md)) are
 settings with a default, so his answers change one value each.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [Graphics demo spec](done/2026_11_12_graphics_demo_spec.md) — the canyon arena, controls,
+- [Graphics demo spec](2026_11_12_graphics_demo_spec.md) — the canyon arena, controls,
   shots, effects, bushes, camera (`ui/src/lib/Arena.svelte`, `ArenaScene.svelte`).
 - `ui/src/lib/game/world.ts` — arena rules: movement with wall collisions, shots, target
   dummies, events for effects; `game/arena.ts` — the canyon layout.
 - `ui/src/lib/models/` — 3D fighters and skins (`fighters3d.ts`), dummies, particles.
-- [Basic UI spec](done/2026_11_12_basic_ui_spec.md) — the home screen with **Play**; the
+- [Basic UI spec](2026_11_12_basic_ui_spec.md) — the home screen with **Play**; the
   selected fighter and skin (`currentFighter()` in `ui/src/lib/hacks.ts`).
 
 **New:**
@@ -33,8 +33,8 @@ settings with a default, so his answers change one value each.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea, planned specs and the questions to Mattia |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea, planned specs and the questions to Mattia |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
