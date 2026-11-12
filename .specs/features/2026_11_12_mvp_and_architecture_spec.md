@@ -120,7 +120,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **0** | Server and UI scaffolding | ✅ Done | [→ Step 0](#step-0--server-and-ui-scaffolding) |
-| **1** | Responsive 3D shell | ⬜ Not started | [→ Step 1](#step-1--responsive-3d-shell) |
+| **1** | Responsive 3D shell | ✅ Done | [→ Step 1](#step-1--responsive-3d-shell) |
 | **2** | Progress saved on the device | ⬜ Not started | [→ Step 2](#step-2--progress-saved-on-the-device) |
 | **3** | README, asset licences, final check | ⬜ Not started | [→ Step 3](#step-3--readme-asset-licences-final-check) |
 
@@ -144,7 +144,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 | D3 | UI: Svelte 5 + Vite + TypeScript, no SvelteKit | A single-page game needs no server rendering or file routing; fewer moving parts |
 | D4 | 3D: Three.js through Threlte (`@threlte/core`, `@threlte/extras`) | Brawl Stars-like 3D look (S11) with Svelte components |
 | D5 | Progress in the browser's `localStorage`, behind one small store module | Per device, no login (S9); the server stays stateless for the MVP |
-| D6 | In development, Vite proxies `/api` to the server; both listen on all network interfaces | One address to open on iPad/phone on the same Wi-Fi (S5) |
+| D6 | In development, Vite proxies `/api` to the server; both listen on all network interfaces; fixed ports UI 5180, server 8180 | One address to open on iPad/phone on the same Wi-Fi (S5); own ports avoid clashing with the common 5173/8000 used by other projects |
 | D7 | Tests: `pytest` for the server, `vitest` for UI logic | Standard for each language |
 | D8 | Art: only CC0 packs (Quaternius, Kenney); licences listed in `ui/public/assets/LICENSES.md`. F0 uses simple shapes, no art yet | S7; real art comes with F1 and F3 |
 
@@ -177,16 +177,20 @@ Started: 2026-11-12 09:22
 A full-screen page with an animated 3D scene that fits every screen, reacts to touch and mouse, and shows the server is reachable (S1–S3, S6, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Threlte canvas filling the screen; a placeholder fighter (simple shapes) bobbing on an arena floor, camera from above at an angle.
-- [ ] Tap/click on the floor makes the placeholder hop (proves touch and mouse input).
-- [ ] Layout uses the full viewport (`100dvh`, safe areas), no zoom (`viewport` meta), works in portrait and landscape.
-- [ ] Small overlay: "Hack star", server status from `/api/health`, frames-per-second counter.
-- [ ] Vite proxy for `/api`; both servers listen on `0.0.0.0`.
-- [ ] Check: `npm run build` passes; in the browser at desktop, iPad (1024×768) and phone (390×844) sizes the scene fills the screen, the overlay is readable, FPS ≥ 30.
+- [x] Record the start time in Notes below.
+- [x] Threlte canvas filling the screen; a placeholder fighter (simple shapes) bobbing on an arena floor, camera from above at an angle.
+- [x] Tap/click on the floor makes the placeholder hop (proves touch and mouse input).
+- [x] Layout uses the full viewport (`100dvh`, safe areas), no zoom (`viewport` meta), works in portrait and landscape.
+- [x] Small overlay: "Hack star", server status from `/api/health`, frames-per-second counter.
+- [x] Vite proxy for `/api`; both servers listen on `0.0.0.0`.
+- [x] Check: `npm run build` passes; in the browser at desktop, iPad (1024×768) and phone (390×844) sizes the scene fills the screen, the overlay is readable, FPS ≥ 30.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:30
+
+Ports 5173/8000 were taken by another project on this machine → fixed ports 5180/8180 (D6). The camera moves back on portrait screens so the arena fits.
+
+**Done (2026-11-12 · ~5m)** — 3D shell with placeholder fighter, tap-to-hop, HUD. Browser check at 390×844, 844×390, 1024×768, 768×1024, 1440×900: canvas fills the viewport, no scrolling, server online, 60 FPS; `svelte-check` 0 errors.
 
 ---
 

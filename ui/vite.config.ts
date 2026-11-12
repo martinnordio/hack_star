@@ -7,8 +7,10 @@ export default defineConfig({
   server: {
     // Listen on the network so iPads and phones on the same Wi-Fi can open the game.
     host: true,
+    port: 5180,
+    strictPort: true,
     proxy: {
-      '/api': 'http://localhost:8000',
+      '/api': 'http://127.0.0.1:8180',
     },
   },
   test: {
