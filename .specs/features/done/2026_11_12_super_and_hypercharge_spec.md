@@ -1,6 +1,6 @@
 # Super and Hypercharge Spec
 
-> **Author:** Martin Nordio
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12

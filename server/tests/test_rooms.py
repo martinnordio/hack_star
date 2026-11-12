@@ -1,11 +1,20 @@
 import json
+from collections.abc import Iterator
 from typing import Any
 
+import pytest
 from fastapi.testclient import TestClient
 
 from hack_star_server.app import app, rooms
 
 client = TestClient(app)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def one_event_loop() -> Iterator[None]:
+    # All sockets share one event loop, as on the real server; separate loops can deadlock.
+    with client:
+        yield
 
 BLAZE = {"fighter": "blaze", "skin": "default", "power": 7}
 ROCKO = {"fighter": "rocko", "skin": "crystal", "power": 4, "hyper": True}
@@ -110,8 +119,9 @@ def test_friend_leaving_tells_the_host() -> None:
         with client.websocket_connect("/api/rooms") as friend:
             send(friend, {"type": "join", "code": code, "member": ROCKO})
             receive(friend), receive(host)
-        assert receive(host) == {"type": "left", "slot": 1}
-        assert [m["slot"] for m in receive(host)["members"]] == [0]
+            friend.close()
+            assert receive(host) == {"type": "left", "slot": 1}
+            assert [m["slot"] for m in receive(host)["members"]] == [0]
 
 
 def test_host_leaving_closes_the_room() -> None:
@@ -120,7 +130,8 @@ def test_host_leaving_closes_the_room() -> None:
             code = create(host)
             send(friend, {"type": "join", "code": code, "member": ROCKO})
             receive(friend), receive(host)
-        assert receive(friend) == {"type": "closed"}
+            host.close()
+            assert receive(friend) == {"type": "closed"}
         assert code not in rooms.rooms
 
 
