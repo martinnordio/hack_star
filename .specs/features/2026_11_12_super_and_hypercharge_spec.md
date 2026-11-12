@@ -75,7 +75,7 @@ part of F8).
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Super and Hypercharge rules | ✅ Done | [→ Step 1](#step-1--super-and-hypercharge-rules) |
-| **2** | HYPERCHARGE hack code | ⬜ Not started | [→ Step 2](#step-2--hypercharge-hack-code) |
+| **2** | HYPERCHARGE hack code | ✅ Done | [→ Step 2](#step-2--hypercharge-hack-code) |
 | **3** | Super button, meters and effects | ⬜ Not started | [→ Step 3](#step-3--super-button-meters-and-effects) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
@@ -130,13 +130,15 @@ Each shot now carries its damage, worked out when fired (so a Hypercharge boost 
 The `HYPERCHARGE` code works like the other hack codes (S5).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Server: hack `hypercharge` / `HYPERCHARGE` in `hacks.py`; tests.
-- [ ] UI: `HackId` gets `hypercharge`; `superHack(progress)` (gain and always-Hypercharge) applied to the player in matches and training.
-- [ ] Check: `pytest` (four hacks, redeem `hypercharge`); `vitest` (hack on / off after reset); the `/?qr` page shows the new QR code.
+- [x] Record the start time in Notes below.
+- [x] Server: hack `hypercharge` / `HYPERCHARGE` in `hacks.py`; tests.
+- [x] UI: `HackId` gets `hypercharge`; `superHack(progress)` (gain and always-Hypercharge) applied to the player in matches and training.
+- [x] Check: `pytest` (four hacks, redeem `hypercharge`); `vitest` (hack on / off after reset); the `/?qr` page shows the new QR code.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:31
+
+**Done (2026-11-12 · ~2m)** — `pytest` 16 passed, `npm test` 97 passed; browser: `/?qr` shows 4 QR codes including HYPERCHARGE, `POST /api/hacks/redeem` with `HYPERCHARGE` returns the hack.
 
 ---
 

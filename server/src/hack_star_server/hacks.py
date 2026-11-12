@@ -27,6 +27,12 @@ HACKS: list[Hack] = [
         name="Power 22",
         description="Fighters can reach power level 22 instead of 11.",
     ),
+    Hack(
+        id="hypercharge",
+        code="HYPERCHARGE",
+        name="Hypercharge",
+        description="Your Super charges 3 times faster and every Super is a Hypercharge.",
+    ),
 ]
 
 

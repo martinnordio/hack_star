@@ -6,13 +6,20 @@ from hack_star_server.app import app
 client = TestClient(app)
 
 
-def test_three_hacks() -> None:
+def test_four_hacks() -> None:
     codes = {h["code"]: h["id"] for h in client.get("/api/hacks").json()}
     assert codes == {
         "INFINITY": "infinite_credits",
         "OPENSESAME": "unlock_all",
         "POWER22": "power22",
+        "HYPERCHARGE": "hypercharge",
     }
+
+
+def test_redeem_hypercharge() -> None:
+    response = client.post("/api/hacks/redeem", json={"code": "hypercharge"})
+    assert response.status_code == 200
+    assert response.json()["id"] == "hypercharge"
 
 
 @pytest.mark.parametrize("code", ["POWER22", "power22", "  Power22 ", "\tpower22\n"])

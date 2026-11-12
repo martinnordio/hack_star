@@ -12,6 +12,7 @@
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
+  import { superHack } from './hacks'
   import { options } from './options'
   import { applyReward, nextPrestigeAt, rewardFor, type Reward } from './game/trophies'
   import type { MatchResult } from './game/match'
@@ -39,6 +40,7 @@
     const match =
       mode === 'match' ? new Match(CANYON, settingsFrom(location.search, SETTINGS, get(options)), { playerPower }) : undefined
     const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower)] })
+    Object.assign(world.player, superHack(get(progress)))
     const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
     const looks: Look[] = world.fighters.map((f) =>
       f.id === 0 ? player : { fighterId: others[(f.id - 1) % others.length].id, skinId: 'default' },

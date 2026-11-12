@@ -1,6 +1,7 @@
 import type { Progress } from './progress'
+import { SETTINGS } from './game/settings'
 
-export type HackId = 'infinite_credits' | 'unlock_all' | 'power22'
+export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge'
 
 export interface Hack {
   id: HackId
@@ -64,6 +65,13 @@ export function isUnlocked(progress: Progress, fighterId: string): boolean {
 
 export function maxPower(progress: Progress): number {
   return has(progress, 'power22') ? HACKED_MAX_POWER : NORMAL_MAX_POWER
+}
+
+/** The player's Super with the HYPERCHARGE hack: charges faster, every Super a Hypercharge. */
+export function superHack(progress: Progress): { superGain: number; alwaysHyper: boolean } {
+  return has(progress, 'hypercharge')
+    ? { superGain: SETTINGS.hackSuperGain, alwaysHyper: true }
+    : { superGain: 1, alwaysHyper: false }
 }
 
 /** The fighter to show and play; a fighter picked with "unlock all" can be locked again after a reset. */
