@@ -47,3 +47,19 @@ export const BOT_LEVELS: Record<BotLevel, BotSkill> = {
   medium: { reaction: 0.35, aimError: 0.2, cooldown: 1.6, speed: 0.9, sight: 10 },
   hard: { reaction: 0.15, aimError: 0.08, cooldown: 1.15, speed: 1, sight: 12 },
 }
+
+/** Settings with overrides from the address (`?seconds=30&bots=5&level=hard`), for trying values quickly. */
+export function settingsFrom(search: string, base: Settings = SETTINGS): Settings {
+  const params = new URLSearchParams(search)
+  const number = (name: string, min: number, max: number) => {
+    const value = Number(params.get(name))
+    return params.has(name) && Number.isFinite(value) ? Math.min(max, Math.max(min, Math.round(value))) : undefined
+  }
+  const level = params.get('level')
+  return {
+    ...base,
+    matchSeconds: number('seconds', 5, 600) ?? base.matchSeconds,
+    botCount: number('bots', 1, 8) ?? base.botCount,
+    botLevel: level === 'easy' || level === 'medium' || level === 'hard' ? level : base.botLevel,
+  }
+}

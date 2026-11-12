@@ -1,25 +1,57 @@
 <script lang="ts">
   import { Canvas } from '@threlte/core'
+  import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
-  import ArenaScene from './ArenaScene.svelte'
+  import ArenaScene, { type Hud, type Look } from './ArenaScene.svelte'
+  import type { Fighter } from './fighters'
   import { CANYON } from './game/arena'
   import { newControls, stickVector } from './game/controls'
+  import { Match } from './game/match'
+  import { settingsFrom } from './game/settings'
   import { World } from './game/world'
+  import { portrait } from './portraits'
 
   interface Props {
-    fighterId: string
-    skinId: string
+    mode: 'match' | 'training'
+    player: Look
+    fighters: Fighter[]
     onLeave: () => void
+    onPlayAgain?: () => void
   }
 
-  let { fighterId, skinId, onLeave }: Props = $props()
+  let { mode, player, fighters, onLeave, onPlayAgain }: Props = $props()
 
   const STICK_RADIUS = 60
   const TAP_MS = 250
 
-  const world = new World(CANYON)
+  // A new Arena component is mounted for every match, so these are made once per match.
+  const { match, world, looks } = untrack(() => {
+    const match = mode === 'match' ? new Match(CANYON, settingsFrom(location.search)) : undefined
+    const world = match?.world ?? new World(CANYON)
+    const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
+    const looks: Look[] = world.fighters.map((f) =>
+      f.id === 0 ? player : { fighterId: others[(f.id - 1) % others.length].id, skinId: 'default' },
+    )
+    return { match, world, looks }
+  })
   const controls = newControls()
   const touchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
+
+  let hud = $state<Hud>()
+  let showFight = $state(false)
+  let showResult = $state(false)
+
+  function onHud(next: Hud) {
+    if (hud?.phase === 'countdown' && next.phase === 'fight') {
+      showFight = true
+      setTimeout(() => (showFight = false), 800)
+    }
+    if (hud?.phase !== 'over' && next.phase === 'over') setTimeout(() => (showResult = true), 1200)
+    hud = next
+  }
+
+  const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+  const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`
 
   interface Stick {
     id: number
@@ -135,10 +167,47 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {controls} {fighterId} {skinId} {overlay} />
+      <ArenaScene {world} {match} {controls} {looks} {overlay} {onHud} />
     </Canvas>
   </div>
   <div class="floaters" bind:this={overlay} aria-hidden="true"></div>
+
+  {#if hud}
+    <div class="hud">
+      <div class="timer" class:hurry={hud.timeLeft <= 10}>{clock(hud.timeLeft)}</div>
+      <div class="left" aria-label="Fighters left">👤 {hud.fightersLeft}</div>
+    </div>
+    {#if hud.phase === 'countdown' && hud.countdown > 0}
+      {#key hud.countdown}
+        <div class="big" role="status">{hud.countdown}</div>
+      {/key}
+    {:else if showFight}
+      <div class="big fight" role="status">FIGHT!</div>
+    {/if}
+  {/if}
+
+  {#if showResult && hud?.result}
+    {@const r = hud.result}
+    <div class="result {r.kind}" role="dialog" aria-label="Match result">
+      <div class="title">
+        {r.kind === 'victory' ? 'VICTORY!' : r.kind === 'defeat' ? 'DEFEAT' : "TIME'S UP"}
+      </div>
+      <img src={portrait(player.fighterId, player.skinId)} alt="" />
+      <div class="detail">
+        {#if r.kind === 'victory'}
+          Last fighter standing!
+        {:else if r.kind === 'defeat'}
+          You finished {ordinal(r.place)}
+        {:else}
+          Nobody won this time
+        {/if}
+      </div>
+      <div class="actions">
+        <button class="again" onclick={onPlayAgain}>Play again</button>
+        <button class="home" onclick={onLeave}>Home</button>
+      </div>
+    </div>
+  {/if}
 
   {#if touchDevice && sticks.length === 0}
     <div class="hint move" aria-hidden="true"></div>
@@ -219,6 +288,152 @@
 
   .hint.aim {
     right: max(1.5rem, env(safe-area-inset-right));
+  }
+
+  .floaters :global(.damage.mine) {
+    color: #ff4d4d;
+  }
+
+  .hud {
+    position: absolute;
+    top: max(0.75rem, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.6rem;
+    pointer-events: none;
+  }
+
+  .timer,
+  .left {
+    padding: 0.2em 0.7em;
+    border-radius: 0.8rem;
+    background: #160f33cc;
+    border: 3px solid #000;
+    color: white;
+    font-weight: 900;
+    font-size: clamp(1.2rem, 4vw, 1.7rem);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer.hurry {
+    color: #ff4d4d;
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    50% {
+      transform: scale(1.12);
+    }
+  }
+
+  .big {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(4rem, 18vw, 9rem);
+    font-weight: 900;
+    font-style: italic;
+    color: #ffd23f;
+    -webkit-text-stroke: 0.05em #160f33;
+    paint-order: stroke fill;
+    text-shadow: 0 0.06em 0 #160f33;
+    pointer-events: none;
+    animation: count 0.9s ease-out both;
+  }
+
+  .big.fight {
+    color: #ff4f9a;
+  }
+
+  @keyframes count {
+    from {
+      transform: translate(-50%, -50%) scale(2.2);
+      opacity: 0;
+    }
+    25% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .result {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 1rem;
+    background: radial-gradient(circle, #3a2a8cdd, #1b1446f2);
+    color: white;
+    text-align: center;
+    animation: fade 0.4s;
+  }
+
+  .result.victory {
+    background: radial-gradient(circle, #ffb000cc, #7a3a00f2);
+  }
+
+  .result.defeat {
+    background: radial-gradient(circle, #6a1a2acc, #1b0a14f2);
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .result .title {
+    font-size: clamp(2.6rem, 11vw, 5rem);
+    font-weight: 900;
+    font-style: italic;
+    color: #ffd23f;
+    -webkit-text-stroke: 0.05em #160f33;
+    paint-order: stroke fill;
+    text-shadow: 0 0.06em 0 #160f33;
+    animation: count 0.6s ease-out both;
+  }
+
+  .result img {
+    width: min(14rem, 38vh);
+    aspect-ratio: 1;
+  }
+
+  .result .detail {
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 0.6rem;
+  }
+
+  .actions button {
+    padding: 0.5em 1.2em;
+    border-radius: 1rem;
+    border: 3px solid #000;
+    box-shadow: 0 0.3rem 0 #000;
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 900;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .again {
+    background: linear-gradient(#ffe45c, #ffb000);
+    color: #160f33;
+  }
+
+  .home {
+    background: linear-gradient(#4aa8ff, #2f6bff);
+    color: white;
   }
 
   .knob {

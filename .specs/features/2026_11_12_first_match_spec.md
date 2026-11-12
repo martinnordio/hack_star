@@ -83,7 +83,7 @@ result, bots fighting each other) use the defaults above, set in one place (S10)
 |------|-------------|--------|--------|
 | **1** | Match rules: fighters, health, knock-outs, timer, result | ✅ Done | [→ Step 1](#step-1--match-rules-fighters-health-knock-outs-timer-result) |
 | **2** | Bot brains | ✅ Done | [→ Step 2](#step-2--bot-brains) |
-| **3** | Match screen | ⬜ Not started | [→ Step 3](#step-3--match-screen) |
+| **3** | Match screen | ✅ Done | [→ Step 3](#step-3--match-screen) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -108,6 +108,7 @@ result, bots fighting each other) use the defaults above, set in one place (S10)
 | D5 | Match runs in the browser, like the demo (no server during play) | No lag on Wi-Fi; the result is kept in the browser for F5 |
 | D6 | Start points for up to 9 fighters added to the canyon layout | Up to 8 bots possible without layout changes |
 | D7 | New `docs/architecture.md` describes the parts of the game and how they fit; README gets "How to play a match" | The user asked that every spec comes with documentation |
+| D8 | The address can override match length, bot count and level (`?seconds=30&bots=5&level=hard`), within limits | Try Mattia's answers without changing code; lets browser checks reach every ending quickly |
 
 ---
 
@@ -160,16 +161,20 @@ While reacting, a bot stops and turns towards the fighter it just noticed (found
 Play starts a match that looks and feels like Brawl Stars, ends with a result screen, and Training keeps the dummy arena (S1–S9, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Arena scene draws every fighter (bots as other fighters), with green/red health bars and damage numbers on fighters.
-- [ ] Knock-out effect (fighter spins, falls apart into a puff) and bot shots in the bot's colour.
-- [ ] HUD: countdown "3, 2, 1, FIGHT!", timer (red in the last 10 s), fighters left.
-- [ ] Result screen: Victory / Defeat (place) / Time's up, the player's fighter, **Play again** and **Home**.
-- [ ] Home: **Play** starts a match; new **Training** button opens the dummy arena.
-- [ ] Check (browser): countdown blocks moving; bots move and shoot; knocking out all bots shows Victory; being knocked out shows Defeat with place; a short time limit shows Time's up; Play again starts a new match; Training still has dummies.
+- [x] Record the start time in Notes below.
+- [x] Arena scene draws every fighter (bots as other fighters), with green/red health bars and damage numbers on fighters.
+- [x] Knock-out effect (fighter spins, falls apart into a puff) and bot shots in the bot's colour.
+- [x] HUD: countdown "3, 2, 1, FIGHT!", timer (red in the last 10 s), fighters left.
+- [x] Result screen: Victory / Defeat (place) / Time's up, the player's fighter, **Play again** and **Home**.
+- [x] Home: **Play** starts a match; new **Training** button opens the dummy arena.
+- [x] Check (browser): countdown blocks moving; bots move and shoot; knocking out all bots shows Victory; being knocked out shows Defeat with place; a short time limit shows Time's up; Play again starts a new match; Training still has dummies.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:41
+
+Bots hiding in a bush are invisible (with their shots) unless the player is within 2.5 units, as in Brawl Stars. Damage numbers show for hits the player gives (white) and takes (red). Space / quick tap now aims at the nearest visible bot in a match. Shared `models/healthBar.ts` for dummies and fighters. Added D8 (address overrides) to reach every ending quickly. Browser checks need a visible page: a hidden tab pauses animation frames, so the game loop does not run there.
+
+**Done (2026-11-12 · ~20m)** — browser: during the countdown D does not move the player and "3"/"2" show, then "FIGHT!"; after 6 s of fighting one bot was out (health `1280,0,2720,3200`, 👤 3); `?seconds=5&bots=1` hiding in a bush → TIME'S UP; `?bots=8&level=hard` standing still → DEFEAT "You finished 7th"; `?bots=1` shooting → VICTORY!; Play again → new countdown, full health; Training → dummies `2400,2400,2400`, no HUD. `npm test` 52 passed, `svelte-check` 0 errors.
 
 ---
 

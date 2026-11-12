@@ -1,25 +1,48 @@
+<script lang="ts" module>
+  import type { MatchPhase, MatchResult } from './game/match'
+
+  export interface Look {
+    fighterId: string
+    skinId: string
+  }
+
+  export interface Hud {
+    phase: MatchPhase
+    countdown: number
+    timeLeft: number
+    fightersLeft: number
+    result: MatchResult | null
+  }
+</script>
+
 <script lang="ts">
   import { T, useTask, useThrelte } from '@threlte/core'
   import { untrack } from 'svelte'
   import * as THREE from 'three'
   import { CANYON } from './game/arena'
   import { keyboardDirection, type Controls, type Vec2 } from './game/controls'
-  import { SHOT_RADIUS, SHOT_RANGE, DUMMY_HEALTH, type World, type WorldEvent } from './game/world'
+  import type { Match } from './game/match'
+  import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, type World, type WorldEvent } from './game/world'
   import { buildArena } from './models/arena3d'
   import { buildDummy, setHealth } from './models/dummy3d'
   import { animateFighter, buildFighter, disposeRig, setRigOpacity } from './models/fighters3d'
+  import { buildHealthBar, setBarHealth, type HealthBar } from './models/healthBar'
   import { Particles } from './models/particles'
+  import type { Rig } from './models/parts'
 
   interface Props {
     world: World
+    /** Present in a match; absent in training. */
+    match?: Match
     controls: Controls
-    fighterId: string
-    skinId: string
+    /** Look of each fighter, by fighter id (0 is the player). */
+    looks: Look[]
     /** HTML layer over the canvas for floating damage numbers. */
     overlay?: HTMLElement
+    onHud?: (hud: Hud) => void
   }
 
-  let { world, controls, fighterId, skinId, overlay }: Props = $props()
+  let { world, match, controls, looks, overlay, onHud }: Props = $props()
 
   const SHOT_COLORS: Record<string, string> = {
     blaze: '#ff7a1a',
@@ -31,29 +54,53 @@
   }
 
   const scenery = buildArena(CANYON)
-  const rig = $derived(buildFighter(fighterId, skinId))
-  $effect(() => {
-    const current = rig
-    return () => disposeRig(current)
-  })
 
-  // Shots: a fixed pool of glowing balls, reused every frame.
-  const shotColor = $derived(SHOT_COLORS[fighterId] ?? '#ffd23f')
-  const shotMaterial = new THREE.MeshBasicMaterial()
-  const glowMaterial = new THREE.MeshBasicMaterial({
-    transparent: true,
-    opacity: 0.35,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  })
-  $effect(() => {
-    shotMaterial.color.set(shotColor).lerp(new THREE.Color('#ffffff'), 0.35)
-    glowMaterial.color.set(shotColor)
-  })
+  // One world per arena visit: fighter and dummy views are built once.
+  interface FighterView {
+    rig: Rig
+    bar: HealthBar
+    color: string
+    core: THREE.MeshBasicMaterial
+    glow: THREE.MeshBasicMaterial
+    lastX: number
+    lastZ: number
+    runTime: number
+    lastShotAt: number
+    knockedAt: number | null
+    hidden: boolean
+  }
+
+  const views: FighterView[] = untrack(() =>
+    world.fighters.map((f) => {
+      const look = looks[f.id] ?? looks[0]
+      const rig = buildFighter(look.fighterId, look.skinId)
+      const bar = buildHealthBar(2.9, f.id === 0 ? '#4cd964' : '#ff3b30')
+      // Training has only the player: no bar over it.
+      bar.group.visible = world.fighters.length > 1
+      rig.root.add(bar.group)
+      const color = SHOT_COLORS[look.fighterId] ?? '#ffd23f'
+      const core = new THREE.MeshBasicMaterial({ color: new THREE.Color(color).lerp(new THREE.Color('#ffffff'), 0.35) })
+      const glow = new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.35,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      })
+      return { rig, bar, color, core, glow, lastX: f.x, lastZ: f.z, runTime: 0, lastShotAt: -1, knockedAt: null, hidden: false }
+    }),
+  )
+  const fighterGroup = new THREE.Group()
+  views.forEach((v) => fighterGroup.add(v.rig.root))
+  $effect(() => () => views.forEach((v) => disposeRig(v.rig)))
+
+  // Shots: a fixed pool of glowing balls, reused every frame and coloured by who fired them.
   const shotPool = new THREE.Group()
-  const shotMeshes = Array.from({ length: 24 }, () => {
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(SHOT_RADIUS, 12, 8), shotMaterial)
-    ball.add(new THREE.Mesh(new THREE.SphereGeometry(SHOT_RADIUS * 2, 12, 8), glowMaterial))
+  const shotGeometry = new THREE.SphereGeometry(SHOT_RADIUS, 12, 8)
+  const glowGeometry = new THREE.SphereGeometry(SHOT_RADIUS * 2, 12, 8)
+  const shotMeshes = Array.from({ length: 48 }, () => {
+    const ball = new THREE.Mesh(shotGeometry, views[0].core)
+    ball.add(new THREE.Mesh(glowGeometry, views[0].glow))
     ball.visible = false
     shotPool.add(ball)
     return ball
@@ -71,7 +118,6 @@
 
   const particles = new Particles()
 
-  // One world per arena visit: the dummy views are built once.
   const dummies = untrack(() => world.dummies).map((d) => {
     const rig = buildDummy()
     rig.root.position.set(d.x, 0, d.z)
@@ -84,35 +130,49 @@
   const floaters: { el: HTMLElement; at: THREE.Vector3; age: number }[] = []
   const projected = new THREE.Vector3()
 
-  function showDamage(x: number, z: number, damage: number) {
+  function showDamage(x: number, z: number, damage: number, mine: boolean) {
     if (!overlay) return
     const el = document.createElement('div')
-    el.className = 'damage'
+    el.className = mine ? 'damage mine' : 'damage'
     el.textContent = String(damage)
     overlay.appendChild(el)
-    floaters.push({ el, at: new THREE.Vector3(x + (Math.random() - 0.5) * 0.6, 2.3, z), age: 0 })
+    floaters.push({ el, at: new THREE.Vector3(x + (Math.random() - 0.5) * 0.6, 2.6, z), age: 0 })
   }
 
   function at(x: number, y: number, z: number) {
     return new THREE.Vector3(x, y, z)
   }
 
+  function sparks(color: string, x: number, z: number) {
+    particles.burst({ color, at: at(x, 1.2, z), count: 10, speed: 5, up: 3, gravity: 10, life: 0.4, size: 0.12 })
+    particles.burst({ color: '#fff3a0', at: at(x, 1.2, z), count: 5, speed: 3, up: 2, life: 0.25, size: 0.1 })
+  }
+
   function handle(e: WorldEvent) {
     if (e.type === 'fire') {
-      particles.burst({ color: shotColor, at: at(e.x, 0.8, e.z), count: 5, speed: 1.5, life: 0.12, size: 0.3, endSize: 0.6 })
+      const v = views[e.by]
+      v.lastShotAt = time
+      if (v.hidden) return
+      particles.burst({ color: v.color, at: at(e.x, 0.8, e.z), count: 5, speed: 1.5, life: 0.12, size: 0.3, endSize: 0.6 })
       particles.burst({ color: '#ffffff', at: at(e.x, 0.8, e.z), count: 2, speed: 0.5, life: 0.08, size: 0.25, endSize: 0.5 })
     } else if (e.type === 'hit') {
-      const d = dummies[e.dummyId]
-      d.flashUntil = time + 0.12
-      particles.burst({ color: shotColor, at: at(e.x, 1.2, e.z), count: 10, speed: 5, up: 3, gravity: 10, life: 0.4, size: 0.12 })
-      particles.burst({ color: '#fff3a0', at: at(e.x, 1.2, e.z), count: 5, speed: 3, up: 2, life: 0.25, size: 0.1 })
-      showDamage(e.x, e.z, e.damage)
+      dummies[e.dummyId].flashUntil = time + 0.12
+      sparks(views[0].color, e.x, e.z)
+      showDamage(e.x, e.z, e.damage, false)
+    } else if (e.type === 'hurt') {
+      sparks(views[e.by]?.color ?? '#ffffff', e.x, e.z)
+      if (e.fighterId === 0 || e.by === 0) showDamage(e.x, e.z, e.damage, e.fighterId === 0)
+    } else if (e.type === 'knockout') {
+      const v = views[e.fighterId]
+      v.knockedAt = time
+      particles.burst({ color: v.color, at: at(e.x, 1.2, e.z), count: 14, speed: 4, up: 6, gravity: 14, life: 1.1, size: 0.14, endSize: 0.06, chunky: true })
+      particles.burst({ color: '#ffffff', at: at(e.x, 0.8, e.z), count: 12, speed: 2.5, up: 1.5, life: 0.8, size: 0.35, endSize: 0.9 })
     } else if (e.type === 'blocked') {
-      particles.burst({ color: shotColor, at: at(e.x, 0.8, e.z), count: 6, speed: 3, up: 2, gravity: 8, life: 0.3, size: 0.1 })
+      const color = views[e.owner]?.color ?? '#ffffff'
+      particles.burst({ color, at: at(e.x, 0.8, e.z), count: 6, speed: 3, up: 2, gravity: 8, life: 0.3, size: 0.1 })
       particles.burst({ color: '#e8d2a8', at: at(e.x, 0.6, e.z), count: 3, speed: 0.8, up: 0.5, life: 0.4, size: 0.15, endSize: 0.4 })
     } else if (e.type === 'break') {
-      const d = dummies[e.dummyId]
-      d.rig.root.visible = false
+      dummies[e.dummyId].rig.root.visible = false
       particles.burst({ color: '#e8c26a', at: at(e.x, 1.2, e.z), count: 16, speed: 4, up: 6, gravity: 14, life: 1.3, size: 0.13, endSize: 0.08, chunky: true })
       particles.burst({ color: '#8a5a2b', at: at(e.x, 0.6, e.z), count: 6, speed: 3, up: 5, gravity: 14, life: 1.3, size: 0.1, endSize: 0.06, chunky: true })
       particles.burst({ color: '#e8d2a8', at: at(e.x, 0.4, e.z), count: 10, speed: 2, up: 0.8, life: 0.7, size: 0.3, endSize: 0.8 })
@@ -139,8 +199,7 @@
   const hit = new THREE.Vector3()
   let placed = false
   let time = 0
-  let runTime = 0
-  let lastShotAt = -1
+  let lastHud = ''
 
   function pointerAim(): Vec2 | null {
     if (!controls.pointer || !camera) return null
@@ -149,21 +208,25 @@
     return { x: hit.x - world.player.x, z: hit.z - world.player.z }
   }
 
+  const canAct = () => !world.player.out && (!match || match.canAct)
+
   function fire(dir: Vec2) {
-    if (world.fire(dir.x, dir.z)) lastShotAt = time
+    if (canAct()) world.fire(dir.x, dir.z)
+  }
+
+  /** Nearest thing worth shooting: a visible bot in a match, a dummy in training. */
+  function nearestTarget(): { x: number; z: number } | undefined {
+    const p = world.player
+    const bots = world.fighters.filter((f) => f.id !== 0 && world.canSee(p, f, SHOT_RANGE * 1.5))
+    const candidates: { x: number; z: number }[] = bots.length ? bots : (world.nearestDummy() ? [world.nearestDummy()!] : [])
+    return candidates.sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))[0]
   }
 
   function applyControls(dt: number) {
     const keys = keyboardDirection(controls.keys)
     const mx = keys.x + controls.moveStick.x
     const mz = keys.z + controls.moveStick.z
-    const running = Math.hypot(mx, mz) > 0.05
-    if (running) {
-      world.move(mx, mz, dt)
-      runTime += dt
-    } else {
-      runTime = 0
-    }
+    if (canAct() && Math.hypot(mx, mz) > 0.05) world.move(mx, mz, dt)
 
     const stickAim = controls.aimStick
     const aim = stickAim ?? pointerAim()
@@ -173,51 +236,103 @@
       controls.fireDir = null
     }
     if (controls.tapFire) {
-      const target = world.nearestDummy()
+      const target = nearestTarget()
       const p = world.player
       fire(target ? { x: target.x - p.x, z: target.z - p.z } : { x: Math.sin(p.facing), z: Math.cos(p.facing) })
       controls.tapFire = false
     }
 
-    aimLine.visible = !!aim && (stickAim !== null || controls.pointer !== null)
+    aimLine.visible = canAct() && !!aim && (stickAim !== null || controls.pointer !== null)
     if (aim) {
       aimLine.position.set(world.player.x, 0, world.player.z)
       aimLine.rotation.y = Math.atan2(aim.x, aim.z)
     }
-    return running
+  }
+
+  function updateFighters(dt: number) {
+    const p = world.player
+    for (const f of world.fighters) {
+      const v = views[f.id]
+      const moved = Math.hypot(f.x - v.lastX, f.z - v.lastZ) > 0.002
+      v.lastX = f.x
+      v.lastZ = f.z
+      v.runTime = moved ? v.runTime + dt : 0
+
+      if (v.knockedAt !== null) {
+        // Knock-out: spin, shrink, then gone.
+        const t = (time - v.knockedAt) / 0.45
+        v.rig.root.visible = t < 1
+        v.rig.root.rotation.y += dt * 20
+        v.rig.root.scale.setScalar(Math.max(0.01, 1 - t))
+        continue
+      }
+
+      // Bots in a bush are invisible unless the player is close; the player is see-through.
+      const inBush = world.inBush(f)
+      const hidden = f.id !== 0 && inBush && Math.hypot(f.x - p.x, f.z - p.z) > BUSH_SIGHT
+      v.hidden = hidden
+      v.rig.root.visible = !hidden
+      if (f.id === 0 && inBush !== wasInBush) {
+        setRigOpacity(v.rig, inBush ? 0.35 : 1)
+        wasInBush = inBush
+      }
+
+      animateFighter(v.rig, time + f.id)
+      const recoil = Math.max(0, 1 - (time - v.lastShotAt) / 0.15)
+      const hop = moved ? Math.abs(Math.sin(v.runTime * 13)) * 0.18 : 0
+      v.rig.root.position.set(f.x - Math.sin(f.facing) * recoil * 0.15, hop, f.z - Math.cos(f.facing) * recoil * 0.15)
+      v.rig.root.rotation.y = f.facing
+      v.rig.body.rotation.x = moved ? 0.22 : -recoil * 0.25
+      setBarHealth(v.bar, f.health / f.maxHealth)
+      // The bar hangs on the turning fighter: undo its turn so the bar faces the camera.
+      if (camera) v.bar.group.quaternion.copy(v.rig.root.quaternion).invert().multiply(camera.quaternion)
+
+      if (moved && !inBush && !hidden) {
+        dustTimer -= dt / world.fighters.length
+        if (dustTimer <= 0) {
+          dustTimer = 0.09
+          particles.burst({
+            color: '#e8d2a8',
+            at: at(f.x - Math.sin(f.facing) * 0.3, 0.1, f.z - Math.cos(f.facing) * 0.3),
+            count: 1,
+            speed: 0.5,
+            up: 0.8,
+            life: 0.5,
+            size: 0.15,
+            endSize: 0.45,
+          })
+        }
+      }
+    }
+  }
+
+  function reportHud() {
+    if (!match || !onHud) return
+    const hud: Hud = {
+      phase: match.phase,
+      countdown: Math.ceil(match.countdown),
+      timeLeft: Math.ceil(match.timeLeft),
+      fightersLeft: world.alive().length,
+      result: match.result,
+    }
+    const key = JSON.stringify(hud)
+    if (key !== lastHud) {
+      lastHud = key
+      onHud(hud)
+    }
   }
 
   useTask((dt) => {
     // Long frames (tab switch) would make everything jump.
     dt = Math.min(dt, 1 / 20)
     time += dt
-    const running = applyControls(dt)
-    world.step(dt)
+    applyControls(dt)
+    if (match) match.update(dt)
+    else world.step(dt)
     for (const e of world.drainEvents()) handle(e)
     particles.update(dt)
-
-    const p = world.player
-
-    const inBush = world.inBush()
-    if (inBush !== wasInBush) {
-      setRigOpacity(rig, inBush ? 0.35 : 1)
-      wasInBush = inBush
-    }
-
-    dustTimer -= dt
-    if (running && dustTimer <= 0 && !inBush) {
-      dustTimer = 0.09
-      particles.burst({
-        color: '#e8d2a8',
-        at: at(p.x - Math.sin(p.facing) * 0.3, 0.1, p.z - Math.cos(p.facing) * 0.3),
-        count: 1,
-        speed: 0.5,
-        up: 0.8,
-        life: 0.5,
-        size: 0.15,
-        endSize: 0.45,
-      })
-    }
+    updateFighters(dt)
+    reportHud()
 
     world.dummies.forEach((d, i) => {
       const view = dummies[i]
@@ -230,27 +345,28 @@
       view.rig.body.rotation.z = flashing ? Math.sin(time * 80) * 0.08 : 0
       const pop = Math.min(1, (time - view.spawnedAt) / 0.35)
       view.rig.root.scale.setScalar(pop < 1 ? 1 + Math.sin(pop * Math.PI) * 0.25 : 1)
-      if (camera) view.rig.bar.quaternion.copy(camera.quaternion)
+      if (camera) view.rig.bar.group.quaternion.copy(camera.quaternion)
     })
-    animateFighter(rig, time)
-    const recoil = Math.max(0, 1 - (time - lastShotAt) / 0.15)
-    const hop = running ? Math.abs(Math.sin(runTime * 13)) * 0.18 : 0
-    rig.root.position.set(p.x - Math.sin(p.facing) * recoil * 0.15, hop, p.z - Math.cos(p.facing) * recoil * 0.15)
-    rig.root.rotation.y = p.facing
-    rig.body.rotation.x = running ? 0.22 : -recoil * 0.25
 
     shotMeshes.forEach((mesh, i) => {
       const shot = world.shots[i]
-      mesh.visible = !!shot
-      if (shot) mesh.position.set(shot.x, 0.8, shot.z)
+      const owner = shot && views[shot.owner]
+      // Shots fired from a hidden bush stay hidden too.
+      mesh.visible = !!owner && !owner.hidden
+      if (!shot || !owner) return
+      mesh.position.set(shot.x, 0.8, shot.z)
+      mesh.material = owner.core
+      ;(mesh.children[0] as THREE.Mesh).material = owner.glow
     })
 
+    const p = world.player
     // Development only: state for browser checks (the page cannot read JS objects from outside).
     if (import.meta.env.DEV) {
       const el = document.querySelector('.arena')
       el?.setAttribute('data-player', `${p.x.toFixed(2)},${p.z.toFixed(2)}`)
       el?.setAttribute('data-shots', String(world.shots.length))
       el?.setAttribute('data-dummies', world.dummies.map((d) => d.health).join(','))
+      el?.setAttribute('data-health', world.fighters.map((f) => Math.round(f.health)).join(','))
       el?.setAttribute('data-in-bush', String(world.inBush()))
     }
 
@@ -305,6 +421,6 @@
 <T is={scenery} />
 <T is={aimLine} />
 <T is={dummyGroup} />
-<T is={rig.root} />
+<T is={fighterGroup} />
 <T is={shotPool} />
 <T is={particles.group} />

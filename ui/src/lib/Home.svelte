@@ -12,7 +12,7 @@
     fighters: Fighter[]
     entrance: boolean
     onEntranceEnd: () => void
-    onNavigate: (screen: 'fighters' | 'info' | 'hack' | 'arena') => void
+    onNavigate: (screen: 'fighters' | 'info' | 'hack' | 'match' | 'training') => void
   }
 
   let { fighters, entrance, onEntranceEnd, onNavigate }: Props = $props()
@@ -64,6 +64,9 @@
     <button class="round" onclick={() => onNavigate('info')}>
       <span class="big">📖</span>Info
     </button>
+    <button class="round" onclick={() => onNavigate('training')}>
+      <span class="big">🎯</span>Training
+    </button>
     <button class="round hack" onclick={() => onNavigate('hack')}>
       <span class="big">💻</span>Hack
     </button>
@@ -77,7 +80,7 @@
     </div>
   </div>
 
-  <button class="play" onclick={() => onNavigate('arena')}>PLAY</button>
+  <button class="play" onclick={() => onNavigate('match')}>PLAY</button>
 
   {#if playing}
     <div class="skip">Tap to skip</div>
