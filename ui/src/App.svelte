@@ -3,6 +3,7 @@
   import FighterDetail from './lib/FighterDetail.svelte'
   import FighterList from './lib/FighterList.svelte'
   import Home from './lib/Home.svelte'
+  import InfoPage from './lib/InfoPage.svelte'
   import Panel from './lib/Panel.svelte'
 
   type Screen = 'home' | 'fighters' | 'fighter' | 'info'
@@ -57,7 +58,7 @@
   </Panel>
 {:else if screen === 'info'}
   <Panel title="Info" onBack={() => (screen = 'home')}>
-    <p>Coming in the next step.</p>
+    <InfoPage />
   </Panel>
 {/if}
 

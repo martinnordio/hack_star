@@ -117,7 +117,7 @@ of this spec (see Deferred Items in the plan)._
 | **2** | 3D fighter models and skins | ✅ Done | [→ Step 2](#step-2--3d-fighter-models-and-skins) |
 | **3** | Home screen with entrance | ✅ Done | [→ Step 3](#step-3--home-screen-with-entrance) |
 | **4** | Fighter list and fighter screen | ✅ Done | [→ Step 4](#step-4--fighter-list-and-fighter-screen) |
-| **5** | Info page | ⬜ Not started | [→ Step 5](#step-5--info-page) |
+| **5** | Info page | ✅ Done | [→ Step 5](#step-5--info-page) |
 | **6** | Final check | ⬜ Not started | [→ Step 6](#step-6--final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -236,12 +236,14 @@ Locked fighters can be opened to look at them, but **Select** shows "🔒 Locked
 The Info page lists the vocabulary of Part 1 (S9, S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `vocabulary.ts` with the 24 words; Info page with a readable list and a back button.
-- [ ] Check: `npm test` checks there are at least 24 words, each with a meaning; the page scrolls on a phone.
+- [x] Record the start time in Notes below.
+- [x] `vocabulary.ts` with the 24 words; Info page with a readable list and a back button.
+- [x] Check: `npm test` checks there are at least 24 words, each with a meaning; the page scrolls on a phone.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:55
+
+**Done (2026-11-12 · ~2m)** — Info page with 24 words; `npm test` 16 passed; at 390×844 the list scrolls inside the page and the page itself does not scroll.
 
 ---
 
