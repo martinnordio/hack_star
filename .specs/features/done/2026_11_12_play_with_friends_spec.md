@@ -1,7 +1,7 @@
 # Play with Friends Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress (defaults for Mattia's open answers)
+> **Status:** ✅ Done (with defaults for Mattia's open answers)
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/play-with-friends`
@@ -16,7 +16,7 @@ Mattia: "the players should have up to 2 friends to play". Today Hack star is si
 against bots, all in the browser. Playing with friends means each kid plays on their own device
 (iPad, phone, computer) in the same match, so the Python server must connect the devices. This
 is the biggest change so far; it is F11 in the
-[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 **Already in the repository** (reuse, don't rebuild):
 - FastAPI server (`server/`) on port 8180, reachable from other devices on the same Wi-Fi
@@ -30,9 +30,9 @@ is the biggest change so far; it is F11 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and Mattia's answers |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
@@ -78,7 +78,7 @@ is the biggest change so far; it is F11 in the
 | **2** | Rooms on the server | ✅ Done | [→ Step 2](#step-2--rooms-on-the-server) |
 | **3** | Friends screen and lobby | ✅ Done | [→ Step 3](#step-3--friends-screen-and-lobby) |
 | **4** | Shared match | ✅ Done | [→ Step 4](#step-4--shared-match) |
-| **5** | Final check and documentation | ⬜ Not started | [→ Step 5](#step-5--final-check-and-documentation) |
+| **5** | Final check and documentation | ✅ Done | [→ Step 5](#step-5--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -198,13 +198,17 @@ Browser check: only the visible page of the shared browser runs its animation fr
 Everything works on every screen size; the documentation explains playing together (S9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Friends screen and lobby checked at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README (how to play together), `docs/architecture.md` (rooms, shared match), Info vocabulary ("Room", "Teammate").
+- [x] Record the start time in Notes below.
+- [x] Friends screen and lobby checked at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README (how to play together), `docs/architecture.md` (rooms, shared match), Info vocabulary ("Room", "Teammate").
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 14:19
+
+Still to try by hand: a real match on two or three devices on the same Wi-Fi (the browser checks used one real side and one scripted side, see Step 4).
+
+**Done (2026-11-12 · ~4m)** — browser at the four sizes: home's 7 side buttons (3 per row) fit without touching PLAY, the name plate or the top bar; Friends screen and lobby (code, QR, 3 player slots, START) with no sideways scrolling; `pytest` 27 passed, `npm test` 129 passed, `svelte-check` 0 errors, `npm run build` OK; README, architecture (with a message diagram) and vocabulary updated.
 
 ---
 
@@ -229,5 +233,5 @@ Everything works on every screen size; the documentation explains playing togeth
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`
