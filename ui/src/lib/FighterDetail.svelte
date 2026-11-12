@@ -6,7 +6,9 @@
   import { credits, isUnlocked, maxPower } from './hacks'
   import Celebration from './Celebration.svelte'
   import { powerOf, stats, unlock, unlockPrice, upgrade, upgradeCost } from './game/economy'
+  import { SETTINGS } from './game/settings'
   import { buySkin, ownsSkin, skinPrice, wornSkin } from './game/shop'
+  import { fighterType } from './game/types'
   import HomeScene from './HomeScene.svelte'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
@@ -20,7 +22,8 @@
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
   const power = $derived(powerOf($progress, fighter.id))
   const max = $derived(maxPower($progress))
-  const fighterStats = $derived(stats(power))
+  const type = $derived(fighterType(fighter.type))
+  const fighterStats = $derived(stats(power, SETTINGS, type))
   const wallet = $derived(credits($progress))
   const price = $derived(unlockPrice(fighter.rarity))
   const nextCost = $derived(upgradeCost(power))
@@ -45,7 +48,7 @@
     const result = upgrade($progress, fighter.id)
     if (!result.ok) return
     progress.set(result.progress)
-    const s = stats(power)
+    const s = stats(power, SETTINGS, type)
     celebrate('UPGRADED!', `Power ${power}`, `❤️ ${s.health}  💥 ${s.damage}`)
   }
   let previewSkin = $state(untrack(() => wornSkin($progress, fighter.id)))
@@ -93,6 +96,10 @@
         <h3>{fighter.name}</h3>
         <div class="rarity">{fighter.rarity} · {fighter.idea}</div>
       </div>
+    </div>
+
+    <div class="type">
+      <strong>{type.emoji} {type.name}</strong> — {type.about} <span class="super">Super: {type.superName}</span>
     </div>
 
     <div class="stats">
@@ -228,6 +235,26 @@
   .rarity {
     font-weight: 700;
     opacity: 0.9;
+  }
+
+  .type {
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .type strong {
+    font-weight: 900;
+    color: #ffd23f;
+  }
+
+  .type .super {
+    display: inline-block;
+    padding: 0 0.5em;
+    border-radius: 999px;
+    background: #ffd23f;
+    color: #160f33;
+    font-weight: 900;
+    font-size: 0.85em;
   }
 
   .stats {

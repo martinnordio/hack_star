@@ -76,7 +76,7 @@ the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
 |------|-------------|--------|--------|
 | **1** | Fighter types in the rules | ✅ Done | [→ Step 1](#step-1--fighter-types-in-the-rules) |
 | **2** | Four new fighters and their skins | ✅ Done | [→ Step 2](#step-2--four-new-fighters-and-their-skins) |
-| **3** | Types on the screens and in the arena | ⬜ Not started | [→ Step 3](#step-3--types-on-the-screens-and-in-the-arena) |
+| **3** | Types on the screens and in the arena | ✅ Done | [→ Step 3](#step-3--types-on-the-screens-and-in-the-arena) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -142,7 +142,7 @@ Started: 2026-11-12 13:42
 
 The gallery (`/?gallery`) had a fixed list of 14 looks in 2 rows; it now has 22 (10 Default + 12 others) in rows of 8. ("18 skins" in the check above was a miscount: 10 fighters × Default + 12 bought skins = 22 looks.) Coco's light face first covered his eyes; it was made smaller and lower.
 
-**Done (2026-11-12 · ~6m)** — `pytest` 18 passed (ten fighters, two of each type, the new four locked and Rare–Legendary); browser: gallery shows all 22 looks; Shop lists Pirate, Gold, Dragon Knight, Sakura ("Unlock … first"); fighter list has the 4 new ones locked; with OPENSESAME they are unlocked; the saved progress loaded unchanged.
+**Done (2026-11-12 · ~4m)** — `pytest` 18 passed (ten fighters, two of each type, the new four locked and Rare–Legendary); browser: gallery shows all 22 looks; Shop lists Pirate, Gold, Dragon Knight, Sakura ("Unlock … first"); fighter list has the 4 new ones locked; with OPENSESAME they are unlocked; the saved progress loaded unchanged.
 
 ---
 
@@ -152,13 +152,17 @@ The gallery (`/?gallery`) had a fixed list of 14 looks in 2 rows; it now has 22 
 Players see each fighter's type and feel it in matches and Training (S3, S4, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Fighter list and fighter screen: type badge and a short line about it; health and damage include the type.
-- [ ] Arena: bots picked with their types; the player's type in matches and Training; aim guide as long as the fighter's range; lobbed shots fly in an arc; explosions, beam and dash effects.
-- [ ] Check (browser): each type in Training (Tank shockwave, Kira beam through a wall, Sparky dash, Coco bomb over a wall, Blaze blast); a match against bots of several types.
+- [x] Record the start time in Notes below.
+- [x] Fighter list and fighter screen: type badge and a short line about it; health and damage include the type.
+- [x] Arena: bots picked with their types; the player's type in matches and Training; aim guide as long as the fighter's range; lobbed shots fly in an arc; explosions, beam and dash effects.
+- [x] Check (browser): each type in Training (Tank shockwave, Kira beam through a wall, Sparky dash, Coco bomb over a wall, Blaze blast); a match against bots of several types.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:46
+
+Throwers also get a white ring where the shot will land. Training has no wall between the start and the middle dummy, so "through a wall" and "over a wall" are covered by the unit tests; the browser check shows each Super hitting. Sir Clank's short range (5.5) does not reach the dummy from the start: he has to walk closer, as intended.
+
+**Done (2026-11-12 · ~3m)** — browser Training with the HYPERCHARGE hack: Sir Clank shockwave ring (dummy 1032 → 0), Kira beam (888 → 0), Sparky dash rushed 7 units (1248 → 192), Coco bomb exploded on the dummy (1440 → 0), Blaze pellets 2400 → 1341; fighter list shows each type (🔥 Spreader, 🛡️ Tank…); Kira's screen: "🎯 Sharpshooter — Very long range… Super: Piercing beam", ❤️ 2400 💥 504; a Medium match with 5 bots of mixed types ran with no errors (bots' health 3010–3360 by type); `svelte-check` 0 errors.
 
 ---
 
