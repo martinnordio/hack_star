@@ -30,6 +30,8 @@ export interface Fighter {
   maxHealth: number
   damage: number
   type: FighterType
+  /** Fighters of the same team never hurt each other (humans share one; each bot has its own). */
+  team: number
   out: boolean
   lastHurt: number
   lastFire: number
@@ -103,6 +105,10 @@ export interface WorldOptions {
   stats?: { health: number; damage: number }[]
   /** Type per fighter (by id); missing ones are Basic. */
   types?: FighterType[]
+  /** Team per fighter (by id); missing ones are their own team. */
+  teams?: number[]
+  /** The fighter this device controls. */
+  playerId?: number
 }
 
 /** Push a circle out of a rectangle; returns true if it overlapped. */
@@ -154,11 +160,13 @@ export class World {
   /** Things that happened since the last `drainEvents()`, for effects. */
   private events: WorldEvent[] = []
   private nextShotId = 1
+  readonly playerId: number
 
   constructor(
     readonly arena: Arena,
-    { fighters = 1, dummies = fighters === 1, stats = [], types = [] }: WorldOptions = {},
+    { fighters = 1, dummies = fighters === 1, stats = [], types = [], teams = [], playerId = 0 }: WorldOptions = {},
   ) {
+    this.playerId = playerId
     const spots = fighters === 1 ? [arena.start] : arena.spawns
     this.walls = [...arena.walls]
     this.bushes = [...arena.bushes]
@@ -175,6 +183,7 @@ export class World {
         maxHealth: health,
         damage,
         type: types[id] ?? BASIC,
+        team: teams[id] ?? id,
         out: false,
         lastHurt: -Infinity,
         lastFire: -Infinity,
@@ -195,7 +204,17 @@ export class World {
   }
 
   get player(): Fighter {
-    return this.fighters[0]
+    return this.fighters[this.playerId]
+  }
+
+  /** Whether `a` may hurt `b`. */
+  enemies(a: Fighter, b: Fighter): boolean {
+    return a.team !== b.team
+  }
+
+  /** Add events made elsewhere (a shared match replays the host's), for effects. */
+  pushEvents(events: WorldEvent[]) {
+    this.events.push(...events)
   }
 
   /** Move the player (see `moveFighter`). */
@@ -378,8 +397,9 @@ export class World {
   }
 
   private explode(s: Shot) {
+    const owner = this.fighters[s.owner]
     for (const f of this.fighters) {
-      if (f.id !== s.owner && !f.out && Math.hypot(s.x - f.x, s.z - f.z) < s.blast + PLAYER_RADIUS) {
+      if (this.enemies(owner, f) && !f.out && Math.hypot(s.x - f.x, s.z - f.z) < s.blast + PLAYER_RADIUS) {
         this.damageFighter(f, s.owner, s.damage, s.superShot)
       }
     }
@@ -397,7 +417,7 @@ export class World {
     f.z += dash.dz * DASH_SPEED * dt
     this.resolve(f)
     for (const o of this.fighters) {
-      if (o === f || o.out || dash.hits.includes(o.id)) continue
+      if (!this.enemies(f, o) || o.out || dash.hits.includes(o.id)) continue
       if (Math.hypot(o.x - f.x, o.z - f.z) < PLAYER_RADIUS * 2 + 0.4) {
         dash.hits.push(o.id)
         this.hurt(o, f.id, dash.damage)
@@ -428,9 +448,10 @@ export class World {
         this.explode(s)
         return false
       }
+      const owner = this.fighters[s.owner]
       const fighter = this.fighters.find(
         (f) =>
-          f.id !== s.owner &&
+          this.enemies(owner, f) &&
           !f.out &&
           !s.hits?.includes(f.id) &&
           Math.hypot(s.x - f.x, s.z - f.z) < PLAYER_RADIUS + s.radius,
