@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store'
 
 export const PROGRESS_KEY = 'hack-star.progress'
-export const PROGRESS_VERSION = 2
+export const PROGRESS_VERSION = 3
 
 export interface Progress {
   version: typeof PROGRESS_VERSION
@@ -14,6 +14,8 @@ export interface Progress {
   selectedFighter: string | null
   /** Chosen skin id per fighter id; missing means the default skin. */
   selectedSkins: Record<string, string>
+  /** Bought skin ids per fighter id; the default skin is always owned. */
+  ownedSkins: Record<string, string[]>
 }
 
 /** Sample start until matches give real trophies (basic UI spec S8). */
@@ -27,6 +29,7 @@ export function defaultProgress(): Progress {
     activeHacks: [],
     selectedFighter: 'blaze',
     selectedSkins: {},
+    ownedSkins: {},
   }
 }
 
@@ -52,11 +55,8 @@ function isStringMap(value: unknown): value is Record<string, string> {
   )
 }
 
-function isProgress(value: unknown): value is Progress {
-  if (typeof value !== 'object' || value === null) return false
-  const p = value as Record<string, unknown>
+function isProgressFields(p: Record<string, unknown>): boolean {
   return (
-    p.version === PROGRESS_VERSION &&
     Number.isInteger(p.credits) &&
     (p.credits as number) >= 0 &&
     isCountMap(p.trophies) &&
@@ -68,13 +68,39 @@ function isProgress(value: unknown): value is Progress {
   )
 }
 
-/** Missing, unreadable or unknown-version data falls back to a fresh start. */
+function isProgress(value: unknown): value is Progress {
+  if (typeof value !== 'object' || value === null) return false
+  const p = value as Record<string, unknown>
+  return (
+    p.version === PROGRESS_VERSION &&
+    isProgressFields(p) &&
+    typeof p.ownedSkins === 'object' &&
+    p.ownedSkins !== null &&
+    Object.values(p.ownedSkins).every(isStringArray)
+  )
+}
+
+/** Version 2 (before the skins shop): every skin it had selected becomes owned. */
+function migrateV2(value: unknown): Progress | null {
+  if (typeof value !== 'object' || value === null) return null
+  const p = value as Record<string, unknown>
+  if (p.version !== 2 || !isProgressFields(p)) return null
+  const selected = p.selectedSkins as Record<string, string>
+  const ownedSkins = Object.fromEntries(
+    Object.entries(selected)
+      .filter(([, skin]) => skin !== 'default')
+      .map(([fighter, skin]) => [fighter, [skin]]),
+  )
+  return { ...(p as unknown as Omit<Progress, 'version' | 'ownedSkins'>), version: PROGRESS_VERSION, ownedSkins }
+}
+
+/** Older versions are migrated; missing, unreadable or unknown data falls back to a fresh start. */
 export function loadProgress(storage: KeyValueStorage): Progress {
   try {
     const raw = storage.getItem(PROGRESS_KEY)
     if (raw === null) return defaultProgress()
     const parsed: unknown = JSON.parse(raw)
-    return isProgress(parsed) ? parsed : defaultProgress()
+    return isProgress(parsed) ? parsed : (migrateV2(parsed) ?? defaultProgress())
   } catch {
     return defaultProgress()
   }
