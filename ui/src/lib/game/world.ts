@@ -14,6 +14,10 @@ export const DUMMY_HEALTH = 2400
 export const RESPAWN_SECONDS = 5
 /** Fighters closer than this see a fighter hiding in a bush. */
 export const BUSH_SIGHT = 2.5
+export const SUPER_SHOT_RADIUS = 0.45
+export const SUPER_RANGE = SHOT_RANGE * 1.3
+/** Angle between two shots of a Super blast (radians). */
+export const SUPER_SPREAD = 0.14
 
 export interface Fighter {
   id: number
@@ -29,6 +33,17 @@ export interface Fighter {
   /** Multipliers (bots are slower on easy). */
   speedFactor: number
   cooldownFactor: number
+  /** Super and Hypercharge meters, 0..1. */
+  superCharge: number
+  hyperCharge: number
+  /** Hypercharged until this world time. */
+  hyperUntil: number
+  /** Multiplier on Super charging (the HYPERCHARGE hack). */
+  superGain: number
+  /** Whether Supers can become Hypercharges at all (not for easy bots). */
+  canHyper: boolean
+  /** Every Super is a Hypercharge (the HYPERCHARGE hack). */
+  alwaysHyper: boolean
 }
 
 export interface Shot {
@@ -39,6 +54,9 @@ export interface Shot {
   dx: number
   dz: number
   travelled: number
+  /** Super shots are big, fly farther, go through walls and do not charge the Super. */
+  superShot: boolean
+  damage: number
 }
 
 export interface Dummy {
@@ -58,6 +76,8 @@ export type WorldEvent =
   | { type: 'knockout'; fighterId: number; by: number; x: number; z: number }
   | { type: 'blocked'; owner: number; x: number; z: number }
   | { type: 'coverGone' }
+  | { type: 'super'; by: number; x: number; z: number; dx: number; dz: number; hyper: boolean }
+  | { type: 'hypercharge'; fighterId: number }
 
 export interface WorldOptions {
   /** Number of fighters; fighter 0 is the player. Training has 1. */
@@ -138,6 +158,12 @@ export class World {
         lastFire: -Infinity,
         speedFactor: 1,
         cooldownFactor: 1,
+        superCharge: 0,
+        hyperCharge: 0,
+        hyperUntil: -Infinity,
+        superGain: 1,
+        canHyper: true,
+        alwaysHyper: false,
       }
     })
     this.dummies = dummies
@@ -159,8 +185,9 @@ export class World {
     const length = Math.hypot(dx, dz)
     if (length === 0 || f.out) return
     const scale = length > 1 ? 1 / length : 1
-    f.x += dx * scale * PLAYER_SPEED * f.speedFactor * dt
-    f.z += dz * scale * PLAYER_SPEED * f.speedFactor * dt
+    const speed = PLAYER_SPEED * f.speedFactor * this.boost(f) * dt
+    f.x += dx * scale * speed
+    f.z += dz * scale * speed
     f.facing = Math.atan2(dx, dz)
     this.resolve(f)
   }
@@ -206,9 +233,57 @@ export class World {
     f.facing = Math.atan2(dx, dz)
     const x = f.x + dx * (PLAYER_RADIUS + 0.2)
     const z = f.z + dz * (PLAYER_RADIUS + 0.2)
-    this.shots.push({ id: this.nextShotId++, owner: f.id, x, z, dx, dz, travelled: 0 })
+    this.shots.push({ id: this.nextShotId++, owner: f.id, x, z, dx, dz, travelled: 0, superShot: false, damage: f.damage * this.boost(f) })
     this.events.push({ type: 'fire', by: f.id, x, z, dx, dz })
     return true
+  }
+
+  isHyper(f: Fighter): boolean {
+    return this.time < f.hyperUntil
+  }
+
+  /** Speed and damage multiplier: more while hypercharged. */
+  private boost(f: Fighter): number {
+    return this.isHyper(f) ? 1 + SETTINGS.hyperchargeBoost : 1
+  }
+
+  /** Whether the next Super will be a Hypercharge. */
+  hyperReady(f: Fighter): boolean {
+    return f.canHyper && (f.alwaysHyper || f.hyperCharge >= 1)
+  }
+
+  /** Super blast towards a direction; needs a full Super meter. */
+  useSuper(f: Fighter, dx: number, dz: number): boolean {
+    const length = Math.hypot(dx, dz)
+    if (length === 0 || f.out || f.superCharge < 1) return false
+    const hyper = this.hyperReady(f)
+    f.superCharge = 0
+    if (hyper) {
+      f.hyperCharge = 0
+      f.hyperUntil = this.time + SETTINGS.hyperchargeSeconds
+      this.events.push({ type: 'hypercharge', fighterId: f.id })
+    } else if (f.canHyper) {
+      f.hyperCharge = Math.min(1, f.hyperCharge + 1 / SETTINGS.supersPerHypercharge)
+    }
+    const angle = Math.atan2(dx, dz)
+    const count = hyper ? SETTINGS.hyperSuperShots : SETTINGS.superShots
+    const damage = f.damage * SETTINGS.superDamage * this.boost(f)
+    f.facing = angle
+    f.lastFire = this.time
+    for (let i = 0; i < count; i++) {
+      const a = angle + (i - (count - 1) / 2) * SUPER_SPREAD
+      const sx = Math.sin(a)
+      const sz = Math.cos(a)
+      const x = f.x + sx * (PLAYER_RADIUS + 0.2)
+      const z = f.z + sz * (PLAYER_RADIUS + 0.2)
+      this.shots.push({ id: this.nextShotId++, owner: f.id, x, z, dx: sx, dz: sz, travelled: 0, superShot: true, damage })
+    }
+    this.events.push({ type: 'super', by: f.id, x: f.x, z: f.z, dx: dx / length, dz: dz / length, hyper })
+    return true
+  }
+
+  private charge(f: Fighter | undefined) {
+    if (f && !f.out) f.superCharge = Math.min(1, f.superCharge + f.superGain / SETTINGS.superHits)
   }
 
   step(dt: number) {
@@ -220,25 +295,28 @@ export class World {
       s.x += s.dx * distance
       s.z += s.dz * distance
       s.travelled += distance
+      const radius = s.superShot ? SUPER_SHOT_RADIUS : SHOT_RADIUS
       const fighter = this.fighters.find(
-        (f) => f.id !== s.owner && !f.out && Math.hypot(s.x - f.x, s.z - f.z) < PLAYER_RADIUS + SHOT_RADIUS,
+        (f) => f.id !== s.owner && !f.out && Math.hypot(s.x - f.x, s.z - f.z) < PLAYER_RADIUS + radius,
       )
       if (fighter) {
-        this.hurt(fighter, s.owner)
+        this.hurt(fighter, s.owner, s.damage)
+        if (!s.superShot) this.charge(this.fighters[s.owner])
         return false
       }
       const dummy = this.dummies.find(
-        (d) => d.brokenAt === null && Math.hypot(s.x - d.x, s.z - d.z) < DUMMY_RADIUS + SHOT_RADIUS,
+        (d) => d.brokenAt === null && Math.hypot(s.x - d.x, s.z - d.z) < DUMMY_RADIUS + radius,
       )
       if (dummy) {
-        this.hit(dummy, this.fighters[s.owner]?.damage ?? SHOT_DAMAGE)
+        this.hit(dummy, s.damage)
+        if (!s.superShot) this.charge(this.fighters[s.owner])
         return false
       }
       const blocked =
-        this.walls.some((w) => overlapsRect(s.x, s.z, SHOT_RADIUS, w)) ||
+        (!s.superShot && this.walls.some((w) => overlapsRect(s.x, s.z, SHOT_RADIUS, w))) ||
         Math.abs(s.x) > halfW ||
         Math.abs(s.z) > halfD
-      if (blocked || s.travelled >= SHOT_RANGE) {
+      if (blocked || s.travelled >= (s.superShot ? SUPER_RANGE : SHOT_RANGE)) {
         this.events.push({ type: 'blocked', owner: s.owner, x: s.x, z: s.z })
         return false
       }
@@ -259,8 +337,8 @@ export class World {
     }
   }
 
-  private hurt(f: Fighter, by: number) {
-    const damage = this.fighters[by]?.damage ?? SHOT_DAMAGE
+  private hurt(f: Fighter, by: number, damage: number) {
+    damage = Math.round(damage)
     f.health = Math.max(0, f.health - damage)
     f.lastHurt = this.time
     this.events.push({ type: 'hurt', fighterId: f.id, by, x: f.x, z: f.z, damage })
@@ -272,6 +350,7 @@ export class World {
   }
 
   private hit(d: Dummy, damage: number) {
+    damage = Math.round(damage)
     d.health = Math.max(0, d.health - damage)
     this.events.push({ type: 'hit', dummyId: d.id, x: d.x, z: d.z, damage })
     if (d.health <= 0) {

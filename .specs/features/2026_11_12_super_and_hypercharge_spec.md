@@ -1,7 +1,7 @@
 # Super and Hypercharge Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟦 Requirements agreed (defaults where Mattia's answer is open)
+> **Status:** � In progress
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/super-and-hypercharge`
@@ -41,12 +41,13 @@ part of F8).
 - **S1 — Super charge:** Each hit on an enemy fills the fighter's Super meter; about 5 hits fill
   it. The meter is shown around the Super button and over the fighter.
 - **S2 — Super:** When full, the player can use the Super: a **Super button** (right side, next
-  to the aim joystick) on touch screens, the **E** key or right mouse button on a computer. Each
-  fighter has its own Super (for example a big blast, a dash, a wall-breaking shot) that does
-  much more damage than a normal shot. Using it empties the meter.
-- **S3 — Hypercharge:** After 2 Supers the Hypercharge meter is full; the next Super can be a
+  to the aim joystick) on touch screens, the **E** key or right mouse button on a computer. The
+  Super is a **Super blast**: a fan of 5 big shots that fly farther, go through walls and do more
+  damage than normal shots. Using it empties the meter. (A different Super per fighter comes
+  with the fighter types of the [more fighters spec](2026_11_12_more_fighters_spec.md).)
+- **S3 — Hypercharge:** After 2 Supers the Hypercharge meter is full; the next Super is a
   **Hypercharge**: for 5 seconds the fighter glows, moves 25% faster, does 25% more damage and
-  its Super is bigger.
+  its Super blast has 7 shots.
 - **S4 — Bots:** Bots charge and use Supers too (not Hypercharge on Easy).
 - **S5 — HYPERCHARGE hack:** A new hack code `HYPERCHARGE` (typed or scanned as QR; also on the
   `/?qr` page) makes the player's Super charge 3 times faster and every Super a Hypercharge.
@@ -64,3 +65,133 @@ part of F8).
   Hypercharge always on, or something else?
 
 <!-- spec-nx:plan -->
+
+---
+
+# Part 2 · Plan
+
+## 2 · Spec Overview
+
+| Step | Description | Status | Detail |
+|------|-------------|--------|--------|
+| **1** | Super and Hypercharge rules | ✅ Done | [→ Step 1](#step-1--super-and-hypercharge-rules) |
+| **2** | HYPERCHARGE hack code | ⬜ Not started | [→ Step 2](#step-2--hypercharge-hack-code) |
+| **3** | Super button, meters and effects | ⬜ Not started | [→ Step 3](#step-3--super-button-meters-and-effects) |
+| **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration>)**`** line to that Step's **Notes**:
+>    date, time it took, a one-line summary and the verifying test/command result.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | One Super for every fighter now (Super blast); per-fighter Supers wait for the fighter types (F9) | Fighters all fight the same way today; F9 gives them types, and each type's Super belongs there |
+| D2 | Rules in `World`: each fighter has `superCharge` and `hyperCharge` (0–1), `hyperUntil`, `superGain`, `canHyper`, `alwaysHyper`; `useSuper(f, dx, dz)` fires the blast; shots carry `power` and `superShot` (big, through walls, longer range) | Same place as normal shots and damage; testable without drawing |
+| D3 | Normal hits on fighters **and dummies** charge the Super; Super hits do not | Training works (S6); a Super cannot chain itself |
+| D4 | The hack is applied to the player's fighter when an arena starts (`superGain` 3, `alwaysHyper`), read from the progress like the other hacks | Hacks stay "worked out when used", so Reset all hacks turns it off at once |
+| D5 | Touch: **tap** the Super button = Super at the nearest visible enemy (or the way the fighter faces); computer: **E** or right click = Super towards the mouse | Easy for kids; no third joystick |
+| D6 | `BotSkill.hyper` (false on Easy); bots use the Super as soon as it is full and the target is in range | S4 |
+
+---
+
+## Step 1 — Super and Hypercharge rules
+
+### Goal
+The world handles Super charge, the Super blast and Hypercharge; bots use them; tested (S1–S4, S6, S8).
+
+### Tasks
+- [x] Record the start time in Notes below.
+- [x] Settings: `superHits` 5, `supersPerHypercharge` 2, `hyperchargeSeconds` 5, `hyperchargeBoost` 0.25, `superShots` 5 / `hyperSuperShots` 7, `superDamage` 1.2, `hackSuperGain` 3.
+- [x] `World`: charge on normal hits (fighters and dummies), `useSuper()`, super shots (big, through walls, ×1.3 range), Hypercharge boosts (speed, damage), events `super` and `hypercharge`.
+- [x] `Bots`: use the Super when full and the target is in range; `BotSkill.hyper` (Easy: no Hypercharge).
+- [x] Check: `vitest` — 5 hits fill the Super, Super needs a full meter and empties it, fan of 5 shots through a wall, 2 Supers fill Hypercharge, Hypercharge lasts 5 s with +25% speed and damage and 7 shots, Super hits do not charge, dummies charge, `alwaysHyper` and `superGain`, easy bots never Hypercharge, bots use a full Super.
+
+### Notes
+Started: 2026-11-12 13:25
+
+Each shot now carries its damage, worked out when fired (so a Hypercharge boost applies to shots fired during it). The Hypercharge's own blast already gets the +25%.
+
+**Done (2026-11-12 · ~6m)** — `npm test` 96 passed (11 new in `game/super.test.ts`), `svelte-check` 0 errors.
+
+---
+
+## Step 2 — HYPERCHARGE hack code
+
+### Goal
+The `HYPERCHARGE` code works like the other hack codes (S5).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Server: hack `hypercharge` / `HYPERCHARGE` in `hacks.py`; tests.
+- [ ] UI: `HackId` gets `hypercharge`; `superHack(progress)` (gain and always-Hypercharge) applied to the player in matches and training.
+- [ ] Check: `pytest` (four hacks, redeem `hypercharge`); `vitest` (hack on / off after reset); the `/?qr` page shows the new QR code.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Super button, meters and effects
+
+### Goal
+Players see, use and feel the Super and Hypercharge (S1–S3, S6, S7).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Controls: **E** key and right mouse button; Super button tap (touch and mouse).
+- [ ] Super button (bottom right, above the aim area) with a ring meter that fills; "HYPER" look when the next Super is a Hypercharge; a yellow Super bar under the player's health bar.
+- [ ] Effects: big glowing super shots, a blast flash when used; Hypercharge: purple glow around the fighter for 5 s and a "HYPERCHARGE!" banner for the player.
+- [ ] Check (browser): in Training hit dummies 5 times → button full → Super breaks dummies through the middle wall; 2 Supers → HYPER → glow and banner; with HYPERCHARGE hack, every Super is a Hypercharge; a match where bots use Supers.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 4 — Final check and documentation
+
+### Goal
+Everything works on every screen size; the documentation explains the Super and the new code (S7, S9).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Super button checked at 390×844, 844×390, 1024×768, 1440×900 (not covering the joysticks, the timer or the leave button).
+- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [ ] README (controls, Super, Hypercharge, hack table), `docs/architecture.md` (Super in `World`, hack), Info vocabulary (Super blast, HYPERCHARGE code).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| A different Super per fighter (dash, bomb, heal…) | Belongs to the fighter types | [More fighters](2026_11_12_more_fighters_spec.md) |
+| Aiming the Super with a third joystick | Tap is easier for kids; maybe later | Later spec, if wanted |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
