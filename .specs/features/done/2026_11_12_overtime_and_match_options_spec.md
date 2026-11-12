@@ -1,7 +1,7 @@
 # Overtime and Match Options Spec
 
 > **Author:** Martin Nordio
-> **Status:** � In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/overtime-and-match-options`
@@ -12,18 +12,18 @@
 
 ## Context
 
-Mattia's feedback ([overall_req.md](../overall_req.md), "Feedback from Mattia"): matches stay
+Mattia's feedback ([overall_req.md](../../overall_req.md), "Feedback from Mattia"): matches stay
 2 minutes against 3 bots that also fight each other, but the **bot level should be chosen in a
 configuration**, and when time runs out with bots still in, **the match goes on for another
 minute without walls**. This is F8 in the
-[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 **Already in the repository** (reuse, don't rebuild):
-- [First match spec](done/2026_11_12_first_match_spec.md): `game/match.ts` (countdown, timer,
+- [First match spec](2026_11_12_first_match_spec.md): `game/match.ts` (countdown, timer,
   results), `game/settings.ts` (`SETTINGS`, `BOT_LEVELS` easy/medium/hard, `?level=` in the
   address for developers), `game/arena.ts` walls, `game/bots.ts`.
-- [Trophies spec](done/2026_11_12_trophies_spec.md) and
-  [unlock and upgrade spec](done/2026_11_12_unlock_and_upgrade_spec.md): rewards for the
+- [Trophies spec](2026_11_12_trophies_spec.md) and
+  [unlock and upgrade spec](2026_11_12_unlock_and_upgrade_spec.md): rewards for the
   "time's up" result.
 - `progress.ts`: saved progress (version 3).
 
@@ -33,9 +33,9 @@ minute without walls**. This is F8 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and Mattia's answers |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
@@ -79,7 +79,7 @@ minute without walls**. This is F8 in the
 | **1** | Overtime rules | ✅ Done | [→ Step 1](#step-1--overtime-rules) |
 | **2** | Overtime in the arena | ✅ Done | [→ Step 2](#step-2--overtime-in-the-arena) |
 | **3** | Settings screen | ✅ Done | [→ Step 3](#step-3--settings-screen) |
-| **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
+| **4** | Final check and documentation | ✅ Done | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -171,13 +171,17 @@ The level chip sits under the timer during the countdown (in the middle it cover
 Everything works on every screen size; the documentation explains overtime and settings (S1, S9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Settings screen and overtime banner checked at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: Settings screen, overtime; `docs/architecture.md`: `options.ts`, overtime in `Match` / `World`; Info vocabulary: "Overtime".
+- [x] Record the start time in Notes below.
+- [x] Settings screen and overtime banner checked at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: Settings screen, overtime; `docs/architecture.md`: `options.ts`, overtime in `Match` / `World`; Info vocabulary: "Overtime".
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:19
+
+Home now has 6 side buttons (2 × 3 in landscape, 3 × 2 in portrait). On a phone held sideways the Settings screen scrolls to reach the bot numbers. Also fixed a broken 💥 in the README.
+
+**Done (2026-11-12 · ~4m)** — browser at the four sizes: home side buttons fit without touching PLAY or the name plate, Settings has no sideways scrolling, the OVERTIME banner fits (390: 76–315 px); `pytest` 15 passed, `npm test` 85 passed, `svelte-check` 0 errors, `npm run build` OK.
 
 ---
 
@@ -201,5 +205,5 @@ Everything works on every screen size; the documentation explains overtime and s
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`

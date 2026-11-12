@@ -48,6 +48,7 @@ value (no router):
 | Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought |
 | Shop | `lib/ShopScreen.svelte` | Skin of the day first, then every skin; buy, "NEW SKIN!", Wear it |
 | Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words kids use |
+| Settings | `lib/SettingsScreen.svelte`, `lib/options.ts` | Bot level and number of bots, saved under `hack-star.options` |
 | Hack | `lib/HackScreen.svelte`, `lib/QrScanner.svelte` | Codes typed or scanned; `/?qr` shows `lib/QrPage.svelte` |
 | Match / Training | `lib/Arena.svelte` (HTML: joysticks, HUD, result), `lib/ArenaScene.svelte` (3D) | A new `Arena` is mounted per match |
 
@@ -60,14 +61,14 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 | File | What |
 |------|------|
 | `arena.ts` | The canyon layout: walls, bushes (cacti), decorations, dummies, start points |
-| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level, shots with owners (a shot does its shooter's damage), collisions (circles against rectangles), healing, knock-outs, dummies; emits events for effects |
-| `match.ts` | `Match`: countdown, timer, result (victory, defeat with place, time's up) around a `World` |
+| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level, shots with owners (a shot does its shooter's damage), collisions (circles against rectangles), healing, knock-outs, dummies; its own `walls` / `bushes` lists, emptied by `removeCover()` (overtime); emits events for effects |
+| `match.ts` | `Match`: countdown, timer, overtime (when time runs out with the player and a bot in: `overtimeSeconds` more and `removeCover()`), result (victory, defeat with place, time's up) around a `World` |
 | `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error; wanders when it sees nobody |
 | `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks) |
 | `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
 | `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power, owned…); `powerOf()` caps a level at the current maximum |
 | `shop.ts` | Skins: `ownsSkin` (default skins and the OPENSESAME hack count as owned), `wornSkin` (the chosen skin if owned, else Default), `skinOfTheDay(date)` (picked from the local day number, same for everyone that day), `skinPrice`, and the purchase `buySkin()` |
-| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power…) and `BOT_LEVELS`; `settingsFrom()` reads `?seconds=&bots=&level=` |
+| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power…) and `BOT_LEVELS`; `settingsFrom(search, defaults, chosen)` applies the Settings screen choices, then `?seconds=&bots=&level=&overtime=` |
 
 Every frame (`ArenaScene.svelte`, `useTask`): input → `match.update(dt)` (bots think, world
 steps) → events turned into effects → 3D objects moved to match the world. Per-frame data stays
@@ -107,10 +108,15 @@ Spending happens only on the fighter screen and in the Shop through `unlock()` /
 unlimited-credits hack nothing is taken from the saved credits, so resetting the hacks shows
 the real amount again.
 
+The player's options (bot level, number of bots) are not progress: `lib/options.ts` keeps them
+under their own key `hack-star.options`, each bad value falling back to its default, so the
+progress format did not change.
+
 ## How to…
 
 - **Change match settings:** edit `SETTINGS` in `ui/src/lib/game/settings.ts` (or try values
-  with `?seconds=&bots=&level=`).
+  with `?seconds=&bots=&level=&overtime=`); players choose bot level and number of bots on the
+  Settings screen.
 - **Add a fighter:** add it to `FIGHTERS` in `server/src/hack_star_server/fighters.py`, add a
   builder in `ui/src/lib/models/fighters3d.ts` and a shot colour in `ArenaScene.svelte`; check
   it with `/?gallery`.
