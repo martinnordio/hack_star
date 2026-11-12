@@ -15,6 +15,12 @@ export interface Settings {
   healDelay: number
   /** Share of full health healed per second. */
   healPerSecond: number
+  /** Trophies the fighter gets for a victory. */
+  trophiesPerWin: number
+  /** Trophies for a defeat: 0 or negative (never below the last Prestige). */
+  trophiesPerDefeat: number
+  /** Trophies when time runs out (only used when `timeUpResult` is 'draw'). */
+  timeUpTrophies: number
 }
 
 export const SETTINGS: Settings = {
@@ -27,6 +33,9 @@ export const SETTINGS: Settings = {
   fighterHealth: 3200,
   healDelay: 3,
   healPerSecond: 0.13,
+  trophiesPerWin: 10,
+  trophiesPerDefeat: 0,
+  timeUpTrophies: 0,
 }
 
 export interface BotSkill {
