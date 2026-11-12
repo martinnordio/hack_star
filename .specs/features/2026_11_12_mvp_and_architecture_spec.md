@@ -1,7 +1,7 @@
 # MVP and Architecture Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Requirements in progress
+> **Status:** ⬜ Not started — plan ready
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/mvp-and-architecture`
@@ -98,15 +98,16 @@ names and logos are copyrighted and are not used.
   are not in it.
 - **S9 — Progress kept:** A player's progress (trophies, unlocked fighters, active hack
   codes) is still there after the browser is closed and opened again on the same device.
+  There is no login; progress is not shared between devices.
+- **S10 — Feature order:** Features are built in the order of the feature list: F1 basic UI,
+  F2 hack codes, F3 graphics demo, then F4 and F5.
+- **S11 — 3D look:** Fighters and arenas are shown in 3D, seen from above at an angle, like
+  Brawl Stars.
 
 ### Open questions
 
-- Feature order: [overall_req.md](../overall_req.md) says the hack feature is the second
-  feature, but its "Spec 2" is the graphics demo. This list uses F2 = hack codes and
-  F3 = graphics demo. Is that right?
-- Player accounts: is progress kept per device (no login, assumed in S9), or should a player
-  be able to continue on another device?
-- Is a 3D look (Threlte) wanted, or is good-looking 2D (PixiJS) enough for the MVP?
+_None. S9–S11 answer the earlier questions with the suggested defaults (assumed by the author
+on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 
 <!-- spec-nx:plan -->
 
@@ -114,4 +115,130 @@ names and logos are copyrighted and are not used.
 
 # Part 2 · Plan
 
-_Written by the plan stage once Part 1 is agreed._
+## 2 · Spec Overview
+
+| Step | Description | Status | Detail |
+|------|-------------|--------|--------|
+| **0** | Server and UI scaffolding | ⬜ Not started | [→ Step 0](#step-0--server-and-ui-scaffolding) |
+| **1** | Responsive 3D shell | ⬜ Not started | [→ Step 1](#step-1--responsive-3d-shell) |
+| **2** | Progress saved on the device | ⬜ Not started | [→ Step 2](#step-2--progress-saved-on-the-device) |
+| **3** | README, asset licences, final check | ⬜ Not started | [→ Step 3](#step-3--readme-asset-licences-final-check) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration>)**`** line to that Step's **Notes**:
+>    date, time it took, a one-line summary and the verifying test/command result.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | Two folders: `server/` (Python) and `ui/` (Svelte) | Clear split; each has its own tools and tests |
+| D2 | Server: FastAPI + Uvicorn, managed with `uv` (Python 3.13) | Small, fast to write, automatic JSON API; `uv` installs Python itself (no Python on PATH on the dev machine) |
+| D3 | UI: Svelte 5 + Vite + TypeScript, no SvelteKit | A single-page game needs no server rendering or file routing; fewer moving parts |
+| D4 | 3D: Three.js through Threlte (`@threlte/core`, `@threlte/extras`) | Brawl Stars-like 3D look (S11) with Svelte components |
+| D5 | Progress in the browser's `localStorage`, behind one small store module | Per device, no login (S9); the server stays stateless for the MVP |
+| D6 | In development, Vite proxies `/api` to the server; both listen on all network interfaces | One address to open on iPad/phone on the same Wi-Fi (S5) |
+| D7 | Tests: `pytest` for the server, `vitest` for UI logic | Standard for each language |
+| D8 | Art: only CC0 packs (Quaternius, Kenney); licences listed in `ui/public/assets/LICENSES.md`. F0 uses simple shapes, no art yet | S7; real art comes with F1 and F3 |
+
+---
+
+## Step 0 — Server and UI scaffolding
+
+### Goal
+The Python server and the Svelte UI exist, start, and have a passing test each (S4).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `server/`: uv project with FastAPI; `GET /api/health` returns `{"status": "ok", "game": "Hack star"}`.
+- [ ] `server/tests/test_health.py` with `pytest`.
+- [ ] `ui/`: Vite + Svelte 5 + TypeScript; `vitest` set up.
+- [ ] Check: `uv run pytest` in `server/` and `npm run build` in `ui/` pass.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 1 — Responsive 3D shell
+
+### Goal
+A full-screen page with an animated 3D scene that fits every screen, reacts to touch and mouse, and shows the server is reachable (S1–S3, S6, S11).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Threlte canvas filling the screen; a placeholder fighter (simple shapes) bobbing on an arena floor, camera from above at an angle.
+- [ ] Tap/click on the floor makes the placeholder hop (proves touch and mouse input).
+- [ ] Layout uses the full viewport (`100dvh`, safe areas), no zoom (`viewport` meta), works in portrait and landscape.
+- [ ] Small overlay: "Hack star", server status from `/api/health`, frames-per-second counter.
+- [ ] Vite proxy for `/api`; both servers listen on `0.0.0.0`.
+- [ ] Check: `npm run build` passes; in the browser at desktop, iPad (1024×768) and phone (390×844) sizes the scene fills the screen, the overlay is readable, FPS ≥ 30.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 2 — Progress saved on the device
+
+### Goal
+A progress store (trophies per fighter, unlocked fighters, active hacks) that survives closing the browser (S9).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `ui/src/lib/progress.ts`: typed progress, load/save to `localStorage` with a version number; broken or missing data falls back to the default.
+- [ ] Svelte store wrapping it, saved on every change.
+- [ ] Check: `vitest` tests for default, save/load round trip and broken data pass.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 3 — README, asset licences, final check
+
+### Goal
+Anyone can install, run and open the game on the computer and on an iPad/phone (S5, S7, S8).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `README.md`: what Hack star is, feature list link, prerequisites (`uv`, Node), how to install, run, test, and play from iPad/phone on the same Wi-Fi.
+- [ ] `ui/public/assets/LICENSES.md`: the allowed sources and licence rule (D8), empty asset list.
+- [ ] `.gitignore`: `node_modules`, `dist`, `.venv`, caches.
+- [ ] Check: from a clean clone, the README steps start both parts; `uv run pytest` and `npm test` pass.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| Real fighter models and animations | Belong to the home screen and the demo | `2026_11_12_basic_ui_spec.md`, `2026_11_12_graphics_demo_spec.md` |
+| Production hosting (one server serving the built UI) | Only local play needed for the trip | Later spec |
+| F4–F8 | Separate features in the feature list | Later specs |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
