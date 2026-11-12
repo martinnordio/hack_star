@@ -30,7 +30,7 @@
   import { CANYON } from './game/arena'
   import { keyboardDirection, type Controls, type Vec2 } from './game/controls'
   import type { Match } from './game/match'
-  import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, SUPER_SHOT_RADIUS, type World, type WorldEvent } from './game/world'
+  import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, type World, type WorldEvent } from './game/world'
   import { buildArena } from './models/arena3d'
   import { buildDummy, setHealth } from './models/dummy3d'
   import { animateFighter, buildFighter, disposeRig, setRigOpacity } from './models/fighters3d'
@@ -60,6 +60,10 @@
     frosty: '#9fe4ff',
     luna: '#ffd23f',
     pixel: '#39ff88',
+    coco: '#b07a3c',
+    sparky: '#7ff0ff',
+    clank: '#e8edf5',
+    kira: '#ff4f9a',
   }
 
   const scenery = buildArena(CANYON)
@@ -153,7 +157,7 @@
   const shotPool = new THREE.Group()
   const shotGeometry = new THREE.SphereGeometry(SHOT_RADIUS, 12, 8)
   const glowGeometry = new THREE.SphereGeometry(SHOT_RADIUS * 2, 12, 8)
-  const shotMeshes = Array.from({ length: 48 }, () => {
+  const shotMeshes = Array.from({ length: 96 }, () => {
     const ball = new THREE.Mesh(shotGeometry, views[0].core)
     ball.add(new THREE.Mesh(glowGeometry, views[0].glow))
     ball.visible = false
@@ -170,6 +174,19 @@
     new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.5, depthWrite: false }),
   )
   aimLine.visible = false
+  const playerAttack = untrack(() => world.player.type.attack)
+  // Throwers see where their shot will land.
+  const aimRing = new THREE.Mesh(
+    new THREE.RingGeometry(playerAttack.blast * 0.85, playerAttack.blast, 32).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.6, depthWrite: false }),
+  )
+  aimRing.visible = false
+
+  function aimLength(aim: Vec2): number {
+    if (!playerAttack.lob) return playerAttack.range
+    const length = Math.hypot(aim.x, aim.z)
+    return Math.max(1.5, Math.min(playerAttack.range, length <= 1 ? length * playerAttack.range : length))
+  }
 
   const particles = new Particles()
 
@@ -222,6 +239,12 @@
       v.knockedAt = time
       particles.burst({ color: v.color, at: at(e.x, 1.2, e.z), count: 14, speed: 4, up: 6, gravity: 14, life: 1.1, size: 0.14, endSize: 0.06, chunky: true })
       particles.burst({ color: '#ffffff', at: at(e.x, 0.8, e.z), count: 12, speed: 2.5, up: 1.5, life: 0.8, size: 0.35, endSize: 0.9 })
+    } else if (e.type === 'explode') {
+      const color = views[e.by]?.color ?? '#ffb000'
+      const count = Math.round(8 + e.radius * 8)
+      particles.burst({ color, at: at(e.x, 0.5, e.z), count, speed: e.radius * 4, up: 3, gravity: 10, life: 0.6, size: 0.25, endSize: 0.1, chunky: true })
+      particles.burst({ color: '#fff3a0', at: at(e.x, 0.6, e.z), count: 6, speed: e.radius * 2, up: 1, life: 0.35, size: 0.6, endSize: 1.4 })
+      particles.burst({ color: '#e8d2a8', at: at(e.x, 0.3, e.z), count: 8, speed: e.radius * 2.5, up: 0.6, life: 0.8, size: 0.4, endSize: 1 })
     } else if (e.type === 'blocked') {
       const color = views[e.owner]?.color ?? '#ffffff'
       particles.burst({ color, at: at(e.x, 0.8, e.z), count: 6, speed: 3, up: 2, gravity: 8, life: 0.3, size: 0.1 })
@@ -322,9 +345,14 @@
     }
 
     aimLine.visible = canAct() && !!aim && (stickAim !== null || controls.pointer !== null)
+    aimRing.visible = aimLine.visible && playerAttack.lob
     if (aim) {
+      const length = aimLength(aim)
+      const angle = Math.atan2(aim.x, aim.z)
       aimLine.position.set(world.player.x, 0, world.player.z)
-      aimLine.rotation.y = Math.atan2(aim.x, aim.z)
+      aimLine.rotation.y = angle
+      aimLine.scale.z = length / SHOT_RANGE
+      aimRing.position.set(world.player.x + Math.sin(angle) * length, 0.05, world.player.z + Math.cos(angle) * length)
     }
   }
 
@@ -374,6 +402,9 @@
       }
 
       if (moved && !inBush && !hidden) {
+        if (f.dash) {
+          particles.burst({ color: v.color, at: at(f.x, 0.8, f.z), count: 2, speed: 1, up: 0.5, life: 0.35, size: 0.35, endSize: 0.1 })
+        }
         dustTimer -= dt / world.fighters.length
         if (dustTimer <= 0) {
           dustTimer = 0.09
@@ -461,8 +492,10 @@
       // Shots fired from a hidden bush stay hidden too.
       mesh.visible = !!owner && !owner.hidden
       if (!shot || !owner) return
-      mesh.position.set(shot.x, 0.8, shot.z)
-      mesh.scale.setScalar(shot.superShot ? SUPER_SHOT_RADIUS / SHOT_RADIUS : 1)
+      // Lobbed shots fly in an arc.
+      const arc = shot.lob ? Math.sin(Math.PI * Math.min(1, shot.travelled / shot.range)) * (1 + shot.range * 0.25) : 0
+      mesh.position.set(shot.x, 0.8 + arc, shot.z)
+      mesh.scale.setScalar(shot.radius / SHOT_RADIUS)
       mesh.material = owner.core
       ;(mesh.children[0] as THREE.Mesh).material = owner.glow
     })
@@ -528,6 +561,7 @@
 
 <T is={scenery} />
 <T is={aimLine} />
+<T is={aimRing} />
 <T is={dummyGroup} />
 <T is={fighterGroup} />
 <T is={shotPool} />

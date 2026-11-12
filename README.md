@@ -57,15 +57,16 @@ Hack star server" with a **Try again** button.
   and number of bots on the **Settings** screen):
   - "3, 2, 1, FIGHT!" countdown (showing for example "Easy · 3 bots"), then a 2-minute timer
     (red in the last 10 seconds) and the number of fighters still in.
-  - Every fighter has a health bar (yours green, bots red); a hit takes 480. After 3 seconds
-    without being hit or shooting, health slowly comes back.
+  - Every fighter has a health bar (yours green, bots red); how much a hit takes depends on
+    the fighter's power level and type (power 1 Basic: 480). After 3 seconds without being hit
+    or shooting, health slowly comes back.
   - Bots fight you and each other. In the cacti you are see-through and bots far away cannot
     see you; bots hiding in cacti are invisible unless you are close.
-  - **Super:** every 5 hits (on fighters or dummies) fill your Super (the ring around the
-    **SUPER** button and the yellow bar over your fighter). The Super blast is a fan of 5 big
-    shots that fly farther, go through walls and hit harder. After 2 Supers the button turns
+  - **Super:** every 5 hits' worth of damage (on fighters or dummies) fills your Super (the ring around the
+    **SUPER** button and the yellow bar over your fighter). Each fighter type has its own
+    Super (see the table below). After 2 Supers the button turns
     purple (**HYPER**): the next Super is a **Hypercharge** — 5 seconds of purple glow, +25%
-    speed and damage, and a 7-shot blast. Bots use Supers too (no Hypercharge on Easy).
+    speed and damage, and a bigger Super. Bots use Supers too (no Hypercharge on Easy).
   - **Overtime:** if the 2 minutes end and you and at least one bot are still in, "OVERTIME!"
     gives one more minute and every wall and cactus breaks apart, so nobody can hide.
   - The match ends with **Victory** (last one standing), **Defeat** (with your place) or
@@ -84,8 +85,20 @@ Hack star server" with a **Try again** button.
   |---|------|---------------|-------|
   | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target | **E** or right click (towards the mouse), or click the Super button |
   | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target | Tap the Super button (aims at the nearest enemy) |
-- **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D,
-  try on its skins and choose or buy one.
+- **Fighters:** the 10 fighters with locks, trophies, power levels and type; open one to see
+  it in 3D, read what its type does, try on its skins and choose or buy one. Every type has two
+  fighters:
+
+  | Type | Fighters | How it fights | Super |
+  |------|----------|---------------|-------|
+  | 🛡️ Tank | Rocko, Sir Clank | Lots of health, short range | **Shockwave**: a ring of shots all around |
+  | 🎯 Sharpshooter | Luna, Kira | Very long range, less health, slower shots | **Piercing beam**: one huge shot through walls and every fighter on its way |
+  | ⚡ Speedy | Turbo, Sparky | Runs 25% faster, shoots quickly | **Dash**: rushes forward and hits everyone on the way |
+  | 💣 Thrower | Frosty, Coco | Throws over walls; shots explode where they land (a ring shows where) | **Big bomb**: a huge explosion |
+  | 🔥 Spreader | Blaze, Pixel | Three shots in a fan, best up close | **Super blast**: 5 big shots through walls |
+
+  The new four (Coco, Sparky, Sir Clank, Kira) start locked. The types were tuned with bot-only
+  test matches so that each one wins about as often as the others.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
   otherwise; you start with 500). On a fighter's screen:
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,

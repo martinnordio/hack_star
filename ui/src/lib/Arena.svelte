@@ -13,6 +13,7 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
   import { superHack } from './hacks'
+  import { fighterType } from './game/types'
   import { options } from './options'
   import { applyReward, nextPrestigeAt, rewardFor, type Reward } from './game/trophies'
   import type { MatchResult } from './game/match'
@@ -37,14 +38,15 @@
   // A new Arena component is mounted for every match, so these are made once per match.
   const { match, world, looks } = untrack(() => {
     const playerPower = powerOf(get(progress), player.fighterId)
-    const match =
-      mode === 'match' ? new Match(CANYON, settingsFrom(location.search, SETTINGS, get(options)), { playerPower }) : undefined
-    const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower)] })
-    Object.assign(world.player, superHack(get(progress)))
+    const settings = settingsFrom(location.search, SETTINGS, get(options))
     const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
-    const looks: Look[] = world.fighters.map((f) =>
-      f.id === 0 ? player : { fighterId: others[(f.id - 1) % others.length].id, skinId: 'default' },
-    )
+    const count = mode === 'match' ? settings.botCount + 1 : 1
+    const ids = Array.from({ length: count }, (_, i) => (i === 0 ? player.fighterId : others[(i - 1) % others.length].id))
+    const types = ids.map((id) => fighterType(fighters.find((f) => f.id === id)?.type))
+    const match = mode === 'match' ? new Match(CANYON, settings, { playerPower, types }) : undefined
+    const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower, SETTINGS, types[0])], types })
+    Object.assign(world.player, superHack(get(progress)))
+    const looks: Look[] = ids.map((id, i) => (i === 0 ? player : { fighterId: id, skinId: 'default' }))
     return { match, world, looks }
   })
   const controls = newControls()

@@ -5,9 +5,22 @@ from hack_star_server.app import app
 client = TestClient(app)
 
 
-def test_six_fighters() -> None:
+def test_ten_fighters() -> None:
     fighters = client.get("/api/fighters").json()
-    assert [f["name"] for f in fighters] == ["Blaze", "Rocko", "Turbo", "Frosty", "Luna", "Pixel"]
+    assert [f["name"] for f in fighters] == [
+        "Blaze", "Rocko", "Turbo", "Frosty", "Luna", "Pixel", "Coco", "Sparky", "Sir Clank", "Kira",
+    ]
+
+
+def test_two_fighters_of_each_type() -> None:
+    types = [f["type"] for f in client.get("/api/fighters").json()]
+    assert sorted(types) == sorted(["tank", "sharpshooter", "speedy", "thrower", "spreader"] * 2)
+
+
+def test_new_fighters_start_locked_and_cover_rare_to_legendary() -> None:
+    new = client.get("/api/fighters").json()[6:]
+    assert not any(f["unlocked_at_start"] for f in new)
+    assert {f["rarity"] for f in new} == {"Rare", "Super Rare", "Epic", "Legendary"}
 
 
 def test_every_fighter_has_two_or_three_skins_starting_with_default() -> None:

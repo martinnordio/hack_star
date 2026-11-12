@@ -24,7 +24,7 @@ part of F8).
   printable QR page (`/?qr`), the hack list on the server (`hacks.py`), **Reset all hacks**.
 - Match rules (`game/world.ts`, `game/match.ts`, `game/bots.ts`), HUD and joysticks
   (`Arena.svelte`), effects (`models/particles.ts`).
-- Fighter types from the [more fighters spec](../2026_11_12_more_fighters_spec.md) if it is done
+- Fighter types from the [more fighters spec](2026_11_12_more_fighters_spec.md) if it is done
   first (each type can have its own Super).
 
 **New:**
@@ -44,7 +44,7 @@ part of F8).
   to the aim joystick) on touch screens, the **E** key or right mouse button on a computer. The
   Super is a **Super blast**: a fan of 5 big shots that fly farther, go through walls and do more
   damage than normal shots. Using it empties the meter. (A different Super per fighter comes
-  with the fighter types of the [more fighters spec](../2026_11_12_more_fighters_spec.md).)
+  with the fighter types of the [more fighters spec](2026_11_12_more_fighters_spec.md).)
 - **S3 — Hypercharge:** After 2 Supers the Hypercharge meter is full; the next Super is a
   **Hypercharge**: for 5 seconds the fighter glows, moves 25% faster, does 25% more damage and
   its Super blast has 7 shots.
@@ -185,7 +185,7 @@ Started: 2026-11-12 13:31
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| A different Super per fighter (dash, bomb, heal…) | Belongs to the fighter types | [More fighters](../2026_11_12_more_fighters_spec.md) |
+| A different Super per fighter (dash, bomb, heal…) | Belongs to the fighter types | [More fighters](2026_11_12_more_fighters_spec.md) |
 | Aiming the Super with a third joystick | Tap is easier for kids; maybe later | Later spec, if wanted |
 
 ---

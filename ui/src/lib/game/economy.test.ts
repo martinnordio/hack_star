@@ -8,6 +8,7 @@ const fighter = (id: string, rarity: Fighter['rarity']): Fighter => ({
   id,
   name: id,
   rarity,
+  type: 'tank',
   idea: '',
   skins: [],
   unlocked_at_start: false,

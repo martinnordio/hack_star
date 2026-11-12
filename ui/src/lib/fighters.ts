@@ -1,4 +1,5 @@
 export type Rarity = 'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary'
+import type { FighterTypeId } from './game/types'
 
 export interface Skin {
   id: string
@@ -10,6 +11,7 @@ export interface Fighter {
   id: string
   name: string
   rarity: Rarity
+  type: FighterTypeId
   idea: string
   skins: Skin[]
   unlocked_at_start: boolean

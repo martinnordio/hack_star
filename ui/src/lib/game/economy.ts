@@ -3,6 +3,7 @@ import { credits, isUnlocked, maxPower } from '../hacks'
 import type { Progress } from '../progress'
 import type { MatchResult } from './match'
 import { SETTINGS, type Settings } from './settings'
+import { BASIC, type FighterType } from './types'
 
 export interface Stats {
   health: number
@@ -23,9 +24,13 @@ export function upgradeCost(level: number, settings: Settings = SETTINGS): numbe
   return level * settings.upgradeCostPerLevel
 }
 
-export function stats(level: number, settings: Settings = SETTINGS): Stats {
+/** Health and damage at a power level, for a fighter type (Basic when not given). */
+export function stats(level: number, settings: Settings = SETTINGS, type: FighterType = BASIC): Stats {
   const factor = 1 + settings.powerBonusPerLevel * (level - 1)
-  return { health: Math.round(settings.fighterHealth * factor), damage: Math.round(settings.shotDamage * factor) }
+  return {
+    health: Math.round(settings.fighterHealth * factor * type.health),
+    damage: Math.round(settings.shotDamage * factor * type.damage),
+  }
 }
 
 export function creditsFor(result: MatchResult, settings: Settings = SETTINGS): number {

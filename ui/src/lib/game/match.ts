@@ -2,6 +2,7 @@ import type { Arena } from './arena'
 import { Bots } from './bots'
 import { stats } from './economy'
 import { BOT_LEVELS, SETTINGS, type Settings } from './settings'
+import type { FighterType } from './types'
 import { World } from './world'
 
 export type MatchPhase = 'countdown' | 'fight' | 'over'
@@ -14,6 +15,8 @@ export interface MatchOptions {
   random?: () => number
   /** The player's power level (bots use `settings.botPower`). */
   playerPower?: number
+  /** Type of each fighter, by id (0 is the player); missing ones are Basic. */
+  types?: FighterType[]
 }
 
 /** A "last fighter standing" match: countdown, timer and result around a `World`. */
@@ -30,13 +33,13 @@ export class Match {
   constructor(
     arena: Arena,
     readonly settings: Settings = SETTINGS,
-    { bots = true, random = Math.random, playerPower = 1 }: MatchOptions = {},
+    { bots = true, random = Math.random, playerPower = 1, types = [] }: MatchOptions = {},
   ) {
     const fighters = settings.botCount + 1
     const fighterStats = Array.from({ length: fighters }, (_, id) =>
-      stats(id === 0 ? playerPower : settings.botPower, settings),
+      stats(id === 0 ? playerPower : settings.botPower, settings, types[id]),
     )
-    this.world = new World(arena, { fighters, stats: fighterStats })
+    this.world = new World(arena, { fighters, stats: fighterStats, types })
     this.bots = bots ? new Bots(this.world, BOT_LEVELS[settings.botLevel], settings.botsFightEachOther, random) : null
     this.countdown = settings.countdownSeconds
     this.timeLeft = settings.matchSeconds

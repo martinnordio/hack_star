@@ -3,6 +3,7 @@
   import { isUnlocked, maxPower } from './hacks'
   import { powerOf, unlockPrice } from './game/economy'
   import { wornSkin } from './game/shop'
+  import { fighterType } from './game/types'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
@@ -31,6 +32,7 @@
         </span>
         <span class="name">{fighter.name}</span>
         <span class="rarity">{fighter.rarity}</span>
+        <span class="type">{fighterType(fighter.type).emoji} {fighterType(fighter.type).name}</span>
         <span class="stats">
           <span>🏆 {trophies}</span>
           <span class="power">⚡ {powerOf($progress, fighter.id)}/{maxPower($progress)}</span>
@@ -135,6 +137,12 @@
 
   .locked .rarity {
     color: #9aa5b1;
+  }
+
+  .type {
+    font-size: 0.8rem;
+    font-weight: 800;
+    opacity: 0.85;
   }
 
   .stats {

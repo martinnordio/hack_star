@@ -77,7 +77,7 @@ names and logos are copyrighted and are not used.
 | F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](2026_11_12_unlock_and_upgrade_spec.md) | later (done) |
 | F7 | Skins shop | [skins shop](2026_11_12_skins_shop_spec.md) | later (done) |
 | F8 | Overtime (one more minute without walls) and a Settings screen for bot level and number of bots | [overtime and match options](2026_11_12_overtime_and_match_options_spec.md) | later (done) |
-| F9 | More fighters (10) with fighter types and different attacks | [more fighters](../2026_11_12_more_fighters_spec.md) | later |
+| F9 | More fighters (10) with fighter types and different attacks | [more fighters](2026_11_12_more_fighters_spec.md) | later (done) |
 | F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](2026_11_12_super_and_hypercharge_spec.md) | later (done) |
 | F11 | Play with up to 2 friends on their own devices | [play with friends](../2026_11_12_play_with_friends_spec.md) | later |
 | F12 | A second mode (Gem Grab or another, Mattia to choose) | — | later |

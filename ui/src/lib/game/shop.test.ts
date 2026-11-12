@@ -9,9 +9,9 @@ const skins = (...list: [string, Fighter['rarity']][]) => [
   ...list.map(([id, rarity]) => ({ id, name: id, rarity })),
 ]
 const fighters: Fighter[] = [
-  { id: 'blaze', name: 'Blaze', rarity: 'Rare', idea: '', skins: skins(['lava', 'Epic'], ['phoenix', 'Legendary']), unlocked_at_start: true },
-  { id: 'rocko', name: 'Rocko', rarity: 'Rare', idea: '', skins: skins(['crystal', 'Epic']), unlocked_at_start: true },
-  { id: 'luna', name: 'Luna', rarity: 'Mythic', idea: '', skins: skins(['galaxy', 'Mythic']), unlocked_at_start: false },
+  { id: 'blaze', name: 'Blaze', rarity: 'Rare', type: 'spreader', idea: '', skins: skins(['lava', 'Epic'], ['phoenix', 'Legendary']), unlocked_at_start: true },
+  { id: 'rocko', name: 'Rocko', rarity: 'Rare', type: 'tank', idea: '', skins: skins(['crystal', 'Epic']), unlocked_at_start: true },
+  { id: 'luna', name: 'Luna', rarity: 'Mythic', type: 'sharpshooter', idea: '', skins: skins(['galaxy', 'Mythic']), unlocked_at_start: false },
 ]
 const [blaze, rocko, luna] = fighters
 const skin = (f: Fighter, id: string) => f.skins.find((s) => s.id === id)!
