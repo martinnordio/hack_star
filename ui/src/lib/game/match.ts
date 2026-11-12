@@ -23,6 +23,8 @@ export class Match {
   phase: MatchPhase = 'countdown'
   countdown: number
   timeLeft: number
+  /** True once the extra time has started. */
+  overtime = false
   result: MatchResult | null = null
 
   constructor(
@@ -74,8 +76,15 @@ export class Match {
     const botsIn = this.world.fighters.slice(1).filter((f) => !f.out).length
     if (this.world.player.out) this.end({ kind: 'defeat', place: botsIn + 1 })
     else if (botsIn === 0) this.end({ kind: 'victory' })
+    else if (this.timeLeft <= 0 && !this.overtime && this.settings.overtimeSeconds > 0) this.startOvertime()
     else if (this.timeLeft <= 0)
       this.end(this.settings.timeUpResult === 'draw' ? { kind: 'timeup' } : { kind: 'defeat', place: botsIn + 1 })
+  }
+
+  private startOvertime() {
+    this.overtime = true
+    this.timeLeft = this.settings.overtimeSeconds
+    if (this.settings.overtimeRemovesCover) this.world.removeCover()
   }
 
   private end(result: MatchResult) {

@@ -1,7 +1,7 @@
 # Overtime and Match Options Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟦 Requirements agreed (defaults where Mattia's answer is open)
+> **Status:** � In progress
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/overtime-and-match-options`
@@ -62,10 +62,136 @@ minute without walls**. This is F8 in the
 
 ### Open questions
 
-- **Q1 (Mattia):** "Then it is a draw **but** …" — the sentence was not finished. Until he
-  answers, a draw after overtime gives the same as "time's up" today (0 trophies, 20 credits).
-  Possible ideas: the fighter with the most health wins; the storm closes in; the fighters
-  still in share the trophies.
+- **Q1 (Mattia) — answered 2026-11-12:** "Then it is a draw but …" → **it is a draw**. A draw
+  after overtime gives the same as "time's up" today (0 trophies, 20 credits).
 - **Q2 (Mattia):** Should harder bots give more trophies or credits? Default: no, the same.
 
 <!-- spec-nx:plan -->
+
+---
+
+# Part 2 · Plan
+
+## 2 · Spec Overview
+
+| Step | Description | Status | Detail |
+|------|-------------|--------|--------|
+| **1** | Overtime rules | ✅ Done | [→ Step 1](#step-1--overtime-rules) |
+| **2** | Overtime in the arena | ⬜ Not started | [→ Step 2](#step-2--overtime-in-the-arena) |
+| **3** | Settings screen | ⬜ Not started | [→ Step 3](#step-3--settings-screen) |
+| **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration>)**`** line to that Step's **Notes**:
+>    date, time it took, a one-line summary and the verifying test/command result.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | `World` keeps its own lists of walls and bushes (copied from the arena); `removeCover()` empties them and emits a `coverGone` event | Collisions, shots, hiding and bots all read the same lists, so "no walls" is one change; the arena stays a constant |
+| D2 | `Match` gets an `overtime` flag: when the time runs out with the player and a bot still in, it sets `timeLeft = overtimeSeconds` once; the result after overtime is the existing "time's up" (draw) | Reuses results, trophies and credits unchanged (Q1: it is a draw) |
+| D3 | Player options (bot level, number of bots) saved under their own key `hack-star.options` in `lib/options.ts`, not in the progress | They are preferences, not progress: no progress version change or migration; bad data falls back to the defaults |
+| D4 | Address overrides (`?level=`, `?bots=`, `?seconds=`) still win over the saved options | Developers keep their quick testing |
+
+---
+
+## Step 1 — Overtime rules
+
+### Goal
+The match rules handle overtime and the walls disappearing, tested (S5–S8).
+
+### Tasks
+- [x] Record the start time in Notes below.
+- [x] Settings: `overtimeSeconds` (60), `overtimeRemovesCover` (true).
+- [x] `World`: own `walls` / `bushes`, `removeCover()` with a `coverGone` event; collisions, shots and `inBush` use them.
+- [x] `Match`: `overtime` flag; time up with more than one fighter in → overtime once; end of overtime → "time's up" draw; `overtimeSeconds` 0 keeps the old behaviour.
+- [x] Check: `vitest` — overtime starts at 0:00 with fighters left, timer shows 60 s, walls and bushes gone (a shot passes where a wall was, nobody hides), a win or defeat in overtime is normal, overtime ending is a draw, no overtime when the match is already decided.
+
+### Notes
+Started: 2026-11-12 13:13
+
+Overtime only starts while the player is still in: a knocked-out player has already lost (defeat with a place), as before.
+
+**Done (2026-11-12 · ~5m)** — `npm test` 80 passed (5 new: overtime starts and removes cover, draw at its end, victory in overtime, cover kept when set off, shots pass once cover is gone), `svelte-check` 0 errors.
+
+---
+
+## Step 2 — Overtime in the arena
+
+### Goal
+Players see overtime: banner, timer and walls breaking (S5, S6).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] HUD: `overtime` in the HUD data; big "OVERTIME!" banner for 1.5 s; timer in a different colour during overtime.
+- [ ] Scene: on `coverGone`, walls and cactus bushes burst into pieces and disappear.
+- [ ] Check (browser, `?seconds=5`): at 0:00 the banner shows, the timer restarts at 1:00, walls and cacti break; the result after overtime is "TIME'S UP".
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Settings screen
+
+### Goal
+Players choose the bot level and the number of bots (S2–S4).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `lib/options.ts`: `Options` (`botLevel`, `botCount` 1–5), load/save with fallback, store; `settingsFrom` applies options, then the address.
+- [ ] Home: **Settings** button (⚙️); `SettingsScreen.svelte` with Easy / Medium / Hard and 1–5 bots.
+- [ ] Countdown shows "Easy · 3 bots".
+- [ ] Check: `vitest` (options load/save/fallback, settings order); browser: pick Hard and 5 bots → match has 6 fighters, countdown says "Hard · 5 bots", choice kept after reload.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Step 4 — Final check and documentation
+
+### Goal
+Everything works on every screen size; the documentation explains overtime and settings (S1, S9).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Settings screen and overtime banner checked at 390×844, 844×390, 1024×768, 1440×900.
+- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [ ] README: Settings screen, overtime; `docs/architecture.md`: `options.ts`, overtime in `Match` / `World`; Info vocabulary: "Overtime".
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| More trophies for harder bots | Waits for Mattia (Q2) | Later spec, if wanted |
+| Sound and music settings | No sound yet | Later spec |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

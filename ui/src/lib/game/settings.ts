@@ -8,6 +8,10 @@ export interface Settings {
   botLevel: BotLevel
   /** What the player gets when time runs out with bots still in. */
   timeUpResult: 'draw' | 'defeat'
+  /** Extra seconds when time runs out with fighters still in (0: no overtime). */
+  overtimeSeconds: number
+  /** Walls and bushes disappear when overtime starts. */
+  overtimeRemovesCover: boolean
   botsFightEachOther: boolean
   countdownSeconds: number
   /** Seconds without being hit or shooting before healing starts. */
@@ -43,6 +47,8 @@ export const SETTINGS: Settings = {
   botCount: 3,
   botLevel: 'easy',
   timeUpResult: 'draw',
+  overtimeSeconds: 60,
+  overtimeRemovesCover: true,
   botsFightEachOther: true,
   countdownSeconds: 3,
   fighterHealth: 3200,

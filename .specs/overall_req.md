@@ -89,7 +89,10 @@ Hiper charge QR code
 
 Until he answers, the game uses the default in brackets.
 
-* After the extra minute it is a draw **but** … what? (a normal draw: 0 trophies, 20 credits)
+Answered:
+* After the extra minute, what happens? **It is a draw** (a normal draw: 0 trophies, 20 credits).
+
+Open:
 * Should harder bots give more trophies? (no)
 * Names or ideas for the new fighters? (the game invents them)
 * What should the Hypercharge QR code do? (every Super becomes a Hypercharge)
