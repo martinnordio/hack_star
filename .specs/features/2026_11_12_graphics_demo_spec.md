@@ -15,11 +15,11 @@
 Before adding game rules, Hack star needs an impressive, playable demo that looks like a
 Brawl Stars match: a fighter running and shooting in a colourful arena. The rules (win, lose,
 trophies) are kept out on purpose and come from F4 on. This is F3 in the
-[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) and "Spec 2" in
+[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) and "Spec 2" in
 [overall_req.md](../overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input), S6 (30 frames per second), S7 (own art); the graphics options
   investigated there.
 - [Basic UI spec](2026_11_12_basic_ui_spec.md) — the Play button (S3) opens this demo; the
