@@ -1,6 +1,6 @@
 # Play with Friends Spec
 
-> **Author:** Martin Nordio
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done (with defaults for Mattia's open answers)
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -143,6 +143,8 @@ The server creates rooms, lets friends join and passes messages (S1, S2, S7, S8)
 Started: 2026-11-12 13:57
 
 A member is `{fighter, skin, power, hyper}` (fighter checked against the catalogue, power 1–22); players are shown as "Player 1–3" with their fighter, so no names are sent. Also: a started room cannot be joined until the host sends `lobby` (back to the room); friends cannot send `state` or `start`; at most 100 rooms. First run: a friend leaving a room its host had already closed crashed the handler — fixed.
+
+Later (2026-11-12): the room tests sometimes hung. The test client gave each socket its own event loop and could cancel a handler when its socket's context closed, before it told the others; the tests now share one event loop (as on the real server) and close sockets explicitly. 10 runs in a row passed.
 
 **Done (2026-11-12 · ~3m)** — `pytest` 27 passed (9 new in `tests/test_rooms.py`); browser: a WebSocket through the Vite proxy created room "ZKJF".
 

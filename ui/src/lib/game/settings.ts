@@ -78,7 +78,7 @@ export const SETTINGS: Settings = {
   creditsPerDefeat: 20,
   timeUpCredits: 20,
   upgradeCostPerLevel: 20,
-  // As in Brawl Stars.
+  // Prices by rarity.
   unlockPrices: { Default: 0, Rare: 160, 'Super Rare': 430, Epic: 925, Mythic: 1900, Legendary: 3800 },
   skinPrices: { Default: 0, Rare: 100, 'Super Rare': 200, Epic: 300, Mythic: 600, Legendary: 1500 },
   skinOfTheDayDiscount: 0.3,

@@ -1,7 +1,7 @@
 # Asset licences
 
-Hack star uses only original art or art that may be used freely. Supercell art, names and
-logos are never used.
+Hack star uses only original art or art that may be used freely; no art, names or logos from
+other games.
 
 Allowed sources:
 
