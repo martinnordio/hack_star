@@ -3,7 +3,9 @@
   import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
   import { RARITY_COLORS, type Fighter } from './fighters'
-  import { isUnlocked, maxPower } from './hacks'
+  import { credits, isUnlocked, maxPower } from './hacks'
+  import Celebration from './Celebration.svelte'
+  import { powerOf, stats, unlock, unlockPrice, upgrade, upgradeCost } from './game/economy'
   import HomeScene from './HomeScene.svelte'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
@@ -13,7 +15,36 @@
 
   const unlocked = $derived(isUnlocked($progress, fighter.id))
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
-  const power = $derived($progress.powerLevels[fighter.id] ?? 1)
+  const power = $derived(powerOf($progress, fighter.id))
+  const max = $derived(maxPower($progress))
+  const fighterStats = $derived(stats(power))
+  const wallet = $derived(credits($progress))
+  const price = $derived(unlockPrice(fighter.rarity))
+  const nextCost = $derived(upgradeCost(power))
+  const free = $derived(wallet === Infinity)
+  let celebrating = $state<{ label: string; title: string; subtitle: string }>()
+  let celebrationTimer: ReturnType<typeof setTimeout> | undefined
+
+  function celebrate(label: string, title: string, subtitle: string) {
+    celebrating = { label, title, subtitle }
+    clearTimeout(celebrationTimer)
+    celebrationTimer = setTimeout(() => (celebrating = undefined), 2200)
+  }
+
+  function buyUnlock() {
+    const result = unlock($progress, fighter)
+    if (!result.ok) return
+    progress.set(result.progress)
+    celebrate('UNLOCKED!', fighter.name, `${fighter.rarity} fighter`)
+  }
+
+  function buyUpgrade() {
+    const result = upgrade($progress, fighter.id)
+    if (!result.ok) return
+    progress.set(result.progress)
+    const s = stats(power)
+    celebrate('UPGRADED!', `Power ${power}`, `❤️ ${s.health}  💥 ${s.damage}`)
+  }
   let previewSkin = $state(untrack(() => $progress.selectedSkins[fighter.id] ?? 'default'))
   const isCurrent = $derived(
     $progress.selectedFighter === fighter.id && ($progress.selectedSkins[fighter.id] ?? 'default') === previewSkin,
@@ -50,14 +81,36 @@
     <div class="stats">
       <span>🏆 {trophies} trophies</span>
       <span class="power">
-        ⚡ Power {power}/{maxPower($progress)}
+        ⚡ Power {power}/{max}
         <span class="bar" aria-hidden="true">
-          {#each { length: maxPower($progress) } as _, i}
+          {#each { length: max } as _, i}
             <span class:on={i < power}></span>
           {/each}
         </span>
       </span>
+      <span aria-label="Health">❤️ {fighterStats.health}</span>
+      <span aria-label="Damage">💥 {fighterStats.damage}</span>
     </div>
+
+    {#if !unlocked}
+      <button class="buy" disabled={wallet < price} onclick={buyUnlock}>
+        {#if wallet >= price}
+          🔓 Unlock · {free ? 'free' : `${price} C`}
+        {:else}
+          🔒 Need {price - wallet} more C
+        {/if}
+      </button>
+    {:else if power >= max}
+      <button class="buy" disabled>⚡ Max power</button>
+    {:else}
+      <button class="buy" disabled={wallet < nextCost} onclick={buyUpgrade}>
+        {#if wallet >= nextCost}
+          ⚡ Upgrade to Power {power + 1} · {free ? 'free' : `${nextCost} C`}
+        {:else}
+          ⚡ Need {nextCost - wallet} more C to upgrade
+        {/if}
+      </button>
+    {/if}
 
     <h4>Skins</h4>
     <ul class="skins">
@@ -87,6 +140,10 @@
     {/if}
   </div>
 </div>
+
+{#if celebrating}
+  <Celebration label={celebrating.label} title={celebrating.title} subtitle={celebrating.subtitle} />
+{/if}
 
 <style>
   .detail {
@@ -254,6 +311,32 @@
   .select:disabled {
     background: #3a3a4a;
     color: #cfd3dc;
+    cursor: default;
+  }
+
+  .buy {
+    padding: 0.45em 1em;
+    border-radius: 1rem;
+    border: 3px solid #000;
+    background: linear-gradient(#39ff88, #0a9f4a);
+    box-shadow: 0 0.3rem 0 #000;
+    color: #06210f;
+    font: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .buy:active:not(:disabled) {
+    transform: translateY(0.15rem);
+    box-shadow: 0 0.15rem 0 #000;
+  }
+
+  .buy:disabled {
+    background: #3a3a4a;
+    color: #cfd3dc;
+    box-shadow: none;
     cursor: default;
   }
 

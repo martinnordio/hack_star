@@ -65,7 +65,9 @@ in the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md)
 - **S8 — Power 22:** With the power-22 hack, fighters can be upgraded up to 22 and the higher
   levels count in matches (replaces S12 of the hack codes spec).
 - **S9 — Saved:** Credits, unlocked fighters and power levels are saved at once and kept after
-  the browser is closed; resetting hacks keeps what was bought with real credits.
+  the browser is closed. Resetting hacks brings back the real credits and the 11 limit, but
+  fighters unlocked and levels bought while a hack was on are kept (levels above 11 count again
+  only with power 22).
 - **S10 — Settings:** Credits per result, prices, upgrade cost, the 10% per level and the bots'
   power level are in one place.
 - **S11 — Documentation:** README and `docs/architecture.md` describe credits, unlocking,
@@ -88,7 +90,7 @@ at power 5 (S6, S10)._
 |------|-------------|--------|--------|
 | **1** | Economy and power rules | ✅ Done | [→ Step 1](#step-1--economy-and-power-rules) |
 | **2** | Power and credits in matches | ✅ Done | [→ Step 2](#step-2--power-and-credits-in-matches) |
-| **3** | Unlock and upgrade screens | ⬜ Not started | [→ Step 3](#step-3--unlock-and-upgrade-screens) |
+| **3** | Unlock and upgrade screens | ✅ Done | [→ Step 3](#step-3--unlock-and-upgrade-screens) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -162,13 +164,17 @@ Training also uses the fighter's power (its damage on the dummies). Damage numbe
 The player unlocks and upgrades fighters from the fighter screen, and sees prices in the list (S2–S5, S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Fighter screen: health and damage; **Unlock for N C** (or "Need N more") on locked fighters; **Upgrade to Power n · N C** (or "Max power") on unlocked ones; a short celebration after each.
-- [ ] Fighter list: price on locked cards.
-- [ ] Check (browser): with 1000 credits unlock Frosty (925) → 75 left, Frosty selectable; upgrade Blaze 7 → 8 costs 140; Pixel shows "Need …"; with INFINITY unlock Pixel for free, credits stay ∞; with POWER22 upgrade past 11; reset hacks → Pixel stays unlocked (it was bought), credits back to the real amount.
+- [x] Record the start time in Notes below.
+- [x] Fighter screen: health and damage; **Unlock for N C** (or "Need N more") on locked fighters; **Upgrade to Power n · N C** (or "Max power") on unlocked ones; a short celebration after each.
+- [x] Fighter list: price on locked cards.
+- [x] Check (browser): with 1000 credits unlock Frosty (925) → 75 left, Frosty selectable; upgrade Blaze 7 → 8 costs 140; Pixel shows "Need …"; with INFINITY unlock Pixel for free, credits stay ∞; with POWER22 upgrade past 11; reset hacks → Pixel stays unlocked (it was bought), credits back to the real amount.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:30
+
+S9 reworded while checking: a fighter unlocked for free with unlimited credits stays unlocked after a reset (friendlier for kids, and the same as upgrades: levels stay, only the 11 limit returns). `Celebration.svelte` got a `label` ("UNLOCKED!", "UPGRADED!" besides "HACKED!"). The list shows power capped at the current maximum.
+
+**Done (2026-11-12 · ~6m)** — browser: list shows 🔒 925 / 1900 / 3800 C; Frosty "Unlock · 925 C" → "UNLOCKED!" celebration, 75 left, SELECT; Blaze "Upgrade to Power 8 · 140 C" → 500 → 360, ❤️ 5120 💥 768 → 5440 / 816; Pixel "Need 3440 more C" (disabled); INFINITY → "Unlock · free", saved credits stay 360; POWER22 + INFINITY → Blaze to Power 14/22 (7360 / 1104); reset → Pixel still SELECT, Blaze 11/11 "Max power" (6400 / 960), home 360 C.
 
 ---
 
