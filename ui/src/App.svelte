@@ -10,7 +10,12 @@
 
   type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack'
 
-  let screen = $state<Screen>('home')
+  // A QR code scanned with the camera app opens the game with `?hack=<CODE>`.
+  const codeInLink = new URLSearchParams(location.search).get('hack') ?? undefined
+  if (codeInLink) history.replaceState(null, '', location.pathname)
+  let linkedCode = $state(codeInLink)
+
+  let screen = $state<Screen>(codeInLink ? 'hack' : 'home')
   let openFighter = $state<Fighter>()
   let fighters = $state<Fighter[]>()
   let hacks = $state<Hack[]>()
@@ -67,8 +72,14 @@
     <InfoPage />
   </Panel>
 {:else if screen === 'hack'}
-  <Panel title="Hack" onBack={() => (screen = 'home')}>
-    <HackScreen {hacks} />
+  <Panel
+    title="Hack"
+    onBack={() => {
+      linkedCode = undefined
+      screen = 'home'
+    }}
+  >
+    <HackScreen {hacks} initialCode={linkedCode} />
   </Panel>
 {/if}
 

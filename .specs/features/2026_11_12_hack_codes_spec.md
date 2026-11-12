@@ -76,7 +76,7 @@ power 22 is shown only until F6 (S12)._
 |------|-------------|--------|--------|
 | **1** | Hack catalogue and rules | ✅ Done | [→ Step 1](#step-1--hack-catalogue-and-rules) |
 | **2** | Hack screen and effects | ✅ Done | [→ Step 2](#step-2--hack-screen-and-effects) |
-| **3** | QR codes: scan and print | ⬜ Not started | [→ Step 3](#step-3--qr-codes-scan-and-print) |
+| **3** | QR codes: scan and print | ✅ Done | [→ Step 3](#step-3--qr-codes-scan-and-print) |
 | **4** | Final check | ⬜ Not started | [→ Step 4](#step-4--final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -151,15 +151,19 @@ After a reset, a fighter picked with "unlock all" is locked again; home then sho
 Codes can be scanned in the game or with the device camera app, and adults can print the QR codes (S3, S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] **Scan QR** on the Hack screen: camera preview, decode with `jsqr`, redeem like a typed code; clear message when the camera is not available or not allowed.
-- [ ] Opening the game with `?hack=<CODE>` redeems it and removes it from the address.
-- [ ] QR page (`/?qr`, linked from the Hack screen): one QR per hack with its name and code, print-friendly.
-- [ ] `npm run dev:https` (D6).
-- [ ] Check: a QR image from the QR page decodes back to its link (`npm test`); `/?hack=power22` shows the celebration; without a camera the scan shows the message.
+- [x] Record the start time in Notes below.
+- [x] **Scan QR** on the Hack screen: camera preview, decode with `jsqr`, redeem like a typed code; clear message when the camera is not available or not allowed.
+- [x] Opening the game with `?hack=<CODE>` redeems it and removes it from the address.
+- [x] QR page (`/?qr`, linked from the Hack screen): one QR per hack with its name and code, print-friendly.
+- [x] `npm run dev:https` (D6).
+- [x] Check: a QR image from the QR page decodes back to its link (`npm test`); `/?hack=power22` shows the celebration; without a camera the scan shows the message.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:12
+
+The QR links contain the address the QR page was opened with, so the page warns when it is opened with `localhost` (those links would not work on an iPad). A `?hack=` code is applied once; going back home and returning to the Hack screen does not apply it again.
+
+**Done (2026-11-12 · ~8m)** — `npm test` 23 passed (QR → jsQR round trip for all 3 codes); `/?hack=power22` → "Power 22" celebration, address cleaned; over `http://192.168.1.20:5180` the scanner shows the HTTPS message; `/?qr` shows 3 QR codes, warning only on localhost; `vite --mode https` serves `https://`.
 
 ---
 

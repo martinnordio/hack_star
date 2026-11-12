@@ -1,9 +1,11 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './progress'
+  import QrScanner from './QrScanner.svelte'
 
-  let { hacks }: { hacks: Hack[] } = $props()
+  /** `initialCode` comes from a scanned link that opened the game (`?hack=`). */
+  let { hacks, initialCode }: { hacks: Hack[]; initialCode?: string } = $props()
 
   let code = $state('')
   let busy = $state(false)
@@ -11,11 +13,12 @@
   let shake = $state(false)
   let celebrating = $state<Hack>()
   let confirmReset = $state(false)
+  let scanning = $state(false)
   let celebrationTimer: ReturnType<typeof setTimeout> | undefined
 
   const active = $derived(hacks.filter((h) => $progress.activeHacks.includes(h.id as HackId)))
 
-  export async function apply(text: string) {
+  async function apply(text: string) {
     if (!text.trim() || busy) return
     busy = true
     error = undefined
@@ -39,6 +42,10 @@
     progress.update((p) => ({ ...p, activeHacks: [] }))
     confirmReset = false
   }
+
+  $effect(() => {
+    if (initialCode) apply(initialCode)
+  })
 </script>
 
 <div class="hack-screen">
@@ -68,6 +75,21 @@
       <p class="error" role="alert">{error}</p>
     {/if}
   </form>
+
+  <div class="qr">
+    <button class="scan" onclick={() => (scanning = !scanning)}>
+      {scanning ? 'Stop scanning' : '📷 Scan QR'}
+    </button>
+    <a href="/?qr" target="_blank" rel="noopener">Print QR codes</a>
+  </div>
+  {#if scanning}
+    <QrScanner
+      onCode={(text) => {
+        scanning = false
+        apply(codeFromScan(text))
+      }}
+    />
+  {/if}
 
   <section>
     <h3>Active hacks</h3>
@@ -189,6 +211,27 @@
     font-weight: 900;
     font-size: 1.2rem;
     color: #ff4d4d;
+  }
+
+  .qr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .scan {
+    padding: 0.5em 1.1em;
+    font-size: 1.2rem;
+    background: linear-gradient(#4aa8ff, #2f6bff);
+    color: white;
+    box-shadow: 0 0.25rem 0 #000;
+  }
+
+  .qr a {
+    color: #b8ffd4;
+    font-weight: 800;
   }
 
   h3 {
