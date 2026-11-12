@@ -114,7 +114,7 @@ of this spec (see Deferred Items in the plan)._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Fighter catalogue and sample progress | ✅ Done | [→ Step 1](#step-1--fighter-catalogue-and-sample-progress) |
-| **2** | 3D fighter models and skins | ⬜ Not started | [→ Step 2](#step-2--3d-fighter-models-and-skins) |
+| **2** | 3D fighter models and skins | ✅ Done | [→ Step 2](#step-2--3d-fighter-models-and-skins) |
 | **3** | Home screen with entrance | ⬜ Not started | [→ Step 3](#step-3--home-screen-with-entrance) |
 | **4** | Fighter list and fighter screen | ⬜ Not started | [→ Step 4](#step-4--fighter-list-and-fighter-screen) |
 | **5** | Info page | ⬜ Not started | [→ Step 5](#step-5--info-page) |
@@ -172,14 +172,18 @@ The server now watches only `src/hack_star_server/` for reloads (it reloaded on 
 Each of the 6 fighters and each skin has a recognisable 3D look with an idle animation; Legendary skins glow (S7, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `ui/src/lib/models/`: `buildFighter(id, skinId)` returns a Three.js group with toon materials and outlines; per-fighter shapes (Blaze flames, Rocko rocks, Turbo helmet, Frosty fur, Luna ears and ray gun, Pixel screen face).
-- [ ] Skins change colours and add details; Legendary skins add a glow.
-- [ ] `FighterStage.svelte`: shows one fighter with idle animation (breathing, sway).
-- [ ] Check: all 15 fighter/skin combinations render in the browser without errors.
+- [x] Record the start time in Notes below.
+- [x] `ui/src/lib/models/`: `buildFighter(id, skinId)` returns a Three.js group with toon materials and outlines; per-fighter shapes (Blaze flames, Rocko rocks, Turbo helmet, Frosty fur, Luna ears and ray gun, Pixel screen face).
+- [x] Skins change colours and add details; Legendary skins add a glow.
+- [x] `FighterStage.svelte`: shows one fighter with idle animation (breathing, sway).
+- [x] Check: all 14 fighter/skin combinations render in the browser without errors.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:42
+
+There are 14 combinations (3+2+2+2+3+2), not 15. `?gallery` (or `?gallery=<fighter>`) shows them side by side for checking looks.
+
+**Done (2026-11-12 · ~6m)** — 6 fighters, 14 skins with toon shading, outlines, flicker/spin idle effects; Legendary halo + sparkle ring. `?gallery` shows all 14 with no console errors.
 
 ---
 
