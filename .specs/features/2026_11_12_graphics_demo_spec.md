@@ -1,7 +1,7 @@
 # Graphics Demo Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/graphics-demo`
@@ -77,7 +77,7 @@ are for later specs._
 | **2** | Canyon arena and camera | ✅ Done | [→ Step 2](#step-2--canyon-arena-and-camera) |
 | **3** | Controls, running and shooting | ✅ Done | [→ Step 3](#step-3--controls-running-and-shooting) |
 | **4** | Targets and effects | ✅ Done | [→ Step 4](#step-4--targets-and-effects) |
-| **5** | Final check | ⬜ Not started | [→ Step 5](#step-5--final-check) |
+| **5** | Final check | ✅ Done | [→ Step 5](#step-5--final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -195,13 +195,17 @@ Straw dummies on posts with a painted target; health bars turn yellow then red; 
 The demo is smooth and fits every screen; F0–F2 still work (S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Browser check at 390×844, 844×390, 1024×768, 1440×900: FPS ≥ 30 while running and shooting; joysticks and back button reachable; arena opens within 5 s.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: how to play the demo (keys, mouse, touch).
+- [x] Record the start time in Notes below.
+- [x] Browser check at 390×844, 844×390, 1024×768, 1440×900: FPS ≥ 30 while running and shooting; joysticks and back button reachable; arena opens within 5 s.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: how to play the demo (keys, mouse, touch).
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:21
+
+Measured on the development PC's browser; a real iPad still needs a try (the scene uses one instanced mesh for the floor and pooled effects to stay light).
+
+**Done (2026-11-12 · ~2m)** — all 4 sizes: 61 FPS while running and firing every 200 ms, arena opens in 0.22–0.28 s, back button on screen; `pytest` 15 passed, `npm test` 33 passed, `svelte-check` 0 errors, build ok; README has the controls.
 
 ---
 
@@ -226,5 +230,5 @@ The demo is smooth and fits every screen; F0–F2 still work (S10).
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`

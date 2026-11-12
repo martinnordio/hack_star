@@ -50,7 +50,15 @@ Hack star server" with a **Try again** button.
 ### What is there
 
 - **Home:** the selected fighter in 3D with an entrance animation (tap to skip), trophies,
-  credits, Prestige badge, Play (coming soon).
+  credits, Prestige badge, and **Play**.
+- **Play:** a canyon arena with your fighter and three target dummies (no win or lose yet):
+
+  | | Move | Aim and shoot |
+  |---|------|---------------|
+  | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target |
+  | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target |
+
+  Hide in the cacti to become see-through. Broken dummies come back after 5 seconds.
 - **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D and
   choose a skin.
 - **Info:** the words kids use in the game.
