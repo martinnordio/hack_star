@@ -5,6 +5,7 @@
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/play-with-friends`
+> **Issue:** [#12](https://github.com/martinnordio/hack_star/issues/12)
 
 ---
 

@@ -5,6 +5,7 @@
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/graphics-demo`
+> **Issue:** [#4](https://github.com/martinnordio/hack_star/issues/4)
 
 ---
 

@@ -5,6 +5,7 @@
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/unlock-and-upgrade`
+> **Issue:** [#7](https://github.com/martinnordio/hack_star/issues/7)
 
 ---
 

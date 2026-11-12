@@ -58,20 +58,20 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 
 ## The features and their specs
 
-| # | Feature | Spec |
-|---|---------|------|
-| F0 | Architecture and foundation: Python server, Svelte UI, runs on desktop, iPad and phone; feature list and MVP | [MVP and architecture](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) |
-| F1 | Home screen with the 3D fighter, fighter list, skins, Prestige badge, info page | [Basic UI](.specs/features/done/2026_11_12_basic_ui_spec.md) |
-| F2 | Hack codes, typed or scanned as QR codes | [Hack codes](.specs/features/done/2026_11_12_hack_codes_spec.md) |
-| F3 | Graphics demo: animated 3D arena, run and shoot | [Graphics demo](.specs/features/done/2026_11_12_graphics_demo_spec.md) |
-| F4 | First real match: last fighter standing against bots | [First match](.specs/features/done/2026_11_12_first_match_spec.md) |
-| F5 | Trophies and Prestige, saved between visits | [Trophies](.specs/features/done/2026_11_12_trophies_spec.md) |
-| F6 | Credits, unlocking fighters, power levels | [Unlock and upgrade](.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) |
-| F7 | Skins shop with a skin of the day | [Skins shop](.specs/features/done/2026_11_12_skins_shop_spec.md) |
-| F8 | Overtime without walls; Settings screen for bot level and number of bots | [Overtime and match options](.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) |
-| F9 | Ten fighters with five types, each with its own attack and Super | [More fighters](.specs/features/done/2026_11_12_more_fighters_spec.md) |
-| F10 | Super, Hypercharge and the HYPERCHARGE hack code | [Super and Hypercharge](.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) |
-| F11 | Playing with up to 2 friends on their own devices | [Play with friends](.specs/features/done/2026_11_12_play_with_friends_spec.md) |
+| # | Feature | Spec | Issue |
+|---|---------|------|-------|
+| F0 | Architecture and foundation: Python server, Svelte UI, runs on desktop, iPad and phone; feature list and MVP | [MVP and architecture](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) | [#1](https://github.com/martinnordio/hack_star/issues/1) |
+| F1 | Home screen with the 3D fighter, fighter list, skins, Prestige badge, info page | [Basic UI](.specs/features/done/2026_11_12_basic_ui_spec.md) | [#2](https://github.com/martinnordio/hack_star/issues/2) |
+| F2 | Hack codes, typed or scanned as QR codes | [Hack codes](.specs/features/done/2026_11_12_hack_codes_spec.md) | [#3](https://github.com/martinnordio/hack_star/issues/3) |
+| F3 | Graphics demo: animated 3D arena, run and shoot | [Graphics demo](.specs/features/done/2026_11_12_graphics_demo_spec.md) | [#4](https://github.com/martinnordio/hack_star/issues/4) |
+| F4 | First real match: last fighter standing against bots | [First match](.specs/features/done/2026_11_12_first_match_spec.md) | [#5](https://github.com/martinnordio/hack_star/issues/5) |
+| F5 | Trophies and Prestige, saved between visits | [Trophies](.specs/features/done/2026_11_12_trophies_spec.md) | [#6](https://github.com/martinnordio/hack_star/issues/6) |
+| F6 | Credits, unlocking fighters, power levels | [Unlock and upgrade](.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) | [#7](https://github.com/martinnordio/hack_star/issues/7) |
+| F7 | Skins shop with a skin of the day | [Skins shop](.specs/features/done/2026_11_12_skins_shop_spec.md) | [#8](https://github.com/martinnordio/hack_star/issues/8) |
+| F8 | Overtime without walls; Settings screen for bot level and number of bots | [Overtime and match options](.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) | [#9](https://github.com/martinnordio/hack_star/issues/9) |
+| F9 | Ten fighters with five types, each with its own attack and Super | [More fighters](.specs/features/done/2026_11_12_more_fighters_spec.md) | [#10](https://github.com/martinnordio/hack_star/issues/10) |
+| F10 | Super, Hypercharge and the HYPERCHARGE hack code | [Super and Hypercharge](.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) | [#11](https://github.com/martinnordio/hack_star/issues/11) |
+| F11 | Playing with up to 2 friends on their own devices | [Play with friends](.specs/features/done/2026_11_12_play_with_friends_spec.md) | [#12](https://github.com/martinnordio/hack_star/issues/12) |
 
 Each spec file shows the requirements, the decisions, every Step with its tasks, the time it
 took, what was checked, and what went differently from the plan (for example a bug found in the
