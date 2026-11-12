@@ -75,7 +75,7 @@ the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Fighter types in the rules | ✅ Done | [→ Step 1](#step-1--fighter-types-in-the-rules) |
-| **2** | Four new fighters and their skins | ⬜ Not started | [→ Step 2](#step-2--four-new-fighters-and-their-skins) |
+| **2** | Four new fighters and their skins | ✅ Done | [→ Step 2](#step-2--four-new-fighters-and-their-skins) |
 | **3** | Types on the screens and in the arena | ⬜ Not started | [→ Step 3](#step-3--types-on-the-screens-and-in-the-arena) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
@@ -132,13 +132,17 @@ The fairness simulation is `game/tournament.ts` (200 bot-only matches, Hard bots
 Coco, Sparky, Sir Clank and Kira exist with 3D models and skins; every fighter has a type (S1, S2, S6, S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Server: `type` on every fighter, the four new fighters with skins (locked at start); tests.
-- [ ] 3D models (`fighters3d.ts`) for the four and their skins; shot colours.
-- [ ] Check: `pytest`; browser `/?gallery` shows 10 fighters and 18 skins; Shop lists the new skins; OPENSESAME unlocks the new fighters; old progress still loads.
+- [x] Record the start time in Notes below.
+- [x] Server: `type` on every fighter, the four new fighters with skins (locked at start); tests.
+- [x] 3D models (`fighters3d.ts`) for the four and their skins; shot colours.
+- [x] Check: `pytest`; browser `/?gallery` shows 10 fighters and 18 skins; Shop lists the new skins; OPENSESAME unlocks the new fighters; old progress still loads.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:42
+
+The gallery (`/?gallery`) had a fixed list of 14 looks in 2 rows; it now has 22 (10 Default + 12 others) in rows of 8. ("18 skins" in the check above was a miscount: 10 fighters × Default + 12 bought skins = 22 looks.) Coco's light face first covered his eyes; it was made smaller and lower.
+
+**Done (2026-11-12 · ~6m)** — `pytest` 18 passed (ten fighters, two of each type, the new four locked and Rare–Legendary); browser: gallery shows all 22 looks; Shop lists Pirate, Gold, Dragon Knight, Sakura ("Unlock … first"); fighter list has the 4 new ones locked; with OPENSESAME they are unlocked; the saved progress loaded unchanged.
 
 ---
 

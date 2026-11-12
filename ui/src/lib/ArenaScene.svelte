@@ -60,6 +60,10 @@
     frosty: '#9fe4ff',
     luna: '#ffd23f',
     pixel: '#39ff88',
+    coco: '#b07a3c',
+    sparky: '#7ff0ff',
+    clank: '#e8edf5',
+    kira: '#ff4f9a',
   }
 
   const scenery = buildArena(CANYON)
