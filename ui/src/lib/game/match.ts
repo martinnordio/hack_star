@@ -1,26 +1,34 @@
 import type { Arena } from './arena'
-import { SETTINGS, type Settings } from './settings'
+import { Bots } from './bots'
+import { BOT_LEVELS, SETTINGS, type Settings } from './settings'
 import { World } from './world'
 
 export type MatchPhase = 'countdown' | 'fight' | 'over'
 
 export type MatchResult = { kind: 'victory' } | { kind: 'defeat'; place: number } | { kind: 'timeup' }
 
+export interface MatchOptions {
+  /** Tests switch the bot brains off to control every move. */
+  bots?: boolean
+  random?: () => number
+}
+
 /** A "last fighter standing" match: countdown, timer and result around a `World`. */
 export class Match {
   readonly world: World
+  readonly bots: Bots | null
   phase: MatchPhase = 'countdown'
   countdown: number
   timeLeft: number
   result: MatchResult | null = null
-  /** Called every fighting frame before the world moves on (the bot brains). */
-  beforeStep?: (dt: number) => void
 
   constructor(
     arena: Arena,
     readonly settings: Settings = SETTINGS,
+    { bots = true, random = Math.random }: MatchOptions = {},
   ) {
     this.world = new World(arena, { fighters: settings.botCount + 1, fighterHealth: settings.fighterHealth })
+    this.bots = bots ? new Bots(this.world, BOT_LEVELS[settings.botLevel], settings.botsFightEachOther, random) : null
     this.countdown = settings.countdownSeconds
     this.timeLeft = settings.matchSeconds
   }
@@ -47,7 +55,7 @@ export class Match {
       return
     }
     if (this.phase === 'fight') {
-      this.beforeStep?.(dt)
+      this.bots?.think(dt)
       this.timeLeft = Math.max(0, this.timeLeft - dt)
     }
     // After the end the world keeps moving so shots and effects can finish.

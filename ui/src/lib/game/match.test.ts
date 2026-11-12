@@ -73,9 +73,10 @@ describe('World with fighters', () => {
 
 describe('Match', () => {
   const settings = { ...SETTINGS, botCount: 1, countdownSeconds: 3, matchSeconds: 10 }
+  const still = { bots: false }
 
   it('nobody moves or shoots during the countdown', () => {
-    const match = new Match(open, settings)
+    const match = new Match(open, settings, still)
     match.movePlayer(1, 0, 1)
     expect(match.firePlayer(0, -1)).toBe(false)
     expect(match.world.player.x).toBe(0)
@@ -86,7 +87,7 @@ describe('Match', () => {
   })
 
   it('the last one standing wins', () => {
-    const match = new Match(open, settings)
+    const match = new Match(open, settings, still)
     run(3.1, (dt) => match.update(dt))
     const bot = match.world.fighters[1]
     run(10, (dt) => {
@@ -97,7 +98,7 @@ describe('Match', () => {
   })
 
   it('a knocked-out player loses with a place', () => {
-    const match = new Match(open, { ...settings, botCount: 3 })
+    const match = new Match(open, { ...settings, botCount: 3 }, still)
     run(3.1, (dt) => match.update(dt))
     match.world.player.health = 1
     const bot = match.world.fighters[1]
@@ -107,11 +108,11 @@ describe('Match', () => {
   })
 
   it('time up with bots still in is a draw (or a defeat if set so)', () => {
-    const draw = new Match(open, settings)
+    const draw = new Match(open, settings, still)
     run(13.2, (dt) => draw.update(dt))
     expect(draw.result).toEqual({ kind: 'timeup' })
 
-    const defeat = new Match(open, { ...settings, timeUpResult: 'defeat' })
+    const defeat = new Match(open, { ...settings, timeUpResult: 'defeat' }, still)
     run(13.2, (dt) => defeat.update(dt))
     expect(defeat.result).toEqual({ kind: 'defeat', place: 2 })
   })

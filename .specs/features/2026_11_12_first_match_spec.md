@@ -82,7 +82,7 @@ result, bots fighting each other) use the defaults above, set in one place (S10)
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Match rules: fighters, health, knock-outs, timer, result | ✅ Done | [→ Step 1](#step-1--match-rules-fighters-health-knock-outs-timer-result) |
-| **2** | Bot brains | ⬜ Not started | [→ Step 2](#step-2--bot-brains) |
+| **2** | Bot brains | ✅ Done | [→ Step 2](#step-2--bot-brains) |
 | **3** | Match screen | ⬜ Not started | [→ Step 3](#step-3--match-screen) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
@@ -139,14 +139,18 @@ The training API (`move`, `fire`, `player`) is kept as shortcuts for fighter 0, 
 Bots wander, chase the nearest visible opponent, shoot when in range, respect bushes, and are fair on "easy" (S2, S6, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `game/bots.ts`: per-bot state (target, reaction delay, wander point); `think(world, bot, level, dt)` → move and shoot through the world.
-- [ ] Visibility: a fighter in a bush is seen only within 2.5 units; walls do not block sight (keeps it simple).
-- [ ] Level table: reaction delay, aim error, shot cool-down multiplier, move speed multiplier.
-- [ ] Check: `vitest` — a bot moves towards a visible opponent; shoots when in range; does not chase a fighter hidden in a far bush; on easy its shots spread; bots fight each other.
+- [x] Record the start time in Notes below.
+- [x] `game/bots.ts`: per-bot state (target, reaction delay, wander point); `think(world, bot, level, dt)` → move and shoot through the world.
+- [x] Visibility: a fighter in a bush is seen only within 2.5 units; walls do not block sight (keeps it simple).
+- [x] Level table: reaction delay, aim error, shot cool-down multiplier, move speed multiplier.
+- [x] Check: `vitest` — a bot moves towards a visible opponent; shoots when in range; does not chase a fighter hidden in a far bush; on easy its shots spread; bots fight each other.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:38
+
+While reacting, a bot stops and turns towards the fighter it just noticed (found while testing: wandering during the reaction made shots start from unexpected places; it also reads well on screen as "it saw me"). In a fight a bot closes in when far, backs off when closer than 3, and circles a little. `Match` creates the brains; tests can switch them off (`{ bots: false }`) or fix the random numbers.
+
+**Done (2026-11-12 · ~4m)** — `vitest src/lib/game`: 27 passed (8 bot tests, including a full default match that ends within its time).
 
 ---
 
