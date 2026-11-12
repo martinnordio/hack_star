@@ -1,7 +1,7 @@
 # Hack Codes Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/hack-codes`
@@ -77,7 +77,7 @@ power 22 is shown only until F6 (S12)._
 | **1** | Hack catalogue and rules | ✅ Done | [→ Step 1](#step-1--hack-catalogue-and-rules) |
 | **2** | Hack screen and effects | ✅ Done | [→ Step 2](#step-2--hack-screen-and-effects) |
 | **3** | QR codes: scan and print | ✅ Done | [→ Step 3](#step-3--qr-codes-scan-and-print) |
-| **4** | Final check | ⬜ Not started | [→ Step 4](#step-4--final-check) |
+| **4** | Final check | ✅ Done | [→ Step 4](#step-4--final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -159,7 +159,7 @@ Codes can be scanned in the game or with the device camera app, and adults can p
 - [x] Check: a QR image from the QR page decodes back to its link (`npm test`); `/?hack=power22` shows the celebration; without a camera the scan shows the message.
 
 ### Notes
-Started: 2026-11-12 10:12
+Started: 2026-11-12 10:06
 
 The QR links contain the address the QR page was opened with, so the page warns when it is opened with `localhost` (those links would not work on an iPad). A `?hack=` code is applied once; going back home and returning to the Hack screen does not apply it again.
 
@@ -173,13 +173,15 @@ The QR links contain the address the QR page was opened with, so the page warns 
 Everything works on all sizes and F0/F1 still work.
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Browser check of home, Hack screen and QR page at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: hack codes, QR page, scanning on iPad (camera app, or `dev:https`).
+- [x] Record the start time in Notes below.
+- [x] Browser check of home, Hack screen and QR page at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: hack codes, QR page, scanning on iPad (camera app, or `dev:https`).
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:08
+
+**Done (2026-11-12 · ~2m)** — 4 sizes: no control outside the screen on home and Hack screen, QR page without sideways scrolling; `pytest` 15 passed, `npm test` 23 passed, `svelte-check` 0 errors, build ok; README updated.
 
 ---
 
@@ -203,5 +205,5 @@ Everything works on all sizes and F0/F1 still work.
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`
