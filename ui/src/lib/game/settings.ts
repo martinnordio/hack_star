@@ -10,7 +10,6 @@ export interface Settings {
   timeUpResult: 'draw' | 'defeat'
   botsFightEachOther: boolean
   countdownSeconds: number
-  fighterHealth: number
   /** Seconds without being hit or shooting before healing starts. */
   healDelay: number
   /** Share of full health healed per second. */
@@ -21,6 +20,19 @@ export interface Settings {
   trophiesPerDefeat: number
   /** Trophies when time runs out (only used when `timeUpResult` is 'draw'). */
   timeUpTrophies: number
+  /** Health and damage at power level 1. */
+  fighterHealth: number
+  shotDamage: number
+  /** Extra health and damage per power level above 1 (0.1 = +10%). */
+  powerBonusPerLevel: number
+  /** Power level of the bots. */
+  botPower: number
+  creditsPerWin: number
+  creditsPerDefeat: number
+  timeUpCredits: number
+  /** Upgrading from level n costs n × this. */
+  upgradeCostPerLevel: number
+  unlockPrices: Record<'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary', number>
 }
 
 export const SETTINGS: Settings = {
@@ -36,6 +48,15 @@ export const SETTINGS: Settings = {
   trophiesPerWin: 10,
   trophiesPerDefeat: 0,
   timeUpTrophies: 0,
+  shotDamage: 480,
+  powerBonusPerLevel: 0.1,
+  botPower: 5,
+  creditsPerWin: 100,
+  creditsPerDefeat: 20,
+  timeUpCredits: 20,
+  upgradeCostPerLevel: 20,
+  // As in Brawl Stars.
+  unlockPrices: { Default: 0, Rare: 160, 'Super Rare': 430, Epic: 925, Mythic: 1900, Legendary: 3800 },
 }
 
 export interface BotSkill {
