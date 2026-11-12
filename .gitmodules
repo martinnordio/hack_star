@@ -1,0 +1,3 @@
+[submodule ".spec-nx"]
+	path = .spec-nx
+	url = https://github.com/martinnordio/spec-nx.git

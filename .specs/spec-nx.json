@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "spec_nx_version": "3cae701",
+  "generated": "2026-11-12",
+  "stages": ["requirements", "plan", "pr"],
+  "git_host": "none",
+  "link_issues": false,
+  "shells": ["powershell"],
+  "kit": "shared",
+  "model": "Claude Opus 5.5"
+}
