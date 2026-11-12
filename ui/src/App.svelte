@@ -10,7 +10,7 @@
   import Panel from './lib/Panel.svelte'
   import { progress } from './lib/progress'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack' | 'arena'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack' | 'match' | 'training'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>`.
   const codeInLink = new URLSearchParams(location.search).get('hack') ?? undefined
@@ -24,6 +24,8 @@
   let error = $state<string>()
   // The entrance plays once per visit, not when coming back to home.
   let entrance = $state(true)
+  // Changing it mounts a fresh arena (Play again).
+  let matchNumber = $state(0)
 
   function load() {
     error = undefined
@@ -55,13 +57,17 @@
       screen = next
     }}
   />
-{:else if screen === 'arena'}
+{:else if screen === 'match' || screen === 'training'}
   {@const fighter = currentFighter($progress, fighters)}
-  <Arena
-    fighterId={fighter.id}
-    skinId={$progress.selectedSkins[fighter.id] ?? 'default'}
-    onLeave={() => (screen = 'home')}
-  />
+  {#key `${screen}-${matchNumber}`}
+    <Arena
+      mode={screen}
+      player={{ fighterId: fighter.id, skinId: $progress.selectedSkins[fighter.id] ?? 'default' }}
+      {fighters}
+      onLeave={() => (screen = 'home')}
+      onPlayAgain={() => matchNumber++}
+    />
+  {/key}
 {:else if screen === 'fighters'}
   <Panel title="Fighters" onBack={() => (screen = 'home')}>
     <FighterList

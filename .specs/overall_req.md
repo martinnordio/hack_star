@@ -35,3 +35,19 @@ As part of the spec, add a basic vocabulary used in the game so that we can unde
 For the spec 2, make good graphics and don't complicate the game itselft and the complexity of the game. We you need to introduce it from spec 3 on. Make sure the graphics and the basic demo works well and it is graphically impressive and looks really like "Brawl starts"
 
 # Spec future
+
+# Questions to Mattia:
+
+How long should a match be?
+How many bots should the player face?
+
+Until Mattia answers, the game uses the default in brackets; each one is a single setting.
+
+* How long should a match be? (2 minutes)
+* How many bots should the player face? (3)
+* Should the bots be easy, medium or hard? (easy)
+* When time runs out and bots are still alive: is it a draw, or do you lose? (draw)
+* Do the bots also fight each other, or only you? (each other too, like Showdown)
+* When you lose, should the fighter lose trophies? (no)
+* Which game mode after this one: Gem Grab, Brawl Ball, or something else?
+* Any names for new fighters or new hack codes?

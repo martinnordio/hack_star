@@ -31,6 +31,8 @@ What this feature gives the player, in two or three sentences, and why it matter
 | Document | Purpose |
 |----------|---------|
 | [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
+| [architecture.md](../../docs/architecture.md) | How the code is organised |
+| [README](../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 

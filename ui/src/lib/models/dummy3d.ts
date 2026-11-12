@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { buildHealthBar, setBarHealth, type HealthBar } from './healthBar'
 import { box, capsule, cylinder, part, sphere, toon } from './parts'
 
 export interface DummyRig {
@@ -6,11 +7,8 @@ export interface DummyRig {
   /** Everything that breaks apart and flashes when hit. */
   body: THREE.Group
   materials: THREE.MeshToonMaterial[]
-  bar: THREE.Group
-  fill: THREE.Mesh
+  bar: HealthBar
 }
-
-const BAR_WIDTH = 1.4
 
 /** A straw training dummy on a post, with a target painted on its chest. */
 export function buildDummy(): DummyRig {
@@ -35,21 +33,12 @@ export function buildDummy(): DummyRig {
     if (o instanceof THREE.Mesh) o.castShadow = true
   })
 
-  const bar = new THREE.Group()
-  bar.position.y = 2.6
-  const back = new THREE.Mesh(new THREE.PlaneGeometry(BAR_WIDTH + 0.1, 0.24), new THREE.MeshBasicMaterial({ color: '#160f33' }))
-  const fillGeometry = new THREE.PlaneGeometry(BAR_WIDTH, 0.14)
-  fillGeometry.translate(BAR_WIDTH / 2, 0, 0)
-  const fill = new THREE.Mesh(fillGeometry, new THREE.MeshBasicMaterial({ color: '#4cd964' }))
-  fill.position.set(-BAR_WIDTH / 2, 0, 0.01)
-  bar.add(back, fill)
-  root.add(bar)
+  const bar = buildHealthBar(2.6)
+  root.add(bar.group)
 
-  return { root, body, materials: [straw, wood, red, white], bar, fill }
+  return { root, body, materials: [straw, wood, red, white], bar }
 }
 
 export function setHealth(rig: DummyRig, fraction: number) {
-  rig.fill.scale.x = Math.max(0.001, fraction)
-  const color = fraction > 0.5 ? '#4cd964' : fraction > 0.25 ? '#ffd23f' : '#ff3b30'
-  ;(rig.fill.material as THREE.MeshBasicMaterial).color.set(color)
+  setBarHealth(rig.bar, fraction)
 }
