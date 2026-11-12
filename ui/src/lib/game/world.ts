@@ -1,4 +1,5 @@
 import type { Arena, Circle, Rect } from './arena'
+import { SETTINGS } from './settings'
 
 export const PLAYER_RADIUS = 0.5
 export const PLAYER_SPEED = 6
@@ -10,9 +11,27 @@ export const SHOT_DAMAGE = 480
 export const DUMMY_RADIUS = 0.6
 export const DUMMY_HEALTH = 2400
 export const RESPAWN_SECONDS = 5
+/** Fighters closer than this see a fighter hiding in a bush. */
+export const BUSH_SIGHT = 2.5
+
+export interface Fighter {
+  id: number
+  x: number
+  z: number
+  facing: number
+  health: number
+  maxHealth: number
+  out: boolean
+  lastHurt: number
+  lastFire: number
+  /** Multipliers (bots are slower on easy). */
+  speedFactor: number
+  cooldownFactor: number
+}
 
 export interface Shot {
   id: number
+  owner: number
   x: number
   z: number
   dx: number
@@ -29,11 +48,20 @@ export interface Dummy {
 }
 
 export type WorldEvent =
-  | { type: 'fire'; x: number; z: number; dx: number; dz: number }
+  | { type: 'fire'; by: number; x: number; z: number; dx: number; dz: number }
   | { type: 'hit'; dummyId: number; x: number; z: number; damage: number }
   | { type: 'break'; dummyId: number; x: number; z: number }
   | { type: 'respawn'; dummyId: number }
-  | { type: 'blocked'; x: number; z: number }
+  | { type: 'hurt'; fighterId: number; by: number; x: number; z: number; damage: number }
+  | { type: 'knockout'; fighterId: number; by: number; x: number; z: number }
+  | { type: 'blocked'; owner: number; x: number; z: number }
+
+export interface WorldOptions {
+  /** Number of fighters; fighter 0 is the player. Training has 1. */
+  fighters?: number
+  dummies?: boolean
+  fighterHealth?: number
+}
 
 /** Push a circle out of a rectangle; returns true if it overlapped. */
 function pushOutOfRect(p: { x: number; z: number }, r: number, rect: Rect): boolean {
@@ -72,68 +100,101 @@ const inside = (x: number, z: number, c: Circle) => Math.hypot(x - c.x, z - c.z)
 
 export class World {
   time = 0
-  player: { x: number; z: number; facing: number }
+  fighters: Fighter[]
   shots: Shot[] = []
   dummies: Dummy[]
   /** Things that happened since the last `drainEvents()`, for effects. */
   private events: WorldEvent[] = []
-  private lastFire = -Infinity
   private nextShotId = 1
 
-  constructor(readonly arena: Arena) {
-    this.player = { x: arena.start.x, z: arena.start.z, facing: 0 }
-    this.dummies = arena.dummies.map((d, id) => ({ id, x: d.x, z: d.z, health: DUMMY_HEALTH, brokenAt: null }))
+  constructor(
+    readonly arena: Arena,
+    { fighters = 1, dummies = fighters === 1, fighterHealth = SETTINGS.fighterHealth }: WorldOptions = {},
+  ) {
+    const spots = fighters === 1 ? [arena.start] : arena.spawns
+    if (fighters > spots.length) throw new Error(`The arena has room for ${spots.length} fighters`)
+    this.fighters = spots.slice(0, fighters).map((s, id) => ({
+      id,
+      x: s.x,
+      z: s.z,
+      // Face the middle of the arena (the player starts facing the camera in training).
+      facing: fighters === 1 ? 0 : Math.atan2(-s.x, -s.z),
+      health: fighterHealth,
+      maxHealth: fighterHealth,
+      out: false,
+      lastHurt: -Infinity,
+      lastFire: -Infinity,
+      speedFactor: 1,
+      cooldownFactor: 1,
+    }))
+    this.dummies = dummies
+      ? arena.dummies.map((d, id) => ({ id, x: d.x, z: d.z, health: DUMMY_HEALTH, brokenAt: null }))
+      : []
+  }
+
+  get player(): Fighter {
+    return this.fighters[0]
+  }
+
+  /** Move the player (see `moveFighter`). */
+  move(dx: number, dz: number, dt: number) {
+    this.moveFighter(this.player, dx, dz, dt)
   }
 
   /** Move by a direction (length ≤ 1 is a partial push, like a joystick) for `dt` seconds. */
-  move(dx: number, dz: number, dt: number) {
+  moveFighter(f: Fighter, dx: number, dz: number, dt: number) {
     const length = Math.hypot(dx, dz)
-    if (length === 0) return
+    if (length === 0 || f.out) return
     const scale = length > 1 ? 1 / length : 1
-    const p = this.player
-    p.x += dx * scale * PLAYER_SPEED * dt
-    p.z += dz * scale * PLAYER_SPEED * dt
-    p.facing = Math.atan2(dx, dz)
-    this.resolvePlayer()
+    f.x += dx * scale * PLAYER_SPEED * f.speedFactor * dt
+    f.z += dz * scale * PLAYER_SPEED * f.speedFactor * dt
+    f.facing = Math.atan2(dx, dz)
+    this.resolve(f)
   }
 
-  private resolvePlayer() {
-    const p = this.player
-    for (const wall of this.arena.walls) pushOutOfRect(p, PLAYER_RADIUS, wall)
-    for (const d of this.dummies) {
-      if (d.brokenAt !== null) continue
-      const dx = p.x - d.x
-      const dz = p.z - d.z
+  private resolve(f: Fighter) {
+    for (const wall of this.arena.walls) pushOutOfRect(f, PLAYER_RADIUS, wall)
+    const others = [
+      ...this.dummies.filter((d) => d.brokenAt === null).map((d) => ({ x: d.x, z: d.z, r: DUMMY_RADIUS })),
+      ...this.fighters.filter((o) => o !== f && !o.out).map((o) => ({ x: o.x, z: o.z, r: PLAYER_RADIUS })),
+    ]
+    for (const o of others) {
+      const dx = f.x - o.x
+      const dz = f.z - o.z
       const dist = Math.hypot(dx, dz)
-      const min = PLAYER_RADIUS + DUMMY_RADIUS
+      const min = PLAYER_RADIUS + o.r
       if (dist < min && dist > 0) {
-        p.x = d.x + (dx / dist) * min
-        p.z = d.z + (dz / dist) * min
+        f.x = o.x + (dx / dist) * min
+        f.z = o.z + (dz / dist) * min
       }
     }
     const maxX = this.arena.width / 2 - PLAYER_RADIUS
     const maxZ = this.arena.depth / 2 - PLAYER_RADIUS
-    p.x = Math.max(-maxX, Math.min(maxX, p.x))
-    p.z = Math.max(-maxZ, Math.min(maxZ, p.z))
+    f.x = Math.max(-maxX, Math.min(maxX, f.x))
+    f.z = Math.max(-maxZ, Math.min(maxZ, f.z))
   }
 
-  canFire(): boolean {
-    return this.time - this.lastFire >= FIRE_COOLDOWN
+  canFire(f: Fighter = this.player): boolean {
+    return !f.out && this.time - f.lastFire >= FIRE_COOLDOWN * f.cooldownFactor
+  }
+
+  /** The player fires (see `fireFrom`). */
+  fire(dx: number, dz: number): boolean {
+    return this.fireFrom(this.player, dx, dz)
   }
 
   /** Fire towards a direction; returns false while cooling down. */
-  fire(dx: number, dz: number): boolean {
+  fireFrom(f: Fighter, dx: number, dz: number): boolean {
     const length = Math.hypot(dx, dz)
-    if (length === 0 || !this.canFire()) return false
+    if (length === 0 || !this.canFire(f)) return false
     dx /= length
     dz /= length
-    this.lastFire = this.time
-    const p = this.player
-    p.facing = Math.atan2(dx, dz)
-    const x = p.x + dx * (PLAYER_RADIUS + 0.2)
-    const z = p.z + dz * (PLAYER_RADIUS + 0.2)
-    this.shots.push({ id: this.nextShotId++, x, z, dx, dz, travelled: 0 })
-    this.events.push({ type: 'fire', x, z, dx, dz })
+    f.lastFire = this.time
+    f.facing = Math.atan2(dx, dz)
+    const x = f.x + dx * (PLAYER_RADIUS + 0.2)
+    const z = f.z + dz * (PLAYER_RADIUS + 0.2)
+    this.shots.push({ id: this.nextShotId++, owner: f.id, x, z, dx, dz, travelled: 0 })
+    this.events.push({ type: 'fire', by: f.id, x, z, dx, dz })
     return true
   }
 
@@ -146,11 +207,18 @@ export class World {
       s.x += s.dx * distance
       s.z += s.dz * distance
       s.travelled += distance
-      const target = this.dummies.find(
+      const fighter = this.fighters.find(
+        (f) => f.id !== s.owner && !f.out && Math.hypot(s.x - f.x, s.z - f.z) < PLAYER_RADIUS + SHOT_RADIUS,
+      )
+      if (fighter) {
+        this.hurt(fighter, s.owner)
+        return false
+      }
+      const dummy = this.dummies.find(
         (d) => d.brokenAt === null && Math.hypot(s.x - d.x, s.z - d.z) < DUMMY_RADIUS + SHOT_RADIUS,
       )
-      if (target) {
-        this.hit(target)
+      if (dummy) {
+        this.hit(dummy)
         return false
       }
       const blocked =
@@ -158,7 +226,7 @@ export class World {
         Math.abs(s.x) > halfW ||
         Math.abs(s.z) > halfD
       if (blocked || s.travelled >= SHOT_RANGE) {
-        this.events.push({ type: 'blocked', x: s.x, z: s.z })
+        this.events.push({ type: 'blocked', owner: s.owner, x: s.x, z: s.z })
         return false
       }
       return true
@@ -169,6 +237,23 @@ export class World {
         d.health = DUMMY_HEALTH
         this.events.push({ type: 'respawn', dummyId: d.id })
       }
+    }
+    for (const f of this.fighters) {
+      const calm = this.time - Math.max(f.lastHurt, f.lastFire) >= SETTINGS.healDelay
+      if (!f.out && calm && f.health < f.maxHealth) {
+        f.health = Math.min(f.maxHealth, f.health + f.maxHealth * SETTINGS.healPerSecond * dt)
+      }
+    }
+  }
+
+  private hurt(f: Fighter, by: number) {
+    f.health = Math.max(0, f.health - SHOT_DAMAGE)
+    f.lastHurt = this.time
+    this.events.push({ type: 'hurt', fighterId: f.id, by, x: f.x, z: f.z, damage: SHOT_DAMAGE })
+    if (f.health <= 0) {
+      f.out = true
+      this.shots = this.shots.filter((s) => s.owner !== f.id)
+      this.events.push({ type: 'knockout', fighterId: f.id, by, x: f.x, z: f.z })
     }
   }
 
@@ -182,8 +267,20 @@ export class World {
     }
   }
 
-  inBush(): boolean {
-    return this.arena.bushes.some((b) => inside(this.player.x, this.player.z, b))
+  inBush(f: Fighter = this.player): boolean {
+    return this.arena.bushes.some((b) => inside(f.x, f.z, b))
+  }
+
+  /** Whether `viewer` can see `target` within `range` (bushes hide unless close). */
+  canSee(viewer: Fighter, target: Fighter, range: number): boolean {
+    if (target.out) return false
+    const dist = Math.hypot(target.x - viewer.x, target.z - viewer.z)
+    if (dist > range) return false
+    return !this.inBush(target) || dist <= BUSH_SIGHT
+  }
+
+  alive(): Fighter[] {
+    return this.fighters.filter((f) => !f.out)
   }
 
   nearestDummy(): Dummy | undefined {

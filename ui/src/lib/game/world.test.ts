@@ -10,6 +10,7 @@ const empty: Arena = {
   decorations: [],
   dummies: [{ x: -8, z: -8 }],
   start: { x: 0, z: 5 },
+  spawns: [],
 }
 
 function run(world: World, seconds: number, each?: () => void) {

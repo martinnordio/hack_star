@@ -21,7 +21,10 @@ export interface Arena {
   bushes: Circle[]
   decorations: Decoration[]
   dummies: { x: number; z: number }[]
+  /** Training start point. */
   start: { x: number; z: number }
+  /** Match start points: the player first, then the bots, farthest first. */
+  spawns: { x: number; z: number }[]
 }
 
 /** The sunny canyon (graphics demo spec S11). */
@@ -58,4 +61,15 @@ export const CANYON: Arena = {
     { x: 6, z: -6 },
   ],
   start: { x: 0, z: 8 },
+  spawns: [
+    { x: 0, z: 9 },
+    { x: 0, z: -10 },
+    { x: -12, z: -9 },
+    { x: 12, z: -9 },
+    { x: -13, z: 8 },
+    { x: 13, z: 8 },
+    { x: -8, z: 2 },
+    { x: 8, z: -4.5 },
+    { x: 6, z: 9.5 },
+  ],
 }
