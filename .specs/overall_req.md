@@ -49,5 +49,6 @@ Until Mattia answers, the game uses the default in brackets; each one is a singl
 * When time runs out and bots are still alive: is it a draw, or do you lose? (draw)
 * Do the bots also fight each other, or only you? (each other too, like Showdown)
 * When you lose, should the fighter lose trophies? (no)
+* How strong should the bots be: weaker than you, the same, or stronger? (power 5)
 * Which game mode after this one: Gem Grab, Brawl Ball, or something else?
 * Any names for new fighters or new hack codes?

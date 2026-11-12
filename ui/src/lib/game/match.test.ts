@@ -121,4 +121,21 @@ describe('Match', () => {
     expect(new Match(CANYON, { ...SETTINGS, botCount: 5 }).world.fighters).toHaveLength(6)
     expect(new Match(CANYON).world.fighters).toHaveLength(SETTINGS.botCount + 1)
   })
+
+  it('gives the player the stats of its power level and bots those of the bot power', () => {
+    const match = new Match(CANYON, { ...SETTINGS, botCount: 2, botPower: 5 }, { playerPower: 11 })
+    const [player, bot] = match.world.fighters
+    expect([player.maxHealth, player.damage]).toEqual([6400, 960])
+    expect([bot.maxHealth, bot.damage]).toEqual([4480, 672])
+  })
+})
+
+describe('Power in the world', () => {
+  it('a shot does its shooter\u2019s damage', () => {
+    const world = new World(open, { fighters: 2, stats: [{ health: 6400, damage: 960 }] })
+    world.fire(0, -1)
+    run(0.5, (dt) => world.step(dt))
+    expect(world.fighters[1].health).toBe(3200 - 960)
+    expect(world.drainEvents().find((e) => e.type === 'hurt')).toMatchObject({ damage: 960 })
+  })
 })

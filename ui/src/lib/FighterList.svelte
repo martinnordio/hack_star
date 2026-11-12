@@ -1,6 +1,7 @@
 <script lang="ts">
   import { RARITY_COLORS, type Fighter } from './fighters'
   import { isUnlocked, maxPower } from './hacks'
+  import { powerOf, unlockPrice } from './game/economy'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
@@ -31,8 +32,11 @@
         <span class="rarity">{fighter.rarity}</span>
         <span class="stats">
           <span>🏆 {trophies}</span>
-          <span class="power">⚡ {$progress.powerLevels[fighter.id] ?? 1}/{maxPower($progress)}</span>
+          <span class="power">⚡ {powerOf($progress, fighter.id)}/{maxPower($progress)}</span>
         </span>
+        {#if !unlocked}
+          <span class="price">🔒 {unlockPrice(fighter.rarity)} C</span>
+        {/if}
       </button>
     </li>
   {/each}
@@ -142,5 +146,12 @@
 
   .power {
     color: #ffd23f;
+  }
+
+  .price {
+    margin-top: 0.25rem;
+    font-weight: 900;
+    font-size: 0.9rem;
+    color: #ffe45c;
   }
 </style>
