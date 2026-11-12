@@ -2,7 +2,6 @@
 name = "hack-star-server"
 version = "0.1.0"
 description = "Hack star game server"
-readme = "README.md"
 authors = [
     { name = "Martin Nordio", email = "martin.nordio@gmail.com" }
 ]
