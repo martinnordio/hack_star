@@ -55,6 +55,24 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 - **S9 — Info page:** An **Info** button opens a page with at least the vocabulary in the
   table below: each word with a one-sentence meaning a parent understands.
 - **S10 — Back:** Every screen other than home has a back button to the home screen.
+- **S11 — The fighters:** The game has these 6 original fighters, each in 3D with its own
+  shape and colours:
+
+  | Fighter | Rarity | Idea | Skins (rarity) |
+  |---------|--------|------|----------------|
+  | Blaze | Rare | Girl with fire powers | Default · Lava (Epic) · Phoenix (Legendary) |
+  | Rocko | Rare | Friendly rock golem, a tank | Default · Crystal (Epic) |
+  | Turbo | Super Rare | Fast racing kid with a helmet | Default · Neon (Mythic) |
+  | Frosty | Epic | Small ice yeti | Default · Snow King (Legendary) |
+  | Luna | Mythic | Space cat with a ray gun | Default · Galaxy (Mythic) · Supernova (Legendary) |
+  | Pixel | Legendary | Hacker robot, the face of Hack star | Default · Glitch (Legendary) |
+
+  At the start Blaze, Rocko and Turbo are unlocked; the others are locked.
+
+### Open questions
+
+_None. Answered 2026-11-12: 3D look; the game invents the fighters (S11). Sound is left out
+of this spec (see Deferred Items in the plan)._
 
 ### Vocabulary for the info page
 
@@ -84,11 +102,6 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 | Brawl Pass | Season pass with rewards for playing |
 | GG | "Good game", said at the end of a match |
 | Hack code | Hack star only: a secret code (typed or QR) that gives extras |
-
-### Open questions
-
-- Fighter names and looks: do the kids want to invent them, or should the game propose 4–6?
-- Should the home screen play music and sounds, and is there a mute button?
 
 <!-- spec-nx:plan -->
 

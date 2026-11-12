@@ -33,8 +33,8 @@ of [overall_req.md](../overall_req.md).
 
 ## 1 · Specs
 
-- **S1 — Hack screen:** A **Hack** button on the home screen opens a screen where the player
-  can type a code or scan a QR code.
+- **S1 — Hack screen:** A **Hack** button, always visible on the home screen, opens a screen
+  where the player can type a code or scan a QR code.
 - **S2 — Type a code:** A typed code is accepted with uppercase or lowercase letters and
   surrounding spaces.
 - **S3 — Scan a QR code:** On a device with a camera, the player can scan a QR code that
@@ -53,14 +53,15 @@ of [overall_req.md](../overall_req.md).
   the game goes back to the normal rules.
 - **S10 — Printable QR codes:** An adult can get the QR code of each hack code as an image to
   print or show on another screen.
+- **S11 — The codes:** `INFINITY` gives unlimited credits (S4), `OPENSESAME` unlocks all
+  (S5), `POWER22` gives 22 power levels (S6).
+- **S12 — Power 22 for now:** Until power levels affect matches (F6), the power-22 hack
+  changes only what the fighter list and fighter screen show.
 
 ### Open questions
 
-- What are the codes (words the kids choose?), and are there more hacks than these three?
-- Should the hack button be visible to everyone, or hidden (for example a secret tap on the
-  logo)?
-- With the power-22 hack, does the fighter become stronger in matches (F6), or is it only
-  shown in the list for now?
+_None. Answered 2026-11-12: the game invents the codes (S11); the Hack button is visible (S1);
+power 22 is shown only until F6 (S12)._
 
 <!-- spec-nx:plan -->
 

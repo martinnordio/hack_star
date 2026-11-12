@@ -54,11 +54,13 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
 - **S9 — Leave:** A button returns to the home screen at any time.
 - **S10 — Smooth on iPad:** The demo runs at 30 frames per second or more on a recent iPad and
   phone, and starts within 5 seconds on home Wi-Fi.
+- **S11 — One arena:** There is one arena with a sunny canyon theme (sand, rocks, cacti as
+  bushes); the target dummies stand still.
 
 ### Open questions
 
-- Is one arena enough, and does it have a theme the kids would like (desert, candy, space…)?
-- Should the dummies move, or is standing still enough for this demo?
+_None. Answered 2026-11-12 with the suggested defaults (S11); more arenas and moving targets
+are for later specs._
 
 <!-- spec-nx:plan -->
 
