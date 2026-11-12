@@ -113,6 +113,19 @@ Hack star server" with a **Try again** button.
 - **Info:** the words kids use in the game.
 - **Settings:** bot level (**Easy**, **Medium**, **Hard**) and number of bots (1–5) for every
   match; saved on the device. Default Easy and 3 bots.
+- **Friends:** play together, each on your own iPad, phone or computer on the same Wi-Fi — you
+  and up to 2 friends **on one team against the bots**:
+  1. One player taps **Friends → Create a room** and gets a 4-letter code and a QR code.
+  2. Friends tap **Friends**, type the code and **Join**, or scan the QR code (with the game's
+     **Scan QR** or the camera app, which opens the game straight into the room).
+  3. The room shows Player 1 👑 (the host) and the friends with their fighters. The host taps
+     **START**: friends take the place of bots (the host's Settings decide how many fighters in
+     total, at least one bot) and everyone starts along the bottom of the arena.
+  4. Shots never hurt teammates; teammates' health bars are blue. The team wins if one of you
+     is the last one standing. Each player gets trophies and credits on their own device, and
+     hacks work only on the device that entered them.
+  5. After the match, **Back to the room** to play again. If a friend leaves, a bot takes over
+     their fighter; if the host leaves, the room closes and the friends get a draw.
 - **Hack:** type a hack code or scan its QR code:
 
   | Code | Hack |
@@ -146,6 +159,8 @@ without changing code, add them to the address, for example
 2. `npm run dev` prints a `Network:` address for the Wi-Fi, for example
    `http://192.168.1.20:5180/`. Open it in Safari or Chrome on the device.
 3. On Windows, allow Node.js through the firewall for private networks when asked.
+4. To play with friends, every device opens the same **Network** address; the computer running
+   the server and the UI is the meeting point (nothing goes outside the Wi-Fi).
 
 ### QR codes
 

@@ -17,10 +17,34 @@ export interface MatchOptions {
   playerPower?: number
   /** Type of each fighter, by id (0 is the player); missing ones are Basic. */
   types?: FighterType[]
+  /** Fighters 0..humans-1 are people on one team (friends); the rest are bots. */
+  humans?: number
+  /** Power level per fighter, by id; overrides `playerPower` and the bots' power. */
+  powers?: number[]
+}
+
+/** What the arena needs from a match: a local one, or a shared one (host or friend). */
+export interface MatchLike {
+  readonly world: World
+  readonly settings: Settings
+  readonly phase: MatchPhase
+  readonly countdown: number
+  readonly timeLeft: number
+  readonly overtime: boolean
+  readonly result: MatchResult | null
+  readonly canAct: boolean
+  update(dt: number): void
+}
+
+/** With friends, the people start along the bottom (the camera side), the bots elsewhere. */
+export function teamArena(arena: Arena, humans: number): Arena {
+  if (humans <= 1) return arena
+  const people = [...arena.spawns].sort((a, b) => b.z - a.z || Math.abs(a.x) - Math.abs(b.x)).slice(0, humans)
+  return { ...arena, spawns: [...people, ...arena.spawns.filter((s) => !people.includes(s))] }
 }
 
 /** A "last fighter standing" match: countdown, timer and result around a `World`. */
-export class Match {
+export class Match implements MatchLike {
   readonly world: World
   readonly bots: Bots | null
   phase: MatchPhase = 'countdown'
@@ -33,14 +57,19 @@ export class Match {
   constructor(
     arena: Arena,
     readonly settings: Settings = SETTINGS,
-    { bots = true, random = Math.random, playerPower = 1, types = [] }: MatchOptions = {},
+    { bots = true, random = Math.random, playerPower = 1, types = [], humans = 1, powers = [] }: MatchOptions = {},
   ) {
-    const fighters = settings.botCount + 1
+    // Friends take the place of bots, but there is always at least one bot.
+    const fighters = Math.max(settings.botCount + 1, humans + 1)
     const fighterStats = Array.from({ length: fighters }, (_, id) =>
-      stats(id === 0 ? playerPower : settings.botPower, settings, types[id]),
+      stats(powers[id] ?? (id === 0 ? playerPower : settings.botPower), settings, types[id]),
     )
-    this.world = new World(arena, { fighters, stats: fighterStats, types })
-    this.bots = bots ? new Bots(this.world, BOT_LEVELS[settings.botLevel], settings.botsFightEachOther, random) : null
+    const teams = Array.from({ length: fighters }, (_, id) => (id < humans ? 0 : id))
+    this.world = new World(teamArena(arena, humans), { fighters, stats: fighterStats, types, teams })
+    const humanIds = Array.from({ length: humans }, (_, id) => id)
+    this.bots = bots
+      ? new Bots(this.world, BOT_LEVELS[settings.botLevel], settings.botsFightEachOther, random, humanIds)
+      : null
     this.countdown = settings.countdownSeconds
     this.timeLeft = settings.matchSeconds
   }
@@ -75,13 +104,17 @@ export class Match {
     if (this.phase === 'fight') this.checkEnd()
   }
 
+  /** Results are for the player's team: it wins when only it is left, loses when all of it is out. */
   private checkEnd() {
-    const botsIn = this.world.fighters.slice(1).filter((f) => !f.out).length
-    if (this.world.player.out) this.end({ kind: 'defeat', place: botsIn + 1 })
-    else if (botsIn === 0) this.end({ kind: 'victory' })
+    const team = this.world.player.team
+    const fighters = this.world.fighters
+    const teamIn = fighters.some((f) => f.team === team && !f.out)
+    const othersIn = new Set(fighters.filter((f) => f.team !== team && !f.out).map((f) => f.team)).size
+    if (!teamIn) this.end({ kind: 'defeat', place: othersIn + 1 })
+    else if (othersIn === 0) this.end({ kind: 'victory' })
     else if (this.timeLeft <= 0 && !this.overtime && this.settings.overtimeSeconds > 0) this.startOvertime()
     else if (this.timeLeft <= 0)
-      this.end(this.settings.timeUpResult === 'draw' ? { kind: 'timeup' } : { kind: 'defeat', place: botsIn + 1 })
+      this.end(this.settings.timeUpResult === 'draw' ? { kind: 'timeup' } : { kind: 'defeat', place: othersIn + 1 })
   }
 
   private startOvertime() {

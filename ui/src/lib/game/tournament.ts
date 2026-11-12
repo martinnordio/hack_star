@@ -18,7 +18,7 @@ export function tournament(matches: number, seconds = 150) {
     // Rotate who starts where, so no type always gets the best spot.
     const types = ids.map((_, i) => FIGHTER_TYPES[ids[(i + m) % ids.length]])
     const world = new World(CANYON, { fighters: types.length, types, stats: types.map((t) => stats(5, SETTINGS, t)) })
-    const bots = new Bots(world, BOT_LEVELS.hard, true, random, true)
+    const bots = new Bots(world, BOT_LEVELS.hard, true, random, [])
     let t = 0
     for (; t < seconds && world.alive().length > 1; t += tick) {
       bots.think(tick)

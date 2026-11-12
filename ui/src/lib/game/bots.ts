@@ -10,7 +10,7 @@ export interface BotState {
   wanderUntil: number
 }
 
-/** Brains for every fighter except the player (fighter 0), or for all with `includePlayer`. */
+/** Brains for every fighter that is not a person (by default fighter 0 is the player). */
 export class Bots {
   readonly states: BotState[]
 
@@ -19,14 +19,20 @@ export class Bots {
     private skill: BotSkill,
     private fightEachOther: boolean,
     private random: () => number = Math.random,
-    includePlayer = false,
+    humans: number[] = [0],
   ) {
-    this.states = world.fighters.slice(includePlayer ? 0 : 1).map((f) => {
-      f.speedFactor = skill.speed
-      f.cooldownFactor = skill.cooldown
-      f.canHyper = skill.hyper
-      return { id: f.id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0 }
-    })
+    this.states = []
+    for (const f of world.fighters) if (!humans.includes(f.id)) this.addBot(f.id)
+  }
+
+  /** A bot takes over fighter `id` (also when a friend leaves a shared match). */
+  addBot(id: number) {
+    if (this.states.some((s) => s.id === id)) return
+    const f = this.world.fighters[id]
+    f.speedFactor = this.skill.speed
+    f.cooldownFactor = this.skill.cooldown
+    f.canHyper = this.skill.hyper
+    this.states.push({ id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0 })
   }
 
   think(dt: number) {
@@ -40,7 +46,8 @@ export class Bots {
     let best: Fighter | undefined
     let bestDist = Infinity
     for (const o of this.world.fighters) {
-      if (o === bot || (!this.fightEachOther && o.id !== 0)) continue
+      const otherBot = this.states.some((s) => s.id === o.id)
+      if (o === bot || o.team === bot.team || (!this.fightEachOther && otherBot)) continue
       if (!this.world.canSee(bot, o, this.skill.sight)) continue
       const d = Math.hypot(o.x - bot.x, o.z - bot.z)
       if (d < bestDist) {
