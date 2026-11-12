@@ -43,12 +43,56 @@ How many bots should the player face?
 
 Until Mattia answers, the game uses the default in brackets; each one is a single setting.
 
-* How long should a match be? (2 minutes)
-* How many bots should the player face? (3)
-* Should the bots be easy, medium or hard? (easy)
-* When time runs out and bots are still alive: is it a draw, or do you lose? (draw)
-* Do the bots also fight each other, or only you? (each other too, like Showdown)
+
 * When you lose, should the fighter lose trophies? (no)
 * How strong should the bots be: weaker than you, the same, or stronger? (power 5)
 * Which game mode after this one: Gem Grab, Brawl Ball, or something else?
 * Any names for new fighters or new hack codes?
+
+# Feedback from Mattia
+
+* How long should a match be? (2 minutes)
+yes, 2 minutes. 
+
+* How many bots should the player face? (3)
+3 bots 
+* more 
+Add more figures
+
+* Should the bots be easy, medium or hard? (easy)
+we should be able to select it in the configuration
+
+* more advance
+and the payers should have up to 2 frinds to play
+
+* When time runs out and bots are still alive: is it a draw, or do you lose? (draw)
+the match continues for another minute but without walls.  Then, tt is a draw but 
+
+* Do the bots also fight each other, or only you? (each other too, like Showdown)
+Ok.
+
+* QR code
+Hiper charge QR code
+
+## What the feedback became (specs)
+
+| Feedback | Spec |
+|----------|------|
+| 2 minutes, 3 bots, bots fight each other | Already so; confirmed, no change |
+| Bot level chosen in a configuration | F8 [overtime and match options](features/2026_11_12_overtime_and_match_options_spec.md) |
+| One more minute without walls when time runs out | F8 [overtime and match options](features/2026_11_12_overtime_and_match_options_spec.md) |
+| Add more figures | F9 [more fighters](features/2026_11_12_more_fighters_spec.md) |
+| Hypercharge QR code | F10 [super and hypercharge](features/2026_11_12_super_and_hypercharge_spec.md) |
+| Up to 2 friends to play | F11 [play with friends](features/2026_11_12_play_with_friends_spec.md) |
+
+## New questions to Mattia
+
+Until he answers, the game uses the default in brackets.
+
+* After the extra minute it is a draw **but** … what? (a normal draw: 0 trophies, 20 credits)
+* Should harder bots give more trophies? (no)
+* Names or ideas for the new fighters? (the game invents them)
+* What should the Hypercharge QR code do? (every Super becomes a Hypercharge)
+* Friends: on your team against the bots, or everyone against everyone? (same team)
+* Friends: only in the same house / Wi-Fi, or also from different houses? (same Wi-Fi)
+* Still open from before: lose trophies when you lose? (no) · How strong are bots? (power 5) · Which second mode? (not started)
