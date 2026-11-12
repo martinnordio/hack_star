@@ -11,7 +11,7 @@ export interface Stats {
 
 export type Purchase =
   | { ok: true; progress: Progress; cost: number }
-  | { ok: false; reason: 'already-unlocked' | 'locked' | 'max-power' }
+  | { ok: false; reason: 'already-unlocked' | 'locked' | 'max-power' | 'owned' }
   | { ok: false; reason: 'credits'; missing: number }
 
 export function unlockPrice(rarity: Rarity, settings: Settings = SETTINGS): number {
@@ -39,7 +39,7 @@ export function powerOf(progress: Progress, fighterId: string): number {
 }
 
 /** Pay `cost`; with unlimited credits the saved credits stay as they are. */
-function pay(progress: Progress, cost: number): Purchase | Progress {
+export function pay(progress: Progress, cost: number): Purchase | Progress {
   const available = credits(progress)
   if (available < cost) return { ok: false, reason: 'credits', missing: cost - available }
   return available === Infinity ? progress : { ...progress, credits: progress.credits - cost }

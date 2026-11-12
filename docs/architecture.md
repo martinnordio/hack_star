@@ -45,7 +45,8 @@ value (no router):
 | Screen | File | Notes |
 |--------|------|-------|
 | Home | `lib/Home.svelte`, `lib/HomeScene.svelte` | 3D fighter on a podium, entrance animation |
-| Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached) |
+| Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought |
+| Shop | `lib/ShopScreen.svelte` | Skin of the day first, then every skin; buy, "NEW SKIN!", Wear it |
 | Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words kids use |
 | Hack | `lib/HackScreen.svelte`, `lib/QrScanner.svelte` | Codes typed or scanned; `/?qr` shows `lib/QrPage.svelte` |
 | Match / Training | `lib/Arena.svelte` (HTML: joysticks, HUD, result), `lib/ArenaScene.svelte` (3D) | A new `Arena` is mounted per match |
@@ -64,7 +65,8 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 | `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error; wanders when it sees nobody |
 | `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks) |
 | `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
-| `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power…); `powerOf()` caps a level at the current maximum |
+| `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power, owned…); `powerOf()` caps a level at the current maximum |
+| `shop.ts` | Skins: `ownsSkin` (default skins and the OPENSESAME hack count as owned), `wornSkin` (the chosen skin if owned, else Default), `skinOfTheDay(date)` (picked from the local day number, same for everyone that day), `skinPrice`, and the purchase `buySkin()` |
 | `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power…) and `BOT_LEVELS`; `settingsFrom()` reads `?seconds=&bots=&level=` |
 
 Every frame (`ArenaScene.svelte`, `useTask`): input → `match.update(dt)` (bots think, world
@@ -87,8 +89,10 @@ Everything is built in code from simple shapes, so there is no art to download o
 ### Saved progress (`ui/src/lib/progress.ts`)
 
 Per device in `localStorage` (no login): credits, trophies and power level per fighter,
-unlocked fighters, active hacks, chosen fighter and skins. Data that does not match the
-current format falls back to the starting progress. Hack effects are worked out when shown
+unlocked fighters, owned skins, active hacks, chosen fighter and skins. The format has a
+`version` (now 3); a version 2 save is migrated (its chosen skins become owned skins, so
+nobody loses a skin), and anything else that does not match falls back to the starting
+progress. Hack effects are worked out when shown
 (`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`), so resetting the hacks
 brings the normal rules back exactly.
 
@@ -98,7 +102,8 @@ them at once, before the result screen opens, so leaving then still keeps them; 
 a match or playing Training saves nothing. Prestige is not stored: it is
 `prestigeLevel(trophies)` (every 1000).
 
-Spending happens only on the fighter screen through `unlock()` / `upgrade()`. With the
+Spending happens only on the fighter screen and in the Shop through `unlock()` / `upgrade()` /
+`buySkin()`. With the
 unlimited-credits hack nothing is taken from the saved credits, so resetting the hacks shows
 the real amount again.
 

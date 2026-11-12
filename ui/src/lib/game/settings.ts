@@ -33,6 +33,9 @@ export interface Settings {
   /** Upgrading from level n costs n × this. */
   upgradeCostPerLevel: number
   unlockPrices: Record<'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary', number>
+  skinPrices: Record<'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary', number>
+  /** Discount on the skin of the day (0.3 = 30% off). */
+  skinOfTheDayDiscount: number
 }
 
 export const SETTINGS: Settings = {
@@ -57,6 +60,8 @@ export const SETTINGS: Settings = {
   upgradeCostPerLevel: 20,
   // As in Brawl Stars.
   unlockPrices: { Default: 0, Rare: 160, 'Super Rare': 430, Epic: 925, Mythic: 1900, Legendary: 3800 },
+  skinPrices: { Default: 0, Rare: 100, 'Super Rare': 200, Epic: 300, Mythic: 600, Legendary: 1500 },
+  skinOfTheDayDiscount: 0.3,
 }
 
 export interface BotSkill {

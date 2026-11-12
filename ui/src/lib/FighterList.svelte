@@ -2,6 +2,7 @@
   import { RARITY_COLORS, type Fighter } from './fighters'
   import { isUnlocked, maxPower } from './hacks'
   import { powerOf, unlockPrice } from './game/economy'
+  import { wornSkin } from './game/shop'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
@@ -24,7 +25,7 @@
         aria-label="{fighter.name}{unlocked ? '' : ', locked'}"
       >
         <span class="picture">
-          <img src={portrait(fighter.id, $progress.selectedSkins[fighter.id])} alt="" />
+          <img src={portrait(fighter.id, wornSkin($progress, fighter.id))} alt="" />
           {#if !unlocked}<span class="lock">🔒</span>{/if}
           <span class="badge"><PrestigeBadge {trophies} size={2} /></span>
         </span>

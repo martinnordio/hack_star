@@ -4,6 +4,7 @@
   import { PCFShadowMap } from 'three'
   import { RARITY_COLORS, type Fighter } from './fighters'
   import { credits, currentFighter } from './hacks'
+  import { wornSkin } from './game/shop'
   import HomeScene from './HomeScene.svelte'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress, totalTrophies } from './progress'
@@ -12,13 +13,13 @@
     fighters: Fighter[]
     entrance: boolean
     onEntranceEnd: () => void
-    onNavigate: (screen: 'fighters' | 'info' | 'hack' | 'match' | 'training') => void
+    onNavigate: (screen: 'fighters' | 'shop' | 'info' | 'hack' | 'match' | 'training') => void
   }
 
   let { fighters, entrance, onEntranceEnd, onNavigate }: Props = $props()
 
   const fighter = $derived(currentFighter($progress, fighters))
-  const skinId = $derived($progress.selectedSkins[fighter.id] ?? 'default')
+  const skinId = $derived(wornSkin($progress, fighter.id))
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
   const shownCredits = $derived(credits($progress))
 
@@ -60,6 +61,9 @@
   <nav class="side">
     <button class="round" onclick={() => onNavigate('fighters')}>
       <span class="big">🦸</span>Fighters
+    </button>
+    <button class="round shop" onclick={() => onNavigate('shop')}>
+      <span class="big">🛍️</span>Shop
     </button>
     <button class="round" onclick={() => onNavigate('info')}>
       <span class="big">📖</span>Info
@@ -182,9 +186,9 @@
     left: var(--pad-left);
     top: 50%;
     transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 0.6rem;
   }
 
   button {
@@ -219,6 +223,10 @@
     background: linear-gradient(#39ff88, #0a9f4a);
     color: #06210f;
     text-shadow: none;
+  }
+
+  .round.shop {
+    background: linear-gradient(#ff8ac2, #e8327a);
   }
 
   .big {
@@ -278,11 +286,12 @@
       top: auto;
       bottom: calc(var(--pad-bottom) + 6.5rem);
       transform: none;
-      flex-direction: row;
+      grid-template-columns: repeat(3, auto);
     }
 
     .plate {
-      bottom: calc(var(--pad-bottom) + 6rem);
+      top: calc(var(--pad-top) + 4rem);
+      bottom: auto;
       left: auto;
       right: var(--pad-right);
       transform: none;
