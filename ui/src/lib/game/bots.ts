@@ -1,4 +1,4 @@
-import { SHOT_RANGE, type Fighter, type World } from './world'
+import type { Fighter, World } from './world'
 import type { BotSkill } from './settings'
 
 export interface BotState {
@@ -10,7 +10,7 @@ export interface BotState {
   wanderUntil: number
 }
 
-/** Brains for every fighter except the player (fighter 0). */
+/** Brains for every fighter except the player (fighter 0), or for all with `includePlayer`. */
 export class Bots {
   readonly states: BotState[]
 
@@ -19,8 +19,9 @@ export class Bots {
     private skill: BotSkill,
     private fightEachOther: boolean,
     private random: () => number = Math.random,
+    includePlayer = false,
   ) {
-    this.states = world.fighters.slice(1).map((f) => {
+    this.states = world.fighters.slice(includePlayer ? 0 : 1).map((f) => {
       f.speedFactor = skill.speed
       f.cooldownFactor = skill.cooldown
       f.canHyper = skill.hyper
@@ -71,14 +72,17 @@ export class Bots {
       const dist = Math.hypot(dx, dz)
       const ux = dx / dist
       const uz = dz / dist
-      // Close in when far, back off when too close, and circle a little in between.
-      const forward = dist > SHOT_RANGE * 0.65 ? 1 : dist < 3 ? -0.6 : 0
+      // Close in when out of range, back off when too close, and circle a little in between.
+      const range = bot.type.attack.range
+      const forward = dist > range * 0.65 ? 1 : dist < Math.min(3, range * 0.4) ? -0.6 : 0
       const side = Math.sin(world.time * 0.9 + s.id * 2) * 0.6
       world.moveFighter(bot, ux * forward - uz * side, uz * forward + ux * side, dt)
-      if (dist <= SHOT_RANGE * 0.9) {
-        const angle = Math.atan2(ux, uz) + (this.random() * 2 - 1) * this.skill.aimError
-        if (!world.useSuper(bot, Math.sin(angle), Math.cos(angle))) world.fireFrom(bot, Math.sin(angle), Math.cos(angle))
-      }
+      const angle = Math.atan2(ux, uz) + (this.random() * 2 - 1) * this.skill.aimError
+      // Aim vectors as long as the distance, so lobbed shots land on the target.
+      const aimX = Math.sin(angle) * dist
+      const aimZ = Math.cos(angle) * dist
+      if (dist <= bot.type.superReach && world.useSuper(bot, aimX, aimZ)) return
+      if (dist <= range * 0.9) world.fireFrom(bot, aimX, aimZ)
       return
     }
 
