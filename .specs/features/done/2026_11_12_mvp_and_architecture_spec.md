@@ -72,10 +72,10 @@ names and logos are copyrighted and are not used.
 | F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_basic_ui_spec.md) | ✅ |
 | F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_hack_codes_spec.md) | ✅ |
 | F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_graphics_demo_spec.md) | ✅ |
-| F4 | First real match: last fighter standing against bots, win or lose | — | ✅ |
-| F5 | Trophies after each match and Prestige levels, saved between visits | — | ✅ |
-| F6 | Unlock fighters with credits; power levels change health and damage | — | later |
-| F7 | Skins shop | — | later |
+| F4 | First real match: last fighter standing against bots, win or lose | [first match](2026_11_12_first_match_spec.md) | ✅ |
+| F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](2026_11_12_trophies_spec.md) | ✅ |
+| F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](2026_11_12_unlock_and_upgrade_spec.md) | later (done) |
+| F7 | Skins shop | [skins shop](2026_11_12_skins_shop_spec.md) | later (done) |
 | F8 | Super ability, a second mode (Gem Grab) | — | later |
 
 ## 1 · Specs

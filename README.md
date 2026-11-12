@@ -76,34 +76,39 @@ Hack star server" with a **Try again** button.
   |---|------|---------------|
   | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target |
   | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target |
-- **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D and
-  choose a skin.
+- **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D,
+  try on its skins and choose or buy one.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
   otherwise; you start with 500). On a fighter's screen:
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
     Legendary 3800 credits (as in Brawl Stars).
   - **Upgrade** its power level for 20 × the current level (7 → 8 costs 140). Each level adds
-    10% health and damage (power 1: ❤️ 3200 💥 480; power 11: 6400 / 960), and that is what the
+    10% health and damage (power 1: ❤️ 3200 � 480; power 11: 6400 / 960), and that is what the
     fighter has in matches and training. Bots play at power 5.
+- **Shop:** buy skins with credits: Epic 300, Mythic 600, Legendary 1500. The **skin of the
+  day** (a new one each day) is first and costs 30% less. Skins of locked fighters say
+  "Unlock … first". After buying, **Wear it** puts it on and makes that fighter the chosen one.
+  Skins can also be bought on the fighter screen (try on, then **Buy**). Default skins are free.
 - **Info:** the words kids use in the game.
 - **Hack:** type a hack code or scan its QR code:
 
   | Code | Hack |
   |------|------|
-  | `INFINITY` | Unlimited credits: unlocking and upgrading are free |
-  | `OPENSESAME` | Every fighter and skin unlocked |
+  | `INFINITY` | Unlimited credits: unlocking, upgrading and skins are free |
+  | `OPENSESAME` | Every fighter and skin unlocked (no need to buy skins) |
   | `POWER22` | Power levels up to 22 instead of 11 (power 22: ❤️ 9920 💥 1488 in matches) |
 
   **Reset all hacks** on the same screen goes back to the normal rules: the real credits and
-  the 11 limit come back; fighters and levels you got while hacking stay.
+  the 11 limit come back; fighters, levels and skins you got while hacking stay (skins you
+  only wore thanks to OPENSESAME go back to Default).
 
-Progress (chosen fighter and skins, trophies) is saved in the browser of each device. Open
+Progress (chosen fighter, bought and chosen skins, trophies) is saved in the browser of each device. Open
 <http://localhost:5180/?gallery> to see every fighter and skin side by side.
 
 ### Match settings
 
 Match length, number of bots, bot level (easy, medium, hard), what "time's up" means, the
-trophies and credits for each result, prices, upgrade costs, power bonus and the bots' power
+trophies and credits for each result, prices (fighters and skins, skin-of-the-day discount), upgrade costs, power bonus and the bots' power
 level are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
 (`SETTINGS`). To try other values
 without changing code, add them to the address, for example

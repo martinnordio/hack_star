@@ -1,7 +1,7 @@
 # Skins Shop Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/skins-shop`
@@ -16,27 +16,27 @@ Kids love skins, especially Legendary ones ("something like a costume"), and in 
 are bought, which makes them special. In Hack star every skin is free to pick today. This spec
 adds a **Shop** where skins are bought with credits, with a "skin of the day" on offer, and makes
 the "unlock everything" hack really unlock every skin. It is F7 in the
-[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [Basic UI spec](done/2026_11_12_basic_ui_spec.md) — 14 skins (6 Default, 2 Epic, 2 Mythic,
+- [Basic UI spec](2026_11_12_basic_ui_spec.md) — 14 skins (6 Default, 2 Epic, 2 Mythic,
   4 Legendary) in the server catalogue (`fighters.py`), 3D skins (`models/fighters3d.ts`),
   portraits (`portraits.ts`), skin choice on the fighter screen (`FighterDetail.svelte`),
   `selectedSkins` in the saved progress (`progress.ts`).
-- [Hack codes spec](done/2026_11_12_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter
+- [Hack codes spec](2026_11_12_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter
   and every skin" (S5), `INFINITY` unlimited credits; `hacks.ts`.
-- [Unlock and upgrade spec](done/2026_11_12_unlock_and_upgrade_spec.md) — credits earned in
+- [Unlock and upgrade spec](2026_11_12_unlock_and_upgrade_spec.md) — credits earned in
   matches, purchases as pure functions (`game/economy.ts`), "UNLOCKED!" celebrations.
-- [docs/architecture.md](../../docs/architecture.md) — where the parts are.
+- [docs/architecture.md](../../../docs/architecture.md) — where the parts are.
 
 **New:**
 - Owned skins in the saved progress, skin prices, the Shop screen, the skin of the day.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and the questions to Mattia |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to Mattia |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
@@ -79,7 +79,7 @@ _None._
 |------|-------------|--------|--------|
 | **1** | Owned skins and shop rules | ✅ Done | [→ Step 1](#step-1--owned-skins-and-shop-rules) |
 | **2** | Shop screen and buying on the fighter screen | ✅ Done | [→ Step 2](#step-2--shop-screen-and-buying-on-the-fighter-screen) |
-| **3** | Final check and documentation | ⬜ Not started | [→ Step 3](#step-3--final-check-and-documentation) |
+| **3** | Final check and documentation | ✅ Done | [→ Step 3](#step-3--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -151,15 +151,17 @@ Started: 2026-11-12 11:52
 Everything works on every screen size; the documentation explains the shop (S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Shop and fighter screen checked at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: the Shop, prices, skin of the day, hacks.
-- [ ] `docs/architecture.md`: `game/shop.ts`, progress version 3 and migration.
-- [ ] Info vocabulary: "Shop", "Skin of the day".
+- [x] Record the start time in Notes below.
+- [x] Shop and fighter screen checked at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: the Shop, prices, skin of the day, hacks.
+- [x] `docs/architecture.md`: `game/shop.ts`, progress version 3 and migration.
+- [x] Info vocabulary: "Shop", "Skin of the day".
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:55
+
+**Done (2026-11-12 · ~3m)** — browser: home, Shop and fighter screen at the four sizes with no sideways scrolling (portrait home grid 3 + 2 buttons); `pytest` 15 passed, `npm test` 75 passed, `svelte-check` 0 errors, `npm run build` OK; README, architecture and vocabulary updated.
 
 ---
 
@@ -184,5 +186,5 @@ Everything works on every screen size; the documentation explains the shop (S11)
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`
