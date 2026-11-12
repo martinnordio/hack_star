@@ -13,4 +13,9 @@ describe('settingsFrom', () => {
     expect([clamped.matchSeconds, clamped.botCount, clamped.botLevel]).toEqual([5, 8, SETTINGS.botLevel])
     expect(settingsFrom('?bots=abc').botCount).toBe(SETTINGS.botCount)
   })
+
+  it('reads the overtime length (0 turns it off)', () => {
+    expect(settingsFrom('?overtime=5').overtimeSeconds).toBe(5)
+    expect(settingsFrom('?overtime=0').overtimeSeconds).toBe(0)
+  })
 })

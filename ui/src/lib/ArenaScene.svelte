@@ -10,6 +10,7 @@
     phase: MatchPhase
     countdown: number
     timeLeft: number
+    overtime: boolean
     fightersLeft: number
     result: MatchResult | null
   }
@@ -54,6 +55,33 @@
   }
 
   const scenery = buildArena(CANYON)
+  const cover = ['walls', 'bushes'].map((name) => scenery.getObjectByName(name)!)
+  let coverGoneAt: number | null = null
+
+  /** Overtime: walls and cacti burst into pieces, then sink away. */
+  function breakCover() {
+    coverGoneAt = time
+    for (const w of CANYON.walls) {
+      for (let i = 0; i < Math.ceil(w.w * w.d); i++) {
+        const x = w.x + (Math.random() - 0.5) * w.w
+        const z = w.z + (Math.random() - 0.5) * w.d
+        particles.burst({ color: '#b5653a', at: at(x, 1, z), count: 4, speed: 4, up: 6, gravity: 14, life: 1.2, size: 0.16, endSize: 0.08, chunky: true })
+      }
+      particles.burst({ color: '#e8d2a8', at: at(w.x, 0.5, w.z), count: 8, speed: 2.5, up: 1, life: 0.9, size: 0.5, endSize: 1.2 })
+    }
+    for (const b of CANYON.bushes) {
+      particles.burst({ color: '#4cbf4f', at: at(b.x, 0.8, b.z), count: 14, speed: 4, up: 5, gravity: 12, life: 1, size: 0.14, endSize: 0.06, chunky: true })
+    }
+  }
+
+  function sinkCover() {
+    if (coverGoneAt === null) return
+    const t = Math.min(1, (time - coverGoneAt) / 0.5)
+    for (const group of cover) {
+      group.scale.y = Math.max(0.01, 1 - t)
+      group.visible = t < 1
+    }
+  }
 
   // One world per arena visit: fighter and dummy views are built once.
   interface FighterView {
@@ -182,6 +210,8 @@
       d.spawnedAt = time
       const w = world.dummies[e.dummyId]
       particles.burst({ color: '#ffffff', at: at(w.x, 0.3, w.z), count: 10, speed: 2.5, up: 1, life: 0.5, size: 0.2, endSize: 0.5 })
+    } else if (e.type === 'coverGone') {
+      breakCover()
     }
   }
 
@@ -312,6 +342,7 @@
       phase: match.phase,
       countdown: Math.ceil(match.countdown),
       timeLeft: Math.ceil(match.timeLeft),
+      overtime: match.overtime,
       fightersLeft: world.alive().length,
       result: match.result,
     }
@@ -330,6 +361,7 @@
     if (match) match.update(dt)
     else world.step(dt)
     for (const e of world.drainEvents()) handle(e)
+    sinkCover()
     particles.update(dt)
     updateFighters(dt)
     reportHud()

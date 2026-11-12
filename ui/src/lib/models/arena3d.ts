@@ -66,6 +66,7 @@ function cliffs(arena: Arena): THREE.Object3D {
 
 function walls(arena: Arena): THREE.Object3D {
   const group = new THREE.Group()
+  group.name = 'walls'
   const side = toon('#b5653a')
   const top = toon('#e09a5c')
   for (const w of arena.walls) {
@@ -95,6 +96,7 @@ function cactus(x: number, z: number, height: number, material: THREE.Material):
 /** Cactus patches: the "bushes" of the canyon. */
 function bushes(arena: Arena): THREE.Object3D {
   const group = new THREE.Group()
+  group.name = 'bushes'
   const greens = [toon('#4cbf4f'), toon('#3aa34a')]
   const patch = toon('#7fbf4a')
   for (const b of arena.bushes) {

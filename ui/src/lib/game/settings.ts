@@ -100,6 +100,7 @@ export function settingsFrom(search: string, base: Settings = SETTINGS): Setting
   return {
     ...base,
     matchSeconds: number('seconds', 5, 600) ?? base.matchSeconds,
+    overtimeSeconds: number('overtime', 0, 600) ?? base.overtimeSeconds,
     botCount: number('bots', 1, 8) ?? base.botCount,
     botLevel: level === 'easy' || level === 'medium' || level === 'hard' ? level : base.botLevel,
   }

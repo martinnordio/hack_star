@@ -49,12 +49,17 @@
 
   let hud = $state<Hud>()
   let showFight = $state(false)
+  let showOvertime = $state(false)
   let showResult = $state(false)
 
   function onHud(next: Hud) {
     if (hud?.phase === 'countdown' && next.phase === 'fight') {
       showFight = true
       setTimeout(() => (showFight = false), 800)
+    }
+    if (hud && !hud.overtime && next.overtime) {
+      showOvertime = true
+      setTimeout(() => (showOvertime = false), 1600)
     }
     if (hud?.phase !== 'over' && next.phase === 'over') {
       if (match && next.result) saveReward(match, next.result)
@@ -206,7 +211,7 @@
 
   {#if hud}
     <div class="hud">
-      <div class="timer" class:hurry={hud.timeLeft <= 10}>{clock(hud.timeLeft)}</div>
+      <div class="timer" class:overtime={hud.overtime} class:hurry={hud.timeLeft <= 10}>{clock(hud.timeLeft)}</div>
       <div class="left" aria-label="Fighters left">👤 {hud.fightersLeft}</div>
     </div>
     {#if hud.phase === 'countdown' && hud.countdown > 0}
@@ -215,6 +220,8 @@
       {/key}
     {:else if showFight}
       <div class="big fight" role="status">FIGHT!</div>
+    {:else if showOvertime && hud.phase === 'fight'}
+      <div class="big overtime" role="status">OVERTIME!<small>No more walls!</small></div>
     {/if}
   {/if}
 
@@ -368,6 +375,11 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .timer.overtime {
+    background: #8a1030dd;
+    border-color: #ffd23f;
+  }
+
   .timer.hurry {
     color: #ff4d4d;
     animation: pulse 1s infinite;
@@ -397,6 +409,21 @@
 
   .big.fight {
     color: #ff4f9a;
+  }
+
+  .big.overtime {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: clamp(2.6rem, 11vw, 6rem);
+    color: #ff4d4d;
+    white-space: nowrap;
+    animation-duration: 1.6s;
+  }
+
+  .big.overtime small {
+    font-size: 0.4em;
+    color: #ffd23f;
   }
 
   @keyframes count {

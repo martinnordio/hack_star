@@ -77,7 +77,7 @@ minute without walls**. This is F8 in the
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Overtime rules | ✅ Done | [→ Step 1](#step-1--overtime-rules) |
-| **2** | Overtime in the arena | ⬜ Not started | [→ Step 2](#step-2--overtime-in-the-arena) |
+| **2** | Overtime in the arena | ✅ Done | [→ Step 2](#step-2--overtime-in-the-arena) |
 | **3** | Settings screen | ⬜ Not started | [→ Step 3](#step-3--settings-screen) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
@@ -130,13 +130,17 @@ Overtime only starts while the player is still in: a knocked-out player has alre
 Players see overtime: banner, timer and walls breaking (S5, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] HUD: `overtime` in the HUD data; big "OVERTIME!" banner for 1.5 s; timer in a different colour during overtime.
-- [ ] Scene: on `coverGone`, walls and cactus bushes burst into pieces and disappear.
-- [ ] Check (browser, `?seconds=5`): at 0:00 the banner shows, the timer restarts at 1:00, walls and cacti break; the result after overtime is "TIME'S UP".
+- [x] Record the start time in Notes below.
+- [x] HUD: `overtime` in the HUD data; big "OVERTIME!" banner for 1.5 s; timer in a different colour during overtime.
+- [x] Scene: on `coverGone`, walls and cactus bushes burst into pieces and disappear.
+- [x] Check (browser, `?seconds=5`): at 0:00 the banner shows, the timer restarts at 1:00, walls and cacti break; the result after overtime is "TIME'S UP".
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:15
+
+Added `?overtime=<seconds>` to the address overrides (0 turns overtime off) so the end of overtime can be checked quickly. The banner reads "OVERTIME! — No more walls!" and lasts 1.6 s; walls and cacti burst into pieces and sink away in 0.5 s.
+
+**Done (2026-11-12 · ~4m)** — browser `?seconds=5&bots=3`: at 0:00 the banner shows, timer 1:00 on red, walls and cacti burst and are gone (screenshot), fighters keep fighting (4 → 3 left); `?seconds=5&overtime=5`: result "TIME'S UP · 0 🏆 +20 C"; `npm test` 81 passed.
 
 ---
 
