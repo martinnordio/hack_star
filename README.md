@@ -53,15 +53,18 @@ Hack star server" with a **Try again** button.
 
 - **Home:** the selected fighter in 3D with an entrance animation (tap to skip), trophies,
   credits, Prestige badge, **Play** and **Training**.
-- **Play:** a match in the canyon, last fighter standing, against 3 bots (other fighters):
-  - "3, 2, 1, FIGHT!" countdown, then a 2-minute timer (red in the last 10 seconds) and the
-    number of fighters still in.
+- **Play:** a match in the canyon, last fighter standing, against 3 bots (other fighters; level
+  and number of bots on the **Settings** screen):
+  - "3, 2, 1, FIGHT!" countdown (showing for example "Easy · 3 bots"), then a 2-minute timer
+    (red in the last 10 seconds) and the number of fighters still in.
   - Every fighter has a health bar (yours green, bots red); a hit takes 480. After 3 seconds
     without being hit or shooting, health slowly comes back.
   - Bots fight you and each other. In the cacti you are see-through and bots far away cannot
     see you; bots hiding in cacti are invisible unless you are close.
+  - **Overtime:** if the 2 minutes end and you and at least one bot are still in, "OVERTIME!"
+    gives one more minute and every wall and cactus breaks apart, so nobody can hide.
   - The match ends with **Victory** (last one standing), **Defeat** (with your place) or
-    **Time's up**; then **Play again** or **Home**.
+    **Time's up** (a draw, when overtime ends with others still in); then **Play again** or **Home**.
   - **Trophies:** a victory gives the fighter you played **+10 trophies** (a defeat or time's up
     gives none for now). The result screen counts them up and shows the bar to the next
     **Prestige** (1000, 2000, 3000…); reaching one shows "PRESTIGE n!" and the fighter gets the
@@ -83,13 +86,15 @@ Hack star server" with a **Try again** button.
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
     Legendary 3800 credits (as in Brawl Stars).
   - **Upgrade** its power level for 20 × the current level (7 → 8 costs 140). Each level adds
-    10% health and damage (power 1: ❤️ 3200 � 480; power 11: 6400 / 960), and that is what the
+    10% health and damage (power 1: ❤️ 3200 💥 480; power 11: 6400 / 960), and that is what the
     fighter has in matches and training. Bots play at power 5.
 - **Shop:** buy skins with credits: Epic 300, Mythic 600, Legendary 1500. The **skin of the
   day** (a new one each day) is first and costs 30% less. Skins of locked fighters say
   "Unlock … first". After buying, **Wear it** puts it on and makes that fighter the chosen one.
   Skins can also be bought on the fighter screen (try on, then **Buy**). Default skins are free.
 - **Info:** the words kids use in the game.
+- **Settings:** bot level (**Easy**, **Medium**, **Hard**) and number of bots (1–5) for every
+  match; saved on the device. Default Easy and 3 bots.
 - **Hack:** type a hack code or scan its QR code:
 
   | Code | Hack |
@@ -107,12 +112,14 @@ Progress (chosen fighter, bought and chosen skins, trophies) is saved in the bro
 
 ### Match settings
 
-Match length, number of bots, bot level (easy, medium, hard), what "time's up" means, the
+Match length, overtime length (and whether it removes walls), default number of bots and bot
+level (easy, medium, hard), what "time's up" means, the
 trophies and credits for each result, prices (fighters and skins, skin-of-the-day discount), upgrade costs, power bonus and the bots' power
 level are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
 (`SETTINGS`). To try other values
 without changing code, add them to the address, for example
-<http://localhost:5180/?seconds=60&bots=5&level=medium> (1–8 bots, 5–600 seconds).
+<http://localhost:5180/?seconds=60&bots=5&level=medium&overtime=10> (1–8 bots, 5–600 seconds,
+`overtime=0` turns overtime off). The address wins over the Settings screen.
 
 ### Play on an iPad or phone
 

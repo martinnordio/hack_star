@@ -8,6 +8,10 @@ export interface Settings {
   botLevel: BotLevel
   /** What the player gets when time runs out with bots still in. */
   timeUpResult: 'draw' | 'defeat'
+  /** Extra seconds when time runs out with fighters still in (0: no overtime). */
+  overtimeSeconds: number
+  /** Walls and bushes disappear when overtime starts. */
+  overtimeRemovesCover: boolean
   botsFightEachOther: boolean
   countdownSeconds: number
   /** Seconds without being hit or shooting before healing starts. */
@@ -43,6 +47,8 @@ export const SETTINGS: Settings = {
   botCount: 3,
   botLevel: 'easy',
   timeUpResult: 'draw',
+  overtimeSeconds: 60,
+  overtimeRemovesCover: true,
   botsFightEachOther: true,
   countdownSeconds: 3,
   fighterHealth: 3200,
@@ -83,8 +89,16 @@ export const BOT_LEVELS: Record<BotLevel, BotSkill> = {
   hard: { reaction: 0.15, aimError: 0.08, cooldown: 1.15, speed: 1, sight: 12 },
 }
 
-/** Settings with overrides from the address (`?seconds=30&bots=5&level=hard`), for trying values quickly. */
-export function settingsFrom(search: string, base: Settings = SETTINGS): Settings {
+/**
+ * Settings with the player's choices (Settings screen), then overrides from the address
+ * (`?seconds=30&bots=5&level=hard&overtime=5`) for trying values quickly.
+ */
+export function settingsFrom(
+  search: string,
+  defaults: Settings = SETTINGS,
+  chosen: Partial<Pick<Settings, 'botLevel' | 'botCount'>> = {},
+): Settings {
+  const base = { ...defaults, ...chosen }
   const params = new URLSearchParams(search)
   const number = (name: string, min: number, max: number) => {
     const value = Number(params.get(name))
@@ -94,6 +108,7 @@ export function settingsFrom(search: string, base: Settings = SETTINGS): Setting
   return {
     ...base,
     matchSeconds: number('seconds', 5, 600) ?? base.matchSeconds,
+    overtimeSeconds: number('overtime', 0, 600) ?? base.overtimeSeconds,
     botCount: number('bots', 1, 8) ?? base.botCount,
     botLevel: level === 'easy' || level === 'medium' || level === 'hard' ? level : base.botLevel,
   }

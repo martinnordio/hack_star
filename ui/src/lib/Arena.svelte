@@ -7,11 +7,12 @@
   import { CANYON } from './game/arena'
   import { newControls, stickVector } from './game/controls'
   import { Match } from './game/match'
-  import { settingsFrom } from './game/settings'
+  import { SETTINGS, settingsFrom } from './game/settings'
   import { World } from './game/world'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
+  import { options } from './options'
   import { applyReward, nextPrestigeAt, rewardFor, type Reward } from './game/trophies'
   import type { MatchResult } from './game/match'
   import { Tween } from 'svelte/motion'
@@ -36,7 +37,7 @@
   const { match, world, looks } = untrack(() => {
     const playerPower = powerOf(get(progress), player.fighterId)
     const match =
-      mode === 'match' ? new Match(CANYON, settingsFrom(location.search), { playerPower }) : undefined
+      mode === 'match' ? new Match(CANYON, settingsFrom(location.search, SETTINGS, get(options)), { playerPower }) : undefined
     const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower)] })
     const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
     const looks: Look[] = world.fighters.map((f) =>
@@ -49,12 +50,17 @@
 
   let hud = $state<Hud>()
   let showFight = $state(false)
+  let showOvertime = $state(false)
   let showResult = $state(false)
 
   function onHud(next: Hud) {
     if (hud?.phase === 'countdown' && next.phase === 'fight') {
       showFight = true
       setTimeout(() => (showFight = false), 800)
+    }
+    if (hud && !hud.overtime && next.overtime) {
+      showOvertime = true
+      setTimeout(() => (showOvertime = false), 1600)
     }
     if (hud?.phase !== 'over' && next.phase === 'over') {
       if (match && next.result) saveReward(match, next.result)
@@ -83,6 +89,7 @@
   })
 
   const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+  const LEVEL_NAMES = { easy: 'Easy', medium: 'Medium', hard: 'Hard' }
   const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`
 
   interface Stick {
@@ -206,15 +213,20 @@
 
   {#if hud}
     <div class="hud">
-      <div class="timer" class:hurry={hud.timeLeft <= 10}>{clock(hud.timeLeft)}</div>
+      <div class="timer" class:overtime={hud.overtime} class:hurry={hud.timeLeft <= 10}>{clock(hud.timeLeft)}</div>
       <div class="left" aria-label="Fighters left">👤 {hud.fightersLeft}</div>
     </div>
     {#if hud.phase === 'countdown' && hud.countdown > 0}
       {#key hud.countdown}
         <div class="big" role="status">{hud.countdown}</div>
       {/key}
+      {#if match}
+        <div class="level-chip">{LEVEL_NAMES[match.settings.botLevel]} · {match.settings.botCount} {match.settings.botCount === 1 ? 'bot' : 'bots'}</div>
+      {/if}
     {:else if showFight}
       <div class="big fight" role="status">FIGHT!</div>
+    {:else if showOvertime && hud.phase === 'fight'}
+      <div class="big overtime" role="status">OVERTIME!<small>No more walls!</small></div>
     {/if}
   {/if}
 
@@ -368,6 +380,11 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .timer.overtime {
+    background: #8a1030dd;
+    border-color: #ffd23f;
+  }
+
   .timer.hurry {
     color: #ff4d4d;
     animation: pulse 1s infinite;
@@ -397,6 +414,37 @@
 
   .big.fight {
     color: #ff4f9a;
+  }
+
+  .level-chip {
+    position: absolute;
+    left: 50%;
+    top: calc(max(0.75rem, env(safe-area-inset-top)) + 3.6rem);
+    transform: translateX(-50%);
+    padding: 0.25em 0.9em;
+    border-radius: 999px;
+    background: #160f33cc;
+    border: 3px solid #000;
+    color: white;
+    font-weight: 900;
+    font-size: clamp(1rem, 3.5vw, 1.4rem);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .big.overtime {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: clamp(2.6rem, 11vw, 6rem);
+    color: #ff4d4d;
+    white-space: nowrap;
+    animation-duration: 1.6s;
+  }
+
+  .big.overtime small {
+    font-size: 0.4em;
+    color: #ffd23f;
   }
 
   @keyframes count {

@@ -57,6 +57,7 @@ export type WorldEvent =
   | { type: 'hurt'; fighterId: number; by: number; x: number; z: number; damage: number }
   | { type: 'knockout'; fighterId: number; by: number; x: number; z: number }
   | { type: 'blocked'; owner: number; x: number; z: number }
+  | { type: 'coverGone' }
 
 export interface WorldOptions {
   /** Number of fighters; fighter 0 is the player. Training has 1. */
@@ -106,6 +107,9 @@ export class World {
   fighters: Fighter[]
   shots: Shot[] = []
   dummies: Dummy[]
+  /** Walls and bushes still standing (overtime removes them). */
+  walls: Rect[]
+  bushes: Circle[]
   /** Things that happened since the last `drainEvents()`, for effects. */
   private events: WorldEvent[] = []
   private nextShotId = 1
@@ -115,6 +119,8 @@ export class World {
     { fighters = 1, dummies = fighters === 1, stats = [] }: WorldOptions = {},
   ) {
     const spots = fighters === 1 ? [arena.start] : arena.spawns
+    this.walls = [...arena.walls]
+    this.bushes = [...arena.bushes]
     if (fighters > spots.length) throw new Error(`The arena has room for ${spots.length} fighters`)
     this.fighters = spots.slice(0, fighters).map((s, id) => {
       const { health, damage } = stats[id] ?? { health: SETTINGS.fighterHealth, damage: SETTINGS.shotDamage }
@@ -160,7 +166,7 @@ export class World {
   }
 
   private resolve(f: Fighter) {
-    for (const wall of this.arena.walls) pushOutOfRect(f, PLAYER_RADIUS, wall)
+    for (const wall of this.walls) pushOutOfRect(f, PLAYER_RADIUS, wall)
     const others = [
       ...this.dummies.filter((d) => d.brokenAt === null).map((d) => ({ x: d.x, z: d.z, r: DUMMY_RADIUS })),
       ...this.fighters.filter((o) => o !== f && !o.out).map((o) => ({ x: o.x, z: o.z, r: PLAYER_RADIUS })),
@@ -229,7 +235,7 @@ export class World {
         return false
       }
       const blocked =
-        this.arena.walls.some((w) => overlapsRect(s.x, s.z, SHOT_RADIUS, w)) ||
+        this.walls.some((w) => overlapsRect(s.x, s.z, SHOT_RADIUS, w)) ||
         Math.abs(s.x) > halfW ||
         Math.abs(s.z) > halfD
       if (blocked || s.travelled >= SHOT_RANGE) {
@@ -275,7 +281,15 @@ export class World {
   }
 
   inBush(f: Fighter = this.player): boolean {
-    return this.arena.bushes.some((b) => inside(f.x, f.z, b))
+    return this.bushes.some((b) => inside(f.x, f.z, b))
+  }
+
+  /** Walls and bushes disappear for the rest of the world's life. */
+  removeCover() {
+    if (this.walls.length === 0 && this.bushes.length === 0) return
+    this.walls = []
+    this.bushes = []
+    this.events.push({ type: 'coverGone' })
   }
 
   /** Whether `viewer` can see `target` within `range` (bushes hide unless close). */

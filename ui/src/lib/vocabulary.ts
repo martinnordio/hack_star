@@ -20,6 +20,7 @@ export const VOCABULARY: Word[] = [
   { word: 'Star Power', meaning: 'A passive bonus a fighter gets at a high power level.' },
   { word: 'Hypercharge', meaning: 'A boosted Super that makes the fighter extra strong for a short time.' },
   { word: 'Showdown', meaning: 'Mode where the last fighter standing wins.' },
+  { word: 'Overtime', meaning: 'Hack star: one extra minute when time runs out; the walls and cacti break so nobody can hide.' },
   { word: 'Gem Grab', meaning: 'Team mode: collect and hold 10 gems to win.' },
   { word: 'Brawl Ball', meaning: 'Team mode: score two goals, like football.' },
   { word: 'Bush', meaning: 'Tall grass where fighters hide.' },

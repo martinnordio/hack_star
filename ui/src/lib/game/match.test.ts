@@ -107,14 +107,71 @@ describe('Match', () => {
     expect(match.result).toEqual({ kind: 'defeat', place: 4 })
   })
 
-  it('time up with bots still in is a draw (or a defeat if set so)', () => {
-    const draw = new Match(open, settings, still)
+  it('time up with bots still in is a draw (or a defeat if set so) without overtime', () => {
+    const noOvertime = { ...settings, overtimeSeconds: 0 }
+    const draw = new Match(open, noOvertime, still)
     run(13.2, (dt) => draw.update(dt))
     expect(draw.result).toEqual({ kind: 'timeup' })
 
-    const defeat = new Match(open, { ...settings, timeUpResult: 'defeat' }, still)
+    const defeat = new Match(open, { ...noOvertime, timeUpResult: 'defeat' }, still)
     run(13.2, (dt) => defeat.update(dt))
     expect(defeat.result).toEqual({ kind: 'defeat', place: 2 })
+  })
+
+  describe('overtime', () => {
+    const overtime = { ...settings, overtimeSeconds: 5 }
+
+    it('starts when time runs out with fighters still in, and removes walls and bushes', () => {
+      const match = new Match(CANYON, overtime, still)
+      run(13.05, (dt) => match.update(dt))
+      expect(match.result).toBeNull()
+      expect(match.overtime).toBe(true)
+      expect(match.timeLeft).toBeGreaterThan(4.5)
+      expect(match.world.walls).toEqual([])
+      expect(match.world.bushes).toEqual([])
+      expect(match.world.drainEvents().filter((e) => e.type === 'coverGone')).toHaveLength(1)
+    })
+
+    it('ends in a draw when overtime runs out', () => {
+      const match = new Match(open, overtime, still)
+      run(17.9, (dt) => match.update(dt))
+      expect(match.result).toBeNull()
+      run(0.3, (dt) => match.update(dt))
+      expect(match.result).toEqual({ kind: 'timeup' })
+    })
+
+    it('a win during overtime is a normal victory', () => {
+      const match = new Match(open, overtime, still)
+      run(13.1, (dt) => match.update(dt))
+      const bot = match.world.fighters[1]
+      run(4, (dt) => {
+        if (match.phase === 'fight') match.firePlayer(bot.x - match.world.player.x, bot.z - match.world.player.z)
+        match.update(dt)
+      })
+      expect(match.result).toEqual({ kind: 'victory' })
+    })
+
+    it('keeps the walls when set so', () => {
+      const match = new Match(CANYON, { ...overtime, overtimeRemovesCover: false }, still)
+      run(13.1, (dt) => match.update(dt))
+      expect(match.overtime).toBe(true)
+      expect(match.world.walls).toHaveLength(CANYON.walls.length)
+    })
+  })
+
+  it('a shot flies through where a wall was once the cover is gone', () => {
+    const arena: Arena = { ...open, walls: [{ x: 0, z: -2, w: 4, d: 1 }] }
+    const blocked = new World(arena, { fighters: 2 })
+    blocked.fire(0, -1)
+    run(0.5, (dt) => blocked.step(dt))
+    expect(blocked.fighters[1].health).toBe(blocked.fighters[1].maxHealth)
+
+    const open2 = new World(arena, { fighters: 2 })
+    open2.removeCover()
+    open2.fire(0, -1)
+    run(0.5, (dt) => open2.step(dt))
+    expect(open2.fighters[1].health).toBeLessThan(open2.fighters[1].maxHealth)
+    expect(CANYON.walls.length).toBeGreaterThan(0)
   })
 
   it('uses the number of bots from the settings', () => {
