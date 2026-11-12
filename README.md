@@ -5,7 +5,7 @@ credits, unlock every fighter and allow power levels up to 22. It runs on a desk
 phone browser.
 
 - Vision: [.specs/overall_req.md](.specs/overall_req.md)
-- Feature list and MVP scope: [MVP and architecture spec](.specs/features/2026_11_12_mvp_and_architecture_spec.md)
+- Feature list and MVP scope: [MVP and architecture spec](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md)
 - All specs: [.specs/features/](.specs/features/)
 
 ## Layout

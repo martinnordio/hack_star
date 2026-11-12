@@ -1,7 +1,7 @@
 # MVP and Architecture Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/mvp-and-architecture`
@@ -14,12 +14,12 @@
 
 Hack star is a browser game for kids inspired by Brawl Stars, with one twist: **hack codes**
 that give unlimited credits, unlock all fighters and allow 22 power levels instead of 11. This
-spec (Spec 0 in [overall_req.md](../overall_req.md)) defines the minimum playable game that can be
+spec (Spec 0 in [overall_req.md](../../overall_req.md)) defines the minimum playable game that can be
 built in about one day, the feature list (F0…F8), and the technical foundation that the
 other features build on.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [overall_req.md](../overall_req.md) — the vision and Spec 0, Spec 1 and Spec 2. There is no code yet.
+- [overall_req.md](../../overall_req.md) — the vision and Spec 0, Spec 1 and Spec 2. There is no code yet.
 - `.spec-nx/` and `.specs/kit/` — the spec kit used to write these specs.
 
 **New:**
@@ -28,10 +28,10 @@ other features build on.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
-| [Basic UI spec](2026_11_12_basic_ui_spec.md) | F1 |
-| [Hack codes spec](2026_11_12_hack_codes_spec.md) | F2 |
-| [Graphics demo spec](2026_11_12_graphics_demo_spec.md) | F3 |
+| [overall_req.md](../../overall_req.md) | Overall game idea and planned specs |
+| [Basic UI spec](../2026_11_12_basic_ui_spec.md) | F1 |
+| [Hack codes spec](../2026_11_12_hack_codes_spec.md) | F2 |
+| [Graphics demo spec](../2026_11_12_graphics_demo_spec.md) | F3 |
 
 ### Investigation: Brawl Stars (the parts that matter for Hack star)
 
@@ -69,9 +69,9 @@ names and logos are copyrighted and are not used.
 | # | Feature | Spec | In MVP |
 |---|---------|------|--------|
 | F0 | Architecture and foundation: server, UI, runs on desktop, iPad, phone | this spec | ✅ |
-| F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_basic_ui_spec.md) | ✅ |
-| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_hack_codes_spec.md) | ✅ |
-| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_graphics_demo_spec.md) | ✅ |
+| F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](../2026_11_12_basic_ui_spec.md) | ✅ |
+| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](../2026_11_12_hack_codes_spec.md) | ✅ |
+| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](../2026_11_12_graphics_demo_spec.md) | ✅ |
 | F4 | First real match: last fighter standing against bots, win or lose | — | ✅ |
 | F5 | Trophies after each match and Prestige levels, saved between visits | — | ✅ |
 | F6 | Unlock fighters with credits; power levels change health and damage | — | later |
@@ -87,7 +87,7 @@ names and logos are copyrighted and are not used.
 - **S3 — Input:** Everything can be done with touch on iPad and phone, and with mouse and
   keyboard on a desktop.
 - **S4 — Technology:** The server is written in Python and the UI in Svelte (decided in
-  [overall_req.md](../overall_req.md)).
+  [overall_req.md](../../overall_req.md)).
 - **S5 — Run locally:** A developer can start the server and the UI on one computer by
   following the README, and play from an iPad or phone on the same Wi-Fi.
 - **S6 — Smooth:** Animated screens run at 30 frames per second or more on a recent iPad
@@ -122,7 +122,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 | **0** | Server and UI scaffolding | ✅ Done | [→ Step 0](#step-0--server-and-ui-scaffolding) |
 | **1** | Responsive 3D shell | ✅ Done | [→ Step 1](#step-1--responsive-3d-shell) |
 | **2** | Progress saved on the device | ✅ Done | [→ Step 2](#step-2--progress-saved-on-the-device) |
-| **3** | README, asset licences, final check | ⬜ Not started | [→ Step 3](#step-3--readme-asset-licences-final-check) |
+| **3** | README, asset licences, final check | ✅ Done | [→ Step 3](#step-3--readme-asset-licences-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -218,14 +218,18 @@ Started: 2026-11-12 09:35
 Anyone can install, run and open the game on the computer and on an iPad/phone (S5, S7, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `README.md`: what Hack star is, feature list link, prerequisites (`uv`, Node), how to install, run, test, and play from iPad/phone on the same Wi-Fi.
-- [ ] `ui/public/assets/LICENSES.md`: the allowed sources and licence rule (D8), empty asset list.
-- [ ] `.gitignore`: `node_modules`, `dist`, `.venv`, caches.
-- [ ] Check: from a clean clone, the README steps start both parts; `uv run pytest` and `npm test` pass.
+- [x] Record the start time in Notes below.
+- [x] `README.md`: what Hack star is, feature list link, prerequisites (`uv`, Node), how to install, run, test, and play from iPad/phone on the same Wi-Fi.
+- [x] `ui/public/assets/LICENSES.md`: the allowed sources and licence rule (D8), empty asset list.
+- [x] `.gitignore`: `node_modules`, `dist`, `.venv`, caches.
+- [x] Check: from a clean clone, the README steps start both parts; `uv run pytest` and `npm test` pass.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:36
+
+The empty `server/README.md` from `uv init` was removed; the root README covers both parts.
+
+**Done (2026-11-12 · ~2m)** — README and asset licences. Clean clone with `--recurse-submodules` into a temp folder: `uv sync` + `uv run pytest` 1 passed; `npm install` + `npm test` 7 passed; `npm run build` ok.
 
 ---
 
@@ -250,5 +254,5 @@ Anyone can install, run and open the game on the computer and on an iPad/phone (
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`

@@ -15,11 +15,11 @@
 Hack codes are what makes Hack star different from Brawl Stars: by typing a secret code or
 scanning a QR code, a player gets unlimited credits, all fighters unlocked, and power levels up
 to 22 instead of 11. This is F2 in the
-[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) and the "hack codes" part
+[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) and the "hack codes" part
 of [overall_req.md](../overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input) and S9 (progress kept on the device) apply here.
 - [Basic UI spec](2026_11_12_basic_ui_spec.md) — credits on the home screen (S1), fighter list
   with locks and power levels (S4). There is no code yet.
