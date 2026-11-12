@@ -75,7 +75,7 @@ are for later specs._
 |------|-------------|--------|--------|
 | **1** | Arena rules (movement, shots, targets) | ✅ Done | [→ Step 1](#step-1--arena-rules-movement-shots-targets) |
 | **2** | Canyon arena and camera | ✅ Done | [→ Step 2](#step-2--canyon-arena-and-camera) |
-| **3** | Controls, running and shooting | ⬜ Not started | [→ Step 3](#step-3--controls-running-and-shooting) |
+| **3** | Controls, running and shooting | ✅ Done | [→ Step 3](#step-3--controls-running-and-shooting) |
 | **4** | Targets and effects | ⬜ Not started | [→ Step 4](#step-4--targets-and-effects) |
 | **5** | Final check | ⬜ Not started | [→ Step 5](#step-5--final-check) |
 
@@ -152,15 +152,19 @@ Scenery is built in `models/arena3d.ts` (tiles as one instanced mesh). Cliffs on
 The fighter runs and shoots with keyboard and mouse or with touch joysticks (S2–S4).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Keyboard: WASD and arrow keys; mouse aims (on the ground) and click fires.
-- [ ] Touch: left joystick moves; right joystick aims and fires on release; quick tap fires at the nearest target.
-- [ ] Run animation (lean, bounce, faces the way it runs) and attack animation (turn to aim, recoil).
-- [ ] Shots drawn as glowing balls in the fighter's colour.
-- [ ] Check: browser — keys move the fighter, it stops at walls; click fires a shot that stops at a wall; simulated touch on both joysticks moves and fires.
+- [x] Record the start time in Notes below.
+- [x] Keyboard: WASD and arrow keys; mouse aims (on the ground) and click fires.
+- [x] Touch: left joystick moves; right joystick aims and fires on release; quick tap fires at the nearest target.
+- [x] Run animation (lean, bounce, faces the way it runs) and attack animation (turn to aim, recoil).
+- [x] Shots drawn as glowing balls in the fighter's colour.
+- [x] Check: browser — keys move the fighter, it stops at walls; click fires a shot that stops at a wall; simulated touch on both joysticks moves and fires.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:15
+
+Extras: holding the mouse button keeps firing (with the cool-down); Space fires at the nearest target; a white aim guide shows where the shot goes. Joysticks appear where the thumb touches (left half moves, right half aims); faint hints show on touch devices. In development the arena element carries `data-player`, `data-shots`, `data-dummies`, `data-in-bush` for browser checks.
+
+**Done (2026-11-12 · ~8m)** — browser: A then W → (−2.5, 8) then stops at the wall at z 7.70; mouse down fires (1 shot); touch left stick drag → x 0 → 3.1; right stick drag + release fires; quick tap fires. `vitest` 33 passed, `svelte-check` 0 errors.
 
 ---
 
