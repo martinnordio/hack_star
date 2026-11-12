@@ -10,6 +10,13 @@
   import { settingsFrom } from './game/settings'
   import { World } from './game/world'
   import { portrait } from './portraits'
+  import PrestigeBadge from './PrestigeBadge.svelte'
+  import { progress } from './progress'
+  import { applyReward, nextPrestigeAt, rewardFor, type Reward } from './game/trophies'
+  import type { MatchResult } from './game/match'
+  import { Tween } from 'svelte/motion'
+  import { cubicOut } from 'svelte/easing'
+  import { get } from 'svelte/store'
 
   interface Props {
     mode: 'match' | 'training'
@@ -46,9 +53,29 @@
       showFight = true
       setTimeout(() => (showFight = false), 800)
     }
-    if (hud?.phase !== 'over' && next.phase === 'over') setTimeout(() => (showResult = true), 1200)
+    if (hud?.phase !== 'over' && next.phase === 'over') {
+      if (match && next.result) saveReward(match, next.result)
+      setTimeout(() => (showResult = true), 1200)
+    }
     hud = next
   }
+
+  // Saved as soon as the match ends, so leaving before the result screen still keeps it.
+  let reward = $state<Reward>()
+  const shownTrophies = new Tween(0, { duration: 900, easing: cubicOut })
+
+  function saveReward(m: Match, result: MatchResult) {
+    const current = get(progress).trophies[player.fighterId] ?? 0
+    const r = rewardFor(current, result, m.settings)
+    progress.update((p) => applyReward(p, player.fighterId, r))
+    reward = r
+    shownTrophies.set(r.before, { duration: 0 })
+  }
+
+  $effect(() => {
+    // Count up once the result screen is on.
+    if (showResult && reward) setTimeout(() => (shownTrophies.target = reward!.after), 400)
+  })
 
   const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
   const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`
@@ -202,6 +229,25 @@
           Nobody won this time
         {/if}
       </div>
+      {#if reward}
+        {@const shown = Math.round(shownTrophies.current)}
+        {@const floor = Math.floor(shown / 1000) * 1000}
+        <div class="trophies" aria-label="Trophies">
+          <span class="change" class:zero={reward.change === 0} class:minus={reward.change < 0}>
+            {reward.change > 0 ? '+' : ''}{reward.change} 🏆
+          </span>
+          <div class="bar" aria-label="{shown} of {nextPrestigeAt(shown)} trophies to the next Prestige">
+            <div class="fill" style="width: {((shown - floor) / 1000) * 100}%"></div>
+            <span>🏆 {shown} / {nextPrestigeAt(shown)}</span>
+          </div>
+        </div>
+        {#if reward.prestigeAfter > reward.prestigeBefore && shown >= reward.after}
+          <div class="prestige-up" role="status">
+            <PrestigeBadge trophies={reward.after} size={2.2} />
+            <span>PRESTIGE {reward.prestigeAfter}!</span>
+          </div>
+        {/if}
+      {/if}
       <div class="actions">
         <button class="again" onclick={onPlayAgain}>Play again</button>
         <button class="home" onclick={onLeave}>Home</button>
@@ -364,9 +410,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: safe center;
     gap: 0.4rem;
-    padding: 1rem;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+    overflow-y: auto;
     background: radial-gradient(circle, #3a2a8cdd, #1b1446f2);
     color: white;
     text-align: center;
@@ -399,13 +446,101 @@
   }
 
   .result img {
-    width: min(14rem, 38vh);
+    width: min(14rem, 24vh);
     aspect-ratio: 1;
+    flex: none;
+  }
+
+  @media (max-height: 560px) {
+    .result {
+      gap: 0.2rem;
+    }
+
+    .result .title {
+      font-size: 2.4rem;
+    }
+
+    .result img {
+      /* Phones on their side: the buttons matter more than the picture. */
+      display: none;
+    }
+
+    .result .detail {
+      font-size: 1rem;
+    }
+
+    .change,
+    .prestige-up {
+      font-size: 1.6rem;
+    }
   }
 
   .result .detail {
     font-size: 1.3rem;
     font-weight: 800;
+  }
+
+  .trophies {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    width: min(22rem, 90%);
+  }
+
+  .change {
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    font-weight: 900;
+    color: #ffd23f;
+    -webkit-text-stroke: 0.05em #160f33;
+    paint-order: stroke fill;
+    animation: count 0.6s 0.3s ease-out both;
+  }
+
+  .change.zero {
+    color: #cfd3dc;
+  }
+
+  .change.minus {
+    color: #ff4d4d;
+  }
+
+  .bar {
+    position: relative;
+    width: 100%;
+    height: 1.8rem;
+    border-radius: 0.9rem;
+    border: 3px solid #000;
+    background: #160f33;
+    overflow: hidden;
+  }
+
+  .bar .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: linear-gradient(#ffe45c, #ffb000);
+  }
+
+  .bar span {
+    position: relative;
+    display: block;
+    line-height: 1.6rem;
+    font-weight: 900;
+    text-shadow: 0 2px 0 #000;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prestige-up {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: clamp(1.8rem, 7vw, 3rem);
+    font-weight: 900;
+    font-style: italic;
+    color: #fff3a0;
+    -webkit-text-stroke: 0.05em #160f33;
+    paint-order: stroke fill;
+    animation: count 0.7s cubic-bezier(0.3, 1.8, 0.5, 1) both;
   }
 
   .actions {

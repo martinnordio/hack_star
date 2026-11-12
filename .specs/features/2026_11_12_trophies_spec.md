@@ -74,7 +74,7 @@ takes none (S2, S8)._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Trophy rules | ✅ Done | [→ Step 1](#step-1--trophy-rules) |
-| **2** | Rewards after a match | ⬜ Not started | [→ Step 2](#step-2--rewards-after-a-match) |
+| **2** | Rewards after a match | ✅ Done | [→ Step 2](#step-2--rewards-after-a-match) |
 | **3** | Final check and documentation | ⬜ Not started | [→ Step 3](#step-3--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -125,13 +125,17 @@ Also `nextPrestigeAt()` for the result screen's progress bar.
 After every match the trophies are saved and the result screen shows them, with a Prestige celebration (S3–S5, S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Arena.svelte`: when a match ends, work out the reward and save it once (match only).
-- [ ] Result screen: "+10 🏆" counting up, new count, bar to the next Prestige; "PRESTIGE n!" with the badge when it went up.
-- [ ] Check (browser): win with Blaze at 1240 → result shows +10 and 1250 / 2000, home shows 1250 and total +10; set Blaze to 1990 and win → "PRESTIGE 2!"; a defeat shows no change; training changes nothing; leaving a match early changes nothing.
+- [x] Record the start time in Notes below.
+- [x] `Arena.svelte`: when a match ends, work out the reward and save it once (match only).
+- [x] Result screen: "+10 🏆" counting up, new count, bar to the next Prestige; "PRESTIGE n!" with the badge when it went up.
+- [x] Check (browser): win with Blaze at 1240 → result shows +10 and 1250 / 2000, home shows 1250 and total +10; set Blaze to 1990 and win → "PRESTIGE 2!"; a defeat shows no change; training changes nothing; leaving a match early changes nothing.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:04
+
+The trophy count and bar count up from the old to the new value (Svelte `Tween`); the Prestige celebration appears when the count reaches the new Prestige. The result screen scrolls if it must and, on short screens (phones on their side), leaves out the fighter picture so the buttons stay visible.
+
+**Done (2026-11-12 · ~8m)** — browser: fresh progress, win → "+10 🏆 | 🏆 1250 / 2000", saved `blaze: 1250`, home total 1,755 and plate 1250; Blaze 1990 → win → "PRESTIGE 2!" with badge; Blaze 1995 → 2005; defeat (3rd) → "0 🏆", still 2005; training and leaving a match early → still 2005.
 
 ---
 
