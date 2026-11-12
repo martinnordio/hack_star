@@ -62,8 +62,8 @@ Paths are relative to this file (`.specs/kit/plan/`).
 
      Every statement S… is covered by at least one Step. Each Step leaves the game running and
      is small enough to review in one sitting. The last Step checks that what worked before
-     still works, and updates the documents the change affects (README: how to install, run
-     and play).
+     still works, and **always** updates the documentation: the README (how to install, run
+     and play) and `docs/architecture.md` (where the new parts are and how they fit).
    - **Deferred Items:** what is consciously left out, with reason and target spec; empty table
      if nothing.
    - **Review Log:** the empty table from the template.

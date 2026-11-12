@@ -38,7 +38,8 @@ Paths are relative to this file (`.specs/kit/requirements/`).
 1. **Read the repository first.** Before writing anything, look at:
    - `.specs/overall_req.md` — the overall vision of Hack star (a browser game like Brawl Stars,
      with hack codes) and which spec the request belongs to;
-   - the README, if there is one;
+   - the README and [`docs/architecture.md`](../../../docs/architecture.md) — how the game
+     is built today;
    - the specs in `.specs/features/` and `.specs/features/done/` — is this feature, or part of
      it, already specified or built?
    - the server (Python) and UI (Svelte) code, if it exists: search for the words of the

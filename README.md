@@ -7,6 +7,7 @@ phone browser.
 - Vision: [.specs/overall_req.md](.specs/overall_req.md)
 - Feature list and MVP scope: [MVP and architecture spec](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md)
 - All specs: [.specs/features/](.specs/features/)
+- How the code is organised: [docs/architecture.md](docs/architecture.md)
 
 ## Layout
 
@@ -14,6 +15,7 @@ phone browser.
 |--------|------|
 | `server/` | Python game server (FastAPI) |
 | `ui/` | Svelte UI with 3D graphics (Threlte / Three.js) |
+| `docs/` | Documentation of how the game is built |
 | `.specs/` | Specs, written with the spec kit in `.specs/kit/` |
 | `.spec-nx/` | spec-nx (git submodule) |
 
@@ -50,15 +52,25 @@ Hack star server" with a **Try again** button.
 ### What is there
 
 - **Home:** the selected fighter in 3D with an entrance animation (tap to skip), trophies,
-  credits, Prestige badge, and **Play**.
-- **Play:** a canyon arena with your fighter and three target dummies (no win or lose yet):
+  credits, Prestige badge, **Play** and **Training**.
+- **Play:** a match in the canyon, last fighter standing, against 3 bots (other fighters):
+  - "3, 2, 1, FIGHT!" countdown, then a 2-minute timer (red in the last 10 seconds) and the
+    number of fighters still in.
+  - Every fighter has a health bar (yours green, bots red); a hit takes 480. After 3 seconds
+    without being hit or shooting, health slowly comes back.
+  - Bots fight you and each other. In the cacti you are see-through and bots far away cannot
+    see you; bots hiding in cacti are invisible unless you are close.
+  - The match ends with **Victory** (last one standing), **Defeat** (with your place) or
+    **Time's up**; then **Play again** or **Home**.
+- **Training:** the same arena with three target dummies (5 hits break one; it comes back
+  after 5 seconds) to practise.
+
+  Controls in matches and training:
 
   | | Move | Aim and shoot |
   |---|------|---------------|
   | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target |
   | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target |
-
-  Hide in the cacti to become see-through. Broken dummies come back after 5 seconds.
 - **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D and
   choose a skin.
 - **Info:** the words kids use in the game.
@@ -74,6 +86,13 @@ Hack star server" with a **Try again** button.
 
 Progress (chosen fighter and skins, trophies) is saved in the browser of each device. Open
 <http://localhost:5180/?gallery> to see every fighter and skin side by side.
+
+### Match settings
+
+Match length, number of bots, bot level (easy, medium, hard) and what "time's up" means are
+in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts) (`SETTINGS`). To try other values
+without changing code, add them to the address, for example
+<http://localhost:5180/?seconds=60&bots=5&level=medium> (1–8 bots, 5–600 seconds).
 
 ### Play on an iPad or phone
 

@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/first-match`
@@ -84,7 +84,7 @@ result, bots fighting each other) use the defaults above, set in one place (S10)
 | **1** | Match rules: fighters, health, knock-outs, timer, result | ✅ Done | [→ Step 1](#step-1--match-rules-fighters-health-knock-outs-timer-result) |
 | **2** | Bot brains | ✅ Done | [→ Step 2](#step-2--bot-brains) |
 | **3** | Match screen | ✅ Done | [→ Step 3](#step-3--match-screen) |
-| **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
+| **4** | Final check and documentation | ✅ Done | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -184,14 +184,18 @@ Bots hiding in a bush are invisible (with their shots) unless the player is with
 Smooth on every screen size; F0–F3 still work; README and architecture documentation describe the game (S13, D7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Browser check at 390×844, 844×390, 1024×768, 1440×900: ≥ 30 FPS with all bots; HUD and buttons visible.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: how a match works and its controls; where the settings are.
-- [ ] `docs/architecture.md`: server, UI screens, game rules (`game/`), 3D models (`models/`), saved progress, settings, how to add a fighter or a hack.
+- [x] Record the start time in Notes below.
+- [x] Browser check at 390×844, 844×390, 1024×768, 1440×900: ≥ 30 FPS with all bots; HUD and buttons visible.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: how a match works and its controls; where the settings are.
+- [x] `docs/architecture.md`: server, UI screens, game rules (`game/`), 3D models (`models/`), saved progress, settings, how to add a fighter or a hack.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:47
+
+The spec kit now makes documentation part of every spec: the requirements stage reads `docs/architecture.md`, the plan stage's last Step always updates README and `docs/architecture.md`, and the spec template links both.
+
+**Done (2026-11-12 · ~3m)** — 4 sizes: 61 FPS while running and shooting with 3 bots; timer, fighters-left and back button inside the screen. `pytest` 15 passed, `npm test` 52 passed, `svelte-check` 0 errors, build ok; all links in README and `docs/architecture.md` resolve.
 
 ---
 
@@ -217,5 +221,5 @@ Smooth on every screen size; F0–F3 still work; README and architecture documen
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`
