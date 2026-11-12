@@ -16,7 +16,7 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 |------|-------|-----------|
 | spec-nx | [`.spec-nx/`](.spec-nx/) (git submodule of [spec-nx](https://github.com/martinnordio/spec-nx)) | The methodology and the generator of the kit |
 | Generated kit | [`.specs/kit/`](.specs/kit/) | What spec-nx generated for this repository (see below) |
-| Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `pr`, no git host, PowerShell |
+| Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `pr`, git host GitHub with linked issues, PowerShell |
 | Vision | [`.specs/overall_req.md`](.specs/overall_req.md) | The idea of the game in our own words, and the questions for Mattia with his answers |
 | Specs | [`.specs/features/done/`](.specs/features/done/) | One file per feature, all finished |
 
@@ -24,12 +24,12 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 
 | File | Used for |
 |------|----------|
-| [requirements/prompt.md](.specs/kit/requirements/prompt.md) | Stage 1: write Part 1 of a spec — context, what already exists, testable requirements (S1…Sn), open questions |
+| [requirements/prompt.md](.specs/kit/requirements/prompt.md) | Stage 1: write Part 1 of a spec — context, what already exists, testable requirements (S1…Sn), open questions; `UPDATE ISSUE` puts its summary into the GitHub issue |
 | [plan/prompt.md](.specs/kit/plan/prompt.md) | Stage 2: write Part 2 — decisions, then Steps with a goal, tasks and a check each |
-| [pr/prompt.md](.specs/kit/pr/prompt.md) | Stage 3: close a spec — summary, review, Definition of Done |
+| [pr/prompt.md](.specs/kit/pr/prompt.md) | Stage 3: push the branch, open or update the pull request and the issue with the spec summary |
 | [spec_template.md](.specs/kit/spec_template.md) | The shape of every spec file |
 | [skills/requirements_engineer.md](.specs/kit/skills/requirements_engineer.md), [skills/architect.md](.specs/kit/skills/architect.md) | The roles the assistant takes for requirements and for the plan |
-| [tools/](.specs/kit/tools/) | `spec_summary.ps1`: a summary of all specs and their steps |
+| [tools/](.specs/kit/tools/) | `github/update_issue.ps1`, `github/update_pr.ps1`: keep the issue and the pull request in sync with the spec; `spec_summary.ps1`: shared helper |
 
 ## How it was used
 
@@ -49,8 +49,12 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 5. **Keep docs alive.** The last Step of every spec updates the [README](README.md),
    [docs/architecture.md](docs/architecture.md) and the in-game word list.
 6. **Close the spec**: tick the Definition of Done, move it to `.specs/features/done/`, merge the
-   branch into `master`. The git history shows this rhythm: a plan commit, one commit per Step, a
+   branch into `main`. The git history shows this rhythm: a plan commit, one commit per Step, a
    merge per feature.
+7. **On GitHub.** F0–F11 were built before the repository was on GitHub, so they were merged
+   locally; each has a closed issue that links to its spec. The open-source preparation that
+   followed went through a real pull request, and from now on every spec gets an issue, a
+   branch and a pull request through the `PR:` stage.
 
 ## The features and their specs
 

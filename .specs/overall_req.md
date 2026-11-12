@@ -1,11 +1,11 @@
 # Game: Hack star
 Name: HAck star
 
-The goal of the project is to develop a game based on Brawl starts, at most an identical copy with the following modifications:
+The goal of the project is to develop a game inspired by Brawl Stars, with our own fighters, art and twists, and with the following modifications:
 * Hack codes: adding some hack code (e.g. QR codes), the players can get unlimited credits to unlock fighters, levels and instead of doing 11 levels we can do 22. 
 
 # Spec 0
-Investigate the Brawl starts games. For example, a kid told me:
+Investigate the Brawl Stars game. For example, a kid told me:
 * If I win a match, the fighter gets 10 trophys, when we have 1000 trophys  it gets a dimond with a number
 
 In this spec, we need to define what the basic game is. so the basic part. The game should be a minimum viable product (a basic game). We need to finish the first version by the  end of one day, but take to account that we use Claude and you will go super fast. But we need to restrict and simplify the game so that we can play the game at the end of our trip. 

@@ -1,16 +1,8 @@
 # Tools
 
-Hack star has no git host yet (`git_host` is `"none"`), so the kit has no issue or
-pull-request scripts. The `PR:` stage builds the **summary** below and the user pastes it into
-the pull request by hand. To get the scripts later, set `git_host` in `.specs/spec-nx.json`
-(`"github"` or `"azure_devops"`) and run `GENERATE KIT --update`.
-
-`spec_summary.ps1` is the shared helper the git-host scripts use to put a summary between the
-markers of a description; it runs in Windows PowerShell 5.1 and PowerShell 7.
-
-## The summary
-
-Built by the stage prompt from the spec file, and placed between the markers
+Small PowerShell scripts that keep a GitHub issue and pull request in sync with a spec. They do
+not read the spec: the stage prompt builds the **summary** from the spec and writes it to a
+file; the script puts that text into the description, between the markers
 
 ```
 <!-- spec-summary:start -->
@@ -18,12 +10,33 @@ Built by the stage prompt from the spec file, and placed between the markers
 <!-- spec-summary:end -->
 ```
 
-Text outside the markers (written by hand) is kept.
+Text outside the markers (written by hand) is kept. Without markers, the block is added at the
+end. Every script has `-DryRun`, which prints the new description and changes nothing.
+
+| Script | Does |
+|--------|------|
+| `github/update_issue.ps1` | Issue description |
+| `github/update_pr.ps1` | Pull request of the current branch; creates it (draft allowed, `Closes #<issue>`) if there is none |
+| `spec_summary.ps1` | Shared helper: puts a summary between the markers |
+
+**Needs:** the GitHub CLI `gh`, logged in (`gh auth login`). The scripts run in Windows
+PowerShell 5.1 and PowerShell 7.
+
+## Examples
+
+```
+powershell -File .specs/kit/tools/github/update_issue.ps1 -Issue 12 -SummaryFile summary.md -DryRun
+powershell -File .specs/kit/tools/github/update_pr.ps1 -SummaryFile summary.md -Title "Skins shop (#12)" -Issue 12 -Draft
+```
+
+## The summary
+
+Built by the stage prompt from the spec file, in this form:
 
 ```markdown
 ### <Spec title>
 
-**Spec:** [<file name>](<link to the spec on the branch>) · **Status:** <Status from the header>
+**Spec:** [<file name>](<link to the spec>) · **Status:** <Status from the header>
 
 **Requirements**
 - **S1 — <name>:** <first sentence of S1>
@@ -36,8 +49,7 @@ Text outside the markers (written by hand) is kept.
 | 1 | <description> | ⬜ Not started |
 ```
 
-- Without a host, the link is the spec's path in the repository
-  (`.specs/features/<file>`); with a host, a full URL to the spec on the feature branch while
-  it is open, on the default branch once it is closed (in `.specs/features/done/`).
-- While the spec has no plan yet, the **Plan** part is left out.
-- Keep it short: Azure DevOps allows 4000 characters in a pull-request description.
+- The link is a full URL (`https://github.com/martinnordio/hack_star/blob/<branch>/<path>`):
+  to the feature branch while the spec is open, to `main` once it is closed (in
+  `.specs/features/done/`) — the feature branch is deleted after the merge.
+- While the spec has no plan yet (requirements stage), the **Plan** part is left out.
