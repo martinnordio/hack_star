@@ -14,6 +14,13 @@
     fightersLeft: number
     result: MatchResult | null
   }
+
+  /** The player's Super state, for the Super button. */
+  export interface Power {
+    superCharge: number
+    hyperReady: boolean
+    hyper: boolean
+  }
 </script>
 
 <script lang="ts">
@@ -23,7 +30,7 @@
   import { CANYON } from './game/arena'
   import { keyboardDirection, type Controls, type Vec2 } from './game/controls'
   import type { Match } from './game/match'
-  import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, type World, type WorldEvent } from './game/world'
+  import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, SUPER_SHOT_RADIUS, type World, type WorldEvent } from './game/world'
   import { buildArena } from './models/arena3d'
   import { buildDummy, setHealth } from './models/dummy3d'
   import { animateFighter, buildFighter, disposeRig, setRigOpacity } from './models/fighters3d'
@@ -41,9 +48,10 @@
     /** HTML layer over the canvas for floating damage numbers. */
     overlay?: HTMLElement
     onHud?: (hud: Hud) => void
+    onPower?: (power: Power) => void
   }
 
-  let { world, match, controls, looks, overlay, onHud }: Props = $props()
+  let { world, match, controls, looks, overlay, onHud, onPower }: Props = $props()
 
   const SHOT_COLORS: Record<string, string> = {
     blaze: '#ff7a1a',
@@ -55,6 +63,15 @@
   }
 
   const scenery = buildArena(CANYON)
+  const HYPER_COLOR = '#b64dff'
+  const haloGeometry = new THREE.SphereGeometry(1.3, 24, 16)
+  const haloMaterial = new THREE.MeshBasicMaterial({
+    color: HYPER_COLOR,
+    transparent: true,
+    opacity: 0.3,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  })
   const cover = ['walls', 'bushes'].map((name) => scenery.getObjectByName(name)!)
   let coverGoneAt: number | null = null
 
@@ -87,6 +104,8 @@
   interface FighterView {
     rig: Rig
     bar: HealthBar
+    /** Purple halo while hypercharged. */
+    halo: THREE.Mesh
     color: string
     core: THREE.MeshBasicMaterial
     glow: THREE.MeshBasicMaterial
@@ -106,6 +125,10 @@
       // Training has only the player: no bar over it.
       bar.group.visible = world.fighters.length > 1
       rig.root.add(bar.group)
+      const halo = new THREE.Mesh(haloGeometry, haloMaterial)
+      halo.position.y = 1.1
+      halo.visible = false
+      rig.root.add(halo)
       const color = SHOT_COLORS[look.fighterId] ?? '#ffd23f'
       const core = new THREE.MeshBasicMaterial({ color: new THREE.Color(color).lerp(new THREE.Color('#ffffff'), 0.35) })
       const glow = new THREE.MeshBasicMaterial({
@@ -115,9 +138,13 @@
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       })
-      return { rig, bar, color, core, glow, lastX: f.x, lastZ: f.z, runTime: 0, lastShotAt: -1, knockedAt: null, hidden: false }
+      return { rig, bar, halo, color, core, glow, lastX: f.x, lastZ: f.z, runTime: 0, lastShotAt: -1, knockedAt: null, hidden: false }
     }),
   )
+  // The player's Super meter: a thin yellow bar under its health bar.
+  const superBar = buildHealthBar(2.62, '#ffd23f')
+  superBar.group.scale.set(1, 0.6, 1)
+  views[0].rig.root.add(superBar.group)
   const fighterGroup = new THREE.Group()
   views.forEach((v) => fighterGroup.add(v.rig.root))
   $effect(() => () => views.forEach((v) => disposeRig(v.rig)))
@@ -212,6 +239,17 @@
       particles.burst({ color: '#ffffff', at: at(w.x, 0.3, w.z), count: 10, speed: 2.5, up: 1, life: 0.5, size: 0.2, endSize: 0.5 })
     } else if (e.type === 'coverGone') {
       breakCover()
+    } else if (e.type === 'super') {
+      const v = views[e.by]
+      v.lastShotAt = time
+      const color = e.hyper ? HYPER_COLOR : v.color
+      const ahead = at(e.x + e.dx * 0.9, 0.9, e.z + e.dz * 0.9)
+      particles.burst({ color, at: ahead, count: 14, speed: 5, up: 2, life: 0.35, size: 0.35, endSize: 0.8 })
+      particles.burst({ color: '#ffffff', at: ahead, count: 6, speed: 2, life: 0.2, size: 0.5, endSize: 1.2 })
+    } else if (e.type === 'hypercharge') {
+      const f = world.fighters[e.fighterId]
+      particles.burst({ color: HYPER_COLOR, at: at(f.x, 1, f.z), count: 24, speed: 6, up: 4, gravity: 6, life: 0.8, size: 0.25, endSize: 0.05 })
+      particles.burst({ color: '#ffffff', at: at(f.x, 1, f.z), count: 8, speed: 3, up: 2, life: 0.5, size: 0.5, endSize: 1.4 })
     }
   }
 
@@ -252,6 +290,13 @@
     return candidates.sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))[0]
   }
 
+  /** Towards the nearest target, or the way the player faces. */
+  function autoAim(): Vec2 {
+    const target = nearestTarget()
+    const p = world.player
+    return target ? { x: target.x - p.x, z: target.z - p.z } : { x: Math.sin(p.facing), z: Math.cos(p.facing) }
+  }
+
   function applyControls(dt: number) {
     const keys = keyboardDirection(controls.keys)
     const mx = keys.x + controls.moveStick.x
@@ -266,10 +311,14 @@
       controls.fireDir = null
     }
     if (controls.tapFire) {
-      const target = nearestTarget()
-      const p = world.player
-      fire(target ? { x: target.x - p.x, z: target.z - p.z } : { x: Math.sin(p.facing), z: Math.cos(p.facing) })
+      fire(autoAim())
       controls.tapFire = false
+    }
+    if (controls.superAim || controls.superAuto) {
+      const dir = (controls.superAim && aim) || autoAim()
+      if (canAct()) world.useSuper(world.player, dir.x, dir.z)
+      controls.superAim = false
+      controls.superAuto = false
     }
 
     aimLine.visible = canAct() && !!aim && (stickAim !== null || controls.pointer !== null)
@@ -308,6 +357,9 @@
       }
 
       animateFighter(v.rig, time + f.id)
+      const hyper = world.isHyper(f)
+      v.halo.visible = hyper
+      if (hyper) v.halo.scale.setScalar(1 + Math.sin(time * 12) * 0.08)
       const recoil = Math.max(0, 1 - (time - v.lastShotAt) / 0.15)
       const hop = moved ? Math.abs(Math.sin(v.runTime * 13)) * 0.18 : 0
       v.rig.root.position.set(f.x - Math.sin(f.facing) * recoil * 0.15, hop, f.z - Math.cos(f.facing) * recoil * 0.15)
@@ -316,6 +368,10 @@
       setBarHealth(v.bar, f.health / f.maxHealth)
       // The bar hangs on the turning fighter: undo its turn so the bar faces the camera.
       if (camera) v.bar.group.quaternion.copy(v.rig.root.quaternion).invert().multiply(camera.quaternion)
+      if (f.id === 0) {
+        setBarHealth(superBar, f.superCharge)
+        superBar.group.quaternion.copy(v.bar.group.quaternion)
+      }
 
       if (moved && !inBush && !hidden) {
         dustTimer -= dt / world.fighters.length
@@ -333,6 +389,24 @@
           })
         }
       }
+    }
+  }
+
+  let lastPower = ''
+
+  function reportPower() {
+    if (!onPower) return
+    const p = world.player
+    const power: Power = {
+      // Steps of 5% keep Svelte updates rare.
+      superCharge: Math.floor(p.superCharge * 20) / 20,
+      hyperReady: world.hyperReady(p),
+      hyper: world.isHyper(p),
+    }
+    const key = JSON.stringify(power)
+    if (key !== lastPower) {
+      lastPower = key
+      onPower(power)
     }
   }
 
@@ -365,6 +439,7 @@
     particles.update(dt)
     updateFighters(dt)
     reportHud()
+    reportPower()
 
     world.dummies.forEach((d, i) => {
       const view = dummies[i]
@@ -387,6 +462,7 @@
       mesh.visible = !!owner && !owner.hidden
       if (!shot || !owner) return
       mesh.position.set(shot.x, 0.8, shot.z)
+      mesh.scale.setScalar(shot.superShot ? SUPER_SHOT_RADIUS / SHOT_RADIUS : 1)
       mesh.material = owner.core
       ;(mesh.children[0] as THREE.Mesh).material = owner.glow
     })

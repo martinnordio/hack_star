@@ -61,10 +61,10 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 | File | What |
 |------|------|
 | `arena.ts` | The canyon layout: walls, bushes (cacti), decorations, dummies, start points |
-| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level, shots with owners (a shot does its shooter's damage), collisions (circles against rectangles), healing, knock-outs, dummies; its own `walls` / `bushes` lists, emptied by `removeCover()` (overtime); emits events for effects |
+| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level, shots with owners (each shot carries its damage, worked out when fired), collisions (circles against rectangles), healing, knock-outs, dummies; its own `walls` / `bushes` lists, emptied by `removeCover()` (overtime); Super and Hypercharge: per-fighter `superCharge` / `hyperCharge` meters filled by normal hits, `useSuper()` fires the Super blast (big shots through walls), `isHyper()` boosts speed and damage; emits events for effects |
 | `match.ts` | `Match`: countdown, timer, overtime (when time runs out with the player and a bot in: `overtimeSeconds` more and `removeCover()`), result (victory, defeat with place, time's up) around a `World` |
-| `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error; wanders when it sees nobody |
-| `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks) |
+| `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error (and uses its Super when full; `BotSkill.hyper` is off on Easy); wanders when it sees nobody |
+| `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks, Super button / E / right click) |
 | `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
 | `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power, owned…); `powerOf()` caps a level at the current maximum |
 | `shop.ts` | Skins: `ownsSkin` (default skins and the OPENSESAME hack count as owned), `wornSkin` (the chosen skin if owned, else Default), `skinOfTheDay(date)` (picked from the local day number, same for everyone that day), `skinPrice`, and the purchase `buySkin()` |
@@ -94,7 +94,7 @@ unlocked fighters, owned skins, active hacks, chosen fighter and skins. The form
 `version` (now 3); a version 2 save is migrated (its chosen skins become owned skins, so
 nobody loses a skin), and anything else that does not match falls back to the starting
 progress. Hack effects are worked out when shown
-(`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`), so resetting the hacks
+(`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`, `superHack` — applied to the player's fighter when an arena starts), so resetting the hacks
 brings the normal rules back exactly.
 
 Trophies change in one place: when a match ends, `Arena.svelte` works out the reward

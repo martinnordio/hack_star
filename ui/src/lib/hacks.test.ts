@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { codeFromScan, credits, hackLink, isUnlocked, maxPower, withHack } from './hacks'
+import { codeFromScan, credits, hackLink, isUnlocked, maxPower, superHack, withHack } from './hacks'
 import { defaultProgress } from './progress'
 
 describe('hacks', () => {
+  it('HYPERCHARGE makes the Super charge 3 times faster and always a Hypercharge, until reset', () => {
+    const p = defaultProgress()
+    expect(superHack(p)).toEqual({ superGain: 1, alwaysHyper: false })
+    const hacked = withHack(p, 'hypercharge')
+    expect(superHack(hacked)).toEqual({ superGain: 3, alwaysHyper: true })
+    expect(superHack({ ...hacked, activeHacks: [] })).toEqual({ superGain: 1, alwaysHyper: false })
+  })
+
   it('reads a plain code or a game link from a QR code', () => {
     expect(codeFromScan('POWER22')).toBe('POWER22')
     expect(codeFromScan('https://192.168.1.20:5180/?hack=OPENSESAME')).toBe('OPENSESAME')

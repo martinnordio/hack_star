@@ -40,6 +40,20 @@ export interface Settings {
   skinPrices: Record<'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary', number>
   /** Discount on the skin of the day (0.3 = 30% off). */
   skinOfTheDayDiscount: number
+  /** Normal hits that fill the Super. */
+  superHits: number
+  /** Supers that fill the Hypercharge. */
+  supersPerHypercharge: number
+  hyperchargeSeconds: number
+  /** Extra speed and damage while hypercharged (0.25 = +25%). */
+  hyperchargeBoost: number
+  /** Shots in a Super blast, normally and when hypercharged. */
+  superShots: number
+  hyperSuperShots: number
+  /** Damage of one Super shot compared with a normal shot. */
+  superDamage: number
+  /** How much faster the Super charges with the HYPERCHARGE hack. */
+  hackSuperGain: number
 }
 
 export const SETTINGS: Settings = {
@@ -68,6 +82,14 @@ export const SETTINGS: Settings = {
   unlockPrices: { Default: 0, Rare: 160, 'Super Rare': 430, Epic: 925, Mythic: 1900, Legendary: 3800 },
   skinPrices: { Default: 0, Rare: 100, 'Super Rare': 200, Epic: 300, Mythic: 600, Legendary: 1500 },
   skinOfTheDayDiscount: 0.3,
+  superHits: 5,
+  supersPerHypercharge: 2,
+  hyperchargeSeconds: 5,
+  hyperchargeBoost: 0.25,
+  superShots: 5,
+  hyperSuperShots: 7,
+  superDamage: 1.2,
+  hackSuperGain: 3,
 }
 
 export interface BotSkill {
@@ -81,12 +103,14 @@ export interface BotSkill {
   speed: number
   /** How far a bot sees (units). */
   sight: number
+  /** Whether the bot's Supers can become Hypercharges. */
+  hyper: boolean
 }
 
 export const BOT_LEVELS: Record<BotLevel, BotSkill> = {
-  easy: { reaction: 0.6, aimError: 0.35, cooldown: 2.4, speed: 0.75, sight: 8 },
-  medium: { reaction: 0.35, aimError: 0.2, cooldown: 1.6, speed: 0.9, sight: 10 },
-  hard: { reaction: 0.15, aimError: 0.08, cooldown: 1.15, speed: 1, sight: 12 },
+  easy: { reaction: 0.6, aimError: 0.35, cooldown: 2.4, speed: 0.75, sight: 8, hyper: false },
+  medium: { reaction: 0.35, aimError: 0.2, cooldown: 1.6, speed: 0.9, sight: 10, hyper: true },
+  hard: { reaction: 0.15, aimError: 0.08, cooldown: 1.15, speed: 1, sight: 12, hyper: true },
 }
 
 /**

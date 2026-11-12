@@ -61,6 +61,11 @@ Hack star server" with a **Try again** button.
     without being hit or shooting, health slowly comes back.
   - Bots fight you and each other. In the cacti you are see-through and bots far away cannot
     see you; bots hiding in cacti are invisible unless you are close.
+  - **Super:** every 5 hits (on fighters or dummies) fill your Super (the ring around the
+    **SUPER** button and the yellow bar over your fighter). The Super blast is a fan of 5 big
+    shots that fly farther, go through walls and hit harder. After 2 Supers the button turns
+    purple (**HYPER**): the next Super is a **Hypercharge** — 5 seconds of purple glow, +25%
+    speed and damage, and a 7-shot blast. Bots use Supers too (no Hypercharge on Easy).
   - **Overtime:** if the 2 minutes end and you and at least one bot are still in, "OVERTIME!"
     gives one more minute and every wall and cactus breaks apart, so nobody can hide.
   - The match ends with **Victory** (last one standing), **Defeat** (with your place) or
@@ -75,10 +80,10 @@ Hack star server" with a **Try again** button.
 
   Controls in matches and training:
 
-  | | Move | Aim and shoot |
-  |---|------|---------------|
-  | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target |
-  | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target |
+  | | Move | Aim and shoot | Super |
+  |---|------|---------------|-------|
+  | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target | **E** or right click (towards the mouse), or click the Super button |
+  | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target | Tap the Super button (aims at the nearest enemy) |
 - **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D,
   try on its skins and choose or buy one.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
@@ -102,6 +107,7 @@ Hack star server" with a **Try again** button.
   | `INFINITY` | Unlimited credits: unlocking, upgrading and skins are free |
   | `OPENSESAME` | Every fighter and skin unlocked (no need to buy skins) |
   | `POWER22` | Power levels up to 22 instead of 11 (power 22: ❤️ 9920 💥 1488 in matches) |
+  | `HYPERCHARGE` | Your Super charges 3 times faster and every Super is a Hypercharge |
 
   **Reset all hacks** on the same screen goes back to the normal rules: the real credits and
   the 11 limit come back; fighters, levels and skins you got while hacking stay (skins you
@@ -114,7 +120,7 @@ Progress (chosen fighter, bought and chosen skins, trophies) is saved in the bro
 
 Match length, overtime length (and whether it removes walls), default number of bots and bot
 level (easy, medium, hard), what "time's up" means, the
-trophies and credits for each result, prices (fighters and skins, skin-of-the-day discount), upgrade costs, power bonus and the bots' power
+trophies and credits for each result, prices (fighters and skins, skin-of-the-day discount), upgrade costs, power bonus, Super and Hypercharge numbers and the bots' power
 level are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
 (`SETTINGS`). To try other values
 without changing code, add them to the address, for example

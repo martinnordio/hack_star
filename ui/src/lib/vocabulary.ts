@@ -32,4 +32,6 @@ export const VOCABULARY: Word[] = [
   { word: 'Brawl Pass', meaning: 'Season pass with rewards for playing.' },
   { word: 'GG', meaning: '"Good game", said at the end of a match.' },
   { word: 'Hack code', meaning: 'Hack star only: a secret code (typed or QR) that gives extras.' },
+  { word: 'Super blast', meaning: 'Hack star\'s Super: a fan of big shots that go through walls.' },
+  { word: 'HYPERCHARGE (code)', meaning: 'Hack star hack code: your Super charges 3 times faster and every Super is a Hypercharge.' },
 ]

@@ -23,6 +23,7 @@ export class Bots {
     this.states = world.fighters.slice(1).map((f) => {
       f.speedFactor = skill.speed
       f.cooldownFactor = skill.cooldown
+      f.canHyper = skill.hyper
       return { id: f.id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0 }
     })
   }
@@ -76,7 +77,7 @@ export class Bots {
       world.moveFighter(bot, ux * forward - uz * side, uz * forward + ux * side, dt)
       if (dist <= SHOT_RANGE * 0.9) {
         const angle = Math.atan2(ux, uz) + (this.random() * 2 - 1) * this.skill.aimError
-        world.fireFrom(bot, Math.sin(angle), Math.cos(angle))
+        if (!world.useSuper(bot, Math.sin(angle), Math.cos(angle))) world.fireFrom(bot, Math.sin(angle), Math.cos(angle))
       }
       return
     }
