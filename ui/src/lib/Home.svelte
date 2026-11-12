@@ -3,7 +3,7 @@
   import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
   import { RARITY_COLORS, type Fighter } from './fighters'
-  import { credits, isUnlocked } from './hacks'
+  import { credits, currentFighter } from './hacks'
   import HomeScene from './HomeScene.svelte'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress, totalTrophies } from './progress'
@@ -12,34 +12,21 @@
     fighters: Fighter[]
     entrance: boolean
     onEntranceEnd: () => void
-    onNavigate: (screen: 'fighters' | 'info' | 'hack') => void
+    onNavigate: (screen: 'fighters' | 'info' | 'hack' | 'arena') => void
   }
 
   let { fighters, entrance, onEntranceEnd, onNavigate }: Props = $props()
 
-  // A fighter selected with "unlock all" can be locked again after a hack reset.
-  const fighter = $derived(
-    fighters.find((f) => f.id === $progress.selectedFighter && isUnlocked($progress, f.id)) ??
-      fighters.find((f) => isUnlocked($progress, f.id)) ??
-      fighters[0],
-  )
+  const fighter = $derived(currentFighter($progress, fighters))
   const skinId = $derived($progress.selectedSkins[fighter.id] ?? 'default')
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
   const shownCredits = $derived(credits($progress))
 
   let skipped = $state(false)
   let playing = $state(untrack(() => entrance))
-  let toast = $state(false)
-  let toastTimer: ReturnType<typeof setTimeout> | undefined
 
   function skip() {
     if (playing) skipped = true
-  }
-
-  function play() {
-    toast = true
-    clearTimeout(toastTimer)
-    toastTimer = setTimeout(() => (toast = false), 1800)
   }
 </script>
 
@@ -90,11 +77,7 @@
     </div>
   </div>
 
-  <button class="play" onclick={play}>PLAY</button>
-
-  {#if toast}
-    <div class="toast" role="status">Coming soon!</div>
-  {/if}
+  <button class="play" onclick={() => onNavigate('arena')}>PLAY</button>
 
   {#if playing}
     <div class="skip">Tap to skip</div>
@@ -300,26 +283,6 @@
       left: auto;
       right: var(--pad-right);
       transform: none;
-    }
-  }
-
-  .toast {
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    transform: translate(-50%, -50%);
-    padding: 0.6em 1.2em;
-    border-radius: 1rem;
-    background: #160f33ee;
-    border: 3px solid #ffd23f;
-    font-size: clamp(1.4rem, 5vw, 2.2rem);
-    font-weight: 900;
-    animation: pop-in 0.3s cubic-bezier(0.3, 1.8, 0.5, 1);
-  }
-
-  @keyframes pop-in {
-    from {
-      transform: translate(-50%, -50%) scale(0.3);
     }
   }
 

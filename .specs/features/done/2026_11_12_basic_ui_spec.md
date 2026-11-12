@@ -38,7 +38,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   (fighter jumps in, light or particle effects) of at most 3 seconds that can be skipped with a
   tap or click.
 - **S3 — Play button:** Tapping **Play** opens the graphics demo
-  ([graphics demo spec](../2026_11_12_graphics_demo_spec.md)); until that exists, it shows
+  ([graphics demo spec](2026_11_12_graphics_demo_spec.md)); until that exists, it shows
   "Coming soon".
 - **S4 — Fighter list:** A **Fighters** button opens a list of all fighters (4–6), each with
   its picture, name, rarity, trophy count and power level; locked fighters look greyed out

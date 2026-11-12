@@ -1,14 +1,16 @@
 ﻿<script lang="ts">
+  import Arena from './lib/Arena.svelte'
   import { loadFighters, type Fighter } from './lib/fighters'
   import FighterDetail from './lib/FighterDetail.svelte'
   import FighterList from './lib/FighterList.svelte'
   import HackScreen from './lib/HackScreen.svelte'
-  import { listHacks, type Hack } from './lib/hacks'
+  import { currentFighter, listHacks, type Hack } from './lib/hacks'
   import Home from './lib/Home.svelte'
   import InfoPage from './lib/InfoPage.svelte'
   import Panel from './lib/Panel.svelte'
+  import { progress } from './lib/progress'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack' | 'arena'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>`.
   const codeInLink = new URLSearchParams(location.search).get('hack') ?? undefined
@@ -52,6 +54,13 @@
       entrance = false
       screen = next
     }}
+  />
+{:else if screen === 'arena'}
+  {@const fighter = currentFighter($progress, fighters)}
+  <Arena
+    fighterId={fighter.id}
+    skinId={$progress.selectedSkins[fighter.id] ?? 'default'}
+    onLeave={() => (screen = 'home')}
   />
 {:else if screen === 'fighters'}
   <Panel title="Fighters" onBack={() => (screen = 'home')}>

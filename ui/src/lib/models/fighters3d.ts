@@ -8,6 +8,7 @@ import {
   cylinder,
   human,
   newRig,
+  OUTLINE,
   part,
   sphere,
   toon,
@@ -244,5 +245,24 @@ export function animateFighter(rig: Rig, time: number) {
 export function disposeRig(rig: Rig) {
   rig.root.traverse((o) => {
     if (o instanceof THREE.Mesh) o.geometry.dispose()
+  })
+}
+
+/** See-through fighter (hiding in a bush): fade its own materials and hide the shared outlines. */
+export function setRigOpacity(rig: Rig, opacity: number) {
+  rig.root.traverse((o) => {
+    if (!(o instanceof THREE.Mesh)) return
+    if (o.material === OUTLINE) {
+      o.visible = opacity >= 1
+      return
+    }
+    const material = o.material as THREE.Material
+    if (material.userData.baseOpacity === undefined) {
+      material.userData.baseOpacity = material.opacity
+      material.userData.baseTransparent = material.transparent
+    }
+    material.transparent = opacity < 1 || material.userData.baseTransparent
+    material.opacity = material.userData.baseOpacity * opacity
+    material.needsUpdate = true
   })
 }
