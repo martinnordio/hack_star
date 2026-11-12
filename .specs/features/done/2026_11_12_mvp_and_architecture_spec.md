@@ -31,7 +31,7 @@ other features build on.
 | [overall_req.md](../../overall_req.md) | Overall game idea and planned specs |
 | [Basic UI spec](2026_11_12_basic_ui_spec.md) | F1 |
 | [Hack codes spec](2026_11_12_hack_codes_spec.md) | F2 |
-| [Graphics demo spec](../2026_11_12_graphics_demo_spec.md) | F3 |
+| [Graphics demo spec](2026_11_12_graphics_demo_spec.md) | F3 |
 
 ### Investigation: Brawl Stars (the parts that matter for Hack star)
 
@@ -71,7 +71,7 @@ names and logos are copyrighted and are not used.
 | F0 | Architecture and foundation: server, UI, runs on desktop, iPad, phone | this spec | ✅ |
 | F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_basic_ui_spec.md) | ✅ |
 | F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_hack_codes_spec.md) | ✅ |
-| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](../2026_11_12_graphics_demo_spec.md) | ✅ |
+| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_graphics_demo_spec.md) | ✅ |
 | F4 | First real match: last fighter standing against bots, win or lose | — | ✅ |
 | F5 | Trophies after each match and Prestige levels, saved between visits | — | ✅ |
 | F6 | Unlock fighters with credits; power levels change health and damage | — | later |

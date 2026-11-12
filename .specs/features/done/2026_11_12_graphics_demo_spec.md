@@ -15,14 +15,14 @@
 Before adding game rules, Hack star needs an impressive, playable demo that looks like a
 Brawl Stars match: a fighter running and shooting in a colourful arena. The rules (win, lose,
 trophies) are kept out on purpose and come from F4 on. This is F3 in the
-[MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) and "Spec 2" in
-[overall_req.md](../overall_req.md).
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) and "Spec 2" in
+[overall_req.md](../../overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input), S6 (30 frames per second), S7 (own art); the graphics options
   investigated there.
-- [Basic UI spec](done/2026_11_12_basic_ui_spec.md) — the Play button (S3) opens this demo; the
+- [Basic UI spec](2026_11_12_basic_ui_spec.md) — the Play button (S3) opens this demo; the
   selected fighter and skin (S5, S7); 3D fighters `buildFighter()` with idle animation
   (`ui/src/lib/models/`); toon materials and outlines (`models/parts.ts`).
 
@@ -31,7 +31,7 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../../overall_req.md) | Overall game idea and planned specs |
 
 ## 1 · Specs
 
