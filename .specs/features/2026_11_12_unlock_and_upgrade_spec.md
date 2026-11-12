@@ -87,7 +87,7 @@ at power 5 (S6, S10)._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Economy and power rules | ✅ Done | [→ Step 1](#step-1--economy-and-power-rules) |
-| **2** | Power and credits in matches | ⬜ Not started | [→ Step 2](#step-2--power-and-credits-in-matches) |
+| **2** | Power and credits in matches | ✅ Done | [→ Step 2](#step-2--power-and-credits-in-matches) |
 | **3** | Unlock and upgrade screens | ⬜ Not started | [→ Step 3](#step-3--unlock-and-upgrade-screens) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
@@ -141,14 +141,18 @@ Started: 2026-11-12 11:27
 Matches use power levels for health and damage, and the player earns credits (S1, S6, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `World`: health and damage per fighter; hurt uses the shooter's damage.
-- [ ] `Match`: the player's power level from progress; bots at the bot power setting.
-- [ ] `Arena.svelte`: save credits with the trophies when the match ends; result screen shows "+100 C".
-- [ ] Check: `vitest` — a power-11 shooter does 960; a power-11 fighter has 6400 health; match fighters get the right stats. Browser: a win shows +100 C and home credits go up by 100.
+- [x] Record the start time in Notes below.
+- [x] `World`: health and damage per fighter; hurt uses the shooter's damage.
+- [x] `Match`: the player's power level from progress; bots at the bot power setting.
+- [x] `Arena.svelte`: save credits with the trophies when the match ends; result screen shows "+100 C".
+- [x] Check: `vitest` — a power-11 shooter does 960; a power-11 fighter has 6400 health; match fighters get the right stats. Browser: a win shows +100 C and home credits go up by 100.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:28
+
+Training also uses the fighter's power (its damage on the dummies). Damage numbers now show the real damage (for example 768 for Blaze at power 7).
+
+**Done (2026-11-12 · ~4m)** — `npm test` 67 passed; browser: Blaze (power 7) starts with 5120 health, the bot (power 5) with 4480; a win shows "+10 🏆 +100 C", saved credits 600, home shows 600.
 
 ---
 

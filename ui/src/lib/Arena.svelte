@@ -17,6 +17,7 @@
   import { Tween } from 'svelte/motion'
   import { cubicOut } from 'svelte/easing'
   import { get } from 'svelte/store'
+  import { creditsFor, earn, powerOf, stats } from './game/economy'
 
   interface Props {
     mode: 'match' | 'training'
@@ -33,8 +34,10 @@
 
   // A new Arena component is mounted for every match, so these are made once per match.
   const { match, world, looks } = untrack(() => {
-    const match = mode === 'match' ? new Match(CANYON, settingsFrom(location.search)) : undefined
-    const world = match?.world ?? new World(CANYON)
+    const playerPower = powerOf(get(progress), player.fighterId)
+    const match =
+      mode === 'match' ? new Match(CANYON, settingsFrom(location.search), { playerPower }) : undefined
+    const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower)] })
     const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
     const looks: Look[] = world.fighters.map((f) =>
       f.id === 0 ? player : { fighterId: others[(f.id - 1) % others.length].id, skinId: 'default' },
@@ -62,12 +65,14 @@
 
   // Saved as soon as the match ends, so leaving before the result screen still keeps it.
   let reward = $state<Reward>()
+  let earned = $state(0)
   const shownTrophies = new Tween(0, { duration: 900, easing: cubicOut })
 
   function saveReward(m: Match, result: MatchResult) {
     const current = get(progress).trophies[player.fighterId] ?? 0
     const r = rewardFor(current, result, m.settings)
-    progress.update((p) => applyReward(p, player.fighterId, r))
+    earned = creditsFor(result, m.settings)
+    progress.update((p) => earn(applyReward(p, player.fighterId, r), earned))
     reward = r
     shownTrophies.set(r.before, { duration: 0 })
   }
@@ -235,6 +240,7 @@
         <div class="trophies" aria-label="Trophies">
           <span class="change" class:zero={reward.change === 0} class:minus={reward.change < 0}>
             {reward.change > 0 ? '+' : ''}{reward.change} 🏆
+            <span class="credits">+{earned} <span class="coin">C</span></span>
           </span>
           <div class="bar" aria-label="{shown} of {nextPrestigeAt(shown)} trophies to the next Prestige">
             <div class="fill" style="width: {((shown - floor) / 1000) * 100}%"></div>
@@ -503,6 +509,25 @@
 
   .change.minus {
     color: #ff4d4d;
+  }
+
+  .credits {
+    margin-left: 0.6em;
+    color: #ffe45c;
+  }
+
+  .coin {
+    display: inline-grid;
+    place-items: center;
+    width: 1.1em;
+    height: 1.1em;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff3a0, #ffb000);
+    color: #7a4a00;
+    font-size: 0.7em;
+    border: 2px solid #000;
+    -webkit-text-stroke: 0;
+    vertical-align: middle;
   }
 
   .bar {

@@ -7,7 +7,8 @@ export const SHOT_RADIUS = 0.25
 export const SHOT_SPEED = 16
 export const SHOT_RANGE = 9
 export const FIRE_COOLDOWN = 0.35
-export const SHOT_DAMAGE = 480
+/** Damage at power level 1. */
+export const SHOT_DAMAGE = SETTINGS.shotDamage
 export const DUMMY_RADIUS = 0.6
 export const DUMMY_HEALTH = 2400
 export const RESPAWN_SECONDS = 5
@@ -21,6 +22,7 @@ export interface Fighter {
   facing: number
   health: number
   maxHealth: number
+  damage: number
   out: boolean
   lastHurt: number
   lastFire: number
@@ -60,7 +62,8 @@ export interface WorldOptions {
   /** Number of fighters; fighter 0 is the player. Training has 1. */
   fighters?: number
   dummies?: boolean
-  fighterHealth?: number
+  /** Health and damage per fighter (by id); missing ones use power level 1. */
+  stats?: { health: number; damage: number }[]
 }
 
 /** Push a circle out of a rectangle; returns true if it overlapped. */
@@ -109,24 +112,28 @@ export class World {
 
   constructor(
     readonly arena: Arena,
-    { fighters = 1, dummies = fighters === 1, fighterHealth = SETTINGS.fighterHealth }: WorldOptions = {},
+    { fighters = 1, dummies = fighters === 1, stats = [] }: WorldOptions = {},
   ) {
     const spots = fighters === 1 ? [arena.start] : arena.spawns
     if (fighters > spots.length) throw new Error(`The arena has room for ${spots.length} fighters`)
-    this.fighters = spots.slice(0, fighters).map((s, id) => ({
-      id,
-      x: s.x,
-      z: s.z,
-      // Face the middle of the arena (the player starts facing the camera in training).
-      facing: fighters === 1 ? 0 : Math.atan2(-s.x, -s.z),
-      health: fighterHealth,
-      maxHealth: fighterHealth,
-      out: false,
-      lastHurt: -Infinity,
-      lastFire: -Infinity,
-      speedFactor: 1,
-      cooldownFactor: 1,
-    }))
+    this.fighters = spots.slice(0, fighters).map((s, id) => {
+      const { health, damage } = stats[id] ?? { health: SETTINGS.fighterHealth, damage: SETTINGS.shotDamage }
+      return {
+        id,
+        x: s.x,
+        z: s.z,
+        // Face the middle of the arena (the player starts facing the camera in training).
+        facing: fighters === 1 ? 0 : Math.atan2(-s.x, -s.z),
+        health,
+        maxHealth: health,
+        damage,
+        out: false,
+        lastHurt: -Infinity,
+        lastFire: -Infinity,
+        speedFactor: 1,
+        cooldownFactor: 1,
+      }
+    })
     this.dummies = dummies
       ? arena.dummies.map((d, id) => ({ id, x: d.x, z: d.z, health: DUMMY_HEALTH, brokenAt: null }))
       : []
@@ -218,7 +225,7 @@ export class World {
         (d) => d.brokenAt === null && Math.hypot(s.x - d.x, s.z - d.z) < DUMMY_RADIUS + SHOT_RADIUS,
       )
       if (dummy) {
-        this.hit(dummy)
+        this.hit(dummy, this.fighters[s.owner]?.damage ?? SHOT_DAMAGE)
         return false
       }
       const blocked =
@@ -247,9 +254,10 @@ export class World {
   }
 
   private hurt(f: Fighter, by: number) {
-    f.health = Math.max(0, f.health - SHOT_DAMAGE)
+    const damage = this.fighters[by]?.damage ?? SHOT_DAMAGE
+    f.health = Math.max(0, f.health - damage)
     f.lastHurt = this.time
-    this.events.push({ type: 'hurt', fighterId: f.id, by, x: f.x, z: f.z, damage: SHOT_DAMAGE })
+    this.events.push({ type: 'hurt', fighterId: f.id, by, x: f.x, z: f.z, damage })
     if (f.health <= 0) {
       f.out = true
       this.shots = this.shots.filter((s) => s.owner !== f.id)
@@ -257,10 +265,9 @@ export class World {
     }
   }
 
-  private hit(d: Dummy) {
-    const damage = Math.min(SHOT_DAMAGE, d.health)
-    d.health -= damage
-    this.events.push({ type: 'hit', dummyId: d.id, x: d.x, z: d.z, damage: SHOT_DAMAGE })
+  private hit(d: Dummy, damage: number) {
+    d.health = Math.max(0, d.health - damage)
+    this.events.push({ type: 'hit', dummyId: d.id, x: d.x, z: d.z, damage })
     if (d.health <= 0) {
       d.brokenAt = this.time
       this.events.push({ type: 'break', dummyId: d.id, x: d.x, z: d.z })
