@@ -1,7 +1,7 @@
 # MVP and Architecture Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🟨 In progress
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/mvp-and-architecture`
@@ -119,7 +119,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
-| **0** | Server and UI scaffolding | ⬜ Not started | [→ Step 0](#step-0--server-and-ui-scaffolding) |
+| **0** | Server and UI scaffolding | ✅ Done | [→ Step 0](#step-0--server-and-ui-scaffolding) |
 | **1** | Responsive 3D shell | ⬜ Not started | [→ Step 1](#step-1--responsive-3d-shell) |
 | **2** | Progress saved on the device | ⬜ Not started | [→ Step 2](#step-2--progress-saved-on-the-device) |
 | **3** | README, asset licences, final check | ⬜ Not started | [→ Step 3](#step-3--readme-asset-licences-final-check) |
@@ -156,14 +156,18 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 The Python server and the Svelte UI exist, start, and have a passing test each (S4).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `server/`: uv project with FastAPI; `GET /api/health` returns `{"status": "ok", "game": "Hack star"}`.
-- [ ] `server/tests/test_health.py` with `pytest`.
-- [ ] `ui/`: Vite + Svelte 5 + TypeScript; `vitest` set up.
-- [ ] Check: `uv run pytest` in `server/` and `npm run build` in `ui/` pass.
+- [x] Record the start time in Notes below.
+- [x] `server/`: uv project with FastAPI; `GET /api/health` returns `{"status": "ok", "game": "Hack star"}`.
+- [x] `server/tests/test_health.py` with `pytest`.
+- [x] `ui/`: Vite + Svelte 5 + TypeScript; `vitest` set up.
+- [x] Check: `uv run pytest` in `server/` and `npm run build` in `ui/` pass.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:22
+
+`httpx2` instead of `httpx` for tests: Starlette's test client deprecates `httpx`. Root `.gitignore` entries for `.venv`, `node_modules`, `dist` added here (planned in Step 3) so they are never committed.
+
+**Done (2026-11-12 · ~15m)** — server and UI scaffolds; `uv run pytest` 1 passed, `npm run build` ok, `npm run check` 0 errors.
 
 ---
 

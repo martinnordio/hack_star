@@ -1,1 +1,10 @@
 .specs/spec-nx.local.json
+
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
