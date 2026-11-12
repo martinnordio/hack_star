@@ -2,7 +2,8 @@
   import { Canvas } from '@threlte/core'
   import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
-  import { MAX_POWER_LEVEL, RARITY_COLORS, type Fighter } from './fighters'
+  import { RARITY_COLORS, type Fighter } from './fighters'
+  import { isUnlocked, maxPower } from './hacks'
   import HomeScene from './HomeScene.svelte'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
@@ -10,7 +11,7 @@
 
   let { fighter, onSelected }: { fighter: Fighter; onSelected: () => void } = $props()
 
-  const unlocked = $derived($progress.unlockedFighters.includes(fighter.id))
+  const unlocked = $derived(isUnlocked($progress, fighter.id))
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
   const power = $derived($progress.powerLevels[fighter.id] ?? 1)
   let previewSkin = $state(untrack(() => $progress.selectedSkins[fighter.id] ?? 'default'))
@@ -49,9 +50,9 @@
     <div class="stats">
       <span>🏆 {trophies} trophies</span>
       <span class="power">
-        ⚡ Power {power}
+        ⚡ Power {power}/{maxPower($progress)}
         <span class="bar" aria-hidden="true">
-          {#each { length: MAX_POWER_LEVEL } as _, i}
+          {#each { length: maxPower($progress) } as _, i}
             <span class:on={i < power}></span>
           {/each}
         </span>

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { MAX_POWER_LEVEL, RARITY_COLORS, type Fighter } from './fighters'
+  import { RARITY_COLORS, type Fighter } from './fighters'
+  import { isUnlocked, maxPower } from './hacks'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
@@ -9,7 +10,7 @@
 
 <ul class="grid">
   {#each fighters as fighter (fighter.id)}
-    {@const unlocked = $progress.unlockedFighters.includes(fighter.id)}
+    {@const unlocked = isUnlocked($progress, fighter.id)}
     {@const trophies = $progress.trophies[fighter.id] ?? 0}
     {@const selected = $progress.selectedFighter === fighter.id}
     <li>
@@ -30,7 +31,7 @@
         <span class="rarity">{fighter.rarity}</span>
         <span class="stats">
           <span>🏆 {trophies}</span>
-          <span class="power">⚡ {$progress.powerLevels[fighter.id] ?? 1}/{MAX_POWER_LEVEL}</span>
+          <span class="power">⚡ {$progress.powerLevels[fighter.id] ?? 1}/{maxPower($progress)}</span>
         </span>
       </button>
     </li>

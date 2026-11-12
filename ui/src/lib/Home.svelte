@@ -3,6 +3,7 @@
   import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
   import { RARITY_COLORS, type Fighter } from './fighters'
+  import { credits, isUnlocked } from './hacks'
   import HomeScene from './HomeScene.svelte'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress, totalTrophies } from './progress'
@@ -11,14 +12,20 @@
     fighters: Fighter[]
     entrance: boolean
     onEntranceEnd: () => void
-    onNavigate: (screen: 'fighters' | 'info') => void
+    onNavigate: (screen: 'fighters' | 'info' | 'hack') => void
   }
 
   let { fighters, entrance, onEntranceEnd, onNavigate }: Props = $props()
 
-  const fighter = $derived(fighters.find((f) => f.id === $progress.selectedFighter) ?? fighters[0])
+  // A fighter selected with "unlock all" can be locked again after a hack reset.
+  const fighter = $derived(
+    fighters.find((f) => f.id === $progress.selectedFighter && isUnlocked($progress, f.id)) ??
+      fighters.find((f) => isUnlocked($progress, f.id)) ??
+      fighters[0],
+  )
   const skinId = $derived($progress.selectedSkins[fighter.id] ?? 'default')
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
+  const shownCredits = $derived(credits($progress))
 
   let skipped = $state(false)
   let playing = $state(untrack(() => entrance))
@@ -59,7 +66,7 @@
     </div>
     <h1 class="title">Hack<span>star</span></h1>
     <div class="chip" aria-label="Credits">
-      <span class="icon coin">C</span>{$progress.credits.toLocaleString()}
+      <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
     </div>
   </header>
 
@@ -69,6 +76,9 @@
     </button>
     <button class="round" onclick={() => onNavigate('info')}>
       <span class="big">📖</span>Info
+    </button>
+    <button class="round hack" onclick={() => onNavigate('hack')}>
+      <span class="big">💻</span>Hack
     </button>
   </nav>
 
@@ -217,6 +227,12 @@
   .play:active {
     transform: translateY(0.2rem);
     box-shadow: 0 0.1rem 0 #000;
+  }
+
+  .round.hack {
+    background: linear-gradient(#39ff88, #0a9f4a);
+    color: #06210f;
+    text-shadow: none;
   }
 
   .big {

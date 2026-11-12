@@ -2,23 +2,29 @@
   import { loadFighters, type Fighter } from './lib/fighters'
   import FighterDetail from './lib/FighterDetail.svelte'
   import FighterList from './lib/FighterList.svelte'
+  import HackScreen from './lib/HackScreen.svelte'
+  import { listHacks, type Hack } from './lib/hacks'
   import Home from './lib/Home.svelte'
   import InfoPage from './lib/InfoPage.svelte'
   import Panel from './lib/Panel.svelte'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'info'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack'
 
   let screen = $state<Screen>('home')
   let openFighter = $state<Fighter>()
   let fighters = $state<Fighter[]>()
+  let hacks = $state<Hack[]>()
   let error = $state<string>()
   // The entrance plays once per visit, not when coming back to home.
   let entrance = $state(true)
 
   function load() {
     error = undefined
-    loadFighters()
-      .then((list) => (fighters = list))
+    Promise.all([loadFighters(), listHacks()])
+      .then(([fighterList, hackList]) => {
+        fighters = fighterList
+        hacks = hackList
+      })
       .catch(() => (error = 'Cannot reach the Hack star server.'))
   }
 
@@ -30,7 +36,7 @@
     <p>{error}</p>
     <button onclick={load}>Try again</button>
   </div>
-{:else if !fighters}
+{:else if !fighters || !hacks}
   <div class="message"><p>Loading…</p></div>
 {:else if screen === 'home'}
   <Home
@@ -59,6 +65,10 @@
 {:else if screen === 'info'}
   <Panel title="Info" onBack={() => (screen = 'home')}>
     <InfoPage />
+  </Panel>
+{:else if screen === 'hack'}
+  <Panel title="Hack" onBack={() => (screen = 'home')}>
+    <HackScreen {hacks} />
   </Panel>
 {/if}
 

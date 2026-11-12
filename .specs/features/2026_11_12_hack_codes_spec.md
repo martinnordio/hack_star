@@ -75,7 +75,7 @@ power 22 is shown only until F6 (S12)._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Hack catalogue and rules | ✅ Done | [→ Step 1](#step-1--hack-catalogue-and-rules) |
-| **2** | Hack screen and effects | ⬜ Not started | [→ Step 2](#step-2--hack-screen-and-effects) |
+| **2** | Hack screen and effects | ✅ Done | [→ Step 2](#step-2--hack-screen-and-effects) |
 | **3** | QR codes: scan and print | ⬜ Not started | [→ Step 3](#step-3--qr-codes-scan-and-print) |
 | **4** | Final check | ⬜ Not started | [→ Step 4](#step-4--final-check) |
 
@@ -130,14 +130,18 @@ Codes longer than 100 characters are refused (422) before they are looked up.
 The player types a code on the Hack screen, sees a celebration, and the effects show everywhere; hacks can be reset (S1, S4–S9, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Hack button on the home screen; Hack screen with code field, **Hack!** button, active hacks list, **Reset all hacks** with confirmation.
-- [ ] Celebration (confetti + big name of the hack); "Unknown code" with a shake for wrong codes.
-- [ ] Effects: home and fighter screens show ∞ credits; unlock all opens every fighter and skin; power shows `x/22`.
-- [ ] Check (browser): `opensesame` unlocks Pixel and lets it be selected; ` Infinity ` shows ∞; `POWER22` shows `/22`; `hello` shows "Unknown code"; reload keeps the hacks; reset brings back locks, credits 500 and `/11`.
+- [x] Record the start time in Notes below.
+- [x] Hack button on the home screen; Hack screen with code field, **Hack!** button, active hacks list, **Reset all hacks** with confirmation.
+- [x] Celebration (confetti + big name of the hack); "Unknown code" with a shake for wrong codes.
+- [x] Effects: home and fighter screens show ∞ credits; unlock all opens every fighter and skin; power shows `x/22`.
+- [x] Check (browser): `opensesame` unlocks Pixel and lets it be selected; ` Infinity ` shows ∞; `POWER22` shows `/22`; `hello` shows "Unknown code"; reload keeps the hacks; reset brings back locks, credits 500 and `/11`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:06
+
+After a reset, a fighter picked with "unlock all" is locked again; home then shows the first unlocked fighter (the saved choice is kept, so it comes back if the hack is entered again).
+
+**Done (2026-11-12 · ~6m)** — browser: `hello` → "Unknown code", no hack saved; `opensesame` → celebration "Unlock everything", Pixel selectable; ` Infinity ` → ∞; `POWER22` → `7/22`; kept after reload; reset → Pixel locked, 500 credits, `7/11`, home shows Blaze. `svelte-check` 0 errors.
 
 ---
 
