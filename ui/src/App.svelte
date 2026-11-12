@@ -9,10 +9,11 @@
   import InfoPage from './lib/InfoPage.svelte'
   import Panel from './lib/Panel.svelte'
   import ShopScreen from './lib/ShopScreen.svelte'
+  import SettingsScreen from './lib/SettingsScreen.svelte'
   import { progress } from './lib/progress'
   import { wornSkin } from './lib/game/shop'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'match' | 'training'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'settings' | 'match' | 'training'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>`.
   const codeInLink = new URLSearchParams(location.search).get('hack') ?? undefined
@@ -91,6 +92,10 @@
 {:else if screen === 'info'}
   <Panel title="Info" onBack={() => (screen = 'home')}>
     <InfoPage />
+  </Panel>
+{:else if screen === 'settings'}
+  <Panel title="Settings" onBack={() => (screen = 'home')}>
+    <SettingsScreen />
   </Panel>
 {:else if screen === 'hack'}
   <Panel

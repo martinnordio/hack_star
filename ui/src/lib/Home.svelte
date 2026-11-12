@@ -13,7 +13,7 @@
     fighters: Fighter[]
     entrance: boolean
     onEntranceEnd: () => void
-    onNavigate: (screen: 'fighters' | 'shop' | 'info' | 'hack' | 'match' | 'training') => void
+    onNavigate: (screen: 'fighters' | 'shop' | 'info' | 'hack' | 'settings' | 'match' | 'training') => void
   }
 
   let { fighters, entrance, onEntranceEnd, onNavigate }: Props = $props()
@@ -73,6 +73,9 @@
     </button>
     <button class="round hack" onclick={() => onNavigate('hack')}>
       <span class="big">💻</span>Hack
+    </button>
+    <button class="round settings" onclick={() => onNavigate('settings')}>
+      <span class="big">⚙️</span>Settings
     </button>
   </nav>
 
@@ -227,6 +230,10 @@
 
   .round.shop {
     background: linear-gradient(#ff8ac2, #e8327a);
+  }
+
+  .round.settings {
+    background: linear-gradient(#a99bd6, #6a5aa8);
   }
 
   .big {

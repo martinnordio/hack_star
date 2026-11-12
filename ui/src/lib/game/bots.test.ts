@@ -83,9 +83,9 @@ describe('Bots', () => {
     expect(world.player.speedFactor).toBe(1)
   })
 
-  it('a full match with default settings ends within its time', () => {
+  it('a full match with default settings ends within its time and overtime', () => {
     const match = new Match(CANYON, SETTINGS)
-    run(SETTINGS.countdownSeconds + SETTINGS.matchSeconds + 1, (dt) => match.update(dt))
+    run(SETTINGS.countdownSeconds + SETTINGS.matchSeconds + SETTINGS.overtimeSeconds + 1, (dt) => match.update(dt))
     expect(match.phase).toBe('over')
     expect(match.result).not.toBeNull()
   })

@@ -78,7 +78,7 @@ minute without walls**. This is F8 in the
 |------|-------------|--------|--------|
 | **1** | Overtime rules | ✅ Done | [→ Step 1](#step-1--overtime-rules) |
 | **2** | Overtime in the arena | ✅ Done | [→ Step 2](#step-2--overtime-in-the-arena) |
-| **3** | Settings screen | ⬜ Not started | [→ Step 3](#step-3--settings-screen) |
+| **3** | Settings screen | ✅ Done | [→ Step 3](#step-3--settings-screen) |
 | **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -150,14 +150,18 @@ Added `?overtime=<seconds>` to the address overrides (0 turns overtime off) so t
 Players choose the bot level and the number of bots (S2–S4).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `lib/options.ts`: `Options` (`botLevel`, `botCount` 1–5), load/save with fallback, store; `settingsFrom` applies options, then the address.
-- [ ] Home: **Settings** button (⚙️); `SettingsScreen.svelte` with Easy / Medium / Hard and 1–5 bots.
-- [ ] Countdown shows "Easy · 3 bots".
-- [ ] Check: `vitest` (options load/save/fallback, settings order); browser: pick Hard and 5 bots → match has 6 fighters, countdown says "Hard · 5 bots", choice kept after reload.
+- [x] Record the start time in Notes below.
+- [x] `lib/options.ts`: `Options` (`botLevel`, `botCount` 1–5), load/save with fallback, store; `settingsFrom` applies options, then the address.
+- [x] Home: **Settings** button (⚙️); `SettingsScreen.svelte` with Easy / Medium / Hard and 1–5 bots.
+- [x] Countdown shows "Easy · 3 bots".
+- [x] Check: `vitest` (options load/save/fallback, settings order); browser: pick Hard and 5 bots → match has 6 fighters, countdown says "Hard · 5 bots", choice kept after reload.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:17
+
+The level chip sits under the timer during the countdown (in the middle it covered the fighter). The bot test "a full match ends" now allows for overtime.
+
+**Done (2026-11-12 · ~3m)** — `npm test` 85 passed (4 new for options), `svelte-check` 0 errors; browser: fresh options Easy · 3; pick Hard and 5 → saved `{"botLevel":"hard","botCount":5}`, kept after reload; match shows "Hard · 5 bots" and 6 fighters.
 
 ---
 
