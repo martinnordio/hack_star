@@ -2,7 +2,7 @@
   import { Canvas } from '@threlte/core'
   import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
-  import ArenaScene, { type Hud, type Look } from './ArenaScene.svelte'
+  import ArenaScene, { type Hud, type Look, type Power } from './ArenaScene.svelte'
   import type { Fighter } from './fighters'
   import { CANYON } from './game/arena'
   import { newControls, stickVector } from './game/controls'
@@ -54,6 +54,16 @@
   let showFight = $state(false)
   let showOvertime = $state(false)
   let showResult = $state(false)
+  let power = $state<Power>()
+  let showHyper = $state(false)
+
+  function onPower(next: Power) {
+    if (power && !power.hyper && next.hyper) {
+      showHyper = true
+      setTimeout(() => (showHyper = false), 1200)
+    }
+    power = next
+  }
 
   function onHud(next: Hud) {
     if (hud?.phase === 'countdown' && next.phase === 'fight') {
@@ -119,6 +129,7 @@
     if (e.pointerType === 'mouse') {
       setPointer(e)
       if (e.button === 0) controls.mouseDown = true
+      if (e.button === 2) controls.superAim = true
       return
     }
     const r = root!.getBoundingClientRect()
@@ -177,6 +188,7 @@
     const keydown = (e: KeyboardEvent) => {
       if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault()
       if (e.code === 'Space') controls.tapFire = true
+      if (e.code === 'KeyE' && !e.repeat) controls.superAim = true
       controls.keys.add(e.code)
     }
     const keyup = (e: KeyboardEvent) => controls.keys.delete(e.code)
@@ -208,7 +220,7 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {match} {controls} {looks} {overlay} {onHud} />
+      <ArenaScene {world} {match} {controls} {looks} {overlay} {onHud} {onPower} />
     </Canvas>
   </div>
   <div class="floaters" bind:this={overlay} aria-hidden="true"></div>
@@ -273,6 +285,25 @@
         <button class="home" onclick={onLeave}>Home</button>
       </div>
     </div>
+  {/if}
+
+  {#if showHyper && !showResult}
+    <div class="big hyper" role="status">HYPERCHARGE!</div>
+  {/if}
+
+  {#if power && !showResult}
+    {@const full = power.superCharge >= 1}
+    <button
+      class="super"
+      class:full
+      class:hyper={full && power.hyperReady}
+      style="--fill: {power.superCharge * 360}deg"
+      aria-label={full ? (power.hyperReady ? 'Hypercharge ready' : 'Super ready') : `Super ${Math.round(power.superCharge * 100)}%`}
+      onclick={() => (controls.superAuto = true)}
+    >
+      <span class="label">{full && power.hyperReady ? 'HYPER' : 'SUPER'}</span>
+      {#if !touchDevice}<span class="key">E</span>{/if}
+    </button>
   {/if}
 
   {#if touchDevice && sticks.length === 0}
@@ -416,6 +447,74 @@
 
   .big.fight {
     color: #ff4f9a;
+  }
+
+  .big.hyper {
+    top: 30%;
+    font-size: clamp(2.2rem, 10vw, 5rem);
+    color: #d58bff;
+    white-space: nowrap;
+  }
+
+  .super {
+    position: absolute;
+    right: max(1.5rem, env(safe-area-inset-right));
+    bottom: calc(max(1.5rem, env(safe-area-inset-bottom)) + 140px);
+    width: 78px;
+    height: 78px;
+    padding: 0;
+    border-radius: 50%;
+    border: 3px solid #000;
+    background:
+      radial-gradient(circle, #3a2a8c 0 54%, transparent 55%),
+      conic-gradient(#ffd23f var(--fill), #160f33aa 0);
+    color: #cfc8f0;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+    touch-action: manipulation;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    box-shadow: 0 0.25rem 0 #000;
+  }
+
+  .super.full {
+    background:
+      radial-gradient(circle, #ffd23f 0 54%, transparent 55%),
+      conic-gradient(#ffd23f 360deg, #ffd23f 0);
+    color: #160f33;
+    animation: ready 0.9s ease-in-out infinite;
+  }
+
+  .super.hyper {
+    background:
+      radial-gradient(circle, #b64dff 0 54%, transparent 55%),
+      conic-gradient(#ffd23f 360deg, #ffd23f 0);
+    color: white;
+    box-shadow:
+      0 0.25rem 0 #000,
+      0 0 1.2rem #b64dff;
+  }
+
+  .super:active {
+    transform: translateY(0.2rem);
+  }
+
+  .super .label {
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+
+  .super .key {
+    font-size: 0.7rem;
+    opacity: 0.75;
+  }
+
+  @keyframes ready {
+    50% {
+      scale: 1.08;
+    }
   }
 
   .level-chip {

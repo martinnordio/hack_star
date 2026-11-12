@@ -17,6 +17,10 @@ export interface Controls {
   fireDir: Vec2 | null
   /** One shot at the nearest target (quick tap on the right side). */
   tapFire: boolean
+  /** Super towards the mouse or aim stick (E key, right click). */
+  superAim: boolean
+  /** Super at the nearest target (Super button). */
+  superAuto: boolean
 }
 
 export function newControls(): Controls {
@@ -28,6 +32,8 @@ export function newControls(): Controls {
     mouseDown: false,
     fireDir: null,
     tapFire: false,
+    superAim: false,
+    superAuto: false,
   }
 }
 
