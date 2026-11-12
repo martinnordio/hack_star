@@ -65,3 +65,12 @@ export function isUnlocked(progress: Progress, fighterId: string): boolean {
 export function maxPower(progress: Progress): number {
   return has(progress, 'power22') ? HACKED_MAX_POWER : NORMAL_MAX_POWER
 }
+
+/** The fighter to show and play; a fighter picked with "unlock all" can be locked again after a reset. */
+export function currentFighter<F extends { id: string }>(progress: Progress, fighters: F[]): F {
+  return (
+    fighters.find((f) => f.id === progress.selectedFighter && isUnlocked(progress, f.id)) ??
+    fighters.find((f) => isUnlocked(progress, f.id)) ??
+    fighters[0]
+  )
+}

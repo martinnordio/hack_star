@@ -74,7 +74,7 @@ are for later specs._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Arena rules (movement, shots, targets) | ✅ Done | [→ Step 1](#step-1--arena-rules-movement-shots-targets) |
-| **2** | Canyon arena and camera | ⬜ Not started | [→ Step 2](#step-2--canyon-arena-and-camera) |
+| **2** | Canyon arena and camera | ✅ Done | [→ Step 2](#step-2--canyon-arena-and-camera) |
 | **3** | Controls, running and shooting | ⬜ Not started | [→ Step 3](#step-3--controls-running-and-shooting) |
 | **4** | Targets and effects | ⬜ Not started | [→ Step 4](#step-4--targets-and-effects) |
 | **5** | Final check | ⬜ Not started | [→ Step 5](#step-5--final-check) |
@@ -130,15 +130,19 @@ The fighter also cannot walk through standing dummies. Numbers: speed 6/s, shots
 Play opens a good-looking canyon arena with the selected fighter, a following camera and a leave button (S1, S2, S7, S9, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `ArenaScene.svelte`: sand ground with tiles, canyon rock walls, cacti bushes, decoration (crates, skulls, small rocks), sky colour, sun light with shadows.
-- [ ] The selected fighter and skin stand at the start point with the idle animation.
-- [ ] Camera from above at an angle, following the fighter smoothly; further away on portrait screens.
-- [ ] Play on home opens the arena; a back button returns home.
-- [ ] Check: browser at desktop and phone sizes — arena visible, fighter visible, back button works.
+- [x] Record the start time in Notes below.
+- [x] `ArenaScene.svelte`: sand ground with tiles, canyon rock walls, cacti bushes, decoration (crates, skulls, small rocks), sky colour, sun light with shadows.
+- [x] The selected fighter and skin stand at the start point with the idle animation.
+- [x] Camera from above at an angle, following the fighter smoothly; further away on portrait screens.
+- [x] Play on home opens the arena; a back button returns home.
+- [x] Check: browser at desktop and phone sizes — arena visible, fighter visible, back button works.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:12
+
+Scenery is built in `models/arena3d.ts` (tiles as one instanced mesh). Cliffs on the camera side are kept low so they never hide the arena. "Coming soon" on Play is gone; Play opens the arena. `currentFighter()` (in `hacks.ts`) is shared by home and the arena.
+
+**Done (2026-11-12 · ~6m)** — Play opens the canyon in ~1.8 s with the selected fighter facing the camera; checked at 1024×768 and 390×844; back returns to home. `svelte-check` 0 errors.
 
 ---
 

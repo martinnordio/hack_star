@@ -81,7 +81,7 @@ export class World {
   private nextShotId = 1
 
   constructor(readonly arena: Arena) {
-    this.player = { x: arena.start.x, z: arena.start.z, facing: Math.PI }
+    this.player = { x: arena.start.x, z: arena.start.z, facing: 0 }
     this.dummies = arena.dummies.map((d, id) => ({ id, x: d.x, z: d.z, health: DUMMY_HEALTH, brokenAt: null }))
   }
 
