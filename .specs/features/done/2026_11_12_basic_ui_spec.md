@@ -15,10 +15,10 @@
 The first screen has to make kids say "wow" and feel like Brawl Stars: a big animated fighter,
 trophies, the Prestige badge and cool skins. It also needs an info page explaining the words
 kids use, so adults can understand them. This is F1 / Spec 1 in
-[overall_req.md](../overall_req.md).
+[overall_req.md](../../overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) — browser, screen sizes,
+- [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md) — browser, screen sizes,
   input, own art and smooth animation (S1–S3, S6, S7) apply here too; Brawl Stars investigation
   and feature list. There is no code yet.
 
@@ -27,7 +27,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../../overall_req.md) | Overall game idea and planned specs |
 
 ## 1 · Specs
 
@@ -38,7 +38,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   (fighter jumps in, light or particle effects) of at most 3 seconds that can be skipped with a
   tap or click.
 - **S3 — Play button:** Tapping **Play** opens the graphics demo
-  ([graphics demo spec](2026_11_12_graphics_demo_spec.md)); until that exists, it shows
+  ([graphics demo spec](../2026_11_12_graphics_demo_spec.md)); until that exists, it shows
   "Coming soon".
 - **S4 — Fighter list:** A **Fighters** button opens a list of all fighters (4–6), each with
   its picture, name, rarity, trophy count and power level; locked fighters look greyed out
