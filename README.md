@@ -15,6 +15,10 @@ phone browser. Made by Martin Nordio and Mattia Nordio.
 - All specs: [.specs/features/](.specs/features/)
 - How the code is organised: [docs/architecture.md](docs/architecture.md)
 
+| Home | Match |
+|------|-------|
+| ![Home screen: Blaze on the podium, the side buttons and PLAY](docs/screenshot-home.png) | ![A match in the canyon: walls, cacti, a bot and the Super button](docs/screenshot-match.png) |
+
 ## Layout
 
 | Folder | What |
