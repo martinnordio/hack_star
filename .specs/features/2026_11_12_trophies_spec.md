@@ -1,7 +1,7 @@
 # Trophies and Prestige Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/trophies`
@@ -75,7 +75,7 @@ takes none (S2, S8)._
 |------|-------------|--------|--------|
 | **1** | Trophy rules | ✅ Done | [→ Step 1](#step-1--trophy-rules) |
 | **2** | Rewards after a match | ✅ Done | [→ Step 2](#step-2--rewards-after-a-match) |
-| **3** | Final check and documentation | ⬜ Not started | [→ Step 3](#step-3--final-check-and-documentation) |
+| **3** | Final check and documentation | ✅ Done | [→ Step 3](#step-3--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -145,14 +145,16 @@ The trophy count and bar count up from the old to the new value (Svelte `Tween`)
 Everything still works on every screen size; the documentation explains trophies (S9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Result screen with reward checked at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: trophies and Prestige, trophy settings.
-- [ ] `docs/architecture.md`: `game/trophies.ts` and where rewards are saved.
+- [x] Record the start time in Notes below.
+- [x] Result screen with reward checked at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: trophies and Prestige, trophy settings.
+- [x] `docs/architecture.md`: `game/trophies.ts` and where rewards are saved.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:08
+
+**Done (2026-11-12 · ~2m)** — 4 sizes: Blaze 2995 → win → "PRESTIGE 3!" with title, bar, badge and buttons all on screen; `pytest` 15 passed, `npm test` 57 passed, `svelte-check` 0 errors, build ok; README and `docs/architecture.md` updated, all links resolve.
 
 ---
 
@@ -177,5 +179,5 @@ Everything still works on every screen size; the documentation explains trophies
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`

@@ -63,7 +63,8 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 | `match.ts` | `Match`: countdown, timer, result (victory, defeat with place, time's up) around a `World` |
 | `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error; wanders when it sees nobody |
 | `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks) |
-| `settings.ts` | `SETTINGS` (match length, bots, level, healing…) and `BOT_LEVELS`; `settingsFrom()` reads `?seconds=&bots=&level=` |
+| `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
+| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies per win/defeat…) and `BOT_LEVELS`; `settingsFrom()` reads `?seconds=&bots=&level=` |
 
 Every frame (`ArenaScene.svelte`, `useTask`): input → `match.update(dt)` (bots think, world
 steps) → events turned into effects → 3D objects moved to match the world. Per-frame data stays
@@ -90,6 +91,11 @@ current format falls back to the starting progress. Hack effects are worked out 
 (`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`), so resetting the hacks
 brings the normal rules back exactly.
 
+Trophies change in one place: when a match ends, `Arena.svelte` works out the reward
+(`game/trophies.ts`) for the fighter that played and saves it at once, before the result
+screen opens, so leaving then still keeps it; leaving during a match or playing Training saves
+nothing. Prestige is not stored: it is `prestigeLevel(trophies)` (every 1000).
+
 ## How to…
 
 - **Change match settings:** edit `SETTINGS` in `ui/src/lib/game/settings.ts` (or try values
@@ -108,5 +114,5 @@ brings the normal rules back exactly.
 | Command | Covers |
 |---------|--------|
 | `cd server; uv run pytest` | API: fighters, hacks |
-| `cd ui; npm test` | Game rules, bots, match, settings, progress, hacks, QR codes, vocabulary |
+| `cd ui; npm test` | Game rules, bots, match, trophies, settings, progress, hacks, QR codes, vocabulary |
 | `cd ui; npm run check` | Type checks (TypeScript and Svelte) |

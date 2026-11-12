@@ -62,6 +62,11 @@ Hack star server" with a **Try again** button.
     see you; bots hiding in cacti are invisible unless you are close.
   - The match ends with **Victory** (last one standing), **Defeat** (with your place) or
     **Time's up**; then **Play again** or **Home**.
+  - **Trophies:** a victory gives the fighter you played **+10 trophies** (a defeat or time's up
+    gives none for now). The result screen counts them up and shows the bar to the next
+    **Prestige** (1000, 2000, 3000…); reaching one shows "PRESTIGE n!" and the fighter gets the
+    diamond badge with that number. A fighter never drops below a Prestige it reached.
+    Training never changes trophies.
 - **Training:** the same arena with three target dummies (5 hits break one; it comes back
   after 5 seconds) to practise.
 
@@ -89,8 +94,9 @@ Progress (chosen fighter and skins, trophies) is saved in the browser of each de
 
 ### Match settings
 
-Match length, number of bots, bot level (easy, medium, hard) and what "time's up" means are
-in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts) (`SETTINGS`). To try other values
+Match length, number of bots, bot level (easy, medium, hard), what "time's up" means and the
+trophies for a win or a defeat are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
+(`SETTINGS`). To try other values
 without changing code, add them to the address, for example
 <http://localhost:5180/?seconds=60&bots=5&level=medium> (1–8 bots, 5–600 seconds).
 
