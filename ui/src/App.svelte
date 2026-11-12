@@ -8,9 +8,11 @@
   import Home from './lib/Home.svelte'
   import InfoPage from './lib/InfoPage.svelte'
   import Panel from './lib/Panel.svelte'
+  import ShopScreen from './lib/ShopScreen.svelte'
   import { progress } from './lib/progress'
+  import { wornSkin } from './lib/game/shop'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'info' | 'hack' | 'match' | 'training'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'match' | 'training'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>`.
   const codeInLink = new URLSearchParams(location.search).get('hack') ?? undefined
@@ -62,7 +64,7 @@
   {#key `${screen}-${matchNumber}`}
     <Arena
       mode={screen}
-      player={{ fighterId: fighter.id, skinId: $progress.selectedSkins[fighter.id] ?? 'default' }}
+      player={{ fighterId: fighter.id, skinId: wornSkin($progress, fighter.id) }}
       {fighters}
       onLeave={() => (screen = 'home')}
       onPlayAgain={() => matchNumber++}
@@ -80,7 +82,11 @@
   </Panel>
 {:else if screen === 'fighter' && openFighter}
   <Panel title="Fighter" onBack={() => (screen = 'fighters')}>
-    <FighterDetail fighter={openFighter} onSelected={() => (screen = 'home')} />
+    <FighterDetail fighter={openFighter} {fighters} onSelected={() => (screen = 'home')} />
+  </Panel>
+{:else if screen === 'shop'}
+  <Panel title="Shop" onBack={() => (screen = 'home')}>
+    <ShopScreen {fighters} />
   </Panel>
 {:else if screen === 'info'}
   <Panel title="Info" onBack={() => (screen = 'home')}>

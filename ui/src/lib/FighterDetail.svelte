@@ -6,12 +6,15 @@
   import { credits, isUnlocked, maxPower } from './hacks'
   import Celebration from './Celebration.svelte'
   import { powerOf, stats, unlock, unlockPrice, upgrade, upgradeCost } from './game/economy'
+  import { buySkin, ownsSkin, skinPrice, wornSkin } from './game/shop'
   import HomeScene from './HomeScene.svelte'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './progress'
 
-  let { fighter, onSelected }: { fighter: Fighter; onSelected: () => void } = $props()
+  let { fighter, fighters, onSelected }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void } = $props()
+
+  const today = new Date()
 
   const unlocked = $derived(isUnlocked($progress, fighter.id))
   const trophies = $derived($progress.trophies[fighter.id] ?? 0)
@@ -45,10 +48,24 @@
     const s = stats(power)
     celebrate('UPGRADED!', `Power ${power}`, `❤️ ${s.health}  💥 ${s.damage}`)
   }
-  let previewSkin = $state(untrack(() => $progress.selectedSkins[fighter.id] ?? 'default'))
+  let previewSkin = $state(untrack(() => wornSkin($progress, fighter.id)))
+  const previewOwned = $derived(ownsSkin($progress, fighter.id, previewSkin))
+  const previewPrice = $derived.by(() => {
+    const skin = fighter.skins.find((s) => s.id === previewSkin)
+    return skin ? skinPrice($progress, fighters, fighter, skin, today) : 0
+  })
   const isCurrent = $derived(
-    $progress.selectedFighter === fighter.id && ($progress.selectedSkins[fighter.id] ?? 'default') === previewSkin,
+    $progress.selectedFighter === fighter.id && wornSkin($progress, fighter.id) === previewSkin,
   )
+
+  function buyPreviewSkin() {
+    const skin = fighter.skins.find((s) => s.id === previewSkin)
+    if (!skin) return
+    const result = buySkin($progress, fighters, fighter, skin, today)
+    if (!result.ok) return
+    progress.set(result.progress)
+    celebrate('NEW SKIN!', skin.name, fighter.name)
+  }
 
   function select() {
     progress.update((p) => ({
@@ -126,6 +143,9 @@
             <img src={portrait(fighter.id, skin.id)} alt="" />
             <span class="skin-name">{skin.name}</span>
             <span class="skin-rarity">{skin.rarity === 'Default' ? 'Default' : skin.rarity}</span>
+            {#if !ownsSkin($progress, fighter.id, skin.id)}
+              <span class="skin-price">🔒 {skinPrice($progress, fighters, fighter, skin, today)} C</span>
+            {/if}
           </button>
         </li>
       {/each}
@@ -133,6 +153,16 @@
 
     {#if !unlocked}
       <!-- The unlock button above says what is needed. -->
+    {:else if !previewOwned}
+      <button class="select" disabled={wallet < previewPrice} onclick={buyPreviewSkin}>
+        {#if wallet === Infinity}
+          BUY SKIN · free
+        {:else if wallet >= previewPrice}
+          BUY SKIN · {previewPrice} C
+        {:else}
+          Need {previewPrice - wallet} more C
+        {/if}
+      </button>
     {:else if isCurrent}
       <button class="select" disabled>✔ Selected</button>
     {:else}
@@ -290,6 +320,12 @@
     font-weight: 800;
     text-transform: uppercase;
     color: var(--skin-rarity);
+  }
+
+  .skin-price {
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #ffe45c;
   }
 
   .select {

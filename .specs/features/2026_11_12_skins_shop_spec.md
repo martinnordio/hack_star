@@ -78,7 +78,7 @@ _None._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Owned skins and shop rules | ✅ Done | [→ Step 1](#step-1--owned-skins-and-shop-rules) |
-| **2** | Shop screen and buying on the fighter screen | ⬜ Not started | [→ Step 2](#step-2--shop-screen-and-buying-on-the-fighter-screen) |
+| **2** | Shop screen and buying on the fighter screen | ✅ Done | [→ Step 2](#step-2--shop-screen-and-buying-on-the-fighter-screen) |
 | **3** | Final check and documentation | ⬜ Not started | [→ Step 3](#step-3--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -130,14 +130,18 @@ The day for "skin of the day" is counted in local time, so it changes at the pla
 Players buy skins in the Shop and on the fighter screen (S3–S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home: **Shop** button.
-- [ ] `ShopScreen.svelte`: skin of the day first (30% off badge), then all non-default skins with picture, names, rarity, price / Owned / "Unlock <fighter> first"; **Buy**; celebration with **Wear it**.
-- [ ] Fighter screen: lock and price on skins not owned; try-on; **Buy · N C** instead of Select.
-- [ ] Check (browser): with 1000 credits buy Rocko Crystal (300) → 700, owned, wear it → home shows it; Blaze Phoenix (1500) shows "Need 800 more"; Luna skins say "Unlock Luna first"; skin of the day shows the discounted price; with OPENSESAME all skins owned; old version 2 progress keeps its selected skin.
+- [x] Record the start time in Notes below.
+- [x] Home: **Shop** button.
+- [x] `ShopScreen.svelte`: skin of the day first (30% off badge), then all non-default skins with picture, names, rarity, price / Owned / "Unlock <fighter> first"; **Buy**; celebration with **Wear it**.
+- [x] Fighter screen: lock and price on skins not owned; try-on; **Buy · N C** instead of Select.
+- [x] Check (browser): with 1000 credits buy Rocko Crystal (300) → 700, owned, wear it → home shows it; Blaze Phoenix (1500) shows "Need 800 more"; Luna skins say "Unlock Luna first"; skin of the day shows the discounted price; with OPENSESAME all skins owned; old version 2 progress keeps its selected skin.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:52
+
+`wornSkin()` (in `game/shop.ts`) is the skin a fighter really wears: a chosen skin that is no longer owned (after a hack reset) shows as Default; home, list, fighter screen and matches use it. Home's side buttons are now a grid (2 columns; 3 in portrait, with the name plate moved under the top bar) to fit the new Shop button. Fixed the struck-through price running into the new price.
+
+**Done (2026-11-12 · ~10m)** — browser: version 2 progress (1000 C, Phoenix selected) → version 3, 1000 C, Phoenix owned; Shop: skin of the day first (Blaze Lava 300 → 210), Phoenix "Owned", Crystal 300, Neon 600, Frosty/Luna/Pixel skins "Unlock … first"; buy Crystal → "NEW SKIN!", 700 C, Wear it → home shows Rocko; fresh progress with 700 C: Phoenix (skin of the day, 1050) "Need 350 more C"; OPENSESAME → all 8 skins Owned, no skin of the day, Phoenix selectable; after reset Blaze wears Default.
 
 ---
 

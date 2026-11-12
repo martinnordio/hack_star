@@ -17,6 +17,12 @@ export function ownsSkin(progress: Progress, fighterId: string, skinId: string):
   )
 }
 
+/** The skin a fighter wears: the chosen one if it is owned (it may not be after a hack reset). */
+export function wornSkin(progress: Progress, fighterId: string): string {
+  const chosen = progress.selectedSkins[fighterId] ?? 'default'
+  return ownsSkin(progress, fighterId, chosen) ? chosen : 'default'
+}
+
 /** Whole days since 1970 in local time, so the skin of the day changes at midnight. */
 function dayNumber(date: Date): number {
   return Math.floor((date.getTime() - date.getTimezoneOffset() * 60_000) / 86_400_000)
