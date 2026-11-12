@@ -18,7 +18,7 @@ reader later understands the trade-off.
 ## Inputs
 
 - Part 1 of the spec (agreed requirements, Already in the repository, New).
-- `.spec/overall_req.md` — the technology choices (Python server, Svelte UI, browser only;
+- `.specs/overall_req.md` — the technology choices (Python server, Svelte UI, browser only;
   desktop, iPad and phone).
 - The repository: folder structure, the modules and components the requirements touch, tests,
   how to install and run.

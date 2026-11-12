@@ -17,7 +17,7 @@ of guessing, and you reuse what the repository already has instead of specifying
 ## Inputs
 
 - The user's request, in their own words (often what kids say about Brawl Stars).
-- `.spec/overall_req.md` — the overall vision and the planned specs.
+- `.specs/overall_req.md` — the overall vision and the planned specs.
 - The repository: README, the Python server and Svelte UI, and the code that matches the words
   of the request.
 - Existing specs in `.specs/features/` and `.specs/features/done/` — to find overlap.

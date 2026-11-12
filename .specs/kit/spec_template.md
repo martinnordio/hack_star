@@ -30,7 +30,7 @@ What this feature gives the player, in two or three sentences, and why it matter
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../.spec/overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
 
 ## 1 · Specs
 

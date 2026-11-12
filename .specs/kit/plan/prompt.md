@@ -26,7 +26,7 @@ Paths are relative to this file (`.specs/kit/plan/`).
 | `../skills/architect.md` | Your role while planning |
 | `../skills/requirements_engineer.md` | How to judge whether Part 1 is ready |
 | `../spec_template.md` | The shape of Part 2 (Overview, Decisions, Steps, Deferred, Review Log, Definition of Done) |
-| `.spec/overall_req.md` | The technology already chosen: Python server, Svelte UI, browser only |
+| `.specs/overall_req.md` | The technology already chosen: Python server, Svelte UI, browser only |
 | `.specs/spec-nx.json` | `stages`: `requirements`, `plan`, `pr` (for the Definition of Done) |
 
 ---

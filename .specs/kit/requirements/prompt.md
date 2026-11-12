@@ -28,7 +28,7 @@ Paths are relative to this file (`.specs/kit/requirements/`).
 |------|-----|
 | `../skills/requirements_engineer.md` | Your role: how to think and what to avoid |
 | `../spec_template.md` | The spec template (Part 1 · Requirements, marker, Part 2 · Plan) |
-| `.spec/overall_req.md` | The overall game idea and the planned specs (Spec 0, Spec 1, …) |
+| `.specs/overall_req.md` | The overall game idea and the planned specs (Spec 0, Spec 1, …) |
 | `.specs/spec-nx.json` | Project settings |
 
 ---
@@ -36,7 +36,7 @@ Paths are relative to this file (`.specs/kit/requirements/`).
 ## REQUIREMENTS: new spec
 
 1. **Read the repository first.** Before writing anything, look at:
-   - `.spec/overall_req.md` — the overall vision of Hack star (a browser game like Brawl Stars,
+   - `.specs/overall_req.md` — the overall vision of Hack star (a browser game like Brawl Stars,
      with hack codes) and which spec the request belongs to;
    - the README, if there is one;
    - the specs in `.specs/features/` and `.specs/features/done/` — is this feature, or part of
@@ -111,5 +111,5 @@ Paths are relative to this file (`.specs/kit/requirements/`).
 
 - Write code, or Part 2.
 - Change other specs (refer to them instead).
-- Change `.spec/overall_req.md` — it is the user's own document.
+- Change `.specs/overall_req.md` — it is the user's own document.
 - Put secrets, tokens, internal URLs or personal data into a spec.
