@@ -121,7 +121,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 |------|-------------|--------|--------|
 | **0** | Server and UI scaffolding | ✅ Done | [→ Step 0](#step-0--server-and-ui-scaffolding) |
 | **1** | Responsive 3D shell | ✅ Done | [→ Step 1](#step-1--responsive-3d-shell) |
-| **2** | Progress saved on the device | ⬜ Not started | [→ Step 2](#step-2--progress-saved-on-the-device) |
+| **2** | Progress saved on the device | ✅ Done | [→ Step 2](#step-2--progress-saved-on-the-device) |
 | **3** | README, asset licences, final check | ⬜ Not started | [→ Step 3](#step-3--readme-asset-licences-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -200,13 +200,15 @@ Ports 5173/8000 were taken by another project on this machine → fixed ports 51
 A progress store (trophies per fighter, unlocked fighters, active hacks) that survives closing the browser (S9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `ui/src/lib/progress.ts`: typed progress, load/save to `localStorage` with a version number; broken or missing data falls back to the default.
-- [ ] Svelte store wrapping it, saved on every change.
-- [ ] Check: `vitest` tests for default, save/load round trip and broken data pass.
+- [x] Record the start time in Notes below.
+- [x] `ui/src/lib/progress.ts`: typed progress, load/save to `localStorage` with a version number; broken or missing data falls back to the default.
+- [x] Svelte store wrapping it, saved on every change.
+- [x] Check: `vitest` tests for default, save/load round trip and broken data pass.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:35
+
+**Done (2026-11-12 · ~3m)** — `progress.ts` with validation and a store that saves on every change; `npm test` 7 passed; `svelte-check` 0 errors.
 
 ---
 
