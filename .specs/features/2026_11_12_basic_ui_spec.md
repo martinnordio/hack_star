@@ -115,7 +115,7 @@ of this spec (see Deferred Items in the plan)._
 |------|-------------|--------|--------|
 | **1** | Fighter catalogue and sample progress | ✅ Done | [→ Step 1](#step-1--fighter-catalogue-and-sample-progress) |
 | **2** | 3D fighter models and skins | ✅ Done | [→ Step 2](#step-2--3d-fighter-models-and-skins) |
-| **3** | Home screen with entrance | ⬜ Not started | [→ Step 3](#step-3--home-screen-with-entrance) |
+| **3** | Home screen with entrance | ✅ Done | [→ Step 3](#step-3--home-screen-with-entrance) |
 | **4** | Fighter list and fighter screen | ⬜ Not started | [→ Step 4](#step-4--fighter-list-and-fighter-screen) |
 | **5** | Info page | ⬜ Not started | [→ Step 5](#step-5--info-page) |
 | **6** | Final check | ⬜ Not started | [→ Step 6](#step-6--final-check) |
@@ -193,14 +193,18 @@ There are 14 combinations (3+2+2+2+3+2), not 15. `?gallery` (or `?gallery=<fight
 The home screen shows the selected fighter large, title, trophies, credits, Play, Fighters and Info buttons, with the entrance animation (S1–S3, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home layout: top bar (total trophies, credits), fighter in the centre on a podium with its name and Prestige badge, big Play button, Fighters and Info buttons.
-- [ ] Entrance (≤ 3 s): fighter drops in with a bounce and sparkles, title pops in; tap or click skips.
-- [ ] Play shows "Coming soon".
-- [ ] Check: in the browser the entrance plays and can be skipped; Play shows "Coming soon"; Blaze shows Prestige 1.
+- [x] Record the start time in Notes below.
+- [x] Home layout: top bar (total trophies, credits), fighter in the centre on a podium with its name and Prestige badge, big Play button, Fighters and Info buttons.
+- [x] Entrance (≤ 3 s): fighter drops in with a bounce and sparkles, title pops in; tap or click skips.
+- [x] Play shows "Coming soon".
+- [x] Check: in the browser the entrance plays and can be skipped; Play shows "Coming soon"; Blaze shows Prestige 1.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:47
+
+The F0 placeholder arena (`Scene.svelte`) and its server/FPS overlay were replaced by the home screen; the server status now shows as a "Cannot reach the Hack star server" message with **Try again**. Portrait phones get a stacked layout (buttons above a full-width Play).
+
+**Done (2026-11-12 · ~8m)** — home screen with rays, podium, 2.2 s drop-in entrance with sparkle burst and title pop; tap skips. Browser: skip hides "Tap to skip", Play shows "Coming soon!", Blaze shows Prestige 1 badge, 61 FPS at 1024×768; phone 390×844 layout checked.
 
 ---
 
