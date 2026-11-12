@@ -22,7 +22,7 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
 - [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input), S6 (30 frames per second), S7 (own art); the graphics options
   investigated there.
-- [Basic UI spec](2026_11_12_basic_ui_spec.md) — the Play button (S3) opens this demo; the
+- [Basic UI spec](done/2026_11_12_basic_ui_spec.md) — the Play button (S3) opens this demo; the
   selected fighter and skin (S5, S7). There is no code yet.
 
 **New:**

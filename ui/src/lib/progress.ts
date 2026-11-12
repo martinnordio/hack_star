@@ -1,24 +1,32 @@
 import { writable } from 'svelte/store'
 
 export const PROGRESS_KEY = 'hack-star.progress'
-export const PROGRESS_VERSION = 1
+export const PROGRESS_VERSION = 2
 
 export interface Progress {
   version: typeof PROGRESS_VERSION
+  credits: number
   /** Trophies per fighter id. */
   trophies: Record<string, number>
+  powerLevels: Record<string, number>
   unlockedFighters: string[]
   activeHacks: string[]
   selectedFighter: string | null
+  /** Chosen skin id per fighter id; missing means the default skin. */
+  selectedSkins: Record<string, string>
 }
 
+/** Sample start until matches give real trophies (basic UI spec S8). */
 export function defaultProgress(): Progress {
   return {
     version: PROGRESS_VERSION,
-    trophies: {},
-    unlockedFighters: [],
+    credits: 500,
+    trophies: { blaze: 1240, rocko: 420, turbo: 85 },
+    powerLevels: { blaze: 7, rocko: 4, turbo: 2 },
+    unlockedFighters: ['blaze', 'rocko', 'turbo'],
     activeHacks: [],
-    selectedFighter: null,
+    selectedFighter: 'blaze',
+    selectedSkins: {},
   }
 }
 
@@ -28,17 +36,35 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string')
 }
 
+function isCountMap(value: unknown): value is Record<string, number> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    Object.values(value).every((n) => Number.isInteger(n) && n >= 0)
+  )
+}
+
+function isStringMap(value: unknown): value is Record<string, string> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    Object.values(value).every((s) => typeof s === 'string')
+  )
+}
+
 function isProgress(value: unknown): value is Progress {
   if (typeof value !== 'object' || value === null) return false
   const p = value as Record<string, unknown>
   return (
     p.version === PROGRESS_VERSION &&
-    typeof p.trophies === 'object' &&
-    p.trophies !== null &&
-    Object.values(p.trophies).every((n) => Number.isInteger(n) && (n as number) >= 0) &&
+    Number.isInteger(p.credits) &&
+    (p.credits as number) >= 0 &&
+    isCountMap(p.trophies) &&
+    isCountMap(p.powerLevels) &&
     isStringArray(p.unlockedFighters) &&
     isStringArray(p.activeHacks) &&
-    (p.selectedFighter === null || typeof p.selectedFighter === 'string')
+    (p.selectedFighter === null || typeof p.selectedFighter === 'string') &&
+    isStringMap(p.selectedSkins)
   )
 }
 
@@ -79,3 +105,7 @@ export function memoryStorage(): KeyValueStorage {
 export const progress = createProgressStore(
   typeof window === 'undefined' ? memoryStorage() : window.localStorage,
 )
+
+export function totalTrophies(p: Progress): number {
+  return Object.values(p.trophies).reduce((sum, n) => sum + n, 0)
+}
