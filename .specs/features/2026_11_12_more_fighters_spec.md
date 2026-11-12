@@ -45,7 +45,9 @@ the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
   numbers: **Tank** (more health, short range), **Sharpshooter** (long range, less health),
   **Speedy** (fast), **Thrower** (shots fly over walls), **Spreader** (several shots in a fan).
 - **S4 — Different attacks:** Fighters attack the way their type says, in matches and in
-  Training, also when bots play them.
+  Training, also when bots play them. Each type also gets its own Super (today every fighter
+  has the same Super blast from the
+  [super and hypercharge spec](done/2026_11_12_super_and_hypercharge_spec.md)).
 - **S5 — Fair:** No fighter wins clearly more often than the others: in a test of many bot-only
   matches at the same power level, every fighter wins between 5% and 20% of them.
 - **S6 — Bots use them:** Bots pick from all 10 fighters.
