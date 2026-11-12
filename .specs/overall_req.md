@@ -81,7 +81,7 @@ Hiper charge QR code
 | 2 minutes, 3 bots, bots fight each other | Already so; confirmed, no change |
 | Bot level chosen in a configuration | F8 [overtime and match options](features/done/2026_11_12_overtime_and_match_options_spec.md) ✅ done |
 | One more minute without walls when time runs out | F8 [overtime and match options](features/done/2026_11_12_overtime_and_match_options_spec.md) ✅ done |
-| Add more figures | F9 [more fighters](features/2026_11_12_more_fighters_spec.md) |
+| Add more figures | F9 [more fighters](features/done/2026_11_12_more_fighters_spec.md) ✅ done |
 | Hypercharge QR code | F10 [super and hypercharge](features/done/2026_11_12_super_and_hypercharge_spec.md) ✅ done |
 | Up to 2 friends to play | F11 [play with friends](features/2026_11_12_play_with_friends_spec.md) |
 

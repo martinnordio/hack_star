@@ -1,7 +1,7 @@
 # More Fighters Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/more-fighters`
@@ -15,7 +15,7 @@
 Mattia asked to "add more figures". Today there are 6 fighters that all fight the same way, so
 the only difference is their look. This spec adds **4 new fighters** and gives every fighter its
 own way of attacking, so choosing, unlocking and upgrading a fighter really matters. It is F9 in
-the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
+the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 **Already in the repository** (reuse, don't rebuild):
 - Fighter catalogue on the server (`server/src/hack_star_server/fighters.py`, `GET /api/fighters`):
@@ -31,9 +31,9 @@ the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and Mattia's answers |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
@@ -47,7 +47,7 @@ the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
 - **S4 — Different attacks:** Fighters attack the way their type says, in matches and in
   Training, also when bots play them. Each type also gets its own Super (today every fighter
   has the same Super blast from the
-  [super and hypercharge spec](done/2026_11_12_super_and_hypercharge_spec.md)).
+  [super and hypercharge spec](2026_11_12_super_and_hypercharge_spec.md)).
 - **S5 — Fair:** No type wins clearly more often than the others: in a test of many bot-only
   matches with one fighter of each of the 5 types at the same power level, every type wins
   between 10% and 30% of the matches that have a winner (a fair share is 20%).
@@ -77,7 +77,7 @@ the [MVP and architecture spec](done/2026_11_12_mvp_and_architecture_spec.md).
 | **1** | Fighter types in the rules | ✅ Done | [→ Step 1](#step-1--fighter-types-in-the-rules) |
 | **2** | Four new fighters and their skins | ✅ Done | [→ Step 2](#step-2--four-new-fighters-and-their-skins) |
 | **3** | Types on the screens and in the arena | ✅ Done | [→ Step 3](#step-3--types-on-the-screens-and-in-the-arena) |
-| **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
+| **4** | Final check and documentation | ✅ Done | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -172,13 +172,15 @@ Throwers also get a white ring where the shot will land. Training has no wall be
 Everything works on every screen size; the documentation explains fighters and types (S8, S9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Fighter list, fighter screen, Shop and home checked at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README (10 fighters, types, Supers), `docs/architecture.md` (`game/types.ts`, attacks and Supers in `World`), Info vocabulary (Tank, Sharpshooter, Thrower, Spreader, Speedy).
+- [x] Record the start time in Notes below.
+- [x] Fighter list, fighter screen, Shop and home checked at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README (10 fighters, types, Supers), `docs/architecture.md` (`game/types.ts`, attacks and Supers in `World`), Info vocabulary (Tank, Sharpshooter, Thrower, Spreader, Speedy).
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:49
+
+**Done (2026-11-12 · ~2m)** — browser at the four sizes: fighter list (10 cards, type labels not cut), Sir Clank's screen and the Shop (12 skins) with no sideways scrolling; `pytest` 18 passed, `npm test` 110 passed, `svelte-check` 0 errors, `npm run build` OK; README (type table), architecture and vocabulary updated.
 
 ---
 
@@ -203,5 +205,5 @@ Everything works on every screen size; the documentation explains fighters and t
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`

@@ -29,7 +29,7 @@ address (also from an iPad or phone on the Wi-Fi).
 | Endpoint | Returns |
 |----------|---------|
 | `GET /api/health` | `{"status": "ok"}` |
-| `GET /api/fighters` | The 6 fighters with rarity and skins (`server/src/hack_star_server/fighters.py`) |
+| `GET /api/fighters` | The 10 fighters with rarity, type and skins (`server/src/hack_star_server/fighters.py`) |
 | `GET /api/hacks` | The hack codes (`hacks.py`), for the printable QR page |
 | `POST /api/hacks/redeem` `{"code"}` | The hack for a code (any case, spaces trimmed), or 404 "Unknown code" |
 
@@ -61,12 +61,14 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 | File | What |
 |------|------|
 | `arena.ts` | The canyon layout: walls, bushes (cacti), decorations, dummies, start points |
-| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level, shots with owners (each shot carries its damage, worked out when fired), collisions (circles against rectangles), healing, knock-outs, dummies; its own `walls` / `bushes` lists, emptied by `removeCover()` (overtime); Super and Hypercharge: per-fighter `superCharge` / `hyperCharge` meters filled by normal hits, `useSuper()` fires the Super blast (big shots through walls), `isHyper()` boosts speed and damage; emits events for effects |
+| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level and type, shots with owners (each shot carries its range, speed, size and damage, worked out when fired; lobbed shots fly over everything and explode; piercing shots go on after a hit), collisions (circles against rectangles), healing, knock-outs, dummies; its own `walls` / `bushes` lists, emptied by `removeCover()` (overtime); Super and Hypercharge: per-fighter `superCharge` / `hyperCharge` meters filled by damage dealt, `useSuper()` does the type's Super (blast, shockwave, beam, dash, bomb), `isHyper()` boosts speed and damage; emits events for effects |
+| `types.ts` | `FIGHTER_TYPES` (Tank, Sharpshooter, Speedy, Thrower, Spreader) and `BASIC`: health, damage, speed and reload multipliers, the attack (range, shot speed, size, count, spread, lob, blast) and the Super; `fighterType(id)` |
+| `tournament.ts` | Bot-only matches with one fighter per type, used by the fairness test |
 | `match.ts` | `Match`: countdown, timer, overtime (when time runs out with the player and a bot in: `overtimeSeconds` more and `removeCover()`), result (victory, defeat with place, time's up) around a `World` |
 | `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error (and uses its Super when full; `BotSkill.hyper` is off on Easy); wanders when it sees nobody |
 | `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks, Super button / E / right click) |
 | `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
-| `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power, owned…); `powerOf()` caps a level at the current maximum |
+| `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level, settings, type)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power, owned…); `powerOf()` caps a level at the current maximum |
 | `shop.ts` | Skins: `ownsSkin` (default skins and the OPENSESAME hack count as owned), `wornSkin` (the chosen skin if owned, else Default), `skinOfTheDay(date)` (picked from the local day number, same for everyone that day), `skinPrice`, and the purchase `buySkin()` |
 | `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power…) and `BOT_LEVELS`; `settingsFrom(search, defaults, chosen)` applies the Settings screen choices, then `?seconds=&bots=&level=&overtime=` |
 
@@ -82,7 +84,7 @@ Everything is built in code from simple shapes, so there is no art to download o
 | File | What |
 |------|------|
 | `parts.ts` | Toon material, outline ("inverted hull"), shape helpers, cartoon eyes, Legendary glow |
-| `fighters3d.ts` | `buildFighter(id, skin)` for the 6 fighters and 14 skins; idle animation; see-through in bushes |
+| `fighters3d.ts` | `buildFighter(id, skin)` for the 10 fighters and 22 looks; idle animation; see-through in bushes |
 | `arena3d.ts` | Tiles, cliffs, rock walls, cacti, crates, barrels, skulls |
 | `dummy3d.ts`, `healthBar.ts` | Training dummy; health bars |
 | `particles.ts` | One pool of reused meshes for dust, flashes, sparks and pieces |
@@ -117,9 +119,12 @@ progress format did not change.
 - **Change match settings:** edit `SETTINGS` in `ui/src/lib/game/settings.ts` (or try values
   with `?seconds=&bots=&level=&overtime=`); players choose bot level and number of bots on the
   Settings screen.
-- **Add a fighter:** add it to `FIGHTERS` in `server/src/hack_star_server/fighters.py`, add a
-  builder in `ui/src/lib/models/fighters3d.ts` and a shot colour in `ArenaScene.svelte`; check
-  it with `/?gallery`.
+- **Add a fighter:** add it to `FIGHTERS` in `server/src/hack_star_server/fighters.py` (with
+  its `type`), add a builder in `ui/src/lib/models/fighters3d.ts`, a shot colour in
+  `ArenaScene.svelte` and its looks in `Gallery.svelte`; check it with `/?gallery`.
+- **Change or add a fighter type:** edit `FIGHTER_TYPES` in `ui/src/lib/game/types.ts`, then
+  run `npm test`: the fairness test fails if one type wins more than 30% or less than 10% of
+  bot-only matches.
 - **Add a hack code:** add it to `HACKS` in `server/src/hack_star_server/hacks.py`, add its id
   to `HackId` and its effect in `ui/src/lib/hacks.ts`.
 - **Add a spec:** use the spec kit — `Load .specs/kit/requirements/prompt.md` →
