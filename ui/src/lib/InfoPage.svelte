@@ -2,7 +2,7 @@
   import { VOCABULARY } from './vocabulary'
 </script>
 
-<p class="intro">The words kids use when they talk about the game.</p>
+<p class="intro">The words used in Hack star.</p>
 
 <dl>
   {#each VOCABULARY as { word, meaning }}

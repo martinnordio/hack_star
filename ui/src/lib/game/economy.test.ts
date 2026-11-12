@@ -22,7 +22,7 @@ function ok(p: ReturnType<typeof unlock>): Progress {
 }
 
 describe('economy', () => {
-  it('prices unlocks by rarity, as in Brawl Stars', () => {
+  it('prices unlocks by rarity', () => {
     expect(['Rare', 'Super Rare', 'Epic', 'Mythic', 'Legendary'].map((r) => unlockPrice(r as Fighter['rarity']))).toEqual([
       160, 430, 925, 1900, 3800,
     ])

@@ -1,10 +1,11 @@
 # MVP and Architecture Spec
 
-> **Author:** Martin Nordio
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/mvp-and-architecture`
+> **Issue:** [#1](https://github.com/martinnordio/hack_star/issues/1)
 
 ---
 

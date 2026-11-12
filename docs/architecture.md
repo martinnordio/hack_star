@@ -49,7 +49,7 @@ value (no router):
 | Home | `lib/Home.svelte`, `lib/HomeScene.svelte` | 3D fighter on a podium, entrance animation |
 | Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought |
 | Shop | `lib/ShopScreen.svelte` | Skin of the day first, then every skin; buy, "NEW SKIN!", Wear it |
-| Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words kids use |
+| Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words used in the game |
 | Settings | `lib/SettingsScreen.svelte`, `lib/options.ts` | Bot level and number of bots, saved under `hack-star.options` |
 | Hack | `lib/HackScreen.svelte`, `lib/QrScanner.svelte` | Codes typed or scanned; `/?qr` shows `lib/QrPage.svelte` |
 | Friends | `lib/FriendsScreen.svelte`, `lib/net/room.ts` | Create / join a room (code, QR, `?room=CODE` link), lobby, Start |

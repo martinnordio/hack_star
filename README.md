@@ -1,13 +1,23 @@
 # Hack star
 
-A browser game for kids inspired by Brawl Stars, with **hack codes** that give unlimited
+> **An example of [spec-nx](https://github.com/martinnordio/spec-nx) in use.** spec-nx is a
+> small spec kit for building software with an AI coding assistant: every feature starts as a
+> spec (requirements, then a plan in steps), each step is implemented, checked and committed,
+> and the spec and the documentation are kept up to date along the way. How it was used here,
+> the generated kit and links to every spec: **[SPEC-NX.md](SPEC-NX.md)**.
+
+A top-down arena browser game for kids, with **hack codes** that give unlimited
 credits, unlock every fighter and allow power levels up to 22. It runs on a desktop, iPad and
-phone browser.
+phone browser. Made by Martin Nordio and Mattia Nordio.
 
 - Vision: [.specs/overall_req.md](.specs/overall_req.md)
 - Feature list and MVP scope: [MVP and architecture spec](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md)
 - All specs: [.specs/features/](.specs/features/)
 - How the code is organised: [docs/architecture.md](docs/architecture.md)
+
+| Home | Match |
+|------|-------|
+| ![Home screen: Blaze on the podium, the side buttons and PLAY](docs/screenshot-home.png) | ![A match in the canyon: walls, cacti, a bot and the Super button](docs/screenshot-match.png) |
 
 ## Layout
 
@@ -102,7 +112,7 @@ Hack star server" with a **Try again** button.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
   otherwise; you start with 500). On a fighter's screen:
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
-    Legendary 3800 credits (as in Brawl Stars).
+    Legendary 3800 credits.
   - **Upgrade** its power level for 20 × the current level (7 → 8 costs 140). Each level adds
     10% health and damage (power 1: ❤️ 3200 💥 480; power 11: 6400 / 960), and that is what the
     fighter has in matches and training. Bots play at power 5.
@@ -110,7 +120,7 @@ Hack star server" with a **Try again** button.
   day** (a new one each day) is first and costs 30% less. Skins of locked fighters say
   "Unlock … first". After buying, **Wear it** puts it on and makes that fighter the chosen one.
   Skins can also be bought on the fighter screen (try on, then **Buy**). Default skins are free.
-- **Info:** the words kids use in the game.
+- **Info:** the words used in the game.
 - **Settings:** bot level (**Easy**, **Medium**, **Hard**) and number of bots (1–5) for every
   match; saved on the device. Default Easy and 3 bots.
 - **Friends:** play together, each on your own iPad, phone or computer on the same Wi-Fi — you
@@ -185,5 +195,14 @@ locks its launcher, so `uv` cannot re-install it).
 
 ## Art
 
-Only original art or art with a free licence (CC0) is used — no Supercell art, names or
-logos. See [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md).
+Only original art or art with a free licence (CC0) is used: every fighter, skin and arena is
+built in code from simple shapes. See [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md).
+
+## Licence and disclaimer
+
+Hack star is open source under the [MIT licence](LICENSE), © 2026 Martin Nordio and Mattia
+Nordio.
+
+Hack star is an independent fan project. It is not affiliated with, endorsed, sponsored or
+approved by Supercell, and it contains no Supercell code, art, sound or other content. All
+trademarks belong to their owners.

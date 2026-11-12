@@ -3,8 +3,8 @@
   "spec_nx_version": "3cae701",
   "generated": "2026-11-12",
   "stages": ["requirements", "plan", "pr"],
-  "git_host": "none",
-  "link_issues": false,
+  "git_host": "github",
+  "link_issues": true,
   "shells": ["powershell"],
   "kit": "shared",
   "model": "Claude Opus 5.5"
