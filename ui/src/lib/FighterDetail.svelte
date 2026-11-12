@@ -132,7 +132,7 @@
     </ul>
 
     {#if !unlocked}
-      <button class="select" disabled>🔒 Locked</button>
+      <!-- The unlock button above says what is needed. -->
     {:else if isCurrent}
       <button class="select" disabled>✔ Selected</button>
     {:else}

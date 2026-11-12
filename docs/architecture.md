@@ -59,12 +59,13 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 | File | What |
 |------|------|
 | `arena.ts` | The canyon layout: walls, bushes (cacti), decorations, dummies, start points |
-| `world.ts` | `World`: fighters (fighter 0 is the player) with health, shots with owners, collisions (circles against rectangles), healing, knock-outs, dummies; emits events for effects |
+| `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level, shots with owners (a shot does its shooter's damage), collisions (circles against rectangles), healing, knock-outs, dummies; emits events for effects |
 | `match.ts` | `Match`: countdown, timer, result (victory, defeat with place, time's up) around a `World` |
 | `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error; wanders when it sees nobody |
 | `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks) |
 | `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
-| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies per win/defeat…) and `BOT_LEVELS`; `settingsFrom()` reads `?seconds=&bots=&level=` |
+| `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power…); `powerOf()` caps a level at the current maximum |
+| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power…) and `BOT_LEVELS`; `settingsFrom()` reads `?seconds=&bots=&level=` |
 
 Every frame (`ArenaScene.svelte`, `useTask`): input → `match.update(dt)` (bots think, world
 steps) → events turned into effects → 3D objects moved to match the world. Per-frame data stays
@@ -92,9 +93,14 @@ current format falls back to the starting progress. Hack effects are worked out 
 brings the normal rules back exactly.
 
 Trophies change in one place: when a match ends, `Arena.svelte` works out the reward
-(`game/trophies.ts`) for the fighter that played and saves it at once, before the result
-screen opens, so leaving then still keeps it; leaving during a match or playing Training saves
-nothing. Prestige is not stored: it is `prestigeLevel(trophies)` (every 1000).
+(`game/trophies.ts`) and the credits (`game/economy.ts`) for the fighter that played and saves
+them at once, before the result screen opens, so leaving then still keeps them; leaving during
+a match or playing Training saves nothing. Prestige is not stored: it is
+`prestigeLevel(trophies)` (every 1000).
+
+Spending happens only on the fighter screen through `unlock()` / `upgrade()`. With the
+unlimited-credits hack nothing is taken from the saved credits, so resetting the hacks shows
+the real amount again.
 
 ## How to…
 
@@ -114,5 +120,5 @@ nothing. Prestige is not stored: it is `prestigeLevel(trophies)` (every 1000).
 | Command | Covers |
 |---------|--------|
 | `cd server; uv run pytest` | API: fighters, hacks |
-| `cd ui; npm test` | Game rules, bots, match, trophies, settings, progress, hacks, QR codes, vocabulary |
+| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress, hacks, QR codes, vocabulary |
 | `cd ui; npm run check` | Type checks (TypeScript and Svelte) |

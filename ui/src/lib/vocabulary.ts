@@ -12,6 +12,7 @@ export const VOCABULARY: Word[] = [
   { word: 'Skin', meaning: 'A different look (costume) for a fighter; it does not make it stronger.' },
   { word: 'Legendary skin', meaning: 'The rarest and most special-looking skins.' },
   { word: 'Credits', meaning: 'Money used to unlock new fighters.' },
+  { word: 'Upgrade', meaning: 'Spending credits to raise a fighter\'s power level, so it has more health and damage.' },
   { word: 'Super', meaning: 'A special attack that charges up by hitting enemies.' },
   { word: 'Gadget', meaning: 'A small extra ability you can use a few times per match.' },
   { word: 'Star Power', meaning: 'A passive bonus a fighter gets at a high power level.' },

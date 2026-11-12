@@ -78,24 +78,33 @@ Hack star server" with a **Try again** button.
   | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target |
 - **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D and
   choose a skin.
+- **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
+  otherwise; you start with 500). On a fighter's screen:
+  - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
+    Legendary 3800 credits (as in Brawl Stars).
+  - **Upgrade** its power level for 20 × the current level (7 → 8 costs 140). Each level adds
+    10% health and damage (power 1: ❤️ 3200 💥 480; power 11: 6400 / 960), and that is what the
+    fighter has in matches and training. Bots play at power 5.
 - **Info:** the words kids use in the game.
 - **Hack:** type a hack code or scan its QR code:
 
   | Code | Hack |
   |------|------|
-  | `INFINITY` | Unlimited credits |
+  | `INFINITY` | Unlimited credits: unlocking and upgrading are free |
   | `OPENSESAME` | Every fighter and skin unlocked |
-  | `POWER22` | Power levels up to 22 instead of 11 |
+  | `POWER22` | Power levels up to 22 instead of 11 (power 22: ❤️ 9920 💥 1488 in matches) |
 
-  **Reset all hacks** on the same screen goes back to the normal rules.
+  **Reset all hacks** on the same screen goes back to the normal rules: the real credits and
+  the 11 limit come back; fighters and levels you got while hacking stay.
 
 Progress (chosen fighter and skins, trophies) is saved in the browser of each device. Open
 <http://localhost:5180/?gallery> to see every fighter and skin side by side.
 
 ### Match settings
 
-Match length, number of bots, bot level (easy, medium, hard), what "time's up" means and the
-trophies for a win or a defeat are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
+Match length, number of bots, bot level (easy, medium, hard), what "time's up" means, the
+trophies and credits for each result, prices, upgrade costs, power bonus and the bots' power
+level are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
 (`SETTINGS`). To try other values
 without changing code, add them to the address, for example
 <http://localhost:5180/?seconds=60&bots=5&level=medium> (1–8 bots, 5–600 seconds).

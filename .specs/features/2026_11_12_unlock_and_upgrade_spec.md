@@ -1,7 +1,7 @@
 # Unlock and Upgrade Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🟨 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/unlock-and-upgrade`
@@ -91,7 +91,7 @@ at power 5 (S6, S10)._
 | **1** | Economy and power rules | ✅ Done | [→ Step 1](#step-1--economy-and-power-rules) |
 | **2** | Power and credits in matches | ✅ Done | [→ Step 2](#step-2--power-and-credits-in-matches) |
 | **3** | Unlock and upgrade screens | ✅ Done | [→ Step 3](#step-3--unlock-and-upgrade-screens) |
-| **4** | Final check and documentation | ⬜ Not started | [→ Step 4](#step-4--final-check-and-documentation) |
+| **4** | Final check and documentation | ✅ Done | [→ Step 4](#step-4--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -184,16 +184,20 @@ S9 reworded while checking: a fighter unlocked for free with unlimited credits s
 Everything works on every screen size; the documentation explains credits and power (S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Fighter screen (locked and unlocked) and result screen checked at 390×844, 844×390, 1024×768, 1440×900.
-- [ ] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
-- [ ] README: earning credits, unlocking, upgrading, power; the hacks' effects.
-- [ ] `docs/architecture.md`: `game/economy.ts`, stats in matches.
-- [ ] Info vocabulary: add "Upgrade".
-- [ ] Questions to Mattia: add "How strong should bots be?".
+- [x] Record the start time in Notes below.
+- [x] Fighter screen (locked and unlocked) and result screen checked at 390×844, 844×390, 1024×768, 1440×900.
+- [x] `pytest`, `npm test`, `npm run check`, `npm run build` pass.
+- [x] README: earning credits, unlocking, upgrading, power; the hacks' effects.
+- [x] `docs/architecture.md`: `game/economy.ts`, stats in matches.
+- [x] Info vocabulary: add "Upgrade".
+- [x] Questions to Mattia: add "How strong should bots be?".
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 11:32
+
+Removed the second "🔒 Locked" button on locked fighters (the unlock button already says what is needed).
+
+**Done (2026-11-12 · ~2m)** — 4 sizes: Blaze "Upgrade to Power 8 · 140 C" and Luna "Need 1400 more C" reachable, no sideways scrolling; `pytest` 15 passed, `npm test` 67 passed, `svelte-check` 0 errors, build ok; README, `docs/architecture.md`, vocabulary (25 words) and questions to Mattia updated; links resolve.
 
 ---
 
@@ -218,5 +222,5 @@ Everything works on every screen size; the documentation explains credits and po
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — no git host yet: merged locally into `master`
