@@ -77,7 +77,7 @@ is the biggest change so far; it is F11 in the
 | **1** | Teams in the rules | ✅ Done | [→ Step 1](#step-1--teams-in-the-rules) |
 | **2** | Rooms on the server | ✅ Done | [→ Step 2](#step-2--rooms-on-the-server) |
 | **3** | Friends screen and lobby | ✅ Done | [→ Step 3](#step-3--friends-screen-and-lobby) |
-| **4** | Shared match | ⬜ Not started | [→ Step 4](#step-4--shared-match) |
+| **4** | Shared match | ✅ Done | [→ Step 4](#step-4--shared-match) |
 | **5** | Final check and documentation | ⬜ Not started | [→ Step 5](#step-5--final-check-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -175,14 +175,20 @@ Home's side buttons are now 3 per row (7 buttons). The Start button says how man
 The same match plays on every device (S3–S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `lib/net/shared.ts`: `HostMatch` (runs the `Match`, applies friends' inputs, sends snapshots) and `GuestMatch` (mirror world: applies snapshots, glides fighters, moves shots, replays events; sends own position, shots and Supers).
-- [ ] Arena: plays a shared match (`MatchLike`), each device follows its own fighter, teammates' bars blue, result for the team, rewards saved on each device; "Back to room" after the match.
-- [ ] Leaving: a friend who leaves becomes a bot; if the host leaves, friends get a draw.
-- [ ] Check: `vitest` with two matches joined by a fake connection (positions, shots, damage and result reach the friend; a friend's shot hurts a bot; leaving); browser with two pages: the friend's fighter moves on the host's screen and the host's on the friend's.
+- [x] Record the start time in Notes below.
+- [x] `lib/net/shared.ts`: `HostMatch` (runs the `Match`, applies friends' inputs, sends snapshots) and `GuestMatch` (mirror world: applies snapshots, glides fighters, moves shots, replays events; sends own position, shots and Supers).
+- [x] Arena: plays a shared match (`MatchLike`), each device follows its own fighter, teammates' bars blue, result for the team, rewards saved on each device; "Back to room" after the match.
+- [x] Leaving: a friend who leaves becomes a bot; if the host leaves, friends get a draw.
+- [x] Check: `vitest` with two matches joined by a fake connection (positions, shots, damage and result reach the friend; a friend's shot hurts a bot; leaving); browser with two pages: the friend's fighter moves on the host's screen and the host's on the friend's.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 14:04
+
+The start message carries every fighter's id, type, look, power and HYPERCHARGE hack, so each device builds the same fighters. Friends start along the bottom of the arena next to the host (`teamArena`): at the top spawn the cliffs hid a friend's view. A friend's own dash follows the host's position for a moment, and the host ignores the friend's position during and just after it.
+
+Browser check: only the visible page of the shared browser runs its animation frames, so the two sides were checked one at a time against a scripted other side. (1) Host page visible, a scripted friend (Rocko) on its own WebSocket: the lobby showed "Player 2 Rocko · ⚡ 4"; after START the host's world moved Rocko to x 6 as the friend sent, bots hurt Rocko (5120 → 3447 health in the friend's snapshot), and the friend received 122 snapshots in ~6 s (~20 per second). (2) Friend page visible, a scripted host (Kira) sending snapshots: the friend's screen showed Kira gliding and the host's shot, Super 60%, its own Blaze moved at once (x 0 → 3.6) and the host received the positions and a shot; when the host closed, the friend got "TIME'S UP" with "Back to the room". A real two-device match is left for the final check on two devices.
+
+**Done (2026-11-12 · ~15m)** — `npm test` 129 passed (8 new in `net/shared.test.ts`, 1 new team spawn test), `svelte-check` 0 errors; browser checks above with no page errors.
 
 ---
 

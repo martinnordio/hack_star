@@ -65,7 +65,7 @@ export class RoomConnection {
     }
   }
 
-  send(message: RoomMessage) {
+  send<T extends { type: string }>(message: T) {
     if (this.socket.readyState === 1) this.socket.send(JSON.stringify(message))
   }
 

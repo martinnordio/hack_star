@@ -86,6 +86,13 @@ describe('team match', () => {
     expect(m.bots!.states.map((s) => s.id)).toEqual([2])
   })
 
+  it('friends start along the bottom, next to each other', () => {
+    const m = new Match(CANYON, settings, { humans: 3 })
+    const [a, b, c] = m.world.fighters
+    expect([a.z, b.z, c.z].every((z) => z >= 8)).toBe(true)
+    expect(new Match(CANYON, settings).world.player.z).toBe(CANYON.spawns[0].z)
+  })
+
   it('the team wins even when one of them is out', () => {
     const m = new Match(CANYON, settings, { humans: 2, bots: false })
     run(0.2, (dt) => m.update(dt))

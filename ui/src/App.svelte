@@ -11,7 +11,11 @@
   import ShopScreen from './lib/ShopScreen.svelte'
   import SettingsScreen from './lib/SettingsScreen.svelte'
   import FriendsScreen from './lib/FriendsScreen.svelte'
-  import { leaveRoom } from './lib/net/room'
+  import { leaveRoom, room, type RoomConnection } from './lib/net/room'
+  import { startInfo, type StartInfo } from './lib/net/shared'
+  import { options } from './lib/options'
+  import { SETTINGS, settingsFrom } from './lib/game/settings'
+  import { untrack } from 'svelte'
   import { progress } from './lib/progress'
   import { wornSkin } from './lib/game/shop'
 
@@ -45,6 +49,39 @@
   }
 
   load()
+
+  /** The shared match being played with friends (set by the host's start). */
+  let shared = $state<{ start: StartInfo; you: number; connection: RoomConnection }>()
+
+  function playShared(start: StartInfo) {
+    if (!$room?.info) return
+    shared = { start, you: $room.info.you, connection: $room.connection }
+    matchNumber++
+    screen = 'match'
+  }
+
+  function startShared() {
+    if (!$room?.info || !fighters) return
+    const settings = settingsFrom(location.search, SETTINGS, $options)
+    const start = startInfo(settings, $room.info.members, fighters)
+    $room.connection.send(start)
+    playShared(start)
+  }
+
+  // Friends follow the host into the match.
+  $effect(() => {
+    const connection = $room?.connection
+    if (!connection) return
+    return connection.on((m) => {
+      if (m.type === 'start' && untrack(() => $room?.info?.you) !== 0) playShared(m as unknown as StartInfo)
+    })
+  })
+
+  function leaveShared() {
+    if (shared?.you === 0) shared.connection.send({ type: 'lobby' })
+    shared = undefined
+    screen = $room?.info || $room?.error ? 'friends' : 'home'
+  }
 </script>
 
 {#if error}
@@ -71,7 +108,8 @@
       mode={screen}
       player={{ fighterId: fighter.id, skinId: wornSkin($progress, fighter.id) }}
       {fighters}
-      onLeave={() => (screen = 'home')}
+      shared={screen === 'match' ? shared : undefined}
+      onLeave={() => (shared ? leaveShared() : (screen = 'home'))}
       onPlayAgain={() => matchNumber++}
     />
   {/key}
@@ -109,7 +147,7 @@
       screen = 'home'
     }}
   >
-    <FriendsScreen {fighters} initialCode={roomInLink} onStart={() => {}} />
+    <FriendsScreen {fighters} initialCode={roomInLink} onStart={startShared} />
   </Panel>
 {:else if screen === 'hack'}
   <Panel

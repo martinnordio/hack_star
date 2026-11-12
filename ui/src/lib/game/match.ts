@@ -36,6 +36,13 @@ export interface MatchLike {
   update(dt: number): void
 }
 
+/** With friends, the people start along the bottom (the camera side), the bots elsewhere. */
+export function teamArena(arena: Arena, humans: number): Arena {
+  if (humans <= 1) return arena
+  const people = [...arena.spawns].sort((a, b) => b.z - a.z || Math.abs(a.x) - Math.abs(b.x)).slice(0, humans)
+  return { ...arena, spawns: [...people, ...arena.spawns.filter((s) => !people.includes(s))] }
+}
+
 /** A "last fighter standing" match: countdown, timer and result around a `World`. */
 export class Match implements MatchLike {
   readonly world: World
@@ -58,7 +65,7 @@ export class Match implements MatchLike {
       stats(powers[id] ?? (id === 0 ? playerPower : settings.botPower), settings, types[id]),
     )
     const teams = Array.from({ length: fighters }, (_, id) => (id < humans ? 0 : id))
-    this.world = new World(arena, { fighters, stats: fighterStats, types, teams })
+    this.world = new World(teamArena(arena, humans), { fighters, stats: fighterStats, types, teams })
     const humanIds = Array.from({ length: humans }, (_, id) => id)
     this.bots = bots
       ? new Bots(this.world, BOT_LEVELS[settings.botLevel], settings.botsFightEachOther, random, humanIds)

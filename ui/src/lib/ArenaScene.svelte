@@ -29,7 +29,7 @@
   import * as THREE from 'three'
   import { CANYON } from './game/arena'
   import { keyboardDirection, type Controls, type Vec2 } from './game/controls'
-  import type { Match } from './game/match'
+  import type { MatchLike } from './game/match'
   import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, type World, type WorldEvent } from './game/world'
   import { buildArena } from './models/arena3d'
   import { buildDummy, setHealth } from './models/dummy3d'
@@ -41,9 +41,11 @@
   interface Props {
     world: World
     /** Present in a match; absent in training. */
-    match?: Match
+    match?: MatchLike
+    /** A friend in a shared match asks the host to shoot instead of shooting locally. */
+    actions?: { fire(dx: number, dz: number): void; useSuper(dx: number, dz: number): void }
     controls: Controls
-    /** Look of each fighter, by fighter id (0 is the player). */
+    /** Look of each fighter, by fighter id. */
     looks: Look[]
     /** HTML layer over the canvas for floating damage numbers. */
     overlay?: HTMLElement
@@ -51,7 +53,9 @@
     onPower?: (power: Power) => void
   }
 
-  let { world, match, controls, looks, overlay, onHud, onPower }: Props = $props()
+  let { world, match, actions, controls, looks, overlay, onHud, onPower }: Props = $props()
+  /** The fighter this device controls. */
+  const me = untrack(() => world.playerId)
 
   const SHOT_COLORS: Record<string, string> = {
     blaze: '#ff7a1a',
@@ -125,7 +129,9 @@
     world.fighters.map((f) => {
       const look = looks[f.id] ?? looks[0]
       const rig = buildFighter(look.fighterId, look.skinId)
-      const bar = buildHealthBar(2.9, f.id === 0 ? '#4cd964' : '#ff3b30')
+      // Mine green, teammates blue, enemies red.
+      const barColor = f.id === me ? '#4cd964' : world.enemies(world.player, f) ? '#ff3b30' : '#4aa8ff'
+      const bar = buildHealthBar(2.9, barColor)
       // Training has only the player: no bar over it.
       bar.group.visible = world.fighters.length > 1
       rig.root.add(bar.group)
@@ -148,7 +154,7 @@
   // The player's Super meter: a thin yellow bar under its health bar.
   const superBar = buildHealthBar(2.62, '#ffd23f')
   superBar.group.scale.set(1, 0.6, 1)
-  views[0].rig.root.add(superBar.group)
+  views[me].rig.root.add(superBar.group)
   const fighterGroup = new THREE.Group()
   views.forEach((v) => fighterGroup.add(v.rig.root))
   $effect(() => () => views.forEach((v) => disposeRig(v.rig)))
@@ -158,8 +164,8 @@
   const shotGeometry = new THREE.SphereGeometry(SHOT_RADIUS, 12, 8)
   const glowGeometry = new THREE.SphereGeometry(SHOT_RADIUS * 2, 12, 8)
   const shotMeshes = Array.from({ length: 96 }, () => {
-    const ball = new THREE.Mesh(shotGeometry, views[0].core)
-    ball.add(new THREE.Mesh(glowGeometry, views[0].glow))
+    const ball = new THREE.Mesh(shotGeometry, views[me].core)
+    ball.add(new THREE.Mesh(glowGeometry, views[me].glow))
     ball.visible = false
     shotPool.add(ball)
     return ball
@@ -229,11 +235,11 @@
       particles.burst({ color: '#ffffff', at: at(e.x, 0.8, e.z), count: 2, speed: 0.5, life: 0.08, size: 0.25, endSize: 0.5 })
     } else if (e.type === 'hit') {
       dummies[e.dummyId].flashUntil = time + 0.12
-      sparks(views[0].color, e.x, e.z)
+      sparks(views[me].color, e.x, e.z)
       showDamage(e.x, e.z, e.damage, false)
     } else if (e.type === 'hurt') {
       sparks(views[e.by]?.color ?? '#ffffff', e.x, e.z)
-      if (e.fighterId === 0 || e.by === 0) showDamage(e.x, e.z, e.damage, e.fighterId === 0)
+      if (e.fighterId === me || e.by === me) showDamage(e.x, e.z, e.damage, e.fighterId === me)
     } else if (e.type === 'knockout') {
       const v = views[e.fighterId]
       v.knockedAt = time
@@ -302,13 +308,15 @@
   const canAct = () => !world.player.out && (!match || match.canAct)
 
   function fire(dir: Vec2) {
-    if (canAct()) world.fire(dir.x, dir.z)
+    if (!canAct()) return
+    if (actions) actions.fire(dir.x, dir.z)
+    else world.fire(dir.x, dir.z)
   }
 
-  /** Nearest thing worth shooting: a visible bot in a match, a dummy in training. */
+  /** Nearest thing worth shooting: a visible enemy in a match, a dummy in training. */
   function nearestTarget(): { x: number; z: number } | undefined {
     const p = world.player
-    const bots = world.fighters.filter((f) => f.id !== 0 && world.canSee(p, f, SHOT_RANGE * 1.5))
+    const bots = world.fighters.filter((f) => world.enemies(p, f) && world.canSee(p, f, SHOT_RANGE * 1.5))
     const candidates: { x: number; z: number }[] = bots.length ? bots : (world.nearestDummy() ? [world.nearestDummy()!] : [])
     return candidates.sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))[0]
   }
@@ -339,7 +347,10 @@
     }
     if (controls.superAim || controls.superAuto) {
       const dir = (controls.superAim && aim) || autoAim()
-      if (canAct()) world.useSuper(world.player, dir.x, dir.z)
+      if (canAct()) {
+        if (actions) actions.useSuper(dir.x, dir.z)
+        else world.useSuper(world.player, dir.x, dir.z)
+      }
       controls.superAim = false
       controls.superAuto = false
     }
@@ -374,12 +385,12 @@
         continue
       }
 
-      // Bots in a bush are invisible unless the player is close; the player is see-through.
+      // Enemies in a bush are invisible unless the player is close; the player is see-through.
       const inBush = world.inBush(f)
-      const hidden = f.id !== 0 && inBush && Math.hypot(f.x - p.x, f.z - p.z) > BUSH_SIGHT
+      const hidden = world.enemies(p, f) && inBush && Math.hypot(f.x - p.x, f.z - p.z) > BUSH_SIGHT
       v.hidden = hidden
       v.rig.root.visible = !hidden
-      if (f.id === 0 && inBush !== wasInBush) {
+      if (f.id === me && inBush !== wasInBush) {
         setRigOpacity(v.rig, inBush ? 0.35 : 1)
         wasInBush = inBush
       }
@@ -396,7 +407,7 @@
       setBarHealth(v.bar, f.health / f.maxHealth)
       // The bar hangs on the turning fighter: undo its turn so the bar faces the camera.
       if (camera) v.bar.group.quaternion.copy(v.rig.root.quaternion).invert().multiply(camera.quaternion)
-      if (f.id === 0) {
+      if (f.id === me) {
         setBarHealth(superBar, f.superCharge)
         superBar.group.quaternion.copy(v.bar.group.quaternion)
       }
@@ -508,6 +519,7 @@
       el?.setAttribute('data-shots', String(world.shots.length))
       el?.setAttribute('data-dummies', world.dummies.map((d) => d.health).join(','))
       el?.setAttribute('data-health', world.fighters.map((f) => Math.round(f.health)).join(','))
+      el?.setAttribute('data-positions', world.fighters.map((f) => `${f.x.toFixed(1)}:${f.z.toFixed(1)}`).join(','))
       el?.setAttribute('data-in-bush', String(world.inBush()))
     }
 

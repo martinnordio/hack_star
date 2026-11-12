@@ -6,7 +6,7 @@
   import type { Fighter } from './fighters'
   import { CANYON } from './game/arena'
   import { newControls, stickVector } from './game/controls'
-  import { Match } from './game/match'
+  import { Match, type MatchLike } from './game/match'
   import { SETTINGS, settingsFrom } from './game/settings'
   import { World } from './game/world'
   import { portrait } from './portraits'
@@ -21,6 +21,8 @@
   import { cubicOut } from 'svelte/easing'
   import { get } from 'svelte/store'
   import { creditsFor, earn, powerOf, stats } from './game/economy'
+  import type { RoomConnection } from './net/room'
+  import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
 
   interface Props {
     mode: 'match' | 'training'
@@ -28,15 +30,25 @@
     fighters: Fighter[]
     onLeave: () => void
     onPlayAgain?: () => void
+    /** A match with friends: `you` is this device's room slot (0 is the host). */
+    shared?: { start: StartInfo; you: number; connection: RoomConnection }
   }
 
-  let { mode, player, fighters, onLeave, onPlayAgain }: Props = $props()
+  let { mode, player: chosen, fighters, onLeave, onPlayAgain, shared }: Props = $props()
 
   const STICK_RADIUS = 60
   const TAP_MS = 250
 
+  function sharedMatch(s: NonNullable<Props['shared']>) {
+    const match = s.you === 0 ? new HostMatch(CANYON, s.start, s.connection) : new GuestMatch(CANYON, s.start, s.you, s.connection)
+    const looks: Look[] = s.start.fighters.map((f) => ({ fighterId: f.fighter, skinId: f.skin }))
+    return { match, world: match.world, looks, player: looks[match.world.playerId] }
+  }
+
   // A new Arena component is mounted for every match, so these are made once per match.
-  const { match, world, looks } = untrack(() => {
+  const { match, world, looks, player } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look } => {
+    if (shared) return sharedMatch(shared)
+    const player = chosen
     const playerPower = powerOf(get(progress), player.fighterId)
     const settings = settingsFrom(location.search, SETTINGS, get(options))
     const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
@@ -47,8 +59,11 @@
     const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower, SETTINGS, types[0])], types })
     Object.assign(world.player, superHack(get(progress)))
     const looks: Look[] = ids.map((id, i) => (i === 0 ? player : { fighterId: id, skinId: 'default' }))
-    return { match, world, looks }
+    return { match, world, looks, player }
   })
+  const actions = match instanceof GuestMatch ? match : undefined
+  // Leaving early: the host gives friends a draw; a friend hands its fighter to a bot.
+  $effect(() => () => match?.stop?.())
   const controls = newControls()
   const touchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
 
@@ -88,7 +103,7 @@
   let earned = $state(0)
   const shownTrophies = new Tween(0, { duration: 900, easing: cubicOut })
 
-  function saveReward(m: Match, result: MatchResult) {
+  function saveReward(m: MatchLike, result: MatchResult) {
     const current = get(progress).trophies[player.fighterId] ?? 0
     const r = rewardFor(current, result, m.settings)
     earned = creditsFor(result, m.settings)
@@ -222,7 +237,7 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {match} {controls} {looks} {overlay} {onHud} {onPower} />
+      <ArenaScene {world} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} />
     </Canvas>
   </div>
   <div class="floaters" bind:this={overlay} aria-hidden="true"></div>
@@ -255,9 +270,9 @@
       <img src={portrait(player.fighterId, player.skinId)} alt="" />
       <div class="detail">
         {#if r.kind === 'victory'}
-          Last fighter standing!
+          {shared ? 'Your team is the last one standing!' : 'Last fighter standing!'}
         {:else if r.kind === 'defeat'}
-          You finished {ordinal(r.place)}
+          {shared ? 'Your team' : 'You'} finished {ordinal(r.place)}
         {:else}
           Nobody won this time
         {/if}
@@ -283,8 +298,12 @@
         {/if}
       {/if}
       <div class="actions">
-        <button class="again" onclick={onPlayAgain}>Play again</button>
-        <button class="home" onclick={onLeave}>Home</button>
+        {#if shared}
+          <button class="again" onclick={onLeave}>Back to the room</button>
+        {:else}
+          <button class="again" onclick={onPlayAgain}>Play again</button>
+          <button class="home" onclick={onLeave}>Home</button>
+        {/if}
       </div>
     </div>
   {/if}
