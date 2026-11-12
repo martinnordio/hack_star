@@ -54,6 +54,15 @@ Hack star server" with a **Try again** button.
 - **Fighters:** the 6 fighters with locks, trophies, power levels; open one to see it in 3D and
   choose a skin.
 - **Info:** the words kids use in the game.
+- **Hack:** type a hack code or scan its QR code:
+
+  | Code | Hack |
+  |------|------|
+  | `INFINITY` | Unlimited credits |
+  | `OPENSESAME` | Every fighter and skin unlocked |
+  | `POWER22` | Power levels up to 22 instead of 11 |
+
+  **Reset all hacks** on the same screen goes back to the normal rules.
 
 Progress (chosen fighter and skins, trophies) is saved in the browser of each device. Open
 <http://localhost:5180/?gallery> to see every fighter and skin side by side.
@@ -64,6 +73,17 @@ Progress (chosen fighter and skins, trophies) is saved in the browser of each de
 2. `npm run dev` prints a `Network:` address for the Wi-Fi, for example
    `http://192.168.1.20:5180/`. Open it in Safari or Chrome on the device.
 3. On Windows, allow Node.js through the firewall for private networks when asked.
+
+### QR codes
+
+Open `/?qr` with the **Network** address (for example `http://192.168.1.20:5180/?qr`) and
+print the page. The QR codes contain a link to the game with the code, so:
+
+- the **camera app** of an iPad or phone opens the game and applies the hack directly;
+- the game's **Scan QR** button needs the camera, which browsers allow only on `https://` (or
+  `localhost`). For that, start the UI with `npm run dev:https` instead of `npm run dev` and open
+  `https://<network address>:5180`; accept the certificate warning once (the certificate is
+  self-signed). Print the QR page from that `https://` address too.
 
 ## Test
 

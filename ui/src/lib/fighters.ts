@@ -24,8 +24,6 @@ export const RARITY_COLORS: Record<Rarity, string> = {
   Legendary: '#ffd23f',
 }
 
-export const MAX_POWER_LEVEL = 11
-
 export async function loadFighters(): Promise<Fighter[]> {
   const response = await fetch('/api/fighters')
   if (!response.ok) throw new Error(`Could not load fighters (${response.status})`)
