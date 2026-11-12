@@ -76,7 +76,7 @@ are for later specs._
 | **1** | Arena rules (movement, shots, targets) | ✅ Done | [→ Step 1](#step-1--arena-rules-movement-shots-targets) |
 | **2** | Canyon arena and camera | ✅ Done | [→ Step 2](#step-2--canyon-arena-and-camera) |
 | **3** | Controls, running and shooting | ✅ Done | [→ Step 3](#step-3--controls-running-and-shooting) |
-| **4** | Targets and effects | ⬜ Not started | [→ Step 4](#step-4--targets-and-effects) |
+| **4** | Targets and effects | ✅ Done | [→ Step 4](#step-4--targets-and-effects) |
 | **5** | Final check | ⬜ Not started | [→ Step 5](#step-5--final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -174,14 +174,18 @@ Extras: holding the mouse button keeps firing (with the cool-down); Space fires 
 Targets react to hits, and everything has lively effects (S5, S6, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] 3 target dummies with health bars; hit flash and floating damage numbers; break into pieces at 0 and come back after 5 s.
-- [ ] Effects: dust puffs when running, muzzle flash, hit sparks.
-- [ ] Fighter partly transparent in a bush.
-- [ ] Check: browser — shooting a dummy shows damage numbers and lowers its bar; it breaks and returns after 5 s; standing in a bush makes the fighter see-through.
+- [x] Record the start time in Notes below.
+- [x] 3 target dummies with health bars; hit flash and floating damage numbers; break into pieces at 0 and come back after 5 s.
+- [x] Effects: dust puffs when running, muzzle flash, hit sparks.
+- [x] Fighter partly transparent in a bush.
+- [x] Check: browser — shooting a dummy shows damage numbers and lowers its bar; it breaks and returns after 5 s; standing in a bush makes the fighter see-through.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 10:18
+
+Straw dummies on posts with a painted target; health bars turn yellow then red; respawn pops in with a white puff. One pool of 160 particles serves dust, flashes, sparks and pieces (D6). The camera now looks a little ahead of the fighter so targets are not at the screen edge.
+
+**Done (2026-11-12 · ~7m)** — browser: middle dummy 2400 → 1440 after 2 hits with 2 damage numbers shown; 0 after 5 hits (breaks into pieces); 2400 again after 5 s; at (4, 6.3) `in-bush` = true and the fighter is see-through.
 
 ---
 

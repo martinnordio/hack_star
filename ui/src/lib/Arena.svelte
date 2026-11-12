@@ -34,6 +34,7 @@
 
   let sticks = $state<Stick[]>([])
   let root = $state<HTMLDivElement>()
+  let overlay = $state<HTMLDivElement>()
 
   function setPointer(e: PointerEvent) {
     const r = root!.getBoundingClientRect()
@@ -134,9 +135,10 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {controls} {fighterId} {skinId} />
+      <ArenaScene {world} {controls} {fighterId} {skinId} {overlay} />
     </Canvas>
   </div>
+  <div class="floaters" bind:this={overlay} aria-hidden="true"></div>
 
   {#if touchDevice && sticks.length === 0}
     <div class="hint move" aria-hidden="true"></div>
@@ -166,6 +168,26 @@
   .scene {
     position: absolute;
     inset: 0;
+  }
+
+  .floaters {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .floaters :global(.damage) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: #fff;
+    -webkit-text-stroke: 0.08em #160f33;
+    paint-order: stroke fill;
+    text-shadow: 0 0.1em 0 #160f33;
+    will-change: transform, opacity;
   }
 
   .base,

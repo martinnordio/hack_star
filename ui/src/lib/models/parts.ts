@@ -10,7 +10,7 @@ const gradientMap = (() => {
   return texture
 })()
 
-const OUTLINE = new THREE.MeshBasicMaterial({ color: '#160f33', side: THREE.BackSide })
+export const OUTLINE = new THREE.MeshBasicMaterial({ color: '#160f33', side: THREE.BackSide })
 
 type Vec3 = [number, number, number]
 
