@@ -75,7 +75,7 @@ is the biggest change so far; it is F11 in the
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Teams in the rules | ✅ Done | [→ Step 1](#step-1--teams-in-the-rules) |
-| **2** | Rooms on the server | ⬜ Not started | [→ Step 2](#step-2--rooms-on-the-server) |
+| **2** | Rooms on the server | ✅ Done | [→ Step 2](#step-2--rooms-on-the-server) |
 | **3** | Friends screen and lobby | ⬜ Not started | [→ Step 3](#step-3--friends-screen-and-lobby) |
 | **4** | Shared match | ⬜ Not started | [→ Step 4](#step-4--shared-match) |
 | **5** | Final check and documentation | ⬜ Not started | [→ Step 5](#step-5--final-check-and-documentation) |
@@ -133,14 +133,18 @@ The defeat place counts the other teams still in (with one human that is the num
 The server creates rooms, lets friends join and passes messages (S1, S2, S7, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `rooms.py`: `RoomManager` (codes, members with fighter and look, host, max 3, started flag); WebSocket `/api/rooms` in `app.py`; messages validated, 64 KB limit.
-- [ ] Relay: `start` and `state` from the host to friends, `input` from friends to the host; `left` when a friend goes, `closed` when the host goes.
-- [ ] Vite proxy forwards WebSockets.
-- [ ] Check: `pytest` — create gives a code, join shows both members, 4th device refused, unknown code refused, input reaches only the host, state reaches only friends, friend leaving → `left`, host leaving → `closed` and the room is gone.
+- [x] Record the start time in Notes below.
+- [x] `rooms.py`: `RoomManager` (codes, members with fighter and look, host, max 3, started flag); WebSocket `/api/rooms` in `app.py`; messages validated, 64 KB limit.
+- [x] Relay: `start` and `state` from the host to friends, `input` from friends to the host; `left` when a friend goes, `closed` when the host goes.
+- [x] Vite proxy forwards WebSockets.
+- [x] Check: `pytest` — create gives a code, join shows both members, 4th device refused, unknown code refused, input reaches only the host, state reaches only friends, friend leaving → `left`, host leaving → `closed` and the room is gone.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 13:59
+
+A member is `{fighter, skin, power, hyper}` (fighter checked against the catalogue, power 1–22); players are shown as "Player 1–3" with their fighter, so no names are sent. Also: a started room cannot be joined until the host sends `lobby` (back to the room); friends cannot send `state` or `start`; at most 100 rooms. First run: a friend leaving a room its host had already closed crashed the handler — fixed.
+
+**Done (2026-11-12 · ~5m)** — `pytest` 27 passed (9 new in `tests/test_rooms.py`); browser: a WebSocket through the Vite proxy created room "ZKJF".
 
 ---
 

@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket
 from pydantic import BaseModel, Field
 
 from hack_star_server.fighters import FIGHTERS, Fighter
 from hack_star_server.hacks import HACKS, Hack, find_hack
+from hack_star_server.rooms import RoomManager
 
 app = FastAPI(title="Hack star")
+rooms = RoomManager()
 
 
 class RedeemRequest(BaseModel):
@@ -32,3 +34,8 @@ def redeem(request: RedeemRequest) -> Hack:
     if hack is None:
         raise HTTPException(status_code=404, detail="Unknown code")
     return hack
+
+
+@app.websocket("/api/rooms")
+async def room_socket(socket: WebSocket) -> None:
+    await rooms.handle(socket)

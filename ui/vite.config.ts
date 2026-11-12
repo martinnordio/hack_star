@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => ({
     port: 5180,
     strictPort: true,
     proxy: {
-      '/api': 'http://127.0.0.1:8180',
+      // `ws` also forwards the room WebSockets (`/api/rooms`).
+      '/api': { target: 'http://127.0.0.1:8180', ws: true },
     },
   },
   test: {
