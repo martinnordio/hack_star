@@ -1,11 +1,14 @@
 ﻿<script lang="ts">
   import { loadFighters, type Fighter } from './lib/fighters'
+  import FighterDetail from './lib/FighterDetail.svelte'
+  import FighterList from './lib/FighterList.svelte'
   import Home from './lib/Home.svelte'
   import Panel from './lib/Panel.svelte'
 
-  type Screen = 'home' | 'fighters' | 'info'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'info'
 
   let screen = $state<Screen>('home')
+  let openFighter = $state<Fighter>()
   let fighters = $state<Fighter[]>()
   let error = $state<string>()
   // The entrance plays once per visit, not when coming back to home.
@@ -40,7 +43,17 @@
   />
 {:else if screen === 'fighters'}
   <Panel title="Fighters" onBack={() => (screen = 'home')}>
-    <p>Coming in the next step.</p>
+    <FighterList
+      {fighters}
+      onOpen={(id) => {
+        openFighter = fighters?.find((f) => f.id === id)
+        screen = 'fighter'
+      }}
+    />
+  </Panel>
+{:else if screen === 'fighter' && openFighter}
+  <Panel title="Fighter" onBack={() => (screen = 'fighters')}>
+    <FighterDetail fighter={openFighter} onSelected={() => (screen = 'home')} />
   </Panel>
 {:else if screen === 'info'}
   <Panel title="Info" onBack={() => (screen = 'home')}>

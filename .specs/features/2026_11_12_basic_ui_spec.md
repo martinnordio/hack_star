@@ -116,7 +116,7 @@ of this spec (see Deferred Items in the plan)._
 | **1** | Fighter catalogue and sample progress | ✅ Done | [→ Step 1](#step-1--fighter-catalogue-and-sample-progress) |
 | **2** | 3D fighter models and skins | ✅ Done | [→ Step 2](#step-2--3d-fighter-models-and-skins) |
 | **3** | Home screen with entrance | ✅ Done | [→ Step 3](#step-3--home-screen-with-entrance) |
-| **4** | Fighter list and fighter screen | ⬜ Not started | [→ Step 4](#step-4--fighter-list-and-fighter-screen) |
+| **4** | Fighter list and fighter screen | ✅ Done | [→ Step 4](#step-4--fighter-list-and-fighter-screen) |
 | **5** | Info page | ⬜ Not started | [→ Step 5](#step-5--info-page) |
 | **6** | Final check | ⬜ Not started | [→ Step 6](#step-6--final-check) |
 
@@ -214,15 +214,19 @@ The F0 placeholder arena (`Scene.svelte`) and its server/FPS overlay were replac
 The player browses fighters, sees locks, trophies, power, Prestige, and chooses a fighter and a skin (S4–S7, S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Off-screen portrait renderer with cache (D3).
-- [ ] Fighter list: cards with picture, name, rarity colour, trophies, power level, Prestige badge; locked cards greyed with a lock.
-- [ ] Fighter screen: the fighter in 3D, its skins with rarity, Legendary with a glowing frame; **Select** sets fighter and skin.
-- [ ] Back buttons to home.
-- [ ] Check: choose Rocko with the Crystal skin → home shows Rocko Crystal; locked Pixel cannot be selected; reload keeps the choice.
+- [x] Record the start time in Notes below.
+- [x] Off-screen portrait renderer with cache (D3).
+- [x] Fighter list: cards with picture, name, rarity colour, trophies, power level, Prestige badge; locked cards greyed with a lock.
+- [x] Fighter screen: the fighter in 3D, its skins with rarity, Legendary with a glowing frame; **Select** sets fighter and skin.
+- [x] Back buttons to home.
+- [x] Check: choose Rocko with the Crystal skin → home shows Rocko Crystal; locked Pixel cannot be selected; reload keeps the choice.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym)** — summary + verifying result. -->
+Started: 2026-11-12 09:53
+
+Locked fighters can be opened to look at them, but **Select** shows "🔒 Locked". The fighter screen's back button goes to the list (one level up); the list's back button goes home. Selecting returns to home so the new fighter is shown at once. Fixed: the 3D stage grew without limit inside the grid (canvas is now absolutely positioned in a fixed-height stage); pictures ignore pointer events so taps reach the cards.
+
+**Done (2026-11-12 · ~9m)** — browser check: Rocko + Crystal selected → home shows Rocko; `selectedSkins` = `{rocko: crystal}` after reload; Pixel shows "🔒 Locked" (disabled).
 
 ---
 
