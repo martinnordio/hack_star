@@ -12,7 +12,7 @@
   import HomeScene from './HomeScene.svelte'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress } from './progress'
+  import { progress } from './accounts'
 
   let { fighter, fighters, onSelected }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void } = $props()
 

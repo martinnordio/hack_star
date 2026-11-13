@@ -7,7 +7,8 @@
   import { wornSkin } from './game/shop'
   import HomeScene from './HomeScene.svelte'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress, totalTrophies } from './progress'
+  import { progress } from './accounts'
+  import { totalTrophies } from './progress'
 
   interface Props {
     fighters: Fighter[]

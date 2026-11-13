@@ -11,7 +11,7 @@
   import { World } from './game/world'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress } from './progress'
+  import { progress } from './accounts'
   import { superHack } from './hacks'
   import { fighterType } from './game/types'
   import { options } from './options'

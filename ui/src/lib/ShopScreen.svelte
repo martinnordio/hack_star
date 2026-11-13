@@ -5,7 +5,7 @@
   import { SETTINGS } from './game/settings'
   import { credits, isUnlocked } from './hacks'
   import { portrait } from './portraits'
-  import { progress } from './progress'
+  import { progress } from './accounts'
 
   let { fighters }: { fighters: Fighter[] } = $props()
 

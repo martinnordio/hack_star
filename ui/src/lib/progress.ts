@@ -1,7 +1,17 @@
-import { writable } from 'svelte/store'
+import type { FighterTypeId } from './game/types'
 
 export const PROGRESS_KEY = 'hack-star.progress'
-export const PROGRESS_VERSION = 3
+export const PROGRESS_VERSION = 4
+
+/** The look of the fighter the player designs (create a fighter). */
+export interface CreatedLook {
+  name: string
+  type: FighterTypeId
+  main: string
+  second: string
+  head: number
+  body: number
+}
 
 export interface Progress {
   version: typeof PROGRESS_VERSION
@@ -16,9 +26,30 @@ export interface Progress {
   selectedSkins: Record<string, string>
   /** Bought skin ids per fighter id; the default skin is always owned. */
   ownedSkins: Record<string, string[]>
+  createdFighter: CreatedLook | null
 }
 
-/** Sample start until matches give real trophies (basic UI spec S8). */
+/** Fighters every new account starts with. */
+export const START_FIGHTERS = ['blaze', 'rocko', 'turbo']
+export const START_CREDITS = 500
+
+/** The progress of a brand-new account. */
+export function startProgress(): Progress {
+  return {
+    version: PROGRESS_VERSION,
+    credits: START_CREDITS,
+    trophies: {},
+    powerLevels: {},
+    unlockedFighters: [...START_FIGHTERS],
+    activeHacks: [],
+    selectedFighter: START_FIGHTERS[0],
+    selectedSkins: {},
+    ownedSkins: {},
+    createdFighter: null,
+  }
+}
+
+/** Sample progress of the first versions (basic UI spec S8); used by tests. */
 export function defaultProgress(): Progress {
   return {
     version: PROGRESS_VERSION,
@@ -30,6 +61,7 @@ export function defaultProgress(): Progress {
     selectedFighter: 'blaze',
     selectedSkins: {},
     ownedSkins: {},
+    createdFighter: null,
   }
 }
 
@@ -68,16 +100,48 @@ function isProgressFields(p: Record<string, unknown>): boolean {
   )
 }
 
+function isOwnedSkins(value: unknown): boolean {
+  return typeof value === 'object' && value !== null && Object.values(value).every(isStringArray)
+}
+
+const TYPES: readonly string[] = ['tank', 'sharpshooter', 'speedy', 'thrower', 'spreader']
+const COLOR = /^#[0-9a-f]{6}$/i
+
+export function isCreatedLook(value: unknown): value is CreatedLook {
+  if (typeof value !== 'object' || value === null) return false
+  const l = value as Record<string, unknown>
+  return (
+    typeof l.name === 'string' &&
+    l.name.trim().length >= 1 &&
+    l.name.length <= 12 &&
+    typeof l.type === 'string' &&
+    TYPES.includes(l.type) &&
+    typeof l.main === 'string' &&
+    COLOR.test(l.main) &&
+    typeof l.second === 'string' &&
+    COLOR.test(l.second) &&
+    [0, 1, 2].includes(l.head as number) &&
+    [0, 1, 2].includes(l.body as number)
+  )
+}
+
 function isProgress(value: unknown): value is Progress {
   if (typeof value !== 'object' || value === null) return false
   const p = value as Record<string, unknown>
   return (
     p.version === PROGRESS_VERSION &&
     isProgressFields(p) &&
-    typeof p.ownedSkins === 'object' &&
-    p.ownedSkins !== null &&
-    Object.values(p.ownedSkins).every(isStringArray)
+    isOwnedSkins(p.ownedSkins) &&
+    (p.createdFighter === null || isCreatedLook(p.createdFighter))
   )
+}
+
+/** Version 3 (before accounts): no created fighter yet. */
+function migrateV3(value: unknown): Progress | null {
+  if (typeof value !== 'object' || value === null) return null
+  const p = value as Record<string, unknown>
+  if (p.version !== 3 || !isProgressFields(p) || !isOwnedSkins(p.ownedSkins)) return null
+  return { ...(p as unknown as Omit<Progress, 'version' | 'createdFighter'>), version: PROGRESS_VERSION, createdFighter: null }
 }
 
 /** Version 2 (before the skins shop): every skin it had selected becomes owned. */
@@ -91,7 +155,12 @@ function migrateV2(value: unknown): Progress | null {
       .filter(([, skin]) => skin !== 'default')
       .map(([fighter, skin]) => [fighter, [skin]]),
   )
-  return { ...(p as unknown as Omit<Progress, 'version' | 'ownedSkins'>), version: PROGRESS_VERSION, ownedSkins }
+  return migrateV3({ ...p, version: 3, ownedSkins })
+}
+
+/** A saved progress of any known version, or `null` when it is broken or unknown. */
+export function parseProgress(value: unknown): Progress | null {
+  return isProgress(value) ? value : (migrateV3(value) ?? migrateV2(value))
 }
 
 /** Older versions are migrated; missing, unreadable or unknown data falls back to a fresh start. */
@@ -99,8 +168,7 @@ export function loadProgress(storage: KeyValueStorage): Progress {
   try {
     const raw = storage.getItem(PROGRESS_KEY)
     if (raw === null) return defaultProgress()
-    const parsed: unknown = JSON.parse(raw)
-    return isProgress(parsed) ? parsed : (migrateV2(parsed) ?? defaultProgress())
+    return parseProgress(JSON.parse(raw)) ?? defaultProgress()
   } catch {
     return defaultProgress()
   }
@@ -114,12 +182,6 @@ export function saveProgress(storage: KeyValueStorage, progress: Progress): void
   }
 }
 
-export function createProgressStore(storage: KeyValueStorage) {
-  const store = writable(loadProgress(storage))
-  store.subscribe((progress) => saveProgress(storage, progress))
-  return store
-}
-
 export function memoryStorage(): KeyValueStorage {
   const items = new Map<string, string>()
   return {
@@ -127,10 +189,6 @@ export function memoryStorage(): KeyValueStorage {
     setItem: (key, value) => void items.set(key, value),
   }
 }
-
-export const progress = createProgressStore(
-  typeof window === 'undefined' ? memoryStorage() : window.localStorage,
-)
 
 export function totalTrophies(p: Progress): number {
   return Object.values(p.trophies).reduce((sum, n) => sum + n, 0)

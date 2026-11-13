@@ -1,7 +1,7 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
   import { codeFromScan, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
-  import { progress } from './progress'
+  import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
 
   /** `initialCode` comes from a scanned link that opened the game (`?hack=`). */

@@ -7,7 +7,7 @@
   import { wornSkin } from './game/shop'
   import { codeFrom, createRoom, joinRoom, leaveRoom, room, roomLink, type Member } from './net/room'
   import { portrait } from './portraits'
-  import { progress } from './progress'
+  import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { options } from './options'
 

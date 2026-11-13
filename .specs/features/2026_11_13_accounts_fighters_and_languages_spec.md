@@ -190,7 +190,7 @@ _None._
 
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
-| **1** | Accounts: storage, migration, per-account progress | ⬜ Not started | [→ Step 1](#step-1--accounts-storage-migration-per-account-progress) |
+| **1** | Accounts: storage, migration, per-account progress | ✅ Done | [→ Step 1](#step-1--accounts-storage-migration-per-account-progress) |
 | **2** | Accounts screen: create, rename, switch | ⬜ Not started | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
 | **3** | Reset in Settings | ⬜ Not started | [→ Step 3](#step-3--reset-in-settings) |
 | **4** | Languages: texts in one place, language per account | ⬜ Not started | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
@@ -242,15 +242,25 @@ Accounts are stored, migrated from today's progress and kept between visits, and
 reads the current account's progress (S1, S2, S4, S5, S23 — logic only).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Progress version 4: `createdFighter` field, migration from version 3 (and 2), `startProgress(fighters)` (D3).
-- [ ] `ui/src/lib/accounts.ts`: load / save `hack-star.accounts`, migration of `hack-star.progress` into "Player 1" (D1, D2), `addAccount`, `renameAccount`, `switchAccount` with the rules of S1, S2 and S23 (1–16 characters, unique ignoring case, at most 5, no delete).
-- [ ] The `progress` store reads and writes the current account (D1); switching account changes it everywhere.
-- [ ] Unit tests (`accounts.test.ts`, `progress.test.ts`): migration keeps everything, name rules, sixth account refused, switching, saved and loaded again.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] Progress version 4: `createdFighter` field, migration from version 3 (and 2), `startProgress(fighters)` (D3).
+- [x] `ui/src/lib/accounts.ts`: load / save `hack-star.accounts`, migration of `hack-star.progress` into "Player 1" (D1, D2), `addAccount`, `renameAccount`, `switchAccount` with the rules of S1, S2 and S23 (1–16 characters, unique ignoring case, at most 5, no delete).
+- [x] The `progress` store reads and writes the current account (D1); switching account changes it everywhere.
+- [x] Unit tests (`accounts.test.ts`, `progress.test.ts`): migration keeps everything, name rules, sixth account refused, switching, saved and loaded again.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 16:40
+
+- The start fighters are a constant `START_FIGHTERS` in `progress.ts` instead of being read from
+  the catalogue (D3): accounts are loaded before the catalogue arrives. Step 9 adds Marina and a
+  server test that the catalogue's `unlocked_at_start` matches it.
+- The `progress` store moved to `accounts.ts` (8 screens import it from there); `progress.ts`
+  keeps the pure functions, so there is no import cycle.
+- Languages (`i18n/languages.ts`) were started here because every account stores one.
+
+**Done (2026-11-13 · ~15m · Claude Opus 5.5)** — accounts store with migration, name rules,
+switching and saving; `npm test` 149 passed (accounts 15 new), `npm run check` 0 errors.
 
 ---
 

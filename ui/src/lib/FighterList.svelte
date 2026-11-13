@@ -6,7 +6,7 @@
   import { fighterType } from './game/types'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress } from './progress'
+  import { progress } from './accounts'
 
   let { fighters, onOpen }: { fighters: Fighter[]; onOpen: (id: string) => void } = $props()
 </script>

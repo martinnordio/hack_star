@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import Arena from './lib/Arena.svelte'
   import { loadFighters, type Fighter } from './lib/fighters'
   import FighterDetail from './lib/FighterDetail.svelte'
@@ -16,7 +16,7 @@
   import { options } from './lib/options'
   import { SETTINGS, settingsFrom } from './lib/game/settings'
   import { untrack } from 'svelte'
-  import { progress } from './lib/progress'
+  import { progress } from './lib/accounts'
   import { wornSkin } from './lib/game/shop'
 
   type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
