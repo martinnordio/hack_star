@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { codeFromScan, credits, hackLink, isUnlocked, maxPower, superHack, withHack } from './hacks'
+import { codeFromScan, credits, hackLink, isQrPassword, isUnlocked, maxPower, superHack, withHack } from './hacks'
 import { defaultProgress } from './progress'
+
+describe('QR password', () => {
+  it.each([
+    ['M6D2', true],
+    ['m6d2', false],
+    ['M6D2 ', false],
+    ['', false],
+    ['M6D3', false],
+  ])('%j is %s', (text, ok) => {
+    expect(isQrPassword(text)).toBe(ok)
+  })
+})
 
 describe('hacks', () => {
   it('HYPERCHARGE makes the Super charge 3 times faster and always a Hypercharge, until reset', () => {

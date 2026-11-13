@@ -119,6 +119,10 @@ export const en = {
   'qrScanner.hint': 'Point the camera at a Hack star QR code',
 
   'qr.title': 'Hack star · QR codes',
+  'qr.passwordIntro': 'The QR codes are for parents. Type the password to show them.',
+  'qr.passwordLabel': 'Password',
+  'qr.passwordShow': 'Show the codes',
+  'qr.wrongPassword': 'Wrong password',
   'qr.intro':
     "Scan one with the game's {button} button or with the camera app of an iPad or phone on the same Wi-Fi. The codes work only with this game address: {address}",
   'qr.localWarning':

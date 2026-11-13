@@ -121,6 +121,10 @@ export const it: Record<TextKey, string> = {
   'qrScanner.hint': 'Inquadra un codice QR di Hack star',
 
   'qr.title': 'Hack star · Codici QR',
+  'qr.passwordIntro': 'I codici QR sono per i genitori. Scrivi la password per vederli.',
+  'qr.passwordLabel': 'Password',
+  'qr.passwordShow': 'Mostra i codici',
+  'qr.wrongPassword': 'Password sbagliata',
   'qr.intro':
     "Scansionane uno con il pulsante {button} del gioco o con l'app Fotocamera di un iPad o telefono sulla stessa rete Wi-Fi. I codici funzionano solo con questo indirizzo del gioco: {address}",
   'qr.localWarning':

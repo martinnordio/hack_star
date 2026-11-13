@@ -195,7 +195,7 @@ _None._
 | **3** | Reset in Settings | ✅ Done | [→ Step 3](#step-3--reset-in-settings) |
 | **4** | Languages: texts in one place, language per account | ✅ Done | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
 | **5** | Translations: German, Swiss German, Spanish, Italian | ✅ Done | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
-| **6** | Password for the QR codes | ⬜ Not started | [→ Step 6](#step-6--password-for-the-qr-codes) |
+| **6** | Password for the QR codes | ✅ Done | [→ Step 6](#step-6--password-for-the-qr-codes) |
 | **7** | Create a fighter and the CREATOR code | ⬜ Not started | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
 | **8** | The created fighter in matches and with friends | ⬜ Not started | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
 | **9** | Five new fighters with nicer graphics | ⬜ Not started | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
@@ -381,14 +381,21 @@ errors; browser at phone size: Settings in German, Home and Shop in Swiss German
 The QR print page shows the codes only after the password `M6D2` (S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `QrPage.svelte`: password form first; exact `M6D2` shows the codes, anything else "Wrong password"; not remembered (D12); texts in all 5 languages.
-- [ ] Test of the check function (`M6D2` yes; `m6d2`, empty, other no).
-- [ ] Check in the browser: `/?qr`, wrong and right password, reload asks again, Print still works.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] `QrPage.svelte`: password form first; exact `M6D2` shows the codes, anything else "Wrong password"; not remembered (D12); texts in all 5 languages.
+- [x] Test of the check function (`M6D2` yes; `m6d2`, empty, other no).
+- [x] Check in the browser: `/?qr`, wrong and right password, reload asks again, Print still works.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 18:10
+
+- The codes are loaded from the server only after the right password, so the page shows no
+  code before it.
+
+**Done (2026-11-13 · ~8m · Claude Opus 5.5)** — password form on `/?qr` (`isQrPassword`, exact
+`M6D2`); `npm test` 162 passed, `npm run check` 0 errors; browser: `m6d2` → "Wrong password",
+0 codes; `M6D2` → 4 codes; after a reload the password is asked again.
 
 ---
 

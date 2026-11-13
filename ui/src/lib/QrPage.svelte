@@ -1,25 +1,49 @@
 <script lang="ts">
   import QRCode from 'qrcode'
-  import { hackLink, listHacks, type Hack } from './hacks'
+  import { hackLink, isQrPassword, listHacks, type Hack } from './hacks'
   import { t, tOr } from './i18n'
 
   let cards = $state<{ hack: Hack; link: string; image: string }[]>()
   let error = $state(false)
+  let password = $state('')
+  let wrong = $state(false)
+  let unlocked = $state(false)
 
-  listHacks()
-    .then((hacks) =>
-      Promise.all(
-        hacks.map(async (hack) => {
-          const link = hackLink(location.origin, hack.code)
-          const image = await QRCode.toDataURL(link, { width: 480, margin: 2, errorCorrectionLevel: 'M' })
-          return { hack, link, image }
-        }),
-      ),
-    )
-    .then((list) => (cards = list))
-    .catch(() => (error = true))
+  function show() {
+    wrong = !isQrPassword(password)
+    if (wrong) return
+    unlocked = true
+    load()
+  }
+
+  function load() {
+    listHacks()
+      .then((hacks) =>
+        Promise.all(
+          hacks.map(async (hack) => {
+            const link = hackLink(location.origin, hack.code)
+            const image = await QRCode.toDataURL(link, { width: 480, margin: 2, errorCorrectionLevel: 'M' })
+            return { hack, link, image }
+          }),
+        ),
+      )
+      .then((list) => (cards = list))
+      .catch(() => (error = true))
+  }
 </script>
 
+{#if !unlocked}
+  <main>
+    <h1>{$t('qr.title')}</h1>
+    <p>{$t('qr.passwordIntro')}</p>
+    <form class="password" onsubmit={(e) => (e.preventDefault(), show())}>
+      <label for="qr-password">{$t('qr.passwordLabel')}</label>
+      <input id="qr-password" type="password" autocomplete="off" bind:value={password} oninput={() => (wrong = false)} />
+      <button type="submit">{$t('qr.passwordShow')}</button>
+    </form>
+    {#if wrong}<p class="warning" role="alert">{$t('qr.wrongPassword')}</p>{/if}
+  </main>
+{:else}
 <main>
   <header>
     <h1>{$t('qr.title')}</h1>
@@ -54,6 +78,7 @@
     </div>
   {/if}
 </main>
+{/if}
 
 <style>
   main {
@@ -72,6 +97,22 @@
 
   h1 {
     margin: 0 0 0.4rem;
+  }
+
+  .password {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .password input {
+    padding: 0.4rem 0.6rem;
+    font: inherit;
+    font-size: 1.2rem;
+    border: 2px solid #160f33;
+    border-radius: 0.5rem;
   }
 
   header p {

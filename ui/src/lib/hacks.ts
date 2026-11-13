@@ -13,6 +13,13 @@ export interface Hack {
 export const NORMAL_MAX_POWER = 11
 export const HACKED_MAX_POWER = 22
 
+/** Keeps kids from printing the codes; it is in the public source, so it is not security. */
+export const QR_PASSWORD = 'M6D2'
+
+export function isQrPassword(text: string): boolean {
+  return text === QR_PASSWORD
+}
+
 export class UnknownCodeError extends Error {}
 
 export async function redeem(code: string): Promise<Hack> {

@@ -121,6 +121,10 @@ export const gsw: Record<TextKey, string> = {
   'qrScanner.hint': 'Heb d Kamera uf en Hack star QR-Code',
 
   'qr.title': 'Hack star · QR-Codes',
+  'qr.passwordIntro': 'D QR-Codes sind für d Eltere. Gib s Passwort ii, dänn gsehsch sie.',
+  'qr.passwordLabel': 'Passwort',
+  'qr.passwordShow': 'Codes zeige',
+  'qr.wrongPassword': 'Falschs Passwort',
   'qr.intro':
     'Scann eine mit em {button}-Chnopf im Spiel oder mit de Kamera-App vo me iPad oder Handy im gliiche WLAN. D Codes gönd nur mit dere Spiel-Adrässe: {address}',
   'qr.localWarning':
