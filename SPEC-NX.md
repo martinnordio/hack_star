@@ -16,20 +16,27 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 |------|-------|-----------|
 | spec-nx | [`.spec-nx/`](.spec-nx/) (git submodule of [spec-nx](https://github.com/martinnordio/spec-nx)) | The methodology and the generator of the kit |
 | Generated kit | [`.specs/kit/`](.specs/kit/) | What spec-nx generated for this repository (see below) |
-| Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `pr`, git host GitHub with linked issues, PowerShell |
+| Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `pr`, git host GitHub with linked issues, PowerShell, languages Python / TypeScript / Svelte / PowerShell |
 | Vision | [`.specs/overall_req.md`](.specs/overall_req.md) | The idea of the game in our own words, and the questions for Mattia with his answers |
 | Specs | [`.specs/features/done/`](.specs/features/done/) | One file per feature, all finished |
 
 ### The generated kit (`.specs/kit/`)
 
+The features below were built with the kit of spec-nx `3cae701`. The kit was then regenerated
+from spec-nx v0.3.0 (`GENERATE KIT --update`), which added the Stage log, `CREATE ISSUE`, the
+guidelines and the agent permissions.
+
 | File | Used for |
 |------|----------|
-| [requirements/prompt.md](.specs/kit/requirements/prompt.md) | Stage 1: write Part 1 of a spec — context, what already exists, testable requirements (S1…Sn), open questions; `UPDATE ISSUE` puts its summary into the GitHub issue |
+| [README.md](.specs/kit/README.md) | The workflow and the commands on one page |
+| [requirements/prompt.md](.specs/kit/requirements/prompt.md) | Stage 1: write Part 1 of a spec — context, what already exists, testable requirements (S1…Sn), open questions; `CREATE ISSUE` / `UPDATE ISSUE` create the GitHub issue or put the summary into it |
 | [plan/prompt.md](.specs/kit/plan/prompt.md) | Stage 2: write Part 2 — decisions, then Steps with a goal, tasks and a check each |
 | [pr/prompt.md](.specs/kit/pr/prompt.md) | Stage 3: push the branch, open or update the pull request and the issue with the spec summary |
-| [spec_template.md](.specs/kit/spec_template.md) | The shape of every spec file |
+| [spec_template.md](.specs/kit/spec_template.md) | The shape of every spec file, with a Stage log of which stage and AI model wrote what |
 | [skills/requirements_engineer.md](.specs/kit/skills/requirements_engineer.md), [skills/architect.md](.specs/kit/skills/architect.md) | The roles the assistant takes for requirements and for the plan |
-| [tools/](.specs/kit/tools/) | `github/update_issue.ps1`, `github/update_pr.ps1`: keep the issue and the pull request in sync with the spec; `spec_summary.ps1`: shared helper |
+| [guidelines/](.specs/kit/guidelines/) | Coding rules per language (Python, TypeScript, Svelte, PowerShell) and for commit messages; `GUIDELINES:` writes project-specific rules into `.specs/guidelines/` |
+| [tools/](.specs/kit/tools/) | `github/create_issue.ps1`, `github/update_issue.ps1`, `github/update_pr.ps1`: create the issue and keep it and the pull request in sync with the spec; `spec_summary.ps1`: shared helper |
+| [.vscode/settings.json](.vscode/settings.json) | The AI agent's terminal permissions: tests and checks run freely; deleting, installing, committing and pushing need approval |
 
 ## How it was used
 
