@@ -1,7 +1,7 @@
 # Accounts, Create a Fighter, New Fighters and Languages Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Requirements in progress
+> **Status:** ⬜ Not started — plan ready
 > **Created:** 2026-11-13
 > **Last updated:** 2026-11-13
 > **Branch:** `feature/accounts-fighters-and-languages`
@@ -13,6 +13,7 @@
 |------|-------|---------|-------|------|
 | 2026-11-13 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written; revised: open questions answered (rename, full reset, re-create cost, CREATOR, exact password, language per account, new fighters invented) |
 | 2026-11-13 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #15 created |
+| 2026-11-13 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
 
 ---
 
@@ -185,4 +186,276 @@ _None._
 
 # Part 2 · Plan
 
-_Written by the plan stage once Part 1 is agreed._
+## 2 · Spec Overview
+
+| Step | Description | Status | Detail |
+|------|-------------|--------|--------|
+| **1** | Accounts: storage, migration, per-account progress | ⬜ Not started | [→ Step 1](#step-1--accounts-storage-migration-per-account-progress) |
+| **2** | Accounts screen: create, rename, switch | ⬜ Not started | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
+| **3** | Reset in Settings | ⬜ Not started | [→ Step 3](#step-3--reset-in-settings) |
+| **4** | Languages: texts in one place, language per account | ⬜ Not started | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
+| **5** | Translations: German, Swiss German, Spanish, Italian | ⬜ Not started | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
+| **6** | Password for the QR codes | ⬜ Not started | [→ Step 6](#step-6--password-for-the-qr-codes) |
+| **7** | Create a fighter and the CREATOR code | ⬜ Not started | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
+| **8** | The created fighter in matches and with friends | ⬜ Not started | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
+| **9** | Five new fighters with nicer graphics | ⬜ Not started | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
+| **10** | Three more skins for every fighter | ⬜ Not started | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
+| **11** | Everything still works; documentation | ⬜ Not started | [→ Step 11](#step-11--everything-still-works-documentation) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration> · <model>)**`** line to that Step's
+>    **Notes**: date, time it took, the AI model that did the work, a one-line summary and
+>    the verifying test/command result.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | Accounts live under a new `localStorage` key `hack-star.accounts`: `{ version: 1, current, accounts: [{ id, name, language, progress }] }`, in a new `ui/src/lib/accounts.ts`. The existing `progress` store keeps its API and reads / writes the **current** account's progress | The rest of the game (Arena, Shop, Fighter screens) does not change; one place decides which account is active |
+| D2 | On first start, a saved `hack-star.progress` (version 2 or 3) becomes account "Player 1"; the old key is left in place but no longer read | Nothing is lost (S5); keeping the old key makes a rollback to the previous version safe |
+| D3 | Progress version 4 adds `createdFighter` (`null` or its look). New accounts start from `startProgress(fighters)`: 500 credits, 0 trophies, the catalogue's `unlocked_at_start` fighters. The sample trophies of today's `defaultProgress()` remain only for migration tests | S5 asks for 0 trophies on new accounts; the start fighters come from one place (the server catalogue), so Marina is included |
+| D4 | Reset (`resetProgress`) is a pure function in `progress.ts`: start progress, but keeps `activeHacks` and `createdFighter`; trophies of the created fighter go to 0 | Testable without the UI; matches S6 exactly |
+| D5 | Languages without a library: `ui/src/lib/i18n/` with one TypeScript dictionary per language (`en.ts`, `de.ts`, `gsw.ts`, `es.ts`, `it.ts`) and a `t` store derived from the current account's language. Every other dictionary is typed as `Record<keyof typeof en, string>`, so a missing text fails `npm run check` | Five small static dictionaries do not need a dependency; the type check enforces S19 |
+| D6 | Texts that come from the server (hack names and descriptions, fighter ideas) are translated in the UI by id (`hack.<id>.description`, `fighter.<id>.idea`); the server stays English and is the fallback | Keeps the API unchanged; friends with other languages still exchange only ids |
+| D7 | Swiss German uses the code `gsw` and is chosen for browsers reporting `de-CH`; written as Zurich German | `gsw` is the standard language code for Swiss German |
+| D8 | The created fighter has the id `custom` in every account and is **not** in the server catalogue: the UI adds it to the fighter list from the progress (`withCreated(fighters, progress)`). Its look is `{ name, type, main, second, head, body }` with 8 colours, 3 heads and 3 bodies | One created fighter per account (S9); no server storage needed |
+| D9 | New hack `creator` (`CREATOR`) in `hacks.py`; `isUnlocked(progress, 'custom')` is true only with that hack and a created fighter; `unlock()` refuses `custom` | S10 and S11: the code is the only way to unlock it, also before it is created |
+| D10 | Re-creating costs `SETTINGS.recreateCost = 500` and goes through the existing `pay()`, so INFINITY makes it free | One price setting; same rule as every purchase (S24) |
+| D11 | Friends: the room `Member` gets an optional `look` (validated on the server: name ≤ 12 characters, known type, colours `#rrggbb`, head and body 0–2); `fighter: "custom"` is accepted only with a look | Friends draw the created fighter correctly (S12); the server still refuses bad data |
+| D12 | The QR password is checked in the browser (`QrPage.svelte`), exact match `M6D2`, never stored | Agreed in Part 1: a lock for kids, not security; no server change |
+| D13 | Nicer fighters (S16) stay code-built (no downloaded art): new helpers in `parts.ts` for shiny (`MeshStandardMaterial` with metalness / roughness) and glowing (emissive) parts, and a list of animated parts per rig so the idle animation can move several parts. Geometries and materials are shared between copies | No licence or download questions; sharing keeps matches fast on an iPad (S17) |
+| D14 | The 45 new skins (3 × 15 fighters) are added to `fighters.py`; each builder gets a colour palette per skin plus at least one extra or changed part | The shop, skin of the day and gallery already work from the catalogue |
+
+---
+
+## Step 1 — Accounts: storage, migration, per-account progress
+
+### Goal
+Accounts are stored, migrated from today's progress and kept between visits, and the game
+reads the current account's progress (S1, S2, S4, S5, S23 — logic only).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Progress version 4: `createdFighter` field, migration from version 3 (and 2), `startProgress(fighters)` (D3).
+- [ ] `ui/src/lib/accounts.ts`: load / save `hack-star.accounts`, migration of `hack-star.progress` into "Player 1" (D1, D2), `addAccount`, `renameAccount`, `switchAccount` with the rules of S1, S2 and S23 (1–16 characters, unique ignoring case, at most 5, no delete).
+- [ ] The `progress` store reads and writes the current account (D1); switching account changes it everywhere.
+- [ ] Unit tests (`accounts.test.ts`, `progress.test.ts`): migration keeps everything, name rules, sixth account refused, switching, saved and loaded again.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 2 — Accounts screen: create, rename, switch
+
+### Goal
+The player sees the current account on the home screen and creates, renames and switches
+accounts (S1, S2, S3, S21, S23).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Home: account name button (top bar) opening an accounts panel; switch in at most two taps.
+- [ ] Accounts panel: list (current marked), add (name field, error messages of S1 and S2), rename.
+- [ ] Check in the browser at phone, iPad and desktop sizes, touch and mouse: create 5 accounts, a sixth is refused; switch and see other credits and trophies; reload and the last account is still active.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Reset in Settings
+
+### Goal
+The player resets the current account to the start after confirming (S6).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `resetProgress()` (D4) with tests: 0 credits and trophies, start fighters only, power 1, default skins, hacks and created fighter kept; other accounts untouched.
+- [ ] Settings: "Reset coins and trophies" button with a confirmation; cancelling changes nothing.
+- [ ] Check in the browser: reset, see 0 credits, no Prestige badges, fighters locked again.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 4 — Languages: texts in one place, language per account
+
+### Goal
+Every text the player sees comes from the English dictionary, and each account has a language
+chosen in Settings (S18, S20 — with English only filled).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `ui/src/lib/i18n/`: `en.ts`, `t` store from the current account's language, `{name}` placeholders, fallback to English (D5).
+- [ ] Move every visible text of every screen (including `vocabulary.ts`, results, errors, Arena HUD, QR page) into `en.ts`; server texts by id (D6).
+- [ ] Account `language`: set for new accounts from the browser language (`de-CH` → `gsw`, D7), else English; Settings: language picker; switching account switches language.
+- [ ] Tests: language of a new account from the browser language; switching account switches language; placeholders filled.
+- [ ] Check in the browser: every screen still shows the same English texts.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 5 — Translations: German, Swiss German, Spanish, Italian
+
+### Goal
+All texts exist in all 5 languages (S18, S19).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `de.ts`, `gsw.ts` (Zurich German), `es.ts`, `it.ts`, typed against `en.ts` (D5); fighter, skin and code names stay untranslated.
+- [ ] Test: every dictionary has every key, none empty, same placeholders as English.
+- [ ] Check in the browser: each language on Home, Fighters, Shop, Info, Settings, Hack, Friends and a match; long German words fit on a phone.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 6 — Password for the QR codes
+
+### Goal
+The QR print page shows the codes only after the password `M6D2` (S13).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `QrPage.svelte`: password form first; exact `M6D2` shows the codes, anything else "Wrong password"; not remembered (D12); texts in all 5 languages.
+- [ ] Test of the check function (`M6D2` yes; `m6d2`, empty, other no).
+- [ ] Check in the browser: `/?qr`, wrong and right password, reload asks again, Print still works.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 7 — Create a fighter and the CREATOR code
+
+### Goal
+The player designs one fighter, which stays locked until `CREATOR` is entered, and can change
+it later for 500 credits (S7, S8, S9, S10, S11, S24).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Server: hack `creator` / `CREATOR` in `hacks.py` (D9); `pytest` for redeem and the list.
+- [ ] UI rules: `HackId` `creator`; `withCreated()` (D8); `isUnlocked` for `custom` (D9); `unlock()` refuses it; `recreate()` with `SETTINGS.recreateCost` through `pay()` (D10); tests.
+- [ ] `models/custom3d.ts`: build the created fighter from its look (3 heads, 3 bodies, 2 colours); portrait.
+- [ ] Creator screen: name, type, colours, head, body, live 3D preview; "Create a fighter" entry in the fighter list; locked card saying a hack code is needed; changing shows the price.
+- [ ] Check in the browser: create, see it locked, enter `CREATOR`, select it; change it with and without enough credits; `CREATOR` before creating unlocks it at creation; `/?qr` lists the new code.
+- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 8 — The created fighter in matches and with friends
+
+### Goal
+The unlocked created fighter plays like any fighter of its type, gets trophies and power, and
+friends see it (S12).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Arena, Training, trophies, power levels and shot colour work with `custom` and its type.
+- [ ] Rooms: `Member.look` on the server with validation (D11) and `pytest` (good look accepted, bad colour / long name / `custom` without look refused); UI sends and draws the look.
+- [ ] Check in the browser: a match and Training with the created fighter; two devices (or two windows) in a room, one with the created fighter, both see it with its colours.
+- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 9 — Five new fighters with nicer graphics
+
+### Goal
+Marina, Drako, Spectra, Mecha Max and Zeus Jr. are in the game, clearly more detailed than the
+current fighters, and matches stay smooth (S15, S16, S17).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `fighters.py`: the 5 fighters from S15 (Marina `unlocked_at_start`); `pytest` for 15 fighters and the start set.
+- [ ] `parts.ts`: shiny and glowing material helpers, animated parts list (D13).
+- [ ] Builders for the 5 fighters: at least twice the parts of a current fighter, shiny or glowing materials, idle animation moving 3 or more parts; shot colours; gallery; ideas in all 5 languages.
+- [ ] Check in the browser: `/?gallery` side by side with the old fighters (screenshot for Mattia); a match with 3 new fighters at iPad size without stutter (frame rate in the browser's performance panel ≥ 30 fps).
+- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 10 — Three more skins for every fighter
+
+### Goal
+Each of the 15 fighters has 3 new skins with their own look, sold in the shop (S14).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `fighters.py`: 45 new skins with names and rarities; `pytest`: every fighter has at least 3 new skins, ids unique per fighter.
+- [ ] Looks in each builder (D14): other colours and at least one changed part per skin; gallery.
+- [ ] Check in the browser: shop lists the new skins at their rarity price, buy and wear one, skin of the day can be a new skin; every new skin in `/?gallery` looks different from the fighter's other skins.
+- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 11 — Everything still works; documentation
+
+### Goal
+Everything that worked before still works, on every screen size, and the documents describe
+the new parts (S21, S22).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Full checks: `cd server; uv run pytest`; `cd ui; npm test; npm run check; npm run build`.
+- [ ] Browser at phone, iPad and desktop, portrait and landscape: match, Training, shop, every hack code, play with friends with two accounts in different languages.
+- [ ] README: accounts, reset, create a fighter, languages, QR password, new fighters.
+- [ ] `docs/architecture.md`: accounts, i18n, created fighter, room `look`, new helpers in `parts.ts`, how to add a text / language.
+- [ ] Info page vocabulary for the new words; `.specs/overall_req.md` untouched (user's document); `SPEC-NX.md` features table gets this spec.
+- [ ] Check: all commands above pass.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| Accounts shared between devices (cloud sync, login) | Accounts are per device and browser; syncing needs a server store and logins | a future online accounts spec |
+| Translated fighter, skin and code names | Agreed: names stay the same in every language | — |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
