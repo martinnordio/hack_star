@@ -37,6 +37,8 @@ const WORDS = [
   'teammate',
   'superBlast',
   'hyperchargeCode',
+  'account',
+  'createdFighter',
 ] as const
 
 export const VOCABULARY: Word[] = WORDS.map(

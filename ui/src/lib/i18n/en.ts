@@ -321,6 +321,10 @@ export const en = {
   'vocabulary.teammate.meaning': 'A friend on your team: your shots do not hurt them, and their health bar is blue.',
   'vocabulary.superBlast.word': 'Super blast',
   'vocabulary.superBlast.meaning': "Hack star's Super: a fan of big shots that go through walls.",
+  'vocabulary.account.word': 'Account',
+  'vocabulary.account.meaning': 'Your own player on this device, with its own name, trophies, credits and language. Up to 5 per device.',
+  'vocabulary.createdFighter.word': 'Created fighter',
+  'vocabulary.createdFighter.meaning': 'The fighter you design yourself. Unlock it with the CREATOR code.',
   'vocabulary.hyperchargeCode.word': 'HYPERCHARGE (code)',
   'vocabulary.hyperchargeCode.meaning':
     'Hack star hack code: your Super charges 3 times faster and every Super is a Hypercharge.',

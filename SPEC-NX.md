@@ -79,6 +79,7 @@ guidelines and the agent permissions.
 | F9 | Ten fighters with five types, each with its own attack and Super | [More fighters](.specs/features/done/2026_11_12_more_fighters_spec.md) | [#10](https://github.com/martinnordio/hack_star/issues/10) |
 | F10 | Super, Hypercharge and the HYPERCHARGE hack code | [Super and Hypercharge](.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) | [#11](https://github.com/martinnordio/hack_star/issues/11) |
 | F11 | Playing with up to 2 friends on their own devices | [Play with friends](.specs/features/done/2026_11_12_play_with_friends_spec.md) | [#12](https://github.com/martinnordio/hack_star/issues/12) |
+| F12 | Accounts, reset, create a fighter (CREATOR), QR password, 5 new fighters, 45 new skins, 5 languages | [Accounts, fighters and languages](.specs/features/2026_11_13_accounts_fighters_and_languages_spec.md) | [#15](https://github.com/martinnordio/hack_star/issues/15) |
 
 Each spec file shows the requirements, the decisions, every Step with its tasks, the time it
 took, what was checked, and what went differently from the plan (for example a bug found in the

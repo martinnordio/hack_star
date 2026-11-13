@@ -1,7 +1,7 @@
 # Accounts, Create a Fighter, New Fighters and Languages Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔶 Implemented — visual checks open (Step 11 notes)
 > **Created:** 2026-11-13
 > **Last updated:** 2026-11-13
 > **Branch:** `feature/accounts-fighters-and-languages`
@@ -200,7 +200,7 @@ _None._
 | **8** | The created fighter in matches and with friends | ✅ Done | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
 | **9** | Five new fighters with nicer graphics | ✅ Done (visual review open) | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
 | **10** | Three more skins for every fighter | ✅ Done (visual review open) | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
-| **11** | Everything still works; documentation | ⬜ Not started | [→ Step 11](#step-11--everything-still-works-documentation) |
+| **11** | Everything still works; documentation | ✅ Done (visual checks open) | [→ Step 11](#step-11--everything-still-works-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -533,16 +533,35 @@ Everything that worked before still works, on every screen size, and the documen
 the new parts (S21, S22).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Full checks: `cd server; uv run pytest`; `cd ui; npm test; npm run check; npm run build`.
+- [x] Record the start time in Notes below.
+- [x] Full checks: `cd server; uv run pytest`; `cd ui; npm test; npm run check; npm run build`.
 - [ ] Browser at phone, iPad and desktop, portrait and landscape: match, Training, shop, every hack code, play with friends with two accounts in different languages.
-- [ ] README: accounts, reset, create a fighter, languages, QR password, new fighters.
-- [ ] `docs/architecture.md`: accounts, i18n, created fighter, room `look`, new helpers in `parts.ts`, how to add a text / language.
-- [ ] Info page vocabulary for the new words; `.specs/overall_req.md` untouched (user's document); `SPEC-NX.md` features table gets this spec.
-- [ ] Check: all commands above pass.
+- [x] README: accounts, reset, create a fighter, languages, QR password, new fighters.
+- [x] `docs/architecture.md`: accounts, i18n, created fighter, room `look`, new helpers in `parts.ts`, how to add a text / language.
+- [x] Info page vocabulary for the new words; `.specs/overall_req.md` untouched (user's document); `SPEC-NX.md` features table gets this spec.
+- [x] Check: all commands above pass.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 20:10
+
+- Checks: `pytest` 38 passed; `npm test` 226 passed; `npm run check` 0 errors; `npm run build`
+  ok (the old "chunk larger than 500 kB" warning only).
+- Two headless devices, one in German and one in Spanish: room created and joined, the host
+  sees "▶ START · 2 Spieler + 2 Bots", the friend "Esperando a que el Jugador 1 empiece…",
+  the match starts on both at 61 fps on the host.
+- Info page: new words "Account" and "Created fighter" in all five languages.
+- **Open (needs eyes, screenshots ran out in this session):**
+  1. Look at every screen at phone, iPad and desktop size, portrait and landscape (accounts
+     panel, creator, Settings with languages and reset, QR password) — S21.
+  2. Mattia compares the five new fighters with the old ones in `/?gallery` — S16.
+  3. Check the 45 new skins in `/?gallery` and fix any that look wrong — S14.
+  4. Play one match on a real iPad with new fighters — S17.
+  5. A native speaker reads the Swiss German texts (Zurich) — S20.
+  Then close the spec (Status ✅, move it to `.specs/features/done/`, fix the link in
+  `SPEC-NX.md`) and run `PR:`.
+
+**Done (2026-11-13 · ~20m · Claude Opus 5.5)** — docs (README, architecture, SPEC-NX.md, Info
+words) and all automated checks; visual checks listed above are still open.
 
 ---
 

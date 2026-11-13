@@ -323,6 +323,10 @@ export const gsw: Record<TextKey, string> = {
   'vocabulary.teammate.meaning': 'En Fründ i dim Team: Dini Schüss tüend ihm nöd weh, und sin Läbesbalke isch blau.',
   'vocabulary.superBlast.word': 'Superschuss',
   'vocabulary.superBlast.meaning': 'Dä Super in Hack star: en Fächer us grosse Schüss, wo dur Muure gönd.',
+  'vocabulary.account.word': 'Konto',
+  'vocabulary.account.meaning': 'Din eigete Spieler uf däm Grät, mit eigetem Name, Trophäe, Credits und Sprach. Bis zu 5 pro Grät.',
+  'vocabulary.createdFighter.word': 'Eigete Kämpfer',
+  'vocabulary.createdFighter.meaning': 'De Kämpfer, wo du sälber machsch. Schalt en mit em Code CREATOR frei.',
   'vocabulary.hyperchargeCode.word': 'HYPERCHARGE (Code)',
   'vocabulary.hyperchargeCode.meaning':
     'Hack-Code in Hack star: Din Super ladt 3-mal schnäller und jede Super isch en Hypercharge.',

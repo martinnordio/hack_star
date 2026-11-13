@@ -323,6 +323,10 @@ export const de: Record<TextKey, string> = {
   'vocabulary.teammate.meaning': 'Ein Freund in deinem Team: Deine Schüsse tun ihm nicht weh, und sein Lebensbalken ist blau.',
   'vocabulary.superBlast.word': 'Superschuss',
   'vocabulary.superBlast.meaning': 'Der Super in Hack star: ein Fächer aus großen Schüssen, die durch Mauern gehen.',
+  'vocabulary.account.word': 'Konto',
+  'vocabulary.account.meaning': 'Dein eigener Spieler auf diesem Gerät, mit eigenem Namen, Trophäen, Credits und Sprache. Bis zu 5 pro Gerät.',
+  'vocabulary.createdFighter.word': 'Eigener Kämpfer',
+  'vocabulary.createdFighter.meaning': 'Der Kämpfer, den du selbst gestaltest. Schalte ihn mit dem Code CREATOR frei.',
   'vocabulary.hyperchargeCode.word': 'HYPERCHARGE (Code)',
   'vocabulary.hyperchargeCode.meaning':
     'Hack-Code in Hack star: Dein Super lädt 3-mal schneller und jeder Super ist ein Hypercharge.',
