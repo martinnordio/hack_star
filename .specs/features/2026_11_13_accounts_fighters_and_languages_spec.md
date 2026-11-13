@@ -192,7 +192,7 @@ _None._
 |------|-------------|--------|--------|
 | **1** | Accounts: storage, migration, per-account progress | ✅ Done | [→ Step 1](#step-1--accounts-storage-migration-per-account-progress) |
 | **2** | Accounts screen: create, rename, switch | ✅ Done | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
-| **3** | Reset in Settings | ⬜ Not started | [→ Step 3](#step-3--reset-in-settings) |
+| **3** | Reset in Settings | ✅ Done | [→ Step 3](#step-3--reset-in-settings) |
 | **4** | Languages: texts in one place, language per account | ⬜ Not started | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
 | **5** | Translations: German, Swiss German, Spanish, Italian | ⬜ Not started | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
 | **6** | Password for the QR codes | ⬜ Not started | [→ Step 6](#step-6--password-for-the-qr-codes) |
@@ -297,14 +297,21 @@ home screen; `npm run check` 0 errors; checked in the browser at desktop and pho
 The player resets the current account to the start after confirming (S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `resetProgress()` (D4) with tests: 0 credits and trophies, start fighters only, power 1, default skins, hacks and created fighter kept; other accounts untouched.
-- [ ] Settings: "Reset coins and trophies" button with a confirmation; cancelling changes nothing.
-- [ ] Check in the browser: reset, see 0 credits, no Prestige badges, fighters locked again.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] `resetProgress()` (D4) with tests: 0 credits and trophies, start fighters only, power 1, default skins, hacks and created fighter kept; other accounts untouched.
+- [x] Settings: "Reset coins and trophies" button with a confirmation; cancelling changes nothing.
+- [x] Check in the browser: reset, see 0 credits, no Prestige badges, fighters locked again.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 17:12
+
+- The reset only touches the current account: the progress store writes into it (Step 1), so
+  the other accounts are untouched by construction.
+
+**Done (2026-11-13 · ~8m · Claude Opus 5.5)** — `resetProgress()` and the confirm / cancel
+button in Settings; `npm test` 150 passed, `npm run check` 0 errors; browser: cancel keeps
+everything, confirm saves 0 credits.
 
 ---
 

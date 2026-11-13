@@ -49,6 +49,16 @@ export function startProgress(): Progress {
   }
 }
 
+/** Settings reset: back to the start with 0 credits; hack codes and the created fighter stay. */
+export function resetProgress(progress: Progress): Progress {
+  return {
+    ...startProgress(),
+    credits: 0,
+    activeHacks: [...progress.activeHacks],
+    createdFighter: progress.createdFighter,
+  }
+}
+
 /** Sample progress of the first versions (basic UI spec S8); used by tests. */
 export function defaultProgress(): Progress {
   return {

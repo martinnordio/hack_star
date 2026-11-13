@@ -1,6 +1,17 @@
 <script lang="ts">
+  import { progress } from './accounts'
   import type { BotLevel } from './game/settings'
   import { BOT_COUNTS, options } from './options'
+  import { resetProgress } from './progress'
+
+  let confirming = $state(false)
+  let resetDone = $state(false)
+
+  function reset() {
+    $progress = resetProgress($progress)
+    confirming = false
+    resetDone = true
+  }
 
   const LEVELS: { id: BotLevel; name: string; emoji: string; text: string }[] = [
     { id: 'easy', name: 'Easy', emoji: '🙂', text: 'Slow bots that miss a lot' },
@@ -45,6 +56,23 @@
 </section>
 
 <p class="note">Saved on this device. Used in every match (not in Training).</p>
+
+<section class="reset">
+  <h3>Start again</h3>
+  {#if confirming}
+    <p class="warn" role="alert">
+      Are you sure? This account gets 0 credits and 0 trophies, fighters are locked again, power
+      levels and skins are gone. Hack codes and your created fighter stay.
+    </p>
+    <div class="row">
+      <button class="danger" onclick={reset}>Yes, reset</button>
+      <button class="plain" onclick={() => (confirming = false)}>Cancel</button>
+    </div>
+  {:else}
+    <button class="danger" onclick={() => ((confirming = true), (resetDone = false))}>🔄 Reset coins and trophies</button>
+    {#if resetDone}<p class="done" role="status">Done: this account starts again.</p>{/if}
+  {/if}
+</section>
 
 <style>
   section {
@@ -144,5 +172,40 @@
     margin: 0 auto;
     font-weight: 700;
     opacity: 0.8;
+  }
+
+  .reset {
+    margin-top: 1.5rem;
+  }
+
+  .reset .row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .danger,
+  .plain {
+    padding: 0.6rem 1.1rem;
+    border-radius: 1rem;
+    font-weight: 900;
+    font-size: 1.1rem;
+  }
+
+  .danger {
+    background: linear-gradient(#ff4d4d, #b3122e);
+  }
+
+  .warn,
+  .done {
+    margin: 0 0 0.6rem;
+    font-weight: 800;
+  }
+
+  .warn {
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.8rem;
+    background: #8a1030;
+    border: 2px solid #000;
   }
 </style>
