@@ -1,0 +1,65 @@
+{
+  "input": {
+    "version": 4,
+    "credits": 900,
+    "trophies": {
+      "blaze": 2100,
+      "custom": 50
+    },
+    "powerLevels": {
+      "blaze": 9
+    },
+    "unlockedFighters": [
+      "blaze",
+      "rocko",
+      "turbo",
+      "luna"
+    ],
+    "activeHacks": [
+      "power22"
+    ],
+    "selectedFighter": "luna",
+    "selectedSkins": {
+      "blaze": "phoenix"
+    },
+    "ownedSkins": {
+      "blaze": [
+        "phoenix"
+      ]
+    },
+    "createdFighter": {
+      "name": "Zap",
+      "type": "tank",
+      "main": "#ff0000",
+      "second": "#00ff00",
+      "head": 1,
+      "body": 2
+    }
+  },
+  "output": {
+    "version": 4,
+    "credits": 0,
+    "trophies": {},
+    "powerLevels": {},
+    "unlockedFighters": [
+      "blaze",
+      "rocko",
+      "turbo",
+      "marina"
+    ],
+    "activeHacks": [
+      "power22"
+    ],
+    "selectedFighter": "blaze",
+    "selectedSkins": {},
+    "ownedSkins": {},
+    "createdFighter": {
+      "name": "Zap",
+      "type": "tank",
+      "main": "#ff0000",
+      "second": "#00ff00",
+      "head": 1,
+      "body": 2
+    }
+  }
+}

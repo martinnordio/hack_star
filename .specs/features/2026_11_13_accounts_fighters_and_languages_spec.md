@@ -14,6 +14,7 @@
 | 2026-11-13 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written; revised: open questions answered (rename, full reset, re-create cost, CREATOR, exact password, language per account, new fighters invented) |
 | 2026-11-13 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #15 created |
 | 2026-11-13 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
+| 2026-11-13 | review | `REVIEW:` | Claude Opus 5.5 | semantic diff written |
 
 ---
 
@@ -578,6 +579,7 @@ words) and all automated checks; visual checks listed above are still open.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-13 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-13_feature-accounts-fighters-and-languages.html): 13 record blocks, checks 7 pass · 2 n/a, 5 findings (1 Should-fix: visual checks open; 4 Nit) |
 
 ---
 
@@ -586,6 +588,6 @@ words) and all automated checks; visual checks listed above are still open.
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked *(except the visual checks listed in Step 9–11 notes)*
-- [ ] Review · review page and semantic diff written; code review without Blocking findings
+- [x] Review · review page and semantic diff written; code review without Blocking findings
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

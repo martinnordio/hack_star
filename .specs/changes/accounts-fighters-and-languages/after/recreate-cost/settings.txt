@@ -1,0 +1,4 @@
+﻿  skinOfTheDayDiscount: number
+  recreateCost: number
+  skinOfTheDayDiscount: 0.3,
+  recreateCost: 500,

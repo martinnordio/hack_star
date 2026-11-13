@@ -1,0 +1,27 @@
+{
+  "en": {
+    "home.play": "PLAY",
+    "settings.reset": "Reset coins and trophies",
+    "qr.wrongPassword": "Wrong password"
+  },
+  "de": {
+    "home.play": "SPIELEN",
+    "settings.reset": "Credits und Trophäen zurücksetzen",
+    "qr.wrongPassword": "Falsches Passwort"
+  },
+  "gsw": {
+    "home.play": "SPIELE",
+    "settings.reset": "Credits und Trophäe zruggsetze",
+    "qr.wrongPassword": "Falschs Passwort"
+  },
+  "es": {
+    "home.play": "JUGAR",
+    "settings.reset": "Reiniciar créditos y trofeos",
+    "qr.wrongPassword": "Contraseña incorrecta"
+  },
+  "it": {
+    "home.play": "GIOCA",
+    "settings.reset": "Azzera crediti e trofei",
+    "qr.wrongPassword": "Password sbagliata"
+  }
+}

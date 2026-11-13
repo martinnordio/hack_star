@@ -1,0 +1,9 @@
+{
+  "status": 200,
+  "body": {
+    "id": "creator",
+    "code": "CREATOR",
+    "name": "Creator",
+    "description": "Unlocks the fighter you created."
+  }
+}

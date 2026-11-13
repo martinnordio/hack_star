@@ -1,0 +1,170 @@
+# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+version: 1
+branch: feature/accounts-fighters-and-languages
+base: 7c6b910
+why: |
+  Mattia and his friends share one device and want their own progress, a fighter they design
+  themselves, more and nicer fighters and skins, and the game in their own language. Parents
+  want to start over and to keep the printed QR codes away from the kids. Before this branch a
+  device had one progress, ten fighters, one or two skins each and English only.
+spec:
+  path: .specs/features/2026_11_13_accounts_fighters_and_languages_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24]
+changes:
+  - id: saved-accounts
+    kind: data-format
+    change: added
+    object: "localStorage hack-star.accounts (accounts with progress v4)"
+    note: Old hack-star.progress (v3) becomes "Player 1" and stays in place; check nothing is lost.
+    statements: [S1, S2, S4, S5, S20, S23]
+    examples:
+      - name: migrate-v3
+        input: |
+          localStorage hack-star.progress = sample progress version 3 (credits 500, Blaze 1240 trophies)
+          open the game once, read localStorage
+  - id: reset-progress
+    kind: output
+    change: added
+    object: "resetProgress(progress)"
+    note: Back to the start with 0 credits; hack codes and the created fighter stay.
+    statements: [S6]
+    examples:
+      - name: rich-account
+        input: |
+          credits 900, trophies {blaze: 2100, custom: 50}, unlocked [blaze, rocko, turbo, luna],
+          power {blaze: 9}, skins {blaze: phoenix}, hacks [power22], created fighter "Zap"
+  - id: home-accounts
+    kind: ui
+    change: modified
+    object: "Home screen + accounts panel"
+    note: Account chip under the trophies; panel to switch, add (max 5) and rename.
+    statements: [S1, S2, S3, S21, S23]
+    examples:
+      - name: panel-open
+        input: |
+          route=/ with 2 accounts, tap the account chip
+        views: [phone, desktop]
+  - id: settings-screen
+    kind: ui
+    change: modified
+    object: "Settings screen"
+    note: Language picker on top, reset with confirmation at the bottom.
+    statements: [S6, S18, S20, S21]
+    examples:
+      - name: settings
+        input: |
+          route=/ -> Settings
+        views: [desktop]
+  - id: create-fighter
+    kind: ui
+    change: added
+    object: "Fighter list entry + Create a fighter screen"
+    note: Free the first time, 500 credits to change; locked until CREATOR.
+    statements: [S7, S8, S9, S10, S24]
+    examples:
+      - name: creator
+        input: |
+          Fighters -> Create a fighter, name "Zappy", type Thrower, cat head, robot body
+        views: [desktop]
+  - id: qr-password
+    kind: ui
+    change: modified
+    object: "/?qr print page"
+    note: Codes are loaded only after the exact password M6D2; asked every time.
+    statements: [S13]
+    examples:
+      - name: before-password
+        input: |
+          route=/?qr
+        views: [desktop]
+  - id: api-fighters
+    kind: api
+    change: modified
+    object: "GET /api/fighters"
+    note: 15 fighters (5 new, Marina unlocked at start), every fighter 3 more skins.
+    statements: [S14, S15]
+    examples:
+      - name: counts
+        input: |
+          GET /api/fighters -> number of fighters, skins per fighter, unlocked_at_start ids
+  - id: api-hacks
+    kind: api
+    change: modified
+    object: "GET /api/hacks, POST /api/hacks/redeem"
+    note: New hack creator / CREATOR.
+    statements: [S11]
+    examples:
+      - name: redeem-creator
+        input: |
+          POST /api/hacks/redeem {"code": "creator"}
+  - id: room-member
+    kind: schema
+    change: modified
+    object: "Room member (WS /api/rooms)"
+    note: fighter "custom" accepted only with a look-shaped skin and a name; name only for it.
+    statements: [S12, S22]
+    examples:
+      - name: created-member
+        input: |
+          {"type": "create", "member": {"fighter": "custom", "skin": "L321e8322b39d353", "power": 3, "name": "Zappy"}}
+  - id: languages
+    kind: message
+    change: added
+    object: "Every player-visible text in en, de, gsw, es, it"
+    note: Same key, five languages; names of fighters, skins and codes untranslated.
+    statements: [S18, S19, S20]
+    examples:
+      - name: play-and-reset
+        input: |
+          keys home.play, settings.reset, qr.wrongPassword in each language
+  - id: recreate-cost
+    kind: config
+    change: added
+    object: "SETTINGS.recreateCost"
+    note: 500 credits to change the created fighter.
+    statements: [S24]
+    examples:
+      - name: settings
+        input: |
+          SETTINGS in ui/src/lib/game/settings.ts
+  - id: match-frame-rate
+    kind: performance
+    change: modified
+    object: "Frames per second in a match with 5 bots (headless Edge, 1024x768)"
+    extraction: manual
+    manual_reason: Measured with a browser script on the head only; the base has no new fighters to compare and the number depends on the machine.
+    statements: [S17]
+    examples:
+      - name: five-bots
+        input: |
+          /?bots=5, PLAY, count requestAnimationFrame calls for 3 s
+  - id: kit-stages
+    kind: command
+    change: added
+    object: "Kit commands IMPLEMENT:, CLOSE:, REVIEW:, CODE REVIEW:"
+    note: Kit regenerated with the implementation and review stages.
+    examples:
+      - name: kit-readme
+        input: |
+          workflow table in .specs/kit/README.md
+breaking: |
+  none — saved progress is migrated (the old key is kept), the API only adds fighters, skins
+  and a hack, and a room member without the new field is read as before.
+review:
+  - question: Does progress saved before this version survive?
+    answer: |
+      Yes. The first start copies hack-star.progress (version 2 or 3) into account "Player 1"
+      and leaves the old key, so going back to the previous version also works.
+  - question: Why does the created fighter's look travel in the skin id?
+    answer: |
+      Pictures, the 3D stage, the arena and room members already pass a skin id (max 20
+      characters). A 16-character code ("L" + type + head + body + 2 colours) made them work
+      unchanged; only the name is sent separately to friends.
+  - question: Is the QR password secure?
+    answer: |
+      No, on purpose: it is checked in the browser and is in the public code; it keeps kids
+      from printing the codes (agreed in Part 1).
+  - question: Why are the 45 new skins recolours with one extra part?
+    answer: |
+      One generic way (skins3d.ts) for 15 fighters instead of 45 hand-made looks; a test checks
+      every skin has other colours and more parts. The looks still need a visual check.
