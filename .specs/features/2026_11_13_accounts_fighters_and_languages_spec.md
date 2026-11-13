@@ -194,7 +194,7 @@ _None._
 | **2** | Accounts screen: create, rename, switch | ✅ Done | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
 | **3** | Reset in Settings | ✅ Done | [→ Step 3](#step-3--reset-in-settings) |
 | **4** | Languages: texts in one place, language per account | ✅ Done | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
-| **5** | Translations: German, Swiss German, Spanish, Italian | ⬜ Not started | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
+| **5** | Translations: German, Swiss German, Spanish, Italian | ✅ Done | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
 | **6** | Password for the QR codes | ⬜ Not started | [→ Step 6](#step-6--password-for-the-qr-codes) |
 | **7** | Create a fighter and the CREATOR code | ⬜ Not started | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
 | **8** | The created fighter in matches and with friends | ⬜ Not started | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
@@ -354,14 +354,24 @@ errors; browser: Home, Settings, Fighters, Info and a match show the same Englis
 All texts exist in all 5 languages (S18, S19).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `de.ts`, `gsw.ts` (Zurich German), `es.ts`, `it.ts`, typed against `en.ts` (D5); fighter, skin and code names stay untranslated.
-- [ ] Test: every dictionary has every key, none empty, same placeholders as English.
-- [ ] Check in the browser: each language on Home, Fighters, Shop, Info, Settings, Hack, Friends and a match; long German words fit on a phone.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] `de.ts`, `gsw.ts` (Zurich German), `es.ts`, `it.ts`, typed against `en.ts` (D5); fighter, skin and code names stay untranslated.
+- [x] Test: every dictionary has every key, none empty, same placeholders as English.
+- [x] Check in the browser: each language on Home, Fighters, Shop, Info, Settings, Hack, Friends and a match; long German words fit on a phone.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 17:48
+
+- 264 texts per language. Rarities: Standard / Selten / Superselten / Episch / Mythisch /
+  Legendär (gsw: Sälte, Supersälte), es Estándar … Legendario, it Standard … Leggendario.
+  Super, Hypercharge, Prestige and Showdown stay as kids say them, explained on the Info page.
+- Words to look at with Mattia: Swiss German spellings ("Iistellige", "Sälte", "Läbe"), the
+  Spreader type ("Streuer" / "Dispersor" / "Ventaglio").
+
+**Done (2026-11-13 · ~20m · Claude Opus 5.5)** — German, Swiss German, Spanish and Italian
+dictionaries; `npm test` 157 passed (one completeness test per language), `npm run check` 0
+errors; browser at phone size: Settings in German, Home and Shop in Swiss German fit.
 
 ---
 

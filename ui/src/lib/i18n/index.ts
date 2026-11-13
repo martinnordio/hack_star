@@ -1,6 +1,10 @@
 import { derived } from 'svelte/store'
 import { accounts, currentAccount, updateAccount } from '../accounts'
+import { de } from './de'
 import { en, type TextKey } from './en'
+import { es } from './es'
+import { gsw } from './gsw'
+import { it as italian } from './it'
 import type { Language } from './languages'
 
 export type { TextKey } from './en'
@@ -9,10 +13,10 @@ export type Translate = (key: TextKey, params?: Params) => string
 
 const DICTIONARIES: Record<Language, Partial<Record<TextKey, string>>> = {
   en,
-  de: {},
-  gsw: {},
-  es: {},
-  it: {},
+  de,
+  gsw,
+  es,
+  it: italian,
 }
 
 /** The text in a language, English when missing; `{name}` is replaced by `params.name`. */
