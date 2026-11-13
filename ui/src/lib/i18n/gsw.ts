@@ -259,6 +259,11 @@ export const gsw: Record<TextKey, string> = {
   'fighter.sparky.idea': 'Roboterhund volle Strom',
   'fighter.clank.idea': 'Chliine Ritter i grosser Rüschtig',
   'fighter.kira.idea': 'Ninja-Bogeschützin, wo nie dänebe schüsst',
+  'fighter.marina.idea': 'Surferin, wo uf ihrere eigete Welle ritet und Wasser spritzt',
+  'fighter.drako.idea': 'Babydrache mit glänzige Schuppe, wo Fürwelle speit',
+  'fighter.spectra.idea': 'Gspenscht-Zauberin, wo lüüchtendi Charte wirft',
+  'fighter.mecha.idea': 'Chind, wo en riesige Roboteranzug stüüret',
+  'fighter.zeus.idea': 'Chliine Donnergott, wo Blitz schiesst',
 
   'vocabulary.fighter.word': 'Kämpfer',
   'vocabulary.fighter.meaning': 'E Figur, wo du mit ihre spielsch.',

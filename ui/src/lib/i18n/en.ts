@@ -257,6 +257,11 @@ export const en = {
   'fighter.sparky.idea': 'Robot dog full of electricity',
   'fighter.clank.idea': 'Little knight in big armour',
   'fighter.kira.idea': 'Ninja archer who never misses',
+  'fighter.marina.idea': 'Surfer girl who rides her own wave and splashes water',
+  'fighter.drako.idea': 'Baby dragon with shiny scales who breathes fire waves',
+  'fighter.spectra.idea': 'Ghost magician who throws glowing cards',
+  'fighter.mecha.idea': 'Kid piloting a giant robot suit',
+  'fighter.zeus.idea': 'Little thunder god who shoots lightning bolts',
 
   'vocabulary.fighter.word': 'Fighter',
   'vocabulary.fighter.meaning': 'A character you play with.',

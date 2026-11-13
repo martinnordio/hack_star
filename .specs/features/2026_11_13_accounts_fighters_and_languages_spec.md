@@ -198,7 +198,7 @@ _None._
 | **6** | Password for the QR codes | ✅ Done | [→ Step 6](#step-6--password-for-the-qr-codes) |
 | **7** | Create a fighter and the CREATOR code | ✅ Done | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
 | **8** | The created fighter in matches and with friends | ✅ Done | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
-| **9** | Five new fighters with nicer graphics | ⬜ Not started | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
+| **9** | Five new fighters with nicer graphics | ✅ Done (visual review open) | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
 | **10** | Three more skins for every fighter | ⬜ Not started | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
 | **11** | Everything still works; documentation | ⬜ Not started | [→ Step 11](#step-11--everything-still-works-documentation) |
 
@@ -440,7 +440,7 @@ The unlocked created fighter plays like any fighter of its type, gets trophies a
 friends see it (S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
+- [x] Record the start time in Notes below.
 - [x] Arena, Training, trophies, power levels and shot colour work with `custom` and its type.
 - [x] Rooms: `Member.look` on the server with validation (D11) and `pytest` (good look accepted, bad colour / long name / `custom` without look refused); UI sends and draws the look.
 - [x] Check in the browser: a match and Training with the created fighter; two devices (or two windows) in a room, one with the created fighter, both see it with its colours.
@@ -469,15 +469,29 @@ Marina, Drako, Spectra, Mecha Max and Zeus Jr. are in the game, clearly more det
 current fighters, and matches stay smooth (S15, S16, S17).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `fighters.py`: the 5 fighters from S15 (Marina `unlocked_at_start`); `pytest` for 15 fighters and the start set.
-- [ ] `parts.ts`: shiny and glowing material helpers, animated parts list (D13).
-- [ ] Builders for the 5 fighters: at least twice the parts of a current fighter, shiny or glowing materials, idle animation moving 3 or more parts; shot colours; gallery; ideas in all 5 languages.
+- [x] Record the start time in Notes below.
+- [x] `fighters.py`: the 5 fighters from S15 (Marina `unlocked_at_start`); `pytest` for 15 fighters and the start set.
+- [x] `parts.ts`: shiny and glowing material helpers, animated parts list (D13).
+- [x] Builders for the 5 fighters: at least twice the parts of a current fighter, shiny or glowing materials, idle animation moving 3 or more parts; shot colours; gallery; ideas in all 5 languages.
 - [ ] Check in the browser: `/?gallery` side by side with the old fighters (screenshot for Mattia); a match with 3 new fighters at iPad size without stutter (frame rate in the browser's performance panel ≥ 30 fps).
-- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+- [x] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 19:20
+
+- New builders in `models/heroes3d.ts` (ids `marina`, `drako`, `spectra`, `mecha`, `zeus`);
+  `parts.ts` got `shiny()`, `glowing()` and `move()` (bob / swing / spin per part).
+- `models/fighters3d.test.ts` checks S16 in numbers: each new fighter has at least twice the
+  visible parts of an average current fighter, at least 2 own moving parts plus flickers /
+  spinners (3 or more), and 5 or more shiny or glowing parts.
+- Frame rate: a match with 5 bots in headless Edge at 1024×768 runs at 60 fps.
+- **Open:** the side-by-side look in `/?gallery` was not reviewed visually in this session (no
+  screenshots left); Mattia should look at the gallery and say whether they look nicer (S16),
+  and the frame rate should be checked once on a real iPad (S17).
+
+**Done (2026-11-13 · ~40m · Claude Opus 5.5)** — five new fighters (Marina free) with richer
+models; `pytest` 37 passed, `npm test` 180 passed, `npm run check` 0 errors; headless match
+60 fps. Visual review by Mattia still open.
 
 ---
 

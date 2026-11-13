@@ -69,6 +69,11 @@
     sparky: '#7ff0ff',
     clank: '#e8edf5',
     kira: '#ff4f9a',
+    marina: '#3ad7ff',
+    drako: '#ff5a1a',
+    spectra: '#c58bff',
+    mecha: '#ffb000',
+    zeus: '#fff35c',
   }
 
   const scenery = buildArena(CANYON)

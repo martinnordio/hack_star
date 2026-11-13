@@ -13,6 +13,7 @@
     ['sparky', 'default'], ['sparky', 'gold'],
     ['clank', 'default'], ['clank', 'dragon'],
     ['kira', 'default'], ['kira', 'sakura'],
+    ['marina', 'default'], ['drako', 'default'], ['spectra', 'default'], ['mecha', 'default'], ['zeus', 'default'],
   ]
   const only = new URLSearchParams(location.search).get('gallery')
   const combos = only ? all.filter(([f]) => f === only) : all

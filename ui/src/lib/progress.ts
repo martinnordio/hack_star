@@ -29,8 +29,8 @@ export interface Progress {
   createdFighter: CreatedLook | null
 }
 
-/** Fighters every new account starts with. */
-export const START_FIGHTERS = ['blaze', 'rocko', 'turbo']
+/** Fighters every new account starts with (the server's `unlocked_at_start`). */
+export const START_FIGHTERS = ['blaze', 'rocko', 'turbo', 'marina']
 export const START_CREDITS = 500
 /** The created fighter has this id in every account (one per account). */
 export const CREATED_ID = 'custom'

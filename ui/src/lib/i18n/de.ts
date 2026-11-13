@@ -259,6 +259,11 @@ export const de: Record<TextKey, string> = {
   'fighter.sparky.idea': 'Roboterhund voller Strom',
   'fighter.clank.idea': 'Kleiner Ritter in großer Rüstung',
   'fighter.kira.idea': 'Ninja-Bogenschützin, die nie danebenschießt',
+  'fighter.marina.idea': 'Surferin, die auf ihrer eigenen Welle reitet und Wasser spritzt',
+  'fighter.drako.idea': 'Babydrache mit glänzenden Schuppen, der Feuerwellen speit',
+  'fighter.spectra.idea': 'Geister-Zauberin, die leuchtende Karten wirft',
+  'fighter.mecha.idea': 'Kind, das einen riesigen Roboteranzug steuert',
+  'fighter.zeus.idea': 'Kleiner Donnergott, der Blitze schießt',
 
   'vocabulary.fighter.word': 'Kämpfer',
   'vocabulary.fighter.meaning': 'Eine Figur, mit der du spielst.',

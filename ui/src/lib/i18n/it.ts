@@ -259,6 +259,11 @@ export const it: Record<TextKey, string> = {
   'fighter.sparky.idea': 'Cane robot pieno di elettricità',
   'fighter.clank.idea': 'Piccolo cavaliere in una grande armatura',
   'fighter.kira.idea': 'Arciera ninja che non sbaglia mai',
+  'fighter.marina.idea': 'Surfista che cavalca la sua onda e schizza acqua',
+  'fighter.drako.idea': 'Cucciolo di drago dalle scaglie lucenti che sputa onde di fuoco',
+  'fighter.spectra.idea': 'Maga fantasma che lancia carte luminose',
+  'fighter.mecha.idea': 'Bambino che pilota una gigantesca tuta robot',
+  'fighter.zeus.idea': 'Piccolo dio del tuono che scaglia fulmini',
 
   'vocabulary.fighter.word': 'Combattente',
   'vocabulary.fighter.meaning': 'Un personaggio con cui giochi.',
