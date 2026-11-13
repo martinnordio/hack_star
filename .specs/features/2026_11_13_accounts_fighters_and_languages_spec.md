@@ -191,7 +191,7 @@ _None._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Accounts: storage, migration, per-account progress | ✅ Done | [→ Step 1](#step-1--accounts-storage-migration-per-account-progress) |
-| **2** | Accounts screen: create, rename, switch | ⬜ Not started | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
+| **2** | Accounts screen: create, rename, switch | ✅ Done | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
 | **3** | Reset in Settings | ⬜ Not started | [→ Step 3](#step-3--reset-in-settings) |
 | **4** | Languages: texts in one place, language per account | ⬜ Not started | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
 | **5** | Translations: German, Swiss German, Spanish, Italian | ⬜ Not started | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
@@ -271,14 +271,23 @@ The player sees the current account on the home screen and creates, renames and 
 accounts (S1, S2, S3, S21, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home: account name button (top bar) opening an accounts panel; switch in at most two taps.
-- [ ] Accounts panel: list (current marked), add (name field, error messages of S1 and S2), rename.
-- [ ] Check in the browser at phone, iPad and desktop sizes, touch and mouse: create 5 accounts, a sixth is refused; switch and see other credits and trophies; reload and the last account is still active.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] Home: account name button (top bar) opening an accounts panel; switch in at most two taps.
+- [x] Accounts panel: list (current marked), add (name field, error messages of S1 and S2), rename.
+- [x] Check in the browser at phone, iPad and desktop sizes, touch and mouse: create 5 accounts, a sixth is refused; switch and see other credits and trophies; reload and the last account is still active.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 16:57
+
+- New `AccountsPanel.svelte`; the account chip sits under the trophies on the home screen.
+- Browser check (1024×768 and 390×760): 5 accounts, the sixth shows "You can have up to 5
+  accounts."; renaming to an existing name shows "That name is already used."; switching shows
+  500 credits / 0 trophies on a new account and the old progress on Player 1; after a reload
+  the last account is still active.
+
+**Done (2026-11-13 · ~15m · Claude Opus 5.5)** — accounts panel (switch, add, rename) on the
+home screen; `npm run check` 0 errors; checked in the browser at desktop and phone size.
 
 ---
 

@@ -7,7 +7,8 @@
   import { wornSkin } from './game/shop'
   import HomeScene from './HomeScene.svelte'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress } from './accounts'
+  import { accounts, currentAccount, progress } from './accounts'
+  import AccountsPanel from './AccountsPanel.svelte'
   import { totalTrophies } from './progress'
 
   interface Props {
@@ -26,6 +27,7 @@
 
   let skipped = $state(false)
   let playing = $state(untrack(() => entrance))
+  let accountsOpen = $state(false)
 
   function skip() {
     if (playing) skipped = true
@@ -58,6 +60,10 @@
       <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
     </div>
   </header>
+
+  <button class="account" aria-label="Account {currentAccount($accounts).name}, change account" onclick={() => (accountsOpen = true)}>
+    <span aria-hidden="true">👤</span>{currentAccount($accounts).name}
+  </button>
 
   <nav class="side">
     <button class="round friends" onclick={() => onNavigate('friends')}>
@@ -97,6 +103,10 @@
     <div class="skip">Tap to skip</div>
   {/if}
 </div>
+
+{#if accountsOpen}
+  <AccountsPanel onClose={() => (accountsOpen = false)} />
+{/if}
 
 <style>
   .home {
@@ -144,6 +154,26 @@
 
   .icon {
     font-size: 1.2em;
+  }
+
+  .account {
+    position: absolute;
+    top: calc(var(--pad-top) + clamp(2.6rem, 7vw, 4rem));
+    left: var(--pad-left);
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    max-width: 45vw;
+    padding: 0.25em 0.8em 0.25em 0.5em;
+    border-radius: 999px;
+    background: #160f33cc;
+    border: 2px solid #ffd23f;
+    font-weight: 900;
+    font-size: clamp(0.9rem, 2.4vw, 1.1rem);
+    text-shadow: 0 2px 0 #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .coin {
