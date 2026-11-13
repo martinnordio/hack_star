@@ -1,12 +1,16 @@
 <#
 .SYNOPSIS
   Put a spec summary into the spec-summary block of the GitHub pull request of the current
-  branch; creates the pull request if there is none (needs -Title). Text outside the block is kept.
+  branch; creates the pull request if there is none (needs -Title). With -SemanticDiffFile, also
+  puts that text into the semantic-diff block. Text outside the blocks is kept.
 .EXAMPLE
   ./update_pr.ps1 -SummaryFile summary.md -Title "Login page (#12)" -Issue 12 -Draft -DryRun
+.EXAMPLE
+  ./update_pr.ps1 -SummaryFile summary.md -SemanticDiffFile semantic_diff.md -DryRun
 #>
 param(
     [Parameter(Mandatory)] [string] $SummaryFile,
+    [string] $SemanticDiffFile,
     [string] $Title,
     [int] $Issue,
     [switch] $Draft,
@@ -30,6 +34,7 @@ if ($number) {
         $body = ("Closes #$Issue`n`n" + $body).TrimEnd()
     }
     $new = Set-SpecSummary -Body $body -Summary $summary
+    if ($SemanticDiffFile) { $new = Set-SemanticDiff -Body $new -Text (Read-Utf8 $SemanticDiffFile) }
     if ($DryRun) {
         Write-Output "Would update pull request #$($number) to:"
         Write-Output $new
@@ -40,6 +45,7 @@ if ($number) {
     if (-not $Title) { throw "No open pull request for '$branch' yet: pass -Title to create one." }
     $closes = if ($Issue) { "Closes #$Issue" } else { '' }
     $new = Set-SpecSummary -Body $closes -Summary $summary
+    if ($SemanticDiffFile) { $new = Set-SemanticDiff -Body $new -Text (Read-Utf8 $SemanticDiffFile) }
     if ($DryRun) {
         $kind = if ($Draft) { 'draft pull request' } else { 'pull request' }
         Write-Output "Would create a $kind '$Title' from '$branch' with:"

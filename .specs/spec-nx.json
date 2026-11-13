@@ -1,11 +1,17 @@
 {
   "version": 1,
-  "spec_nx_version": "3cae701",
-  "generated": "2026-11-12",
+  "spec_nx_version": "b03a057",
+  "generated": "2026-11-13",
+  "layer": null,
+  "project": "existing",
+  "languages": ["python", "typescript", "svelte", "powershell"],
   "stages": ["requirements", "plan", "pr"],
+  "on_demand": [],
   "git_host": "github",
   "link_issues": true,
   "shells": ["powershell"],
   "kit": "shared",
+  "kit_dir": ".specs/kit",
+  "agent": ["copilot"],
   "model": "Claude Opus 5.5"
 }

@@ -1,0 +1,33 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "git status": true,
+    "/^git (diff|log|show)\\b/": true,
+    "git branch --show-current": true,
+    "git submodule status": true,
+    "uv run pytest": true,
+    "uv run --no-sync pytest": true,
+    "npm test": true,
+    "npm run check": true,
+    "npm run build": true,
+    "gh auth status": true,
+    "/^gh (issue|pr) view\\b/": true,
+    "/^\\.specs[\\\\/]kit[\\\\/]tools[\\\\/]github[\\\\/]\\w+\\.ps1\\b.*-DryRun\\b/": true,
+
+    "/^\\.specs[\\\\/]kit[\\\\/]tools[\\\\/]github[\\\\/]\\w+\\.ps1\\b(?!.*-DryRun)/": false,
+    "/^Remove-Item\\b/i": false,
+    "/^Move-Item\\b/i": false,
+    "/^Copy-Item\\b/i": false,
+    "rm": false,
+    "del": false,
+    "mv": false,
+    "uv add": false,
+    "uv sync": false,
+    "uv pip": false,
+    "npm install": false,
+    "npm uninstall": false,
+    "/^git (checkout|switch|stash|clean|restore)\\b/": false,
+    "/^git (commit|push|merge|rebase|tag)\\b/": false,
+    "/^git reset\\b/": false,
+    "/^gh (issue|pr) (create|edit|close|merge|ready)\\b/": false
+  }
+}
