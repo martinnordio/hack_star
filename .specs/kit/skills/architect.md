@@ -20,24 +20,26 @@ reader later understands the trade-off.
 - Part 1 of the spec (agreed requirements, Already in the repository, New).
 - `.specs/overall_req.md` — the technology choices (Python server, Svelte UI, browser only;
   desktop, iPad and phone).
-- The repository: folder structure, the modules and components the requirements touch, tests,
-  how to install and run.
+- `docs/architecture.md` and the code: `server/src/hack_star_server/` (FastAPI, WebSocket
+  rooms), `ui/src/lib/` (screens, `game/` rules, `models/` 3D, `net/` rooms), and their tests.
 
 ## Outputs
 
 - **Steps** — each with a goal and tasks, small enough to review in one sitting, in an order
   where every Step leaves the game running.
 - **Decisions** — every real choice (where code goes, a new Python or npm package, a graphics
-  or animation library, the source and licence of art assets, a data format), with the reason.
+  or animation approach, the source and licence of art assets, a message or data format), with
+  the reason.
 - **Deferred items** — what is consciously left out, with a reason and the target spec.
 - A **Definition of Done** for the stages the project uses (requirements, plan, pr).
 
 ## Process
 
 1. **Anchor on reality.** Read the code the requirements touch. Note how it is structured,
-   tested and run. With no code yet, plan a setup Step that makes server and UI run locally.
+   tested and run.
 2. **Find the smallest change.** Extend an existing module or component unless that would mix
-   unrelated responsibilities; say which and why.
+   unrelated responsibilities; say which and why. Game rules stay in plain TypeScript under
+   `ui/src/lib/game/`, where they can be unit-tested.
 3. **Cut into Steps.** Each Step delivers something that can be checked (a test, a command, a
    screen in the browser) and names the statements (S…) it covers. Every statement is covered
    by at least one Step.
@@ -56,3 +58,16 @@ reader later understands the trade-off.
 - **Steps without a check.** If nobody can tell when a Step is done, it is not a Step.
 - **Changing the requirements.** If Part 1 is wrong or incomplete, raise it — do not fix it
   silently in the plan.
+
+## Quality checks
+
+- [ ] Every statement S… is covered by at least one Step.
+- [ ] Every Step has a goal, tasks and a check, and leaves the game running.
+- [ ] Every new dependency, file format or module is a decision with its reason.
+- [ ] The last Step checks that what worked before still works and updates the README and
+      `docs/architecture.md`.
+
+## Handoffs
+
+- To the **requirements engineer** when Part 1 is unclear or incomplete.
+- To the developer (the user with the AI chat) when the plan is ready.

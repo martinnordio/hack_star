@@ -8,3 +8,6 @@ __pycache__/
 # Node
 node_modules/
 dist/
+
+# Demo videos
+.specs/video/
