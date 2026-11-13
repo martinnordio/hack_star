@@ -5,12 +5,13 @@
   import { currentFighter } from './hacks'
   import { powerOf } from './game/economy'
   import { wornSkin } from './game/shop'
-  import { codeFrom, createRoom, joinRoom, leaveRoom, room, roomLink, type Member } from './net/room'
+  import { codeFrom, createRoom, joinRoom, leaveRoom, room, roomLink, type Member, type Seat } from './net/room'
   import { portrait } from './portraits'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { options } from './options'
   import { t, tOr } from './i18n'
+  import { CREATED_ID } from './progress'
 
   let { fighters, initialCode, onStart }: { fighters: Fighter[]; initialCode?: string; onStart: () => void } = $props()
 
@@ -27,6 +28,7 @@
       skin: wornSkin(p, fighter.id),
       power: powerOf(p, fighter.id),
       hyper: p.activeHacks.includes('hypercharge'),
+      ...(fighter.id === CREATED_ID && p.createdFighter ? { name: p.createdFighter.name } : {}),
     }
   }
 
@@ -41,7 +43,7 @@
 
   const info = $derived($room?.info ?? null)
   const host = $derived(info?.you === 0)
-  const name = (id: string) => fighters.find((f) => f.id === id)?.name ?? id
+  const name = (seat: Seat) => seat.name ?? fighters.find((f) => f.id === seat.fighter)?.name ?? seat.fighter
   const bots = $derived(info ? Math.max(1, $options.botCount + 1 - info.members.length) : 0)
 
   $effect(() => {
@@ -104,7 +106,7 @@
             <img src={portrait(seat.fighter, seat.skin)} alt="" />
             <span class="who">
               <strong>{$t('friends.player', { number: slot + 1 })}{slot === 0 ? ' 👑' : ''}</strong>
-              <span>{name(seat.fighter)} · ⚡ {seat.power}{seat.slot === info.you ? ` · ${$t('friends.you')}` : ''}</span>
+              <span>{name(seat)} · ⚡ {seat.power}{seat.slot === info.you ? ` · ${$t('friends.you')}` : ''}</span>
             </span>
           {:else}
             <span class="who"><strong>{$t('friends.player', { number: slot + 1 })}</strong><span>{$t('friends.waitingForFriend')}</span></span>

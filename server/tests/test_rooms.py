@@ -81,6 +81,36 @@ def test_bad_member_is_refused() -> None:
         assert receive(socket) == {"type": "error", "reason": "bad-member"}
 
 
+CREATED = {"fighter": "custom", "skin": "L321e8322b39d353", "power": 3, "hyper": False, "name": "Zappy"}
+
+
+def test_created_fighter_is_shown_with_its_look_and_name() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as friend:
+            send(friend, {"type": "join", "code": code, "member": CREATED})
+            assert receive(friend)["members"][1] == {"slot": 1, **CREATED}
+            assert "name" not in receive(host)["members"][0]
+
+
+@pytest.mark.parametrize(
+    "member",
+    [
+        {**CREATED, "skin": "default"},
+        {**CREATED, "skin": "L921e8322b39d353"},
+        {**CREATED, "skin": "L321red000green0"},
+        {**CREATED, "name": "x" * 13},
+        {**CREATED, "name": "  "},
+        {key: value for key, value in CREATED.items() if key != "name"},
+        {**BLAZE, "name": "Blaze"},
+    ],
+)
+def test_bad_created_fighter_is_refused(member: dict[str, Any]) -> None:
+    with client.websocket_connect("/api/rooms") as socket:
+        send(socket, {"type": "create", "member": member})
+        assert receive(socket) == {"type": "error", "reason": "bad-member"}
+
+
 def test_messages_go_to_the_right_devices() -> None:
     with client.websocket_connect("/api/rooms") as host:
         code = create(host)

@@ -24,6 +24,7 @@
   import type { RoomConnection } from './net/room'
   import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
+  import { CREATED_ID } from './progress'
 
   interface Props {
     mode: 'match' | 'training'
@@ -52,7 +53,7 @@
     const player = chosen
     const playerPower = powerOf(get(progress), player.fighterId)
     const settings = settingsFrom(location.search, SETTINGS, get(options))
-    const others = fighters.filter((f) => f.id !== player.fighterId).sort(() => Math.random() - 0.5)
+    const others = fighters.filter((f) => f.id !== player.fighterId && f.id !== CREATED_ID).sort(() => Math.random() - 0.5)
     const count = mode === 'match' ? settings.botCount + 1 : 1
     const ids = Array.from({ length: count }, (_, i) => (i === 0 ? player.fighterId : others[(i - 1) % others.length].id))
     const types = ids.map((id) => fighterType(fighters.find((f) => f.id === id)?.type))

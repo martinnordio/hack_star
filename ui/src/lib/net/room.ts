@@ -8,6 +8,8 @@ export interface Member {
   power: number
   /** The HYPERCHARGE hack is on for this player. */
   hyper: boolean
+  /** The name of a created fighter (its look is in `skin`). */
+  name?: string
 }
 
 export interface Seat extends Member {

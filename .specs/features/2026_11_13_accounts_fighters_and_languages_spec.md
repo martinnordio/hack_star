@@ -197,7 +197,7 @@ _None._
 | **5** | Translations: German, Swiss German, Spanish, Italian | ✅ Done | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
 | **6** | Password for the QR codes | ✅ Done | [→ Step 6](#step-6--password-for-the-qr-codes) |
 | **7** | Create a fighter and the CREATOR code | ✅ Done | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
-| **8** | The created fighter in matches and with friends | ⬜ Not started | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
+| **8** | The created fighter in matches and with friends | ✅ Done | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
 | **9** | Five new fighters with nicer graphics | ⬜ Not started | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
 | **10** | Three more skins for every fighter | ⬜ Not started | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
 | **11** | Everything still works; documentation | ⬜ Not started | [→ Step 11](#step-11--everything-still-works-documentation) |
@@ -441,13 +441,24 @@ friends see it (S12).
 
 ### Tasks
 - [ ] Record the start time in Notes below.
-- [ ] Arena, Training, trophies, power levels and shot colour work with `custom` and its type.
-- [ ] Rooms: `Member.look` on the server with validation (D11) and `pytest` (good look accepted, bad colour / long name / `custom` without look refused); UI sends and draws the look.
-- [ ] Check in the browser: a match and Training with the created fighter; two devices (or two windows) in a room, one with the created fighter, both see it with its colours.
-- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+- [x] Arena, Training, trophies, power levels and shot colour work with `custom` and its type.
+- [x] Rooms: `Member.look` on the server with validation (D11) and `pytest` (good look accepted, bad colour / long name / `custom` without look refused); UI sends and draws the look.
+- [x] Check in the browser: a match and Training with the created fighter; two devices (or two windows) in a room, one with the created fighter, both see it with its colours.
+- [x] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 18:58
+
+- With the look in the skin id (Step 7), the room `Member` only gets an optional `name`; the
+  server accepts `fighter: "custom"` only with a look-shaped skin and a name, and a name only
+  for the created fighter. Members are sent without empty fields (`exclude_none`).
+- The host takes a created fighter's type from its look (`startInfo`), and bots never get the
+  created fighter (local matches and rooms). Its shots have its main colour.
+
+**Done (2026-11-13 · ~20m · Claude Opus 5.5)** — created fighter in matches and rooms;
+`pytest` 36 passed (8 new room tests), `npm test` 170 passed, `npm run check` 0 errors; two
+headless devices: the friend's "Zappy" (red cat, Thrower) shows in the lobby and in the
+host's match.
 
 ---
 
