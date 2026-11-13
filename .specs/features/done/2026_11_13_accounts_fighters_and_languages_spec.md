@@ -16,6 +16,7 @@
 | 2026-11-13 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
 | 2026-11-13 | review | `REVIEW:` | Claude Opus 5.5 | semantic diff written |
 | 2026-11-13 | implementation | `CLOSE:` | Claude Opus 5.5 | spec closed (visual checks deferred) |
+| 2026-11-13 | pr | `PR:` | Claude Opus 5.5 | pull request opened |
 
 ---
 
