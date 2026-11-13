@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Canvas, T } from '@threlte/core'
   import FighterStage from './FighterStage.svelte'
+  import { VARIANTS } from './models/skins3d'
 
   const all: [string, string][] = [
     ['blaze', 'default'], ['blaze', 'lava'], ['blaze', 'phoenix'],
@@ -14,6 +15,7 @@
     ['clank', 'default'], ['clank', 'dragon'],
     ['kira', 'default'], ['kira', 'sakura'],
     ['marina', 'default'], ['drako', 'default'], ['spectra', 'default'], ['mecha', 'default'], ['zeus', 'default'],
+    ...Object.entries(VARIANTS).flatMap(([fighter, skins]) => Object.keys(skins).map((skin): [string, string] => [fighter, skin])),
   ]
   const only = new URLSearchParams(location.search).get('gallery')
   const combos = only ? all.filter(([f]) => f === only) : all

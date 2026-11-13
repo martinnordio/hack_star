@@ -44,3 +44,13 @@ def test_start_unlocks() -> None:
 def test_five_newest_fighters_one_of_each_type() -> None:
     newest = client.get("/api/fighters").json()[10:]
     assert sorted(f["type"] for f in newest) == sorted(["tank", "sharpshooter", "speedy", "thrower", "spreader"])
+
+
+def test_every_fighter_has_three_more_skins_with_unique_ids() -> None:
+    from hack_star_server.fighters import MORE_SKINS
+
+    for fighter in client.get("/api/fighters").json():
+        ids = [s["id"] for s in fighter["skins"]]
+        assert len(ids) == len(set(ids)), fighter["id"]
+        assert [i for i, _, _ in MORE_SKINS[fighter["id"]]] == ids[-3:], fighter["id"]
+        assert all(s["rarity"] != "Default" for s in fighter["skins"][-3:]), fighter["id"]

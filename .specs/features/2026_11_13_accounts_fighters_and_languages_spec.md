@@ -199,7 +199,7 @@ _None._
 | **7** | Create a fighter and the CREATOR code | ✅ Done | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
 | **8** | The created fighter in matches and with friends | ✅ Done | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
 | **9** | Five new fighters with nicer graphics | ✅ Done (visual review open) | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
-| **10** | Three more skins for every fighter | ⬜ Not started | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
+| **10** | Three more skins for every fighter | ✅ Done (visual review open) | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
 | **11** | Everything still works; documentation | ⬜ Not started | [→ Step 11](#step-11--everything-still-works-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -501,14 +501,28 @@ models; `pytest` 37 passed, `npm test` 180 passed, `npm run check` 0 errors; hea
 Each of the 15 fighters has 3 new skins with their own look, sold in the shop (S14).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `fighters.py`: 45 new skins with names and rarities; `pytest`: every fighter has at least 3 new skins, ids unique per fighter.
-- [ ] Looks in each builder (D14): other colours and at least one changed part per skin; gallery.
+- [x] Record the start time in Notes below.
+- [x] `fighters.py`: 45 new skins with names and rarities; `pytest`: every fighter has at least 3 new skins, ids unique per fighter.
+- [x] Looks in each builder (D14): other colours and at least one changed part per skin; gallery.
 - [ ] Check in the browser: shop lists the new skins at their rarity price, buy and wear one, skin of the day can be a new skin; every new skin in `/?gallery` looks different from the fighter's other skins.
-- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+- [x] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 19:45
+
+- **Change to D14:** instead of a palette in each builder, `models/skins3d.ts` builds the
+  default look and changes it: every colour shifted (hue / saturation / lightness) plus one
+  extra part (crown, halo, horns, shades, scarf, backpack or cape); Legendary skins also get
+  the Legendary glow. The server lists the skins in `MORE_SKINS`.
+- Tests: every one of the 45 skins has other colours and more parts than the default look
+  (`fighters3d.test.ts`); the server checks 3 more skins per fighter with unique ids.
+- Browser (text only): the shop lists 57 skins (12 before + 45), "Candy" (Blaze, Rare) bought
+  for 100 C; `/?gallery` renders all skins without errors.
+- **Open:** the looks were not reviewed visually (no screenshots left in this session): check
+  `/?gallery` once and adjust any skin that looks wrong.
+
+**Done (2026-11-13 · ~25m · Claude Opus 5.5)** — 45 new skins; `pytest` 38 passed, `npm test`
+226 passed, `npm run check` 0 errors. Visual review still open.
 
 ---
 
