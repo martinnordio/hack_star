@@ -1,7 +1,7 @@
 # Accounts, Create a Fighter, New Fighters and Languages Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔶 Implemented — visual checks open (Step 11 notes)
+> **Status:** ✅ Complete — closed on feature/accounts-fighters-and-languages
 > **Created:** 2026-11-13
 > **Last updated:** 2026-11-13
 > **Branch:** `feature/accounts-fighters-and-languages`
@@ -15,6 +15,7 @@
 | 2026-11-13 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #15 created |
 | 2026-11-13 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
 | 2026-11-13 | review | `REVIEW:` | Claude Opus 5.5 | semantic diff written |
+| 2026-11-13 | implementation | `CLOSE:` | Claude Opus 5.5 | spec closed (visual checks deferred) |
 
 ---
 
@@ -62,9 +63,9 @@ agreed as enough.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and planned specs |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
@@ -187,6 +188,24 @@ _None._
 
 # Part 2 · Plan
 
+## Closing summary
+
+**Built:** Up to 5 accounts per device (names, rename, switch from the home screen), each with
+its own progress and language; the progress saved before becomes "Player 1". Settings has a
+language picker (English, Deutsch, Schwiizerdütsch, Español, Italiano) and a reset of coins and
+trophies. Every account can design one fighter (name, type, colours, head, body), unlocked only
+by the new code `CREATOR` and playable in matches, Training and with friends; changing it costs
+500 credits. The QR print page asks for the password `M6D2`. Five new, more detailed fighters
+(Marina free at the start) and 3 more skins for each of the 15 fighters.
+**Differs from the plan:** the created fighter's look travels in the skin id (D8, D11); the 45
+skins are generated recolours with one extra part (D14); `START_FIGHTERS` is a constant matched
+by a server test (D3); the kit gained the implementation and review stages on this branch; the
+visual checks of Steps 9–11 are deferred (Deferred Items).
+**Files:** `ui/src/lib/accounts.ts`, `progress.ts`, `created.ts`, `i18n/` (5 dictionaries),
+`AccountsPanel.svelte`, `CreatorScreen.svelte`, `SettingsScreen.svelte`, `QrPage.svelte`,
+`models/heroes3d.ts`, `skins3d.ts`, `custom3d.ts`, `parts.ts`; `server/src/hack_star_server/fighters.py`,
+`hacks.py`, `rooms.py`; tests next to them; README, `docs/architecture.md`, `SPEC-NX.md`.
+
 ## 2 · Spec Overview
 
 | Step | Description | Status | Detail |
@@ -199,9 +218,9 @@ _None._
 | **6** | Password for the QR codes | ✅ Done | [→ Step 6](#step-6--password-for-the-qr-codes) |
 | **7** | Create a fighter and the CREATOR code | ✅ Done | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
 | **8** | The created fighter in matches and with friends | ✅ Done | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
-| **9** | Five new fighters with nicer graphics | ✅ Done (visual review open) | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
-| **10** | Three more skins for every fighter | ✅ Done (visual review open) | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
-| **11** | Everything still works; documentation | ✅ Done (visual checks open) | [→ Step 11](#step-11--everything-still-works-documentation) |
+| **9** | Five new fighters with nicer graphics | ✅ Done · visual check 🔜 Deferred | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
+| **10** | Three more skins for every fighter | ✅ Done · visual check 🔜 Deferred | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
+| **11** | Everything still works; documentation | ✅ Done · visual check 🔜 Deferred | [→ Step 11](#step-11--everything-still-works-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -226,13 +245,13 @@ _None._
 | D5 | Languages without a library: `ui/src/lib/i18n/` with one TypeScript dictionary per language (`en.ts`, `de.ts`, `gsw.ts`, `es.ts`, `it.ts`) and a `t` store derived from the current account's language. Every other dictionary is typed as `Record<keyof typeof en, string>`, so a missing text fails `npm run check` | Five small static dictionaries do not need a dependency; the type check enforces S19 |
 | D6 | Texts that come from the server (hack names and descriptions, fighter ideas) are translated in the UI by id (`hack.<id>.description`, `fighter.<id>.idea`); the server stays English and is the fallback | Keeps the API unchanged; friends with other languages still exchange only ids |
 | D7 | Swiss German uses the code `gsw` and is chosen for browsers reporting `de-CH`; written as Zurich German | `gsw` is the standard language code for Swiss German |
-| D8 | The created fighter has the id `custom` in every account and is **not** in the server catalogue: the UI adds it to the fighter list from the progress (`withCreated(fighters, progress)`). Its look is `{ name, type, main, second, head, body }` with 8 colours, 3 heads and 3 bodies | One created fighter per account (S9); no server storage needed |
+| D8 | The created fighter has the id `custom` in every account and is **not** in the server catalogue: the UI adds it to the fighter list from the progress (`withCreated(fighters, progress)`). Its look is `{ name, type, main, second, head, body }` with 8 colours, 3 heads and 3 bodies. *Changed while implementing (Step 7): the look travels as the skin id (`lookSkin()`, 16 characters).* | One created fighter per account (S9); no server storage needed |
 | D9 | New hack `creator` (`CREATOR`) in `hacks.py`; `isUnlocked(progress, 'custom')` is true only with that hack and a created fighter; `unlock()` refuses `custom` | S10 and S11: the code is the only way to unlock it, also before it is created |
 | D10 | Re-creating costs `SETTINGS.recreateCost = 500` and goes through the existing `pay()`, so INFINITY makes it free | One price setting; same rule as every purchase (S24) |
-| D11 | Friends: the room `Member` gets an optional `look` (validated on the server: name ≤ 12 characters, known type, colours `#rrggbb`, head and body 0–2); `fighter: "custom"` is accepted only with a look | Friends draw the created fighter correctly (S12); the server still refuses bad data |
+| D11 | Friends: the room `Member` gets an optional `look` (validated on the server: name ≤ 12 characters, known type, colours `#rrggbb`, head and body 0–2); `fighter: "custom"` is accepted only with a look. *Changed while implementing (Step 8): the look is in `skin`; the member gets an optional `name` instead of `look`.* | Friends draw the created fighter correctly (S12); the server still refuses bad data |
 | D12 | The QR password is checked in the browser (`QrPage.svelte`), exact match `M6D2`, never stored | Agreed in Part 1: a lock for kids, not security; no server change |
 | D13 | Nicer fighters (S16) stay code-built (no downloaded art): new helpers in `parts.ts` for shiny (`MeshStandardMaterial` with metalness / roughness) and glowing (emissive) parts, and a list of animated parts per rig so the idle animation can move several parts. Geometries and materials are shared between copies | No licence or download questions; sharing keeps matches fast on an iPad (S17) |
-| D14 | The 45 new skins (3 × 15 fighters) are added to `fighters.py`; each builder gets a colour palette per skin plus at least one extra or changed part | The shop, skin of the day and gallery already work from the catalogue |
+| D14 | The 45 new skins (3 × 15 fighters) are added to `fighters.py`; each builder gets a colour palette per skin plus at least one extra or changed part. *Changed while implementing (Step 10): `models/skins3d.ts` recolours the default look and adds one accessory per skin.* | The shop, skin of the day and gallery already work from the catalogue |
 
 ---
 
@@ -572,6 +591,10 @@ words) and all automated checks; visual checks listed above are still open.
 |------|--------|------------------|
 | Accounts shared between devices (cloud sync, login) | Accounts are per device and browser; syncing needs a server store and logins | a future online accounts spec |
 | Translated fighter, skin and code names | Agreed: names stay the same in every language | — |
+| Visual check: the five new fighters next to the old ones in `/?gallery` (Mattia), and a match on a real iPad (Step 9; S16, S17) | Screenshots could not be reviewed in the implementing session; deferred at CLOSE by the user | before merging pull request for #15 |
+| Visual check: the 45 new skins in `/?gallery`; shop, buy and wear one, skin of the day (Step 10; S14) | Same | before merging pull request for #15 |
+| Visual check: every screen at phone, iPad and desktop, portrait and landscape; Swiss German read by a native speaker (Step 11; S20, S21) | Same | before merging pull request for #15 |
+| Free the cloned 3D materials with the rig (review finding 2) | Memory only, no visible effect | a future 3D clean-up spec |
 
 ---
 
@@ -579,7 +602,7 @@ words) and all automated checks; visual checks listed above are still open.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-13 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-13_feature-accounts-fighters-and-languages.html): 13 record blocks, checks 7 pass · 2 n/a, 5 findings (1 Should-fix: visual checks open; 4 Nit) |
+| 2026-11-13 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-13_feature-accounts-fighters-and-languages.html): 13 record blocks, checks 7 pass · 2 n/a, 5 findings (1 Should-fix: visual checks open; 4 Nit) |
 
 ---
 
@@ -589,5 +612,5 @@ words) and all automated checks; visual checks listed above are still open.
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked *(except the visual checks listed in Step 9–11 notes)*
 - [x] Review · review page and semantic diff written; code review without Blocking findings
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

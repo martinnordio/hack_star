@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
 version: 1
 branch: feature/accounts-fighters-and-languages
 base: 7c6b910
@@ -8,7 +8,7 @@ why: |
   want to start over and to keep the printed QR codes away from the kids. Before this branch a
   device had one progress, ten fighters, one or two skins each and English only.
 spec:
-  path: .specs/features/2026_11_13_accounts_fighters_and_languages_spec.md
+  path: .specs/features/done/2026_11_13_accounts_fighters_and_languages_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24]
 changes:
   - id: saved-accounts
