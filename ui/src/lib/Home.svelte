@@ -7,7 +7,10 @@
   import { wornSkin } from './game/shop'
   import HomeScene from './HomeScene.svelte'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress, totalTrophies } from './progress'
+  import { accounts, currentAccount, progress } from './accounts'
+  import AccountsPanel from './AccountsPanel.svelte'
+  import { totalTrophies } from './progress'
+  import { t } from './i18n'
 
   interface Props {
     fighters: Fighter[]
@@ -25,6 +28,7 @@
 
   let skipped = $state(false)
   let playing = $state(untrack(() => entrance))
+  let accountsOpen = $state(false)
 
   function skip() {
     if (playing) skipped = true
@@ -49,36 +53,40 @@
   </div>
 
   <header class="top">
-    <div class="chip" aria-label="Total trophies">
+    <div class="chip" aria-label={$t('home.totalTrophies')}>
       <span class="icon">🏆</span>{totalTrophies($progress).toLocaleString()}
     </div>
     <h1 class="title">Hack<span>star</span></h1>
-    <div class="chip" aria-label="Credits">
+    <div class="chip" aria-label={$t('home.credits')}>
       <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
     </div>
   </header>
 
+  <button class="account" aria-label={$t('home.account', { name: currentAccount($accounts).name })} onclick={() => (accountsOpen = true)}>
+    <span aria-hidden="true">👤</span>{currentAccount($accounts).name}
+  </button>
+
   <nav class="side">
     <button class="round friends" onclick={() => onNavigate('friends')}>
-      <span class="big">👫</span>Friends
+      <span class="big">👫</span>{$t('home.friends')}
     </button>
     <button class="round" onclick={() => onNavigate('fighters')}>
-      <span class="big">🦸</span>Fighters
+      <span class="big">🦸</span>{$t('home.fighters')}
     </button>
     <button class="round shop" onclick={() => onNavigate('shop')}>
-      <span class="big">🛍️</span>Shop
+      <span class="big">🛍️</span>{$t('home.shop')}
     </button>
     <button class="round" onclick={() => onNavigate('info')}>
-      <span class="big">📖</span>Info
+      <span class="big">📖</span>{$t('home.info')}
     </button>
     <button class="round" onclick={() => onNavigate('training')}>
-      <span class="big">🎯</span>Training
+      <span class="big">🎯</span>{$t('home.training')}
     </button>
     <button class="round hack" onclick={() => onNavigate('hack')}>
-      <span class="big">💻</span>Hack
+      <span class="big">💻</span>{$t('home.hack')}
     </button>
     <button class="round settings" onclick={() => onNavigate('settings')}>
-      <span class="big">⚙️</span>Settings
+      <span class="big">⚙️</span>{$t('home.settings')}
     </button>
   </nav>
 
@@ -90,12 +98,16 @@
     </div>
   </div>
 
-  <button class="play" onclick={() => onNavigate('match')}>PLAY</button>
+  <button class="play" onclick={() => onNavigate('match')}>{$t('home.play')}</button>
 
   {#if playing}
-    <div class="skip">Tap to skip</div>
+    <div class="skip">{$t('home.tapToSkip')}</div>
   {/if}
 </div>
+
+{#if accountsOpen}
+  <AccountsPanel onClose={() => (accountsOpen = false)} />
+{/if}
 
 <style>
   .home {
@@ -143,6 +155,26 @@
 
   .icon {
     font-size: 1.2em;
+  }
+
+  .account {
+    position: absolute;
+    top: calc(var(--pad-top) + clamp(2.6rem, 7vw, 4rem));
+    left: var(--pad-left);
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    max-width: 45vw;
+    padding: 0.25em 0.8em 0.25em 0.5em;
+    border-radius: 999px;
+    background: #160f33cc;
+    border: 2px solid #ffd23f;
+    font-weight: 900;
+    font-size: clamp(0.9rem, 2.4vw, 1.1rem);
+    text-shadow: 0 2px 0 #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .coin {

@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { RARITY_COLORS, type Fighter } from './fighters'
+  import { RARITY_COLORS, RARITY_KEYS, type Fighter } from './fighters'
   import { isUnlocked, maxPower } from './hacks'
   import { powerOf, unlockPrice } from './game/economy'
   import { wornSkin } from './game/shop'
   import { fighterType } from './game/types'
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
-  import { progress } from './progress'
+  import { progress } from './accounts'
+  import { t } from './i18n'
+  import { CREATED_ID } from './progress'
 
-  let { fighters, onOpen }: { fighters: Fighter[]; onOpen: (id: string) => void } = $props()
+  let { fighters, onOpen, onCreate }: { fighters: Fighter[]; onOpen: (id: string) => void; onCreate: () => void } = $props()
 </script>
 
 <ul class="grid">
@@ -23,7 +25,7 @@
         class:selected
         style="--rarity: {RARITY_COLORS[fighter.rarity]}"
         onclick={() => onOpen(fighter.id)}
-        aria-label="{fighter.name}{unlocked ? '' : ', locked'}"
+        aria-label={unlocked ? fighter.name : $t('fighters.locked', { name: fighter.name })}
       >
         <span class="picture">
           <img src={portrait(fighter.id, wornSkin($progress, fighter.id))} alt="" />
@@ -31,21 +33,43 @@
           <span class="badge"><PrestigeBadge {trophies} size={2} /></span>
         </span>
         <span class="name">{fighter.name}</span>
-        <span class="rarity">{fighter.rarity}</span>
-        <span class="type">{fighterType(fighter.type).emoji} {fighterType(fighter.type).name}</span>
+        <span class="rarity">{$t(RARITY_KEYS[fighter.rarity])}</span>
+        <span class="type">{fighterType(fighter.type).emoji} {$t(fighterType(fighter.type).nameKey)}</span>
         <span class="stats">
           <span>🏆 {trophies}</span>
           <span class="power">⚡ {powerOf($progress, fighter.id)}/{maxPower($progress)}</span>
         </span>
-        {#if !unlocked}
-          <span class="price">🔒 {unlockPrice(fighter.rarity)} C</span>
+        {#if !unlocked && fighter.id === CREATED_ID}
+          <span class="price">🔒 💻</span>
+        {:else if !unlocked}
+          <span class="price">🔒 {$t('common.price', { credits: unlockPrice(fighter.rarity) })}</span>
         {/if}
       </button>
     </li>
   {/each}
+  {#if !$progress.createdFighter}
+    <li>
+      <button class="card create" onclick={onCreate}>
+        <span class="picture plus" aria-hidden="true">➕</span>
+        <span class="name">{$t('creator.title')}</span>
+      </button>
+    </li>
+  {/if}
 </ul>
 
 <style>
+  .create {
+    height: 100%;
+    border-style: dashed;
+    border-color: #ffd23f;
+  }
+
+  .plus {
+    display: grid;
+    place-items: center;
+    font-size: 3rem;
+    min-height: 8rem;
+  }
   .grid {
     list-style: none;
     margin: 0 auto;

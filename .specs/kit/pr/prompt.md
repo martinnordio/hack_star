@@ -51,6 +51,11 @@ Needs the GitHub CLI `gh`, logged in (`gh auth status`).
    statements (one line each) and — if Part 2 has Steps — the Plan table with each Step's
    status. Write it to a temporary file outside the repository.
 
+   **Semantic diff:** if the review stage wrote `semantic_diff.md` for this branch
+   (`.specs/changes/<name>/` or `.specs/changes/done/<name>/`), pass it to the pull-request
+   script too (`-SemanticDiffFile <file>`); it fills the pull request's `semantic-diff` block.
+   The review page in `.specs/review/` must be committed so its link works.
+
 3. **Title and issue.**
    - Title of a new pull request: the spec title and the issue (`<title> (#<n>)`).
    - Issue: from the spec header (`Issue:`). `link_issues` is `true`: if the header has none,
@@ -59,7 +64,7 @@ Needs the GitHub CLI `gh`, logged in (`gh auth status`).
      `.specs/features/done/`).
 
 4. **Dry run** — show the user both results:
-   - `../tools/github/update_pr.ps1 -SummaryFile <file> -Title <title> -Issue <n> [-Draft] -DryRun`
+   - `../tools/github/update_pr.ps1 -SummaryFile <file> [-SemanticDiffFile <file>] -Title <title> -Issue <n> [-Draft] -DryRun`
    - `../tools/github/update_issue.ps1 -Issue <n> -SummaryFile <file> -DryRun`
 
 5. **After the user confirms:**

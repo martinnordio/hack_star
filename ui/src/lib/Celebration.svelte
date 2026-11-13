@@ -1,5 +1,7 @@
 <script lang="ts">
-  let { title, subtitle, label = 'HACKED!' }: { title: string; subtitle: string; label?: string } = $props()
+  import { t } from './i18n'
+
+  let { title, subtitle, label }: { title: string; subtitle: string; label?: string } = $props()
 
   const COLORS = ['#ffd23f', '#ff4f9a', '#39ff88', '#4aa8ff', '#b64dff', '#ff7a1a']
   const pieces = Array.from({ length: 60 }, (_, i) => ({
@@ -19,7 +21,7 @@
     ></span>
   {/each}
   <div class="banner">
-    <div class="hacked">{label}</div>
+    <div class="hacked">{label ?? $t('celebration.hacked')}</div>
     <div class="title">{title}</div>
     <div class="subtitle">{subtitle}</div>
   </div>

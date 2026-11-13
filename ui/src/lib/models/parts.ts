@@ -62,6 +62,54 @@ export interface Rig {
   spinners: THREE.Object3D[]
   /** Parts that flicker (flames, screens). */
   flickers: THREE.Object3D[]
+  /** Parts with their own idle movement (wings, tails, floating hands). */
+  moves: Move[]
+}
+
+export type MoveKind = 'bob' | 'swingX' | 'swingY' | 'swingZ' | 'spin'
+
+export interface Move {
+  object: THREE.Object3D
+  kind: MoveKind
+  amount: number
+  speed: number
+  phase: number
+  base: number
+}
+
+/** Gives a part its own idle movement around where it is now. */
+export function move(rig: Rig, object: THREE.Object3D, kind: MoveKind, amount: number, speed = 2, phase = 0) {
+  const base =
+    kind === 'bob' ? object.position.y : kind === 'swingX' ? object.rotation.x : kind === 'swingZ' ? object.rotation.z : object.rotation.y
+  rig.moves.push({ object, kind, amount, speed, phase, base })
+  return object
+}
+
+export function animateMoves(rig: Rig, time: number) {
+  for (const m of rig.moves) {
+    const wave = Math.sin(time * m.speed + m.phase) * m.amount
+    if (m.kind === 'bob') m.object.position.y = m.base + wave
+    else if (m.kind === 'swingX') m.object.rotation.x = m.base + wave
+    else if (m.kind === 'swingY') m.object.rotation.y = m.base + wave
+    else if (m.kind === 'swingZ') m.object.rotation.z = m.base + wave
+    else m.object.rotation.y = m.base + time * m.speed
+  }
+}
+
+/** Polished material for the newer, more detailed fighters: metal, scales, gems. */
+export function shiny(color: string, metalness = 0.5, roughness = 0.3, glow?: string, glowStrength = 0.6) {
+  return new THREE.MeshStandardMaterial({
+    color,
+    metalness,
+    roughness,
+    emissive: glow ?? '#000000',
+    emissiveIntensity: glow ? glowStrength : 0,
+  })
+}
+
+/** Bright see-through light: water, ghost sheets, lightning. */
+export function glowing(color: string, opacity = 0.75) {
+  return new THREE.MeshBasicMaterial({ color, transparent: opacity < 1, opacity, depthWrite: opacity >= 1 })
 }
 
 export function newRig(): Rig {
@@ -70,7 +118,7 @@ export function newRig(): Rig {
   const head = new THREE.Group()
   root.add(body)
   body.add(head)
-  return { root, body, head, spinners: [], flickers: [] }
+  return { root, body, head, spinners: [], flickers: [], moves: [] }
 }
 
 /** Two big shiny cartoon eyes, placed on the front of a head of radius r centred at y. */

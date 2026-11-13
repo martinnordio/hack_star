@@ -34,6 +34,7 @@
   import { buildArena } from './models/arena3d'
   import { buildDummy, setHealth } from './models/dummy3d'
   import { animateFighter, buildFighter, disposeRig, setRigOpacity } from './models/fighters3d'
+  import { parseLookSkin } from './created'
   import { buildHealthBar, setBarHealth, type HealthBar } from './models/healthBar'
   import { Particles } from './models/particles'
   import type { Rig } from './models/parts'
@@ -68,6 +69,11 @@
     sparky: '#7ff0ff',
     clank: '#e8edf5',
     kira: '#ff4f9a',
+    marina: '#3ad7ff',
+    drako: '#ff5a1a',
+    spectra: '#c58bff',
+    mecha: '#ffb000',
+    zeus: '#fff35c',
   }
 
   const scenery = buildArena(CANYON)
@@ -139,7 +145,7 @@
       halo.position.y = 1.1
       halo.visible = false
       rig.root.add(halo)
-      const color = SHOT_COLORS[look.fighterId] ?? '#ffd23f'
+      const color = SHOT_COLORS[look.fighterId] ?? parseLookSkin(look.skinId)?.main ?? '#ffd23f'
       const core = new THREE.MeshBasicMaterial({ color: new THREE.Color(color).lerp(new THREE.Color('#ffffff'), 0.35) })
       const glow = new THREE.MeshBasicMaterial({
         color,

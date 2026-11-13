@@ -125,4 +125,71 @@ FIGHTERS: list[Fighter] = [
         skins=[_default(), Skin(id="sakura", name="Sakura", rarity="Legendary")],
         unlocked_at_start=False,
     ),
+    Fighter(
+        id="marina",
+        name="Marina",
+        rarity="Rare",
+        type="speedy",
+        idea="Surfer girl who rides her own wave and splashes water",
+        skins=[_default()],
+        unlocked_at_start=True,
+    ),
+    Fighter(
+        id="drako",
+        name="Drako",
+        rarity="Epic",
+        type="spreader",
+        idea="Baby dragon with shiny scales who breathes fire waves",
+        skins=[_default()],
+        unlocked_at_start=False,
+    ),
+    Fighter(
+        id="spectra",
+        name="Spectra",
+        rarity="Epic",
+        type="thrower",
+        idea="Ghost magician who throws glowing cards",
+        skins=[_default()],
+        unlocked_at_start=False,
+    ),
+    Fighter(
+        id="mecha",
+        name="Mecha Max",
+        rarity="Mythic",
+        type="tank",
+        idea="Kid piloting a giant robot suit",
+        skins=[_default()],
+        unlocked_at_start=False,
+    ),
+    Fighter(
+        id="zeus",
+        name="Zeus Jr.",
+        rarity="Legendary",
+        type="sharpshooter",
+        idea="Little thunder god who shoots lightning bolts",
+        skins=[_default()],
+        unlocked_at_start=False,
+    ),
 ]
+
+# Three more skins for every fighter (accounts, fighters and languages spec, S14).
+MORE_SKINS: dict[str, list[tuple[str, str, Rarity]]] = {
+    "blaze": [("frost", "Frost", "Epic"), ("shadow", "Shadow", "Super Rare"), ("candy", "Candy", "Rare")],
+    "rocko": [("emerald", "Emerald", "Mythic"), ("magma", "Magma", "Epic"), ("snowman", "Snowman", "Rare")],
+    "turbo": [("golden", "Golden", "Legendary"), ("jungle", "Jungle", "Rare"), ("midnight", "Midnight", "Epic")],
+    "frosty": [("lava_yeti", "Lava Yeti", "Epic"), ("candy_floss", "Candy Floss", "Rare"), ("abominable", "Abominable", "Mythic")],
+    "luna": [("solar", "Solar", "Epic"), ("neon_cat", "Neon Cat", "Super Rare"), ("shadow_cat", "Shadow Cat", "Mythic")],
+    "pixel": [("retro", "Retro", "Rare"), ("gold_bot", "Gold Bot", "Legendary"), ("virus", "Virus", "Epic")],
+    "coco": [("astro", "Astro", "Epic"), ("king", "King", "Legendary"), ("banana", "Banana", "Rare")],
+    "sparky": [("ice_dog", "Ice Dog", "Epic"), ("hot_dog", "Hot Dog", "Rare"), ("cyber", "Cyber", "Mythic")],
+    "clank": [("paladin", "Paladin", "Epic"), ("dark_knight", "Dark Knight", "Mythic"), ("royal", "Royal", "Legendary")],
+    "kira": [("storm", "Storm", "Epic"), ("samurai", "Samurai", "Mythic"), ("ghost", "Ghost", "Rare")],
+    "marina": [("lava_surf", "Lava Surf", "Epic"), ("tropical", "Tropical", "Rare"), ("mermaid", "Mermaid", "Legendary")],
+    "drako": [("ice_dragon", "Ice Dragon", "Epic"), ("gold_dragon", "Gold Dragon", "Legendary"), ("shadow_dragon", "Shadow Dragon", "Mythic")],
+    "spectra": [("pumpkin", "Pumpkin", "Epic"), ("snow_ghost", "Snow Ghost", "Rare"), ("rainbow", "Rainbow", "Legendary")],
+    "mecha": [("red_mech", "Red Mech", "Rare"), ("camo", "Camo", "Epic"), ("golden_mech", "Golden Mech", "Legendary")],
+    "zeus": [("poseidon", "Poseidon", "Epic"), ("hades", "Hades", "Mythic"), ("sun_god", "Sun God", "Legendary")],
+}
+
+for _fighter in FIGHTERS:
+    _fighter.skins += [Skin(id=i, name=n, rarity=r) for i, n, r in MORE_SKINS[_fighter.id]]

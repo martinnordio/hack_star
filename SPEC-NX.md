@@ -16,7 +16,7 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 |------|-------|-----------|
 | spec-nx | [`.spec-nx/`](.spec-nx/) (git submodule of [spec-nx](https://github.com/martinnordio/spec-nx)) | The methodology and the generator of the kit |
 | Generated kit | [`.specs/kit/`](.specs/kit/) | What spec-nx generated for this repository (see below) |
-| Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `pr`, git host GitHub with linked issues, PowerShell, languages Python / TypeScript / Svelte / PowerShell |
+| Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `implementation` → `review` → `pr`, git host GitHub with linked issues, PowerShell, languages Python / TypeScript / Svelte / PowerShell |
 | Vision | [`.specs/overall_req.md`](.specs/overall_req.md) | The idea of the game in our own words, and the questions for Mattia with his answers |
 | Specs | [`.specs/features/done/`](.specs/features/done/) | One file per feature, all finished |
 
@@ -31,6 +31,8 @@ guidelines and the agent permissions.
 | [README.md](.specs/kit/README.md) | The workflow and the commands on one page |
 | [requirements/prompt.md](.specs/kit/requirements/prompt.md) | Stage 1: write Part 1 of a spec — context, what already exists, testable requirements (S1…Sn), open questions; `CREATE ISSUE` / `UPDATE ISSUE` create the GitHub issue or put the summary into it |
 | [plan/prompt.md](.specs/kit/plan/prompt.md) | Stage 2: write Part 2 — decisions, then Steps with a goal, tasks and a check each |
+| [implementation/prompt.md](.specs/kit/implementation/prompt.md) | `IMPLEMENT:` one Step at a time, keeping the spec true; `CLOSE:` moves the spec to `done/` |
+| [review/prompt.md](.specs/kit/review/prompt.md) | `REVIEW:` writes the HTML review page (`.specs/review/`) and the semantic diff for the pull request; `CODE REVIEW:` logs findings in the spec |
 | [pr/prompt.md](.specs/kit/pr/prompt.md) | Stage 3: push the branch, open or update the pull request and the issue with the spec summary |
 | [spec_template.md](.specs/kit/spec_template.md) | The shape of every spec file, with a Stage log of which stage and AI model wrote what |
 | [skills/requirements_engineer.md](.specs/kit/skills/requirements_engineer.md), [skills/architect.md](.specs/kit/skills/architect.md) | The roles the assistant takes for requirements and for the plan |
@@ -79,6 +81,7 @@ guidelines and the agent permissions.
 | F9 | Ten fighters with five types, each with its own attack and Super | [More fighters](.specs/features/done/2026_11_12_more_fighters_spec.md) | [#10](https://github.com/martinnordio/hack_star/issues/10) |
 | F10 | Super, Hypercharge and the HYPERCHARGE hack code | [Super and Hypercharge](.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) | [#11](https://github.com/martinnordio/hack_star/issues/11) |
 | F11 | Playing with up to 2 friends on their own devices | [Play with friends](.specs/features/done/2026_11_12_play_with_friends_spec.md) | [#12](https://github.com/martinnordio/hack_star/issues/12) |
+| F12 | Accounts, reset, create a fighter (CREATOR), QR password, 5 new fighters, 45 new skins, 5 languages | [Accounts, fighters and languages](.specs/features/done/2026_11_13_accounts_fighters_and_languages_spec.md) | [#15](https://github.com/martinnordio/hack_star/issues/15) |
 
 Each spec file shows the requirements, the decisions, every Step with its tasks, the time it
 took, what was checked, and what went differently from the plan (for example a bug found in the

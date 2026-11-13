@@ -1,0 +1,16 @@
+{
+  "type": "room",
+  "code": "<code>",
+  "you": 0,
+  "started": false,
+  "members": [
+    {
+      "slot": 0,
+      "fighter": "custom",
+      "skin": "L321e8322b39d353",
+      "power": 3,
+      "hyper": false,
+      "name": "Zappy"
+    }
+  ]
+}

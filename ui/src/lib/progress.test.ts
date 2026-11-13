@@ -1,12 +1,13 @@
-import { get } from 'svelte/store'
 import { describe, expect, it } from 'vitest'
 import {
   PROGRESS_KEY,
-  createProgressStore,
   defaultProgress,
   loadProgress,
   memoryStorage,
+  parseProgress,
+  resetProgress,
   saveProgress,
+  startProgress,
   totalTrophies,
 } from './progress'
 
@@ -46,11 +47,50 @@ describe('progress', () => {
     },
   )
 
-  it('saves every change made through the store', () => {
-    const storage = memoryStorage()
-    const store = createProgressStore(storage)
-    store.update((p) => ({ ...p, selectedFighter: 'rocko' }))
-    expect(loadProgress(storage).selectedFighter).toBe('rocko')
-    expect(get(createProgressStore(storage)).selectedFighter).toBe('rocko')
+  it('migrates version 3: everything kept, no created fighter', () => {
+    const { createdFighter: _, ...rest } = { ...defaultProgress(), credits: 42 }
+    const p = parseProgress({ ...rest, version: 3 })
+    expect(p).toEqual({ ...defaultProgress(), credits: 42, createdFighter: null })
+  })
+
+  it('a new account starts with 500 credits, 0 trophies and the start fighters', () => {
+    const p = startProgress()
+    expect(p.credits).toBe(500)
+    expect(totalTrophies(p)).toBe(0)
+    expect(p.unlockedFighters).toContain('blaze')
+    expect(p.createdFighter).toBeNull()
+  })
+
+  it('reset: 0 credits and trophies, start fighters, power 1, default skins; hacks and created fighter kept', () => {
+    const look = { name: 'Zap', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+    const before = {
+      ...defaultProgress(),
+      credits: 900,
+      trophies: { blaze: 2100, custom: 50 },
+      unlockedFighters: ['blaze', 'rocko', 'turbo', 'luna'],
+      powerLevels: { blaze: 9 },
+      selectedFighter: 'luna',
+      selectedSkins: { blaze: 'phoenix' },
+      ownedSkins: { blaze: ['phoenix'] },
+      activeHacks: ['power22'],
+      createdFighter: look,
+    }
+    const p = resetProgress(before)
+    expect(p.credits).toBe(0)
+    expect(totalTrophies(p)).toBe(0)
+    expect(p.unlockedFighters).toEqual(startProgress().unlockedFighters)
+    expect(p.powerLevels).toEqual({})
+    expect(p.selectedSkins).toEqual({})
+    expect(p.ownedSkins).toEqual({})
+    expect(p.selectedFighter).toBe('blaze')
+    expect(p.activeHacks).toEqual(['power22'])
+    expect(p.createdFighter).toEqual(look)
+  })
+
+  it('refuses a created fighter with a bad look', () => {
+    const look = { name: 'Zap', type: 'tank', main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+    expect(parseProgress({ ...defaultProgress(), createdFighter: look })?.createdFighter).toEqual(look)
+    expect(parseProgress({ ...defaultProgress(), createdFighter: { ...look, main: 'red' } })).toBeNull()
+    expect(parseProgress({ ...defaultProgress(), createdFighter: { ...look, head: 3 } })).toBeNull()
   })
 })

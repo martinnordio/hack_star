@@ -47,6 +47,14 @@ function setup() {
 }
 
 describe('shared match', () => {
+  it('a created fighter plays with the type in its look; bots never take it', () => {
+    const settings = { ...SETTINGS, botCount: 5 }
+    const created: Seat = { slot: 1, fighter: 'custom', skin: 'L321e8322b39d353', power: 3, hyper: false, name: 'Zappy' }
+    const start = startInfo(settings, [seats[0], created], [...catalogue, { id: 'custom', type: 'spreader' }], () => 0.5)
+    expect(start.fighters[1]).toMatchObject({ fighter: 'custom', type: 'thrower', skin: created.skin })
+    expect(start.fighters.slice(2).some((f) => f.fighter === 'custom')).toBe(false)
+  })
+
   it('the start message puts people first, then bots with other fighters', () => {
     const { start } = setup()
     expect(start.fighters.map((f) => [f.fighter, f.slot])).toEqual([

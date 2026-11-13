@@ -156,5 +156,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [ ] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [ ] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Implementation · every Step's tasks checked
+- [ ] Review · review page and semantic diff written; code review without Blocking findings
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

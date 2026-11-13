@@ -1,24 +1,24 @@
 <script lang="ts">
   import jsQR from 'jsqr'
+  import { t, type TextKey } from './i18n'
 
   let { onCode }: { onCode: (text: string) => void } = $props()
 
   let video = $state<HTMLVideoElement>()
-  let problem = $state<string>()
+  let problem = $state<TextKey>()
 
-  function explain(error: unknown): string {
+  function explain(error: unknown): TextKey {
     const name = error instanceof DOMException ? error.name : ''
-    if (name === 'NotAllowedError') return 'The camera is not allowed. Allow it in the browser settings, or type the code.'
-    if (name === 'NotFoundError' || name === 'OverconstrainedError') return 'No camera found on this device. Type the code instead.'
-    return 'The camera could not start. Type the code instead.'
+    if (name === 'NotAllowedError') return 'qrScanner.notAllowed'
+    if (name === 'NotFoundError' || name === 'OverconstrainedError') return 'qrScanner.noCamera'
+    return 'qrScanner.failed'
   }
 
   $effect(() => {
     if (!video) return
     if (!navigator.mediaDevices?.getUserMedia) {
       // Browsers only allow the camera on https:// or localhost.
-      problem =
-        'The camera only works when the game is opened with https://. Scan the QR code with the camera app instead, or type the code.'
+      problem = 'qrScanner.needsHttps'
       return
     }
 
@@ -64,12 +64,12 @@
 
 <div class="scanner">
   {#if problem}
-    <p class="problem" role="alert">{problem}</p>
+    <p class="problem" role="alert">{$t(problem)}</p>
   {:else}
     <!-- svelte-ignore a11y_media_has_caption -->
     <video bind:this={video} playsinline muted></video>
     <div class="frame" aria-hidden="true"></div>
-    <p class="hint">Point the camera at a Hack star QR code</p>
+    <p class="hint">{$t('qrScanner.hint')}</p>
   {/if}
 </div>
 

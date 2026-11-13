@@ -5,27 +5,28 @@ from hack_star_server.app import app
 client = TestClient(app)
 
 
-def test_ten_fighters() -> None:
+def test_fifteen_fighters() -> None:
     fighters = client.get("/api/fighters").json()
     assert [f["name"] for f in fighters] == [
         "Blaze", "Rocko", "Turbo", "Frosty", "Luna", "Pixel", "Coco", "Sparky", "Sir Clank", "Kira",
+        "Marina", "Drako", "Spectra", "Mecha Max", "Zeus Jr.",
     ]
 
 
-def test_two_fighters_of_each_type() -> None:
+def test_three_fighters_of_each_type() -> None:
     types = [f["type"] for f in client.get("/api/fighters").json()]
-    assert sorted(types) == sorted(["tank", "sharpshooter", "speedy", "thrower", "spreader"] * 2)
+    assert sorted(types) == sorted(["tank", "sharpshooter", "speedy", "thrower", "spreader"] * 3)
 
 
 def test_new_fighters_start_locked_and_cover_rare_to_legendary() -> None:
-    new = client.get("/api/fighters").json()[6:]
+    new = client.get("/api/fighters").json()[6:10]
     assert not any(f["unlocked_at_start"] for f in new)
     assert {f["rarity"] for f in new} == {"Rare", "Super Rare", "Epic", "Legendary"}
 
 
-def test_every_fighter_has_two_or_three_skins_starting_with_default() -> None:
+def test_every_fighter_has_skins_starting_with_default() -> None:
     for fighter in client.get("/api/fighters").json():
-        assert 2 <= len(fighter["skins"]) <= 3, fighter["id"]
+        assert len(fighter["skins"]) >= 1, fighter["id"]
         assert fighter["skins"][0]["id"] == "default", fighter["id"]
 
 
@@ -35,5 +36,21 @@ def test_some_skins_are_legendary() -> None:
 
 
 def test_start_unlocks() -> None:
+    # Must match START_FIGHTERS in ui/src/lib/progress.ts (new accounts).
     unlocked = [f["id"] for f in client.get("/api/fighters").json() if f["unlocked_at_start"]]
-    assert unlocked == ["blaze", "rocko", "turbo"]
+    assert unlocked == ["blaze", "rocko", "turbo", "marina"]
+
+
+def test_five_newest_fighters_one_of_each_type() -> None:
+    newest = client.get("/api/fighters").json()[10:]
+    assert sorted(f["type"] for f in newest) == sorted(["tank", "sharpshooter", "speedy", "thrower", "spreader"])
+
+
+def test_every_fighter_has_three_more_skins_with_unique_ids() -> None:
+    from hack_star_server.fighters import MORE_SKINS
+
+    for fighter in client.get("/api/fighters").json():
+        ids = [s["id"] for s in fighter["skins"]]
+        assert len(ids) == len(set(ids)), fighter["id"]
+        assert [i for i, _, _ in MORE_SKINS[fighter["id"]]] == ids[-3:], fighter["id"]
+        assert all(s["rarity"] != "Default" for s in fighter["skins"][-3:]), fighter["id"]

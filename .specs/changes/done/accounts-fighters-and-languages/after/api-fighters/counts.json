@@ -1,0 +1,27 @@
+{
+  "fighters": 15,
+  "unlocked_at_start": [
+    "blaze",
+    "rocko",
+    "turbo",
+    "marina"
+  ],
+  "skins_per_fighter": {
+    "blaze": 6,
+    "rocko": 5,
+    "turbo": 5,
+    "frosty": 5,
+    "luna": 6,
+    "pixel": 5,
+    "coco": 5,
+    "sparky": 5,
+    "clank": 5,
+    "kira": 5,
+    "marina": 4,
+    "drako": 4,
+    "spectra": 4,
+    "mecha": 4,
+    "zeus": 4
+  },
+  "skins_total": 72
+}

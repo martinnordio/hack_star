@@ -1,0 +1,2 @@
+﻿  skinOfTheDayDiscount: number
+  skinOfTheDayDiscount: 0.3,

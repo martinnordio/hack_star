@@ -95,20 +95,27 @@ Hack star server" with a **Try again** button.
   |---|------|---------------|-------|
   | Computer | WASD or arrow keys | Mouse to aim, click (hold to keep firing); Space shoots the nearest target | **E** or right click (towards the mouse), or click the Super button |
   | iPad / phone | Left thumb: joystick | Right thumb: drag to aim, let go to shoot; quick tap shoots the nearest target | Tap the Super button (aims at the nearest enemy) |
-- **Fighters:** the 10 fighters with locks, trophies, power levels and type; open one to see
-  it in 3D, read what its type does, try on its skins and choose or buy one. Every type has two
+- **Fighters:** the 15 fighters with locks, trophies, power levels and type; open one to see
+  it in 3D, read what its type does, try on its skins and choose or buy one. Every type has three
   fighters:
 
   | Type | Fighters | How it fights | Super |
   |------|----------|---------------|-------|
-  | 🛡️ Tank | Rocko, Sir Clank | Lots of health, short range | **Shockwave**: a ring of shots all around |
-  | 🎯 Sharpshooter | Luna, Kira | Very long range, less health, slower shots | **Piercing beam**: one huge shot through walls and every fighter on its way |
-  | ⚡ Speedy | Turbo, Sparky | Runs 25% faster, shoots quickly | **Dash**: rushes forward and hits everyone on the way |
-  | 💣 Thrower | Frosty, Coco | Throws over walls; shots explode where they land (a ring shows where) | **Big bomb**: a huge explosion |
-  | 🔥 Spreader | Blaze, Pixel | Three shots in a fan, best up close | **Super blast**: 5 big shots through walls |
+  | 🛡️ Tank | Rocko, Sir Clank, Mecha Max | Lots of health, short range | **Shockwave**: a ring of shots all around |
+  | 🎯 Sharpshooter | Luna, Kira, Zeus Jr. | Very long range, less health, slower shots | **Piercing beam**: one huge shot through walls and every fighter on its way |
+  | ⚡ Speedy | Turbo, Sparky, Marina | Runs 25% faster, shoots quickly | **Dash**: rushes forward and hits everyone on the way |
+  | 💣 Thrower | Frosty, Coco, Spectra | Throws over walls; shots explode where they land (a ring shows where) | **Big bomb**: a huge explosion |
+  | 🔥 Spreader | Blaze, Pixel, Drako | Three shots in a fan, best up close | **Super blast**: 5 big shots through walls |
 
-  The new four (Coco, Sparky, Sir Clank, Kira) start locked. The types were tuned with bot-only
-  test matches so that each one wins about as often as the others.
+  Blaze, Rocko, Turbo and Marina are unlocked at the start. Marina, Drako, Spectra, Mecha Max
+  and Zeus Jr. are the newest and most detailed fighters (shiny and glowing parts, more moving
+  parts). The types were tuned with bot-only test matches so that each one wins about as often
+  as the others.
+- **Create a fighter:** the last card of the fighter list. Choose a name (1–12 characters), a
+  type, two colours, a head (kid, robot, cat) and a body (kid, robot, armour), with a 3D
+  preview. One per account; creating it is free, changing it later costs 500 credits (it keeps
+  its trophies and power). It stays locked until the hack code `CREATOR` is entered; then it
+  plays like any fighter of its type, also with friends.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
   otherwise; you start with 500). On a fighter's screen:
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
@@ -116,13 +123,22 @@ Hack star server" with a **Try again** button.
   - **Upgrade** its power level for 20 × the current level (7 → 8 costs 140). Each level adds
     10% health and damage (power 1: ❤️ 3200 💥 480; power 11: 6400 / 960), and that is what the
     fighter has in matches and training. Bots play at power 5.
-- **Shop:** buy skins with credits: Epic 300, Mythic 600, Legendary 1500. The **skin of the
+- **Shop:** buy skins with credits: Rare 100, Super Rare 200, Epic 300, Mythic 600, Legendary
+  1500. Every fighter has at least 3 skins to buy. The **skin of the
   day** (a new one each day) is first and costs 30% less. Skins of locked fighters say
   "Unlock … first". After buying, **Wear it** puts it on and makes that fighter the chosen one.
   Skins can also be bought on the fighter screen (try on, then **Buy**). Default skins are free.
 - **Info:** the words used in the game.
-- **Settings:** bot level (**Easy**, **Medium**, **Hard**) and number of bots (1–5) for every
-  match; saved on the device. Default Easy and 3 bots.
+- **Settings:** the language (English, Deutsch, Schwiizerdütsch, Español, Italiano — per
+  account; a new account starts in the browser's language), bot level (**Easy**, **Medium**,
+  **Hard**) and number of bots (1–5) for every match (saved on the device; default Easy and 3
+  bots), and **Reset coins and trophies**: after a confirmation the account starts again with
+  0 credits, 0 trophies, only the start fighters, power 1 and default skins (hack codes and
+  the created fighter stay).
+- **Accounts:** the name under the trophies on the home screen. Tap it to switch account, add
+  one (up to 5 per device, names 1–16 characters, all different) or rename one (accounts
+  cannot be deleted). Each account has its own credits, trophies, fighters, skins, hack codes,
+  created fighter and language. The progress saved before accounts existed became "Player 1".
 - **Friends:** play together, each on your own iPad, phone or computer on the same Wi-Fi — you
   and up to 2 friends **on one team against the bots**:
   1. One player taps **Friends → Create a room** and gets a 4-letter code and a QR code.
@@ -144,12 +160,13 @@ Hack star server" with a **Try again** button.
   | `OPENSESAME` | Every fighter and skin unlocked (no need to buy skins) |
   | `POWER22` | Power levels up to 22 instead of 11 (power 22: ❤️ 9920 💥 1488 in matches) |
   | `HYPERCHARGE` | Your Super charges 3 times faster and every Super is a Hypercharge |
+  | `CREATOR` | Unlocks the fighter you created |
 
   **Reset all hacks** on the same screen goes back to the normal rules: the real credits and
   the 11 limit come back; fighters, levels and skins you got while hacking stay (skins you
   only wore thanks to OPENSESAME go back to Default).
 
-Progress (chosen fighter, bought and chosen skins, trophies) is saved in the browser of each device. Open
+Progress (accounts, chosen fighter, bought and chosen skins, trophies) is saved in the browser of each device. Open
 <http://localhost:5180/?gallery> to see every fighter and skin side by side.
 
 ### Match settings
@@ -174,8 +191,10 @@ without changing code, add them to the address, for example
 
 ### QR codes
 
-Open `/?qr` with the **Network** address (for example `http://192.168.1.20:5180/?qr`) and
-print the page. The QR codes contain a link to the game with the code, so:
+Open `/?qr` with the **Network** address (for example `http://192.168.1.20:5180/?qr`), type
+the password `M6D2` (asked every time; it keeps kids from printing the codes, it is not real
+security: it is in this public code) and print the page. The QR codes contain a link to the
+game with the code, so:
 
 - the **camera app** of an iPad or phone opens the game and applies the hack directly;
 - the game's **Scan QR** button needs the camera, which browsers allow only on `https://` (or

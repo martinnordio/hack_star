@@ -1,7 +1,7 @@
-import type { Progress } from './progress'
+import { CREATED_ID, type Progress } from './progress'
 import { SETTINGS } from './game/settings'
 
-export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge'
+export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge' | 'creator'
 
 export interface Hack {
   id: HackId
@@ -12,6 +12,13 @@ export interface Hack {
 
 export const NORMAL_MAX_POWER = 11
 export const HACKED_MAX_POWER = 22
+
+/** Keeps kids from printing the codes; it is in the public source, so it is not security. */
+export const QR_PASSWORD = 'M6D2'
+
+export function isQrPassword(text: string): boolean {
+  return text === QR_PASSWORD
+}
 
 export class UnknownCodeError extends Error {}
 
@@ -60,6 +67,8 @@ export function credits(progress: Progress): number {
 }
 
 export function isUnlocked(progress: Progress, fighterId: string): boolean {
+  // Only the CREATOR code unlocks the created fighter (not credits, not OPENSESAME).
+  if (fighterId === CREATED_ID) return has(progress, 'creator') && progress.createdFighter !== null
   return has(progress, 'unlock_all') || progress.unlockedFighters.includes(fighterId)
 }
 

@@ -29,7 +29,7 @@ address (also from an iPad or phone on the Wi-Fi).
 | Endpoint | Returns |
 |----------|---------|
 | `GET /api/health` | `{"status": "ok"}` |
-| `GET /api/fighters` | The 10 fighters with rarity, type and skins (`server/src/hack_star_server/fighters.py`) |
+| `GET /api/fighters` | The 15 fighters with rarity, type and skins (`server/src/hack_star_server/fighters.py`; the 3 extra skins per fighter are in `MORE_SKINS`) |
 | `GET /api/hacks` | The hack codes (`hacks.py`), for the printable QR page |
 | `POST /api/hacks/redeem` `{"code"}` | The hack for a code (any case, spaces trimmed), or 404 "Unknown code" |
 | `WS /api/rooms` | Rooms for playing with friends (`rooms.py`, see below) |
@@ -46,16 +46,28 @@ value (no router):
 
 | Screen | File | Notes |
 |--------|------|-------|
-| Home | `lib/Home.svelte`, `lib/HomeScene.svelte` | 3D fighter on a podium, entrance animation |
+| Home | `lib/Home.svelte`, `lib/HomeScene.svelte`, `lib/AccountsPanel.svelte` | 3D fighter on a podium, entrance animation; the account chip opens the accounts panel (switch, add, rename) |
 | Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought |
+| Create a fighter | `lib/CreatorScreen.svelte`, `lib/created.ts` | Name, type, colours, head, body with a live 3D preview; free the first time, `recreateCost` after |
 | Shop | `lib/ShopScreen.svelte` | Skin of the day first, then every skin; buy, "NEW SKIN!", Wear it |
 | Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words used in the game |
-| Settings | `lib/SettingsScreen.svelte`, `lib/options.ts` | Bot level and number of bots, saved under `hack-star.options` |
+| Settings | `lib/SettingsScreen.svelte`, `lib/options.ts` | Language (per account), bot level and number of bots (saved under `hack-star.options`), reset of the account |
 | Hack | `lib/HackScreen.svelte`, `lib/QrScanner.svelte` | Codes typed or scanned; `/?qr` shows `lib/QrPage.svelte` |
 | Friends | `lib/FriendsScreen.svelte`, `lib/net/room.ts` | Create / join a room (code, QR, `?room=CODE` link), lobby, Start |
 | Match / Training | `lib/Arena.svelte` (HTML: joysticks, HUD, result), `lib/ArenaScene.svelte` (3D) | A new `Arena` is mounted per match |
 
-Extra pages by address: `/?qr` (printable QR codes), `/?gallery` (all fighters and skins).
+Extra pages by address: `/?qr` (printable QR codes, after the password `M6D2` — checked in the
+browser, a lock for kids, not security), `/?gallery` (all fighters and skins).
+
+### Languages (`ui/src/lib/i18n/`)
+
+Every text the player sees is a key in `en.ts`; `de.ts`, `gsw.ts` (Swiss German, Zurich),
+`es.ts` and `it.ts` are typed `Record<TextKey, string>`, so a missing text fails
+`npm run check`, and `i18n.test.ts` checks that none is empty and the `{placeholders}` match.
+Components use `$t('key', { name })`; texts from the server (hack names and descriptions,
+fighter ideas) go through `$tOr('hack.<id>.name', fallback)`, so the server stays English.
+The language belongs to the current account (`language` store); a new account takes the
+browser's language (`de-CH` → Swiss German). Fighter, skin and code names are not translated.
 
 ### Game rules (`ui/src/lib/game/`)
 
@@ -86,19 +98,30 @@ Everything is built in code from simple shapes, so there is no art to download o
 
 | File | What |
 |------|------|
-| `parts.ts` | Toon material, outline ("inverted hull"), shape helpers, cartoon eyes, Legendary glow |
-| `fighters3d.ts` | `buildFighter(id, skin)` for the 10 fighters and 22 looks; idle animation; see-through in bushes |
+| `parts.ts` | Toon material, outline ("inverted hull"), shape helpers, cartoon eyes, Legendary glow; `shiny()` / `glowing()` materials and `move()` for parts with their own idle movement |
+| `fighters3d.ts` | `buildFighter(id, skin)` for every fighter and skin; idle animation; see-through in bushes |
+| `heroes3d.ts` | The five newest, more detailed fighters (Marina, Drako, Spectra, Mecha Max, Zeus Jr.) |
+| `skins3d.ts` | The 3 extra skins of every fighter: the default look recoloured plus one extra part (crown, halo, horns, shades, scarf, backpack, cape) |
+| `custom3d.ts` | The created fighter, built from its look (3 heads × 3 bodies × 2 colours) |
 | `arena3d.ts` | Tiles, cliffs, rock walls, cacti, crates, barrels, skulls |
 | `dummy3d.ts`, `healthBar.ts` | Training dummy; health bars |
 | `particles.ts` | One pool of reused meshes for dust, flashes, sparks and pieces |
 
-### Saved progress (`ui/src/lib/progress.ts`)
+### Saved progress (`ui/src/lib/progress.ts`, `ui/src/lib/accounts.ts`)
 
-Per device in `localStorage` (no login): credits, trophies and power level per fighter,
-unlocked fighters, owned skins, active hacks, chosen fighter and skins. The format has a
-`version` (now 3); a version 2 save is migrated (its chosen skins become owned skins, so
-nobody loses a skin), and anything else that does not match falls back to the starting
-progress. Hack effects are worked out when shown
+Per device in `localStorage` (no login), under `hack-star.accounts`: up to 5 accounts, each
+with a name, a language and its own progress, and which account is current. The `progress`
+store (in `accounts.ts`) reads and writes the current account's progress, so the screens do
+not know about accounts. The first time, the progress saved before accounts
+(`hack-star.progress`, left in place) becomes "Player 1"; a new account starts with
+`startProgress()` (500 credits, 0 trophies, `START_FIGHTERS`, which must match the server's
+`unlocked_at_start`). `resetProgress()` is the Settings reset.
+
+Each progress holds: credits, trophies and power level per fighter,
+unlocked fighters, owned skins, active hacks, chosen fighter and skins, and the created
+fighter's look. The format has a
+`version` (now 4); versions 2 and 3 are migrated, and anything else that does not match falls
+back to the starting progress. Hack effects are worked out when shown
 (`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`, `superHack` — applied to the player's fighter when an arena starts), so resetting the hacks
 brings the normal rules back exactly.
 
@@ -116,6 +139,15 @@ the real amount again.
 The player's options (bot level, number of bots) are not progress: `lib/options.ts` keeps them
 under their own key `hack-star.options`, each bad value falling back to its default, so the
 progress format did not change.
+
+### The created fighter (`ui/src/lib/created.ts`)
+
+Id `custom` in every account (`CREATED_ID`), added to the catalogue from the progress
+(`withCreated`). Its look travels as its **skin id** (`lookSkin()`: "L" + type + head + body +
+2 colours, 16 characters), so pictures, the 3D stage, the arena and rooms need nothing extra.
+Only the `CREATOR` hack unlocks it (not credits, not OPENSESAME); bots never use it. In a room,
+the member also sends its `name`; the server accepts `fighter: "custom"` only with a
+look-shaped skin and a name.
 
 ### Playing with friends (`server/.../rooms.py`, `ui/src/lib/net/`)
 
@@ -164,8 +196,15 @@ sequenceDiagram
   with `?seconds=&bots=&level=&overtime=`); players choose bot level and number of bots on the
   Settings screen.
 - **Add a fighter:** add it to `FIGHTERS` in `server/src/hack_star_server/fighters.py` (with
-  its `type`), add a builder in `ui/src/lib/models/fighters3d.ts`, a shot colour in
-  `ArenaScene.svelte` and its looks in `Gallery.svelte`; check it with `/?gallery`.
+  its `type`) and its skins to `MORE_SKINS`, add a builder in `ui/src/lib/models/fighters3d.ts`
+  (or `heroes3d.ts`), its skin variants in `skins3d.ts`, a shot colour in
+  `ArenaScene.svelte` and its idea `fighter.<id>.idea` in the five dictionaries; check it with
+  `/?gallery`.
+- **Add or change a text:** add the key to `ui/src/lib/i18n/en.ts` and to `de.ts`, `gsw.ts`,
+  `es.ts`, `it.ts` (`npm run check` lists the missing ones), then use `$t('key')`.
+- **Add a language:** add its code to `LANGUAGES` / `LANGUAGE_NAMES` in
+  `i18n/languages.ts`, a dictionary typed `Record<TextKey, string>` and its entry in
+  `DICTIONARIES` (`i18n/index.ts`).
 - **Change or add a fighter type:** edit `FIGHTER_TYPES` in `ui/src/lib/game/types.ts`, then
   run `npm test`: the fairness test fails if one type wins more than 30% or less than 10% of
   bot-only matches.
@@ -179,6 +218,6 @@ sequenceDiagram
 
 | Command | Covers |
 |---------|--------|
-| `cd server; uv run pytest` | API: fighters, hacks |
-| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress, hacks, QR codes, vocabulary |
+| `cd server; uv run pytest` | API: fighters and skins, hacks, rooms (also the created fighter's look) |
+| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress, accounts, languages, created fighter, 3D models (detail of the new fighters, every new skin different), hacks, QR codes and password, vocabulary |
 | `cd ui; npm run check` | Type checks (TypeScript and Svelte) |

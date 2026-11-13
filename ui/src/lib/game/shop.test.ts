@@ -97,7 +97,7 @@ describe('skins shop', () => {
     }
     storage.setItem(PROGRESS_KEY, JSON.stringify(v2))
     const p = loadProgress(storage)
-    expect(p).toMatchObject({ version: 3, credits: 360, trophies: { blaze: 2005 }, unlockedFighters: ['blaze', 'frosty'] })
+    expect(p).toMatchObject({ version: 4, credits: 360, trophies: { blaze: 2005 }, unlockedFighters: ['blaze', 'frosty'] })
     expect(p.ownedSkins).toEqual({ blaze: ['phoenix'] })
   })
 })

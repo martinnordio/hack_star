@@ -1,5 +1,6 @@
 export type Rarity = 'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary'
 import type { FighterTypeId } from './game/types'
+import type { TextKey } from './i18n/en'
 
 export interface Skin {
   id: string
@@ -24,6 +25,15 @@ export const RARITY_COLORS: Record<Rarity, string> = {
   Epic: '#b64dff',
   Mythic: '#ff3b5c',
   Legendary: '#ffd23f',
+}
+
+export const RARITY_KEYS: Record<Rarity, TextKey> = {
+  Default: 'rarity.Default',
+  Rare: 'rarity.Rare',
+  'Super Rare': 'rarity.Super Rare',
+  Epic: 'rarity.Epic',
+  Mythic: 'rarity.Mythic',
+  Legendary: 'rarity.Legendary',
 }
 
 export async function loadFighters(): Promise<Fighter[]> {

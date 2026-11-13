@@ -6,14 +6,21 @@ from hack_star_server.app import app
 client = TestClient(app)
 
 
-def test_four_hacks() -> None:
+def test_five_hacks() -> None:
     codes = {h["code"]: h["id"] for h in client.get("/api/hacks").json()}
     assert codes == {
         "INFINITY": "infinite_credits",
         "OPENSESAME": "unlock_all",
         "POWER22": "power22",
         "HYPERCHARGE": "hypercharge",
+        "CREATOR": "creator",
     }
+
+
+def test_redeem_creator() -> None:
+    response = client.post("/api/hacks/redeem", json={"code": "creator"})
+    assert response.status_code == 200
+    assert response.json()["id"] == "creator"
 
 
 def test_redeem_hypercharge() -> None:

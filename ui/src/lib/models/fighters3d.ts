@@ -1,7 +1,11 @@
 import * as THREE from 'three'
+import { buildCreated } from './custom3d'
+import { applyVariant, variantOf } from './skins3d'
+import { HERO_BUILDERS } from './heroes3d'
 import {
   addEyes,
   addLegendaryGlow,
+  animateMoves,
   box,
   capsule,
   cone,
@@ -341,10 +345,25 @@ function kira(skin: string): Rig {
   return rig
 }
 
-const BUILDERS: Record<string, Builder> = { blaze, rocko, turbo, frosty, luna, pixel, coco, sparky, clank, kira }
+const BUILDERS: Record<string, Builder> = {
+  blaze,
+  rocko,
+  turbo,
+  frosty,
+  luna,
+  pixel,
+  coco,
+  sparky,
+  clank,
+  kira,
+  ...HERO_BUILDERS,
+  custom: buildCreated,
+}
 
 export function buildFighter(fighterId: string, skinId = 'default'): Rig {
-  return (BUILDERS[fighterId] ?? blaze)(skinId)
+  const build = BUILDERS[fighterId] ?? blaze
+  const variant = variantOf(fighterId, skinId)
+  return variant ? applyVariant(build('default'), variant) : build(skinId)
 }
 
 /** Idle animation: breathing, gentle sway, flickering flames and spinning sparkles. */
@@ -357,6 +376,7 @@ export function animateFighter(rig: Rig, time: number) {
     o.scale.setScalar(s)
   })
   rig.spinners.forEach((o) => (o.rotation.y = time * 0.8))
+  animateMoves(rig, time)
 }
 
 export function disposeRig(rig: Rig) {

@@ -1,14 +1,15 @@
 <script lang="ts">
+  import { t } from './i18n'
   import { VOCABULARY } from './vocabulary'
 </script>
 
-<p class="intro">The words used in Hack star.</p>
+<p class="intro">{$t('info.intro')}</p>
 
 <dl>
   {#each VOCABULARY as { word, meaning }}
     <div class="entry">
-      <dt>{word}</dt>
-      <dd>{meaning}</dd>
+      <dt>{$t(word)}</dt>
+      <dd>{$t(meaning)}</dd>
     </div>
   {/each}
 </dl>

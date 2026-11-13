@@ -7,6 +7,7 @@ import { SETTINGS, type BotLevel, type Settings } from '../game/settings'
 import { fighterType } from '../game/types'
 import { World, type Shot, type WorldEvent } from '../game/world'
 import type { RoomConnection, RoomMessage, Seat } from './room'
+import { CREATED_ID, parseLookSkin } from '../created'
 
 /** Seconds between two snapshots from the host, and between two positions from a friend. */
 export const SEND_EVERY = 0.05
@@ -39,8 +40,10 @@ export function startInfo(
 ): StartInfo {
   const people = [...members].sort((a, b) => a.slot - b.slot)
   const count = Math.max(settings.botCount + 1, people.length + 1)
-  const typeOf = (id: string) => catalogue.find((f) => f.id === id)?.type ?? 'basic'
-  const fighterIds = catalogue.map((f) => f.id)
+  // A created fighter's type is in its look (skin id); every device has its own.
+  const typeOf = (id: string, skin = 'default') =>
+    (id === CREATED_ID ? parseLookSkin(skin)?.type : undefined) ?? catalogue.find((f) => f.id === id)?.type ?? 'basic'
+  const fighterIds = catalogue.map((f) => f.id).filter((id) => id !== CREATED_ID)
   const others = fighterIds.filter((id) => !people.some((p) => p.fighter === id))
   const pool = (others.length ? others : fighterIds).slice().sort(() => random() - 0.5)
   const bots = Array.from({ length: count - people.length }, (_, i) => ({
@@ -60,7 +63,7 @@ export function startInfo(
       botLevel: settings.botLevel,
     },
     fighters: [
-      ...people.map((p) => ({ fighter: p.fighter, type: typeOf(p.fighter), skin: p.skin, power: p.power, hyper: p.hyper, slot: p.slot })),
+      ...people.map((p) => ({ fighter: p.fighter, type: typeOf(p.fighter, p.skin), skin: p.skin, power: p.power, hyper: p.hyper, slot: p.slot })),
       ...bots,
     ],
   }

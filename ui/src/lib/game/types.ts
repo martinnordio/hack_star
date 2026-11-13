@@ -1,5 +1,7 @@
 /** Fighter types: how a fighter moves, shoots and what its Super does (more fighters spec). */
 
+import type { TextKey } from '../i18n/en'
+
 export type FighterTypeId = 'tank' | 'sharpshooter' | 'speedy' | 'thrower' | 'spreader'
 export type SuperKind = 'blast' | 'shockwave' | 'beam' | 'dash' | 'bomb'
 
@@ -21,10 +23,10 @@ export interface Attack {
 
 export interface FighterType {
   id: FighterTypeId | 'basic'
-  name: string
+  nameKey: TextKey
   emoji: string
   /** One line for the fighter screen. */
-  about: string
+  aboutKey: TextKey
   /** Multipliers on the power level's health and damage, walking speed and time between attacks. */
   health: number
   damage: number
@@ -32,7 +34,7 @@ export interface FighterType {
   reload: number
   attack: Attack
   super: SuperKind
-  superName: string
+  superNameKey: TextKey
   /** Bots use the Super on targets closer than this. */
   superReach: number
 }
@@ -52,91 +54,93 @@ const shot = (attack: Partial<Attack>): Attack => ({
 /** No type: the numbers every fighter had before types (tests, unknown fighters). */
 export const BASIC: FighterType = {
   id: 'basic',
-  name: 'Basic',
+  nameKey: 'fighterType.basic.name',
   emoji: '⭐',
-  about: 'All-rounder.',
+  aboutKey: 'fighterType.basic.about',
   health: 1,
   damage: 1,
   speed: 1,
   reload: 1,
   attack: shot({}),
   super: 'blast',
-  superName: 'Super blast',
+  superNameKey: 'fighterType.basic.super',
   superReach: 9,
 }
 
 export const FIGHTER_TYPES: Record<FighterTypeId, FighterType> = {
   tank: {
     id: 'tank',
-    name: 'Tank',
+    nameKey: 'fighterType.tank.name',
     emoji: '🛡️',
-    about: 'Lots of health, short range. Get close!',
+    aboutKey: 'fighterType.tank.about',
     health: 1.2,
     damage: 0.95,
     speed: 0.92,
     reload: 1.05,
     attack: shot({ range: 5.5, speed: 15, radius: 0.35 }),
     super: 'shockwave',
-    superName: 'Shockwave',
+    superNameKey: 'fighterType.tank.super',
     superReach: 4.5,
   },
   sharpshooter: {
     id: 'sharpshooter',
-    name: 'Sharpshooter',
+    nameKey: 'fighterType.sharpshooter.name',
     emoji: '🎯',
-    about: 'Very long range, less health. Keep your distance.',
+    aboutKey: 'fighterType.sharpshooter.about',
     health: 0.75,
     damage: 1.05,
     speed: 1,
     reload: 1.4,
     attack: shot({ range: 12.5, speed: 22, radius: 0.2 }),
     super: 'beam',
-    superName: 'Piercing beam',
+    superNameKey: 'fighterType.sharpshooter.super',
     superReach: 12,
   },
   speedy: {
     id: 'speedy',
-    name: 'Speedy',
+    nameKey: 'fighterType.speedy.name',
     emoji: '⚡',
-    about: 'Runs fast and shoots quickly.',
+    aboutKey: 'fighterType.speedy.about',
     health: 0.9,
     damage: 0.8,
     speed: 1.25,
     reload: 0.8,
     attack: shot({ range: 8, speed: 18, radius: 0.22 }),
     super: 'dash',
-    superName: 'Dash',
+    superNameKey: 'fighterType.speedy.super',
     superReach: 6,
   },
   thrower: {
     id: 'thrower',
-    name: 'Thrower',
+    nameKey: 'fighterType.thrower.name',
     emoji: '💣',
-    about: 'Throws over walls; hits explode where they land.',
+    aboutKey: 'fighterType.thrower.about',
     health: 0.75,
     damage: 1,
     speed: 0.95,
     reload: 1.5,
     attack: shot({ range: 9, speed: 11, radius: 0.3, lob: true, blast: 1.4 }),
     super: 'bomb',
-    superName: 'Big bomb',
+    superNameKey: 'fighterType.thrower.super',
     superReach: 9,
   },
   spreader: {
     id: 'spreader',
-    name: 'Spreader',
+    nameKey: 'fighterType.spreader.name',
     emoji: '🔥',
-    about: 'Three shots in a fan: deadly up close.',
+    aboutKey: 'fighterType.spreader.about',
     health: 1,
     damage: 1,
     speed: 1,
     reload: 1.1,
     attack: shot({ range: 7.5, count: 3, spread: 0.2, share: 0.46 }),
     super: 'blast',
-    superName: 'Super blast',
+    superNameKey: 'fighterType.spreader.super',
     superReach: 8,
   },
 }
+
+export const FIGHTER_TYPE_IDS: FighterTypeId[] = ['tank', 'sharpshooter', 'speedy', 'thrower', 'spreader']
 
 export function fighterType(id: string | undefined): FighterType {
   return FIGHTER_TYPES[id as FighterTypeId] ?? BASIC

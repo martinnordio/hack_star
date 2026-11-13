@@ -31,7 +31,7 @@ reader later understands the trade-off.
   or animation approach, the source and licence of art assets, a message or data format), with
   the reason.
 - **Deferred items** — what is consciously left out, with a reason and the target spec.
-- A **Definition of Done** for the stages the project uses (requirements, plan, pr).
+- A **Definition of Done** for the stages the project uses (requirements, plan, implementation, review, pr).
 
 ## Process
 
@@ -70,4 +70,4 @@ reader later understands the trade-off.
 ## Handoffs
 
 - To the **requirements engineer** when Part 1 is unclear or incomplete.
-- To the developer (the user with the AI chat) when the plan is ready.
+- To the **developer** (`IMPLEMENT:`) when the plan is ready.

@@ -1,0 +1,64 @@
+{
+  "hack-star.accounts": {
+    "version": 1,
+    "current": "a1",
+    "accounts": [
+      {
+        "id": "a1",
+        "name": "Player 1",
+        "language": "en",
+        "progress": {
+          "version": 4,
+          "credits": 500,
+          "trophies": {
+            "blaze": 1240,
+            "rocko": 420,
+            "turbo": 85
+          },
+          "powerLevels": {
+            "blaze": 7,
+            "rocko": 4,
+            "turbo": 2
+          },
+          "unlockedFighters": [
+            "blaze",
+            "rocko",
+            "turbo"
+          ],
+          "activeHacks": [],
+          "selectedFighter": "blaze",
+          "selectedSkins": {},
+          "ownedSkins": {},
+          "createdFighter": null
+        }
+      }
+    ]
+  },
+  "hack-star.options": {
+    "botLevel": "easy",
+    "botCount": 3
+  },
+  "hack-star.progress": {
+    "version": 3,
+    "credits": 500,
+    "trophies": {
+      "blaze": 1240,
+      "rocko": 420,
+      "turbo": 85
+    },
+    "powerLevels": {
+      "blaze": 7,
+      "rocko": 4,
+      "turbo": 2
+    },
+    "unlockedFighters": [
+      "blaze",
+      "rocko",
+      "turbo"
+    ],
+    "activeHacks": [],
+    "selectedFighter": "blaze",
+    "selectedSkins": {},
+    "ownedSkins": {}
+  }
+}

@@ -1,0 +1,6 @@
+﻿7c6b910:ui/src/lib/HackScreen.svelte:15:  let confirmReset = $state(false)
+7c6b910:ui/src/lib/HackScreen.svelte:43:    confirmReset = false
+7c6b910:ui/src/lib/HackScreen.svelte:107:      {#if confirmReset}
+7c6b910:ui/src/lib/HackScreen.svelte:111:          <button onclick={() => (confirmReset = false)}>No</button>
+7c6b910:ui/src/lib/HackScreen.svelte:114:        <button class="reset" onclick={() => (confirmReset = true)}>Reset all hacks</button>
+7c6b910:ui/src/lib/Home.svelte:93:  <button class="play" onclick={() => onNavigate('match')}>PLAY</button>

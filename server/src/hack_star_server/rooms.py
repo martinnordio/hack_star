@@ -5,12 +5,13 @@ snapshots of the match to the friends (play with friends spec, D1-D2).
 """
 
 import json
+import re
 import secrets
 from dataclasses import dataclass, field
 from typing import Any
 
 from fastapi import WebSocket, WebSocketDisconnect
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 
 from hack_star_server.fighters import FIGHTERS
 
@@ -20,7 +21,10 @@ CODE_LENGTH = 4
 MAX_MEMBERS = 3
 MAX_MESSAGE = 64 * 1024
 MAX_ROOMS = 100
-FIGHTER_IDS = {f.id for f in FIGHTERS}
+CREATED = "custom"
+FIGHTER_IDS = {f.id for f in FIGHTERS} | {CREATED}
+# The look of a created fighter: "L", type 0-4, head 0-2, body 0-2, two colours.
+CREATED_LOOK = re.compile(r"^L[0-4][0-2][0-2][0-9a-fA-F]{12}$")
 
 
 class Member(BaseModel):
@@ -30,6 +34,7 @@ class Member(BaseModel):
     skin: str = Field(max_length=20)
     power: int = Field(ge=1, le=22)
     hyper: bool = False
+    name: str | None = Field(default=None, min_length=1, max_length=12)
 
     @field_validator("fighter")
     @classmethod
@@ -37,6 +42,14 @@ class Member(BaseModel):
         if value not in FIGHTER_IDS:
             raise ValueError("unknown fighter")
         return value
+
+    @model_validator(mode="after")
+    def created_fighter_has_a_look(self) -> "Member":
+        if self.fighter == CREATED and not (CREATED_LOOK.match(self.skin) and self.name and self.name.strip()):
+            raise ValueError("a created fighter needs its look and name")
+        if self.fighter != CREATED and self.name is not None:
+            raise ValueError("only a created fighter has a name")
+        return self
 
 
 @dataclass
@@ -62,7 +75,7 @@ class Room:
             "code": self.code,
             "you": you,
             "started": self.started,
-            "members": [{"slot": s.slot, **s.member.model_dump()} for s in self.seats],
+            "members": [{"slot": s.slot, **s.member.model_dump(exclude_none=True)} for s in self.seats],
         }
 
 

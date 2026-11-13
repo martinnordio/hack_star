@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code reviews · Hack star</title>
+<style>
+  body { margin: 0; padding: 1.5rem; font: 15px/1.55 system-ui, "Segoe UI", Roboto, sans-serif; color: #1a1d21; background: #f7f8fa; }
+  main { max-width: 1100px; margin: 0 auto; }
+  h1 { border-left: 5px solid #2563eb; padding-left: 0.75rem; }
+  table { border-collapse: collapse; width: 100%; background: #fff; font-size: 0.9rem; }
+  th, td { border: 1px solid #d5d9e0; padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  th { background: #f7f8fa; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; font-variant-ligatures: none; }
+  a { color: #1d4ed8; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e6e8eb; background: #111418; } table { background: #1a1e24; }
+    th { background: #111418; } th, td { border-color: #343a44; } a { color: #6ea2ff; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Code reviews</h1>
+  <p>Written by the review stage (<code>REVIEW:</code>). Newest first.</p>
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Scope</th><th>Mode</th><th>Range</th><th>Snippets</th><th>Open findings</th></tr>
+    </thead>
+    <tbody>
+      <tr data-branch="feature/accounts-fighters-and-languages">
+        <td><a href="2026-11-13_feature-accounts-fighters-and-languages.html">2026-11-13</a></td>
+        <td><code>the repository</code></td>
+        <td>branch <code>feature/accounts-fighters-and-languages</code> + semantic diff</td>
+        <td><code>7c6b910..fa93c3a</code></td>
+        <td>10 + 13 record blocks</td>
+        <td>5 (1 should-fix, 4 nit)</td>
+      </tr>
+      </tbody>
+  </table>
+</main>
+</body>
+</html>

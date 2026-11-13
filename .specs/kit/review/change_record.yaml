@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=change_record.schema.json
+# Change record — one per feature branch: .specs/changes/<name>/change_record.yaml
+# Only judgement. Before / After are produced by REVIEW: into before/ and after/.
+version: 1
+branch: feature/example
+why: |
+  What problem exists today and why this change is needed.
+  Name the symptom users see, or the decision it unblocks.
+spec:
+  path: .specs/features/2026_01_01_example_spec.md
+  statements: [S1, S2]
+changes:
+  - id: export-command
+    kind: command
+    change: added
+    object: "export --format csv"
+    note: New command; check the header row and the empty-list case.
+    statements: [S1]
+    examples:
+      - name: two-rows
+        input: |
+          export --format csv --input fixtures/two_rows.json
+  - id: settings-page
+    kind: ui
+    change: modified
+    object: /settings
+    statements: [S2]
+    examples:
+      - name: default
+        input: |
+          route=/settings
+        views: [desktop]
+breaking: none
+review:
+  - question: Does an older settings file still load?
+    answer: |
+      Yes. The new key is optional and defaults to the old behaviour.

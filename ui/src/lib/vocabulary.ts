@@ -1,37 +1,46 @@
+import type { TextKey } from './i18n/en'
+
+/** Text keys of a word and its meaning. */
 export interface Word {
-  word: string
-  meaning: string
+  word: TextKey
+  meaning: TextKey
 }
 
-export const VOCABULARY: Word[] = [
-  { word: 'Fighter', meaning: 'A character you play with.' },
-  { word: 'Trophies', meaning: 'Points a fighter wins in matches; they show how good you are with it.' },
-  { word: 'Prestige', meaning: 'A level a fighter reaches at every 1000 trophies, shown as a badge with a number.' },
-  { word: 'Power level', meaning: 'How strong a fighter is (1 to 11; up to 22 in Hack star with a hack code).' },
-  { word: 'Rarity', meaning: 'How rare a fighter or skin is: Rare, Super Rare, Epic, Mythic, Legendary.' },
-  { word: 'Skin', meaning: 'A different look (costume) for a fighter; it does not make it stronger.' },
-  { word: 'Legendary skin', meaning: 'The rarest and most special-looking skins.' },
-  { word: 'Credits', meaning: 'Money used to unlock fighters, upgrade them and buy skins.' },
-  { word: 'Shop', meaning: 'Where you buy skins with credits.' },
-  { word: 'Skin of the day', meaning: 'One skin in the Shop that is cheaper today; a new one comes every day.' },
-  { word: 'Upgrade', meaning: 'Spending credits to raise a fighter\'s power level, so it has more health and damage.' },
-  { word: 'Super', meaning: 'A special attack that charges up by hitting enemies.' },
-  { word: 'Hypercharge', meaning: 'A boosted Super: for 5 seconds the fighter glows and is faster and stronger.' },
-  { word: 'Overtime', meaning: 'One extra minute when time runs out; the walls and cacti break so nobody can hide.' },
-  { word: 'Last fighter standing', meaning: 'How a match is won: be the last one (or the last team) still in.' },
-  { word: 'Bush', meaning: 'Tall grass (cacti in the canyon) where fighters hide.' },
-  { word: 'Main', meaning: 'The fighter a kid plays the most.' },
-  { word: 'Push / pushing', meaning: 'Playing a lot to win trophies with one fighter.' },
-  { word: 'Camping', meaning: 'Hiding (often in a bush) and waiting for others.' },
-  { word: 'Tank', meaning: 'A fighter with a lot of health (Hack star: Rocko, Sir Clank).' },
-  { word: 'Sharpshooter', meaning: 'A fighter that shoots very far but has less health (Hack star: Luna, Kira).' },
-  { word: 'Thrower', meaning: 'A fighter whose attacks fly over walls and explode (Hack star: Frosty, Coco).' },
-  { word: 'Spreader', meaning: 'Hack star: a fighter that fires several shots in a fan, best up close (Blaze, Pixel).' },
-  { word: 'Speedy', meaning: 'Hack star: a fast fighter whose Super is a dash (Turbo, Sparky).' },
-  { word: 'GG', meaning: '"Good game", said at the end of a match.' },
-  { word: 'Hack code', meaning: 'Hack star only: a secret code (typed or QR) that gives extras.' },
-  { word: 'Room', meaning: 'Hack star: a place with a 4-letter code where friends meet to play one match together.' },
-  { word: 'Teammate', meaning: 'A friend on your team: your shots do not hurt them, and their health bar is blue.' },
-  { word: 'Super blast', meaning: 'Hack star\'s Super: a fan of big shots that go through walls.' },
-  { word: 'HYPERCHARGE (code)', meaning: 'Hack star hack code: your Super charges 3 times faster and every Super is a Hypercharge.' },
-]
+const WORDS = [
+  'fighter',
+  'trophies',
+  'prestige',
+  'powerLevel',
+  'rarity',
+  'skin',
+  'legendarySkin',
+  'credits',
+  'shop',
+  'skinOfTheDay',
+  'upgrade',
+  'super',
+  'hypercharge',
+  'overtime',
+  'lastFighterStanding',
+  'bush',
+  'main',
+  'push',
+  'camping',
+  'tank',
+  'sharpshooter',
+  'thrower',
+  'spreader',
+  'speedy',
+  'gg',
+  'hackCode',
+  'room',
+  'teammate',
+  'superBlast',
+  'hyperchargeCode',
+  'account',
+  'createdFighter',
+] as const
+
+export const VOCABULARY: Word[] = WORDS.map(
+  (id): Word => ({ word: `vocabulary.${id}.word`, meaning: `vocabulary.${id}.meaning` }),
+)
