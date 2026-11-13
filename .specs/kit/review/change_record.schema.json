@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantic change record",
+  "description": "One record per feature branch. Holds only judgement; Before / After are produced. See semantic_diff.md.",
+  "type": "object",
+  "required": ["version", "branch", "why", "spec", "changes"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "branch": { "type": "string" },
+    "base": { "type": "string", "description": "Base revision, filled by REVIEW:." },
+    "why": { "type": "string", "minLength": 20 },
+    "spec": {
+      "type": "object",
+      "required": ["path", "statements"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string", "pattern": "^\\.specs/.+_spec\\.md$" },
+        "statements": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^S[0-9]+$" },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "changes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/change" } },
+    "breaking": { "type": "string", "description": "'none', or what breaks and for whom." },
+    "review": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["question", "answer"],
+        "additionalProperties": false,
+        "properties": {
+          "question": { "type": "string" },
+          "answer": { "type": "string" }
+        }
+      }
+    },
+    "measured": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["metric", "command"],
+        "additionalProperties": false,
+        "properties": {
+          "metric": { "type": "string" },
+          "command": { "type": "string" },
+          "unit": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "change": {
+      "type": "object",
+      "required": ["id", "kind", "change", "object", "examples"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "kind": {
+          "enum": [
+            "command",
+            "api",
+            "schema",
+            "data-format",
+            "output",
+            "ui",
+            "tokens",
+            "message",
+            "config",
+            "dependency",
+            "performance"
+          ]
+        },
+        "change": { "enum": ["added", "modified", "removed"] },
+        "object": { "type": "string" },
+        "note": { "type": "string" },
+        "statements": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^S[0-9]+$" },
+          "uniqueItems": true
+        },
+        "extraction": { "enum": ["auto", "manual"], "default": "auto" },
+        "manual_reason": { "type": "string" },
+        "examples": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/example" } }
+      },
+      "if": { "properties": { "extraction": { "const": "manual" } }, "required": ["extraction"] },
+      "then": { "required": ["manual_reason"] }
+    },
+    "example": {
+      "type": "object",
+      "required": ["name", "input"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "input": { "type": "string" },
+        "views": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

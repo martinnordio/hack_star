@@ -585,5 +585,7 @@ words) and all automated checks; visual checks listed above are still open.
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
+- [x] Implementation · every Step's tasks checked *(except the visual checks listed in Step 9–11 notes)*
+- [ ] Review · review page and semantic diff written; code review without Blocking findings
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

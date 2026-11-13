@@ -5,7 +5,7 @@
   "layer": null,
   "project": "existing",
   "languages": ["python", "typescript", "svelte", "powershell"],
-  "stages": ["requirements", "plan", "pr"],
+  "stages": ["requirements", "plan", "implementation", "review", "pr"],
   "on_demand": [],
   "git_host": "github",
   "link_issues": true,

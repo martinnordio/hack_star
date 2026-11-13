@@ -15,8 +15,7 @@ Text outside the markers (written by hand) is kept. Without markers, the block i
 end. Every script has `-DryRun`, which prints the new description and changes nothing.
 
 `update_pr.ps1` also fills a second block, `<!-- semantic-diff:start -->` …
-`<!-- semantic-diff:end -->`, when it gets `-SemanticDiffFile`. Hack star's kit has no review
-stage, so that block is normally left as it is.
+`<!-- semantic-diff:end -->`, when it gets `-SemanticDiffFile` (written by `REVIEW:`).
 
 | Script | Does |
 |--------|------|

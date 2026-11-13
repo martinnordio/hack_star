@@ -1,0 +1,174 @@
+<!doctype html>
+<!-- Review page template of the review stage (REVIEW:). Copy it to
+     .specs/review/<yyyy-mm-dd>_<branch-slug>.html and replace every {{…}} placeholder and every
+     REPEAT block; then add a row to .specs/review/index.html (index_page.html).
+     Rules: one self-contained file (no external CSS, fonts, scripts or images except data: URIs),
+     readable without JavaScript, every code character escaped (& < > "), relative links only. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}} — semantic diff</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --surface: #ffffff; --border: #d5d9e0; --text: #1a1d21; --text-dim: #4b5563;
+    --primary: #2563eb; --add: #dcfce7; --add-text: #14532d; --del: #fee2e2; --del-text: #7f1d1d;
+    --warn: #b45309; --tip-bg: #1a1d21; --tip-text: #f7f8fa;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111418; --surface: #1a1e24; --border: #343a44; --text: #e6e8eb; --text-dim: #a8afb9;
+      --primary: #6ea2ff; --add: #12301f; --add-text: #bbf7d0; --del: #3a1717; --del-text: #fecaca;
+      --warn: #fbbf24; --tip-bg: #e6e8eb; --tip-text: #111418;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 var(--font-sans); }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1100px); gap: 24px; padding: 24px; }
+  nav.toc { position: sticky; top: 24px; align-self: start; font-size: 14px; }
+  nav.toc ol { margin: 4px 0; padding-left: 18px; }
+  nav.toc a { color: var(--text-dim); text-decoration: none; }
+  nav.toc a:hover, nav.toc a:focus { color: var(--primary); }
+  header.page .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--text-dim); font-size: 14px; }
+  .recommendation { border-left: 4px solid var(--primary); padding: 8px 12px; background: var(--surface); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } nav.toc { position: static; } }
+  h1 { font-size: 24px; margin: 0 0 8px; } h2 { font-size: 19px; margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  h3 { font-size: 16px; margin: 0 0 8px; } h4 { font-size: 13px; margin: 0 0 4px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+  a { color: var(--primary); }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: var(--surface); }
+  code, pre { font-family: var(--font-mono); font-variant-ligatures: none; font-size: 13px; }
+  pre { margin: 0; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; white-space: pre; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--border); text-transform: uppercase; }
+  .added { color: var(--add-text); background: var(--add); } .removed { color: var(--del-text); background: var(--del); }
+  .modified { color: var(--warn); }
+  .note { color: var(--text-dim); margin: 4px 0 8px; }
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  main, .ba > div { min-width: 0; }
+  @media (max-width: 700px) { .ba { grid-template-columns: 1fr; } }
+  .ba pre > span { display: block; min-height: 1.5em; }
+  .ba pre .add { background: var(--add); color: var(--add-text); }
+  .ba pre .del { background: var(--del); color: var(--del-text); }
+  .absent { padding: 24px; text-align: center; color: var(--text-dim); border: 1px dashed var(--border); border-radius: 4px;
+    background: repeating-linear-gradient(45deg, transparent, transparent 6px, var(--bg) 6px, var(--bg) 12px); }
+  table.diff { font-family: var(--font-mono); font-variant-ligatures: none; font-size: 13px; border: 1px solid var(--border); display: block; overflow-x: auto; }
+  table.diff td { border: none; padding: 0 8px; white-space: pre; }
+  table.diff td.ln { color: var(--text-dim); text-align: right; width: 1%; user-select: none; }
+  table.diff tr.add td { background: var(--add); color: var(--add-text); }
+  table.diff tr.del td { background: var(--del); color: var(--del-text); }
+  .concept { border-bottom: 1px dotted var(--primary); position: relative; cursor: help; }
+  .concept .tip { display: none; position: absolute; left: 0; top: 1.6em; z-index: 10; width: 320px; padding: 8px;
+    background: var(--tip-bg); color: var(--tip-text); border-radius: 4px; font: 13px/1.4 var(--font-sans); white-space: normal; }
+  .concept:hover .tip, .concept:focus .tip { display: block; }
+  .sev-blocking { color: var(--del-text); background: var(--del); } .sev-should-fix { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Table of contents">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#spec-context">Spec context</a></li>
+    <li><a href="#semantic-diff">Semantic diff</a>
+      <ol><!-- one <li><a href="#sd-{{id}}">{{short object name}}</a></li> per change block, then <li><a href="#sd-qa">Author Q&amp;A</a></li> --></ol></li>
+    <li><a href="#previous">Previously reviewed</a></li>
+    <li><a href="#highlights">Highlights</a>
+      <ol><!-- one <li><a href="#c{{n}}">{{short title}}</a></li> per highlight --></ol></li>
+    <li><a href="#findings">Findings</a></li>
+    <li><a href="#not-covered">Not covered</a></li>
+    <li><a href="#glossary">Concepts glossary</a></li>
+    <li><a href="#checklist">Reviewer checklist</a></li>
+  </ol>
+</nav>
+<main>
+<header class="page">
+  <h1>{{title}} — semantic diff</h1>
+  <div class="meta">
+    <span><b>Branch</b> {{branch}}</span><span><b>Base</b> {{base}}</span><span><b>Head</b> {{head}}</span>
+    <span><b>Target</b> {{default branch}}</span><span><b>Date</b> {{date}}</span>
+    <span><b>Commits</b> {{commits}}</span><span><b>Files</b> {{files}} · +{{added}} / −{{removed}}</span>
+    <span><b>Written by</b> REVIEW: · {{model}}</span>
+  </div>
+</header>
+
+<section id="summary"><h2>Summary</h2>
+  <ul><!-- 3–5 <li> in plain words --></ul>
+  <p class="recommendation"><strong>Recommendation:</strong> {{Approve / Approve with follow-ups / Request changes}} — {{one sentence}}</p>
+</section>
+
+<section id="spec-context"><h2>Spec context</h2>
+  <p><a href="{{relative link to the spec}}">{{spec file}}</a> — statements {{S…}}; Steps {{…}}.</p>
+</section>
+
+<section id="semantic-diff"><h2>Semantic diff</h2>
+  <div class="card" data-card="0-record">
+    <p><strong>Why:</strong> {{why}}</p>
+    <p><strong>Breaking:</strong> {{breaking}} · <strong>Checks:</strong> {{n pass · n n/a · n fail}}</p>
+    <table><tr><th>#</th><th>Check</th><th>Result</th></tr><!-- one row per check C1–C9 --></table>
+  </div>
+  <!-- REPEAT per change block, in record order:
+  <article class="card" id="sd-{{id}}" data-card="{{n}}-{{id}}">
+    <h3><span class="badge">{{kind}}</span> {{object}} <span class="badge {{added|modified|removed}}">{{change}}</span></h3>
+    <p class="note">{{note}} · {{S…}}</p>
+    <pre class="input">{{example input}}</pre>
+    <div class="ba">
+      <div><h4>Before</h4><pre>{{before: one <span> per line, no newlines between them; lines only here get class="del"}}</pre></div>
+      <div><h4>After</h4><pre>{{after: one <span> per line; lines only here get class="add"}}</pre></div>
+    </div>
+    For an absent side: <div class="absent">absent</div>; for images: <img alt="…" src="data:image/png;base64,…">.
+  </article>
+  -->
+  <div class="card" id="sd-qa" data-card="9-qa"><h3>Author Q&amp;A</h3><dl><!-- <dt>question</dt><dd>answer</dd> --></dl></div>
+</section>
+
+<section id="previous"><h2>Previously reviewed</h2>
+  <p><!-- Earlier pages of this branch in .specs/review/ (from their review-meta): link, date, head; hunks already
+     covered are not explained again; follow-ups of their findings: resolved / partially / still open.
+     "None — first review of this branch." when there are none. --></p>
+</section>
+
+<section id="highlights"><h2>Highlights</h2>
+  <!-- REPEAT, at most 12, most relevant first:
+  <article class="card" id="c{{n}}">
+    <h3>{{n}} · {{title, ≤ 10 words}}</h3>
+    <p class="note"><code>{{path}}:{{start}}-{{end}}</code> · {{commit}} · {{Step / S…}}</p>
+    <table class="diff">
+      <tr class="ctx"><td class="ln">{{line}}</td><td>{{escaped code}}</td></tr>
+      <tr class="del"><td class="ln">{{line}}</td><td>{{escaped code}}</td></tr>
+      <tr class="add"><td class="ln">{{line}}</td><td>{{escaped code with 2–5 concept tooltips:
+        <span class="concept" tabindex="0">word<span class="tip" role="tooltip"><b>Concept</b> — what it is, then why it is used on this line (≤ 40 words).</span></span>}}</td></tr>
+    </table>
+    <p><strong>What changed:</strong> … <strong>Why it matters:</strong> … <strong>Check:</strong> …</p>
+  </article>
+  -->
+</section>
+
+<section id="findings"><h2>Findings</h2>
+  <table><tr><th>#</th><th>Finding</th><th>Layer</th><th>Class</th><th>Severity</th><th>Target</th></tr><!-- rows; severity cell class="sev-blocking" / "sev-should-fix" --></table>
+</section>
+
+<section id="not-covered"><h2>Not covered</h2><ul><!-- what was left out, with the reason --></ul></section>
+
+<section id="glossary"><h2>Concepts glossary</h2><dl><!-- every concept of the tooltips once: <dt>…</dt><dd>…</dd> --></dl></section>
+
+<section id="checklist"><h2>Reviewer checklist</h2>
+  <ul>
+    <li><input type="checkbox" id="chk1"> <label for="chk1">Every statement the change claims is met</label></li>
+    <li><input type="checkbox" id="chk2"> <label for="chk2">Each Before | After is what I expect</label></li>
+    <li><input type="checkbox" id="chk3"> <label for="chk3">The findings are acceptable or have a target</label></li>
+  </ul>
+</section>
+
+<script type="application/json" id="review-meta">
+{ "version": 1, "date": "{{date}}", "branch": "{{branch}}", "base": "{{base}}", "head": "{{head}}",
+  "record": "../changes/{{name}}/change_record.yaml", "commits": [], "covered": [], "findings": [], "specs": [] }
+</script>
+</main>
+</div>
+</body>
+</html>
