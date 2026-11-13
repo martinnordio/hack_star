@@ -3,13 +3,14 @@
   import { codeFromScan, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
+  import { t, tOr } from './i18n'
 
   /** `initialCode` comes from a scanned link that opened the game (`?hack=`). */
   let { hacks, initialCode }: { hacks: Hack[]; initialCode?: string } = $props()
 
   let code = $state('')
   let busy = $state(false)
-  let error = $state<string>()
+  let error = $state<'hackScreen.unknownCode' | 'common.serverDown'>()
   let shake = $state(false)
   let celebrating = $state<Hack>()
   let confirmReset = $state(false)
@@ -30,7 +31,7 @@
       clearTimeout(celebrationTimer)
       celebrationTimer = setTimeout(() => (celebrating = undefined), 2600)
     } catch (e) {
-      error = e instanceof UnknownCodeError ? 'Unknown code' : 'Cannot reach the Hack star server.'
+      error = e instanceof UnknownCodeError ? 'hackScreen.unknownCode' : 'common.serverDown'
       shake = false
       requestAnimationFrame(() => (shake = true))
     } finally {
@@ -57,7 +58,7 @@
       apply(code)
     }}
   >
-    <label for="code">&gt; ENTER HACK CODE_</label>
+    <label for="code">{$t('hackScreen.enterCode')}</label>
     <div class="row">
       <input
         id="code"
@@ -69,18 +70,18 @@
         placeholder="●●●●●●"
         oninput={() => (error = undefined)}
       />
-      <button class="go" disabled={busy || !code.trim()}>Hack!</button>
+      <button class="go" disabled={busy || !code.trim()}>{$t('hackScreen.go')}</button>
     </div>
     {#if error}
-      <p class="error" role="alert">{error}</p>
+      <p class="error" role="alert">{$t(error)}</p>
     {/if}
   </form>
 
   <div class="qr">
     <button class="scan" onclick={() => (scanning = !scanning)}>
-      {scanning ? 'Stop scanning' : '📷 Scan QR'}
+      {scanning ? $t('common.stopScanning') : `📷 ${$t('common.scanQr')}`}
     </button>
-    <a href="/?qr" target="_blank" rel="noopener">Print QR codes</a>
+    <a href="/?qr" target="_blank" rel="noopener">{$t('hackScreen.printQr')}</a>
   </div>
   {#if scanning}
     <QrScanner
@@ -92,33 +93,36 @@
   {/if}
 
   <section>
-    <h3>Active hacks</h3>
+    <h3>{$t('hackScreen.active')}</h3>
     {#if active.length === 0}
-      <p class="none">No hacks yet. Find a code!</p>
+      <p class="none">{$t('hackScreen.none')}</p>
     {:else}
       <ul class="active">
         {#each active as hack (hack.id)}
           <li>
-            <span class="on">ON</span>
-            <span><strong>{hack.name}</strong><br />{hack.description}</span>
+            <span class="on">{$t('hackScreen.on')}</span>
+            <span><strong>{$tOr(`hack.${hack.id}.name`, hack.name)}</strong><br />{$tOr(`hack.${hack.id}.description`, hack.description)}</span>
           </li>
         {/each}
       </ul>
       {#if confirmReset}
         <div class="confirm">
-          <span>Turn all hacks off?</span>
-          <button class="danger" onclick={reset}>Yes, reset</button>
-          <button onclick={() => (confirmReset = false)}>No</button>
+          <span>{$t('hackScreen.confirmReset')}</span>
+          <button class="danger" onclick={reset}>{$t('common.yesReset')}</button>
+          <button onclick={() => (confirmReset = false)}>{$t('common.no')}</button>
         </div>
       {:else}
-        <button class="reset" onclick={() => (confirmReset = true)}>Reset all hacks</button>
+        <button class="reset" onclick={() => (confirmReset = true)}>{$t('hackScreen.reset')}</button>
       {/if}
     {/if}
   </section>
 </div>
 
 {#if celebrating}
-  <Celebration title={celebrating.name} subtitle={celebrating.description} />
+  <Celebration
+    title={$tOr(`hack.${celebrating.id}.name`, celebrating.name)}
+    subtitle={$tOr(`hack.${celebrating.id}.description`, celebrating.description)}
+  />
 {/if}
 
 <style>

@@ -10,6 +10,7 @@
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { options } from './options'
+  import { t, tOr } from './i18n'
 
   let { fighters, initialCode, onStart }: { fighters: Fighter[]; initialCode?: string; onStart: () => void } = $props()
 
@@ -52,13 +53,13 @@
 
 {#if !info}
   <div class="start">
-    <p class="intro">Play on your own iPads, phones or computers on the same Wi-Fi: you and up to 2 friends on one team against the bots.</p>
+    <p class="intro">{$t('friends.intro')}</p>
     {#if $room?.error}
-      <p class="error" role="alert">{$room.error}</p>
+      <p class="error" role="alert">{$tOr($room.error, $room.error)}</p>
     {/if}
-    <button class="big create" onclick={() => createRoom(me())}>➕ Create a room</button>
+    <button class="big create" onclick={() => createRoom(me())}>➕ {$t('friends.createRoom')}</button>
     <div class="join">
-      <label for="room-code">Join with a code</label>
+      <label for="room-code">{$t('friends.joinWithCode')}</label>
       <div class="row">
         <input
           id="room-code"
@@ -70,9 +71,9 @@
           oninput={() => (code = codeFrom(code))}
           onkeydown={(e) => e.key === 'Enter' && join(code)}
         />
-        <button class="big" disabled={code.length !== 4} onclick={() => join(code)}>Join</button>
+        <button class="big" disabled={code.length !== 4} onclick={() => join(code)}>{$t('friends.join')}</button>
       </div>
-      <button class="scan" onclick={() => (scanning = !scanning)}>{scanning ? 'Stop scanning' : '📷 Scan QR'}</button>
+      <button class="scan" onclick={() => (scanning = !scanning)}>{scanning ? $t('common.stopScanning') : `📷 ${$t('common.scanQr')}`}</button>
       {#if scanning}
         <QrScanner
           onCode={(text) => {
@@ -83,16 +84,16 @@
       {/if}
     </div>
     {#if $room && !$room.error}
-      <p class="wait">Connecting…</p>
+      <p class="wait">{$t('friends.connecting')}</p>
     {/if}
   </div>
 {:else}
   <div class="lobby">
     <div class="code-box">
-      <span class="label">Room code</span>
-      <span class="code" aria-label="Room code {info.code.split('').join(' ')}">{info.code}</span>
-      {#if qr}<img class="qr" src={qr} alt="QR code to join room {info.code}" />{/if}
-      <span class="hint">Friends: tap <strong>Friends</strong> and type the code, or scan the QR code.</span>
+      <span class="label">{$t('friends.roomCode')}</span>
+      <span class="code" aria-label={$t('friends.roomCodeLabel', { code: info.code.split('').join(' ') })}>{info.code}</span>
+      {#if qr}<img class="qr" src={qr} alt={$t('friends.qrAlt', { code: info.code })} />{/if}
+      <span class="hint">{#each $t('friends.hint').split(/\{(\w+)\}/) as part, i}{#if i % 2 === 0}{part}{:else}<strong>{$t('home.friends')}</strong>{/if}{/each}</span>
     </div>
 
     <ul class="players">
@@ -102,28 +103,31 @@
           {#if seat}
             <img src={portrait(seat.fighter, seat.skin)} alt="" />
             <span class="who">
-              <strong>Player {slot + 1}{slot === 0 ? ' 👑' : ''}</strong>
-              <span>{name(seat.fighter)} · ⚡ {seat.power}{seat.slot === info.you ? ' · you' : ''}</span>
+              <strong>{$t('friends.player', { number: slot + 1 })}{slot === 0 ? ' 👑' : ''}</strong>
+              <span>{name(seat.fighter)} · ⚡ {seat.power}{seat.slot === info.you ? ` · ${$t('friends.you')}` : ''}</span>
             </span>
           {:else}
-            <span class="who"><strong>Player {slot + 1}</strong><span>Waiting for a friend…</span></span>
+            <span class="who"><strong>{$t('friends.player', { number: slot + 1 })}</strong><span>{$t('friends.waitingForFriend')}</span></span>
           {/if}
         </li>
       {/each}
     </ul>
 
     {#if $room?.error}
-      <p class="error" role="alert">{$room.error}</p>
+      <p class="error" role="alert">{$tOr($room.error, $room.error)}</p>
     {/if}
 
     {#if host}
       <button class="big start-match" onclick={onStart}>
-        ▶ START · {info.members.length} {info.members.length === 1 ? 'player' : 'players'} + {bots} {bots === 1 ? 'bot' : 'bots'}
+        ▶ {$t('friends.start', {
+          players: $t(info.members.length === 1 ? 'friends.players.one' : 'friends.players.other', { count: info.members.length }),
+          bots: $t(bots === 1 ? 'common.bots.one' : 'common.bots.other', { count: bots }),
+        })}
       </button>
     {:else}
-      <p class="wait">Waiting for Player 1 to start…</p>
+      <p class="wait">{$t('friends.waitingForHost')}</p>
     {/if}
-    <button class="leave" onclick={leaveRoom}>Leave the room</button>
+    <button class="leave" onclick={leaveRoom}>{$t('friends.leave')}</button>
   </div>
 {/if}
 

@@ -193,7 +193,7 @@ _None._
 | **1** | Accounts: storage, migration, per-account progress | ✅ Done | [→ Step 1](#step-1--accounts-storage-migration-per-account-progress) |
 | **2** | Accounts screen: create, rename, switch | ✅ Done | [→ Step 2](#step-2--accounts-screen-create-rename-switch) |
 | **3** | Reset in Settings | ✅ Done | [→ Step 3](#step-3--reset-in-settings) |
-| **4** | Languages: texts in one place, language per account | ⬜ Not started | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
+| **4** | Languages: texts in one place, language per account | ✅ Done | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
 | **5** | Translations: German, Swiss German, Spanish, Italian | ⬜ Not started | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
 | **6** | Password for the QR codes | ⬜ Not started | [→ Step 6](#step-6--password-for-the-qr-codes) |
 | **7** | Create a fighter and the CREATOR code | ⬜ Not started | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
@@ -322,16 +322,29 @@ Every text the player sees comes from the English dictionary, and each account h
 chosen in Settings (S18, S20 — with English only filled).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `ui/src/lib/i18n/`: `en.ts`, `t` store from the current account's language, `{name}` placeholders, fallback to English (D5).
-- [ ] Move every visible text of every screen (including `vocabulary.ts`, results, errors, Arena HUD, QR page) into `en.ts`; server texts by id (D6).
-- [ ] Account `language`: set for new accounts from the browser language (`de-CH` → `gsw`, D7), else English; Settings: language picker; switching account switches language.
-- [ ] Tests: language of a new account from the browser language; switching account switches language; placeholders filled.
-- [ ] Check in the browser: every screen still shows the same English texts.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] `ui/src/lib/i18n/`: `en.ts`, `t` store from the current account's language, `{name}` placeholders, fallback to English (D5).
+- [x] Move every visible text of every screen (including `vocabulary.ts`, results, errors, Arena HUD, QR page) into `en.ts`; server texts by id (D6).
+- [x] Account `language`: set for new accounts from the browser language (`de-CH` → `gsw`, D7), else English; Settings: language picker; switching account switches language.
+- [x] Tests: language of a new account from the browser language; switching account switches language; placeholders filled.
+- [x] Check in the browser: every screen still shows the same English texts.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 17:22
+
+- 264 keys in `ui/src/lib/i18n/en.ts`; `$t(key, params)` and `$tOr(key, fallback)` in the
+  components; `vocabulary.ts` and the fighter types (`game/types.ts`: `nameKey`, `aboutKey`,
+  `superNameKey`) hold keys instead of English text; room errors are keys, so they also switch
+  language. Rarity names and fighter type names are translated too.
+- Left as they are on purpose: fighter, skin and code names, the "C" coin icon, the `E` key,
+  example codes (`ABCD`), the names of the languages (each in its own language), the QR page's
+  `npm run dev` / Network hint (it must match what Vite prints), and the first account name
+  "Player 1" (it is saved data, not a label).
+
+**Done (2026-11-13 · ~25m · Claude Opus 5.5)** — every visible text from the English dictionary,
+language per account with a picker in Settings; `npm test` 153 passed, `npm run check` 0
+errors; browser: Home, Settings, Fighters, Info and a match show the same English texts.
 
 ---
 

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { prestigeLevel } from './fighters'
+  import { t } from './i18n'
 
   let { trophies, size = 2.2 }: { trophies: number; size?: number } = $props()
 
@@ -7,7 +8,7 @@
 </script>
 
 {#if level > 0}
-  <span class="badge" style="--size: {size}em" title="Prestige {level}" aria-label="Prestige {level}">
+  <span class="badge" style="--size: {size}em" title={$t('prestige.badge', { level })} aria-label={$t('prestige.badge', { level })}>
     <span class="number">{level}</span>
   </span>
 {/if}

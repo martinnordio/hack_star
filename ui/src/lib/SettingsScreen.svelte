@@ -3,6 +3,8 @@
   import type { BotLevel } from './game/settings'
   import { BOT_COUNTS, options } from './options'
   import { resetProgress } from './progress'
+  import { language, setLanguage, t, type TextKey } from './i18n'
+  import { LANGUAGES, LANGUAGE_NAMES } from './i18n/languages'
 
   let confirming = $state(false)
   let resetDone = $state(false)
@@ -13,16 +15,27 @@
     resetDone = true
   }
 
-  const LEVELS: { id: BotLevel; name: string; emoji: string; text: string }[] = [
-    { id: 'easy', name: 'Easy', emoji: '🙂', text: 'Slow bots that miss a lot' },
-    { id: 'medium', name: 'Medium', emoji: '😠', text: 'Quicker bots with better aim' },
-    { id: 'hard', name: 'Hard', emoji: '😈', text: 'Fast bots that rarely miss' },
+  const LEVELS: { id: BotLevel; name: TextKey; emoji: string; text: TextKey }[] = [
+    { id: 'easy', name: 'botLevel.easy', emoji: '🙂', text: 'settings.easyText' },
+    { id: 'medium', name: 'botLevel.medium', emoji: '😠', text: 'settings.mediumText' },
+    { id: 'hard', name: 'botLevel.hard', emoji: '😈', text: 'settings.hardText' },
   ]
 </script>
 
 <section>
-  <h3>Bot level</h3>
-  <div class="levels" role="radiogroup" aria-label="Bot level">
+  <h3>{$t('settings.language')}</h3>
+  <div class="languages" role="radiogroup" aria-label={$t('settings.language')}>
+    {#each LANGUAGES as code (code)}
+      <button class="language" role="radio" lang={code === 'gsw' ? 'gsw' : code} aria-checked={$language === code} onclick={() => setLanguage(code)}>
+        {LANGUAGE_NAMES[code]}
+      </button>
+    {/each}
+  </div>
+</section>
+
+<section>
+  <h3>{$t('settings.botLevel')}</h3>
+  <div class="levels" role="radiogroup" aria-label={$t('settings.botLevel')}>
     {#each LEVELS as level (level.id)}
       <button
         class="level {level.id}"
@@ -31,22 +44,22 @@
         onclick={() => ($options.botLevel = level.id)}
       >
         <span class="emoji">{level.emoji}</span>
-        <span class="name">{level.name}</span>
-        <span class="text">{level.text}</span>
+        <span class="name">{$t(level.name)}</span>
+        <span class="text">{$t(level.text)}</span>
       </button>
     {/each}
   </div>
 </section>
 
 <section>
-  <h3>Number of bots</h3>
-  <div class="counts" role="radiogroup" aria-label="Number of bots">
+  <h3>{$t('settings.botCount')}</h3>
+  <div class="counts" role="radiogroup" aria-label={$t('settings.botCount')}>
     {#each BOT_COUNTS as count (count)}
       <button
         class="count"
         role="radio"
         aria-checked={$options.botCount === count}
-        aria-label="{count} {count === 1 ? 'bot' : 'bots'}"
+        aria-label={$t(count === 1 ? 'common.bots.one' : 'common.bots.other', { count })}
         onclick={() => ($options.botCount = count)}
       >
         {count}
@@ -55,22 +68,21 @@
   </div>
 </section>
 
-<p class="note">Saved on this device. Used in every match (not in Training).</p>
+<p class="note">{$t('settings.note')}</p>
 
 <section class="reset">
-  <h3>Start again</h3>
+  <h3>{$t('settings.startAgain')}</h3>
   {#if confirming}
     <p class="warn" role="alert">
-      Are you sure? This account gets 0 credits and 0 trophies, fighters are locked again, power
-      levels and skins are gone. Hack codes and your created fighter stay.
+      {$t('settings.resetWarning')}
     </p>
     <div class="row">
-      <button class="danger" onclick={reset}>Yes, reset</button>
-      <button class="plain" onclick={() => (confirming = false)}>Cancel</button>
+      <button class="danger" onclick={reset}>{$t('common.yesReset')}</button>
+      <button class="plain" onclick={() => (confirming = false)}>{$t('common.cancel')}</button>
     </div>
   {:else}
-    <button class="danger" onclick={() => ((confirming = true), (resetDone = false))}>🔄 Reset coins and trophies</button>
-    {#if resetDone}<p class="done" role="status">Done: this account starts again.</p>{/if}
+    <button class="danger" onclick={() => ((confirming = true), (resetDone = false))}>🔄 {$t('settings.reset')}</button>
+    {#if resetDone}<p class="done" role="status">{$t('settings.resetDone')}</p>{/if}
   {/if}
 </section>
 
@@ -176,6 +188,23 @@
 
   .reset {
     margin-top: 1.5rem;
+  }
+
+  .languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .language {
+    padding: 0.5rem 0.9rem;
+    border-radius: 1rem;
+    font-weight: 900;
+    font-size: 1.05rem;
+  }
+
+  .language[aria-checked='true'] {
+    background: linear-gradient(#4aa8ff, #2f6bff);
   }
 
   .reset .row {

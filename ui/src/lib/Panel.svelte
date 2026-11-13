@@ -1,12 +1,13 @@
 <script lang="ts">
   import type { Snippet } from 'svelte'
+  import { t } from './i18n'
 
   let { title, onBack, children }: { title: string; onBack: () => void; children: Snippet } = $props()
 </script>
 
 <section class="panel">
   <header>
-    <button class="back" onclick={onBack} aria-label="Back to home">◀</button>
+    <button class="back" onclick={onBack} aria-label={$t('common.backHome')}>◀</button>
     <h2>{title}</h2>
   </header>
   <div class="content">

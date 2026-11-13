@@ -10,6 +10,7 @@
   import { accounts, currentAccount, progress } from './accounts'
   import AccountsPanel from './AccountsPanel.svelte'
   import { totalTrophies } from './progress'
+  import { t } from './i18n'
 
   interface Props {
     fighters: Fighter[]
@@ -52,40 +53,40 @@
   </div>
 
   <header class="top">
-    <div class="chip" aria-label="Total trophies">
+    <div class="chip" aria-label={$t('home.totalTrophies')}>
       <span class="icon">🏆</span>{totalTrophies($progress).toLocaleString()}
     </div>
     <h1 class="title">Hack<span>star</span></h1>
-    <div class="chip" aria-label="Credits">
+    <div class="chip" aria-label={$t('home.credits')}>
       <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
     </div>
   </header>
 
-  <button class="account" aria-label="Account {currentAccount($accounts).name}, change account" onclick={() => (accountsOpen = true)}>
+  <button class="account" aria-label={$t('home.account', { name: currentAccount($accounts).name })} onclick={() => (accountsOpen = true)}>
     <span aria-hidden="true">👤</span>{currentAccount($accounts).name}
   </button>
 
   <nav class="side">
     <button class="round friends" onclick={() => onNavigate('friends')}>
-      <span class="big">👫</span>Friends
+      <span class="big">👫</span>{$t('home.friends')}
     </button>
     <button class="round" onclick={() => onNavigate('fighters')}>
-      <span class="big">🦸</span>Fighters
+      <span class="big">🦸</span>{$t('home.fighters')}
     </button>
     <button class="round shop" onclick={() => onNavigate('shop')}>
-      <span class="big">🛍️</span>Shop
+      <span class="big">🛍️</span>{$t('home.shop')}
     </button>
     <button class="round" onclick={() => onNavigate('info')}>
-      <span class="big">📖</span>Info
+      <span class="big">📖</span>{$t('home.info')}
     </button>
     <button class="round" onclick={() => onNavigate('training')}>
-      <span class="big">🎯</span>Training
+      <span class="big">🎯</span>{$t('home.training')}
     </button>
     <button class="round hack" onclick={() => onNavigate('hack')}>
-      <span class="big">💻</span>Hack
+      <span class="big">💻</span>{$t('home.hack')}
     </button>
     <button class="round settings" onclick={() => onNavigate('settings')}>
-      <span class="big">⚙️</span>Settings
+      <span class="big">⚙️</span>{$t('home.settings')}
     </button>
   </nav>
 
@@ -97,10 +98,10 @@
     </div>
   </div>
 
-  <button class="play" onclick={() => onNavigate('match')}>PLAY</button>
+  <button class="play" onclick={() => onNavigate('match')}>{$t('home.play')}</button>
 
   {#if playing}
-    <div class="skip">Tap to skip</div>
+    <div class="skip">{$t('home.tapToSkip')}</div>
   {/if}
 </div>
 

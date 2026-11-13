@@ -18,6 +18,7 @@
   import { untrack } from 'svelte'
   import { progress } from './lib/accounts'
   import { wornSkin } from './lib/game/shop'
+  import { t } from './lib/i18n'
 
   type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
 
@@ -32,20 +33,20 @@
   let openFighter = $state<Fighter>()
   let fighters = $state<Fighter[]>()
   let hacks = $state<Hack[]>()
-  let error = $state<string>()
+  let error = $state(false)
   // The entrance plays once per visit, not when coming back to home.
   let entrance = $state(true)
   // Changing it mounts a fresh arena (Play again).
   let matchNumber = $state(0)
 
   function load() {
-    error = undefined
+    error = false
     Promise.all([loadFighters(), listHacks()])
       .then(([fighterList, hackList]) => {
         fighters = fighterList
         hacks = hackList
       })
-      .catch(() => (error = 'Cannot reach the Hack star server.'))
+      .catch(() => (error = true))
   }
 
   load()
@@ -86,11 +87,11 @@
 
 {#if error}
   <div class="message">
-    <p>{error}</p>
-    <button onclick={load}>Try again</button>
+    <p>{$t('common.serverDown')}</p>
+    <button onclick={load}>{$t('common.tryAgain')}</button>
   </div>
 {:else if !fighters || !hacks}
-  <div class="message"><p>Loading…</p></div>
+  <div class="message"><p>{$t('common.loading')}</p></div>
 {:else if screen === 'home'}
   <Home
     {fighters}
@@ -114,7 +115,7 @@
     />
   {/key}
 {:else if screen === 'fighters'}
-  <Panel title="Fighters" onBack={() => (screen = 'home')}>
+  <Panel title={$t('panel.fighters')} onBack={() => (screen = 'home')}>
     <FighterList
       {fighters}
       onOpen={(id) => {
@@ -124,24 +125,24 @@
     />
   </Panel>
 {:else if screen === 'fighter' && openFighter}
-  <Panel title="Fighter" onBack={() => (screen = 'fighters')}>
+  <Panel title={$t('panel.fighter')} onBack={() => (screen = 'fighters')}>
     <FighterDetail fighter={openFighter} {fighters} onSelected={() => (screen = 'home')} />
   </Panel>
 {:else if screen === 'shop'}
-  <Panel title="Shop" onBack={() => (screen = 'home')}>
+  <Panel title={$t('panel.shop')} onBack={() => (screen = 'home')}>
     <ShopScreen {fighters} />
   </Panel>
 {:else if screen === 'info'}
-  <Panel title="Info" onBack={() => (screen = 'home')}>
+  <Panel title={$t('panel.info')} onBack={() => (screen = 'home')}>
     <InfoPage />
   </Panel>
 {:else if screen === 'settings'}
-  <Panel title="Settings" onBack={() => (screen = 'home')}>
+  <Panel title={$t('panel.settings')} onBack={() => (screen = 'home')}>
     <SettingsScreen />
   </Panel>
 {:else if screen === 'friends'}
   <Panel
-    title="Play with friends"
+    title={$t('panel.friends')}
     onBack={() => {
       leaveRoom()
       screen = 'home'
@@ -151,7 +152,7 @@
   </Panel>
 {:else if screen === 'hack'}
   <Panel
-    title="Hack"
+    title={$t('panel.hack')}
     onBack={() => {
       linkedCode = undefined
       screen = 'home'

@@ -2,7 +2,7 @@
   import { Canvas } from '@threlte/core'
   import { untrack } from 'svelte'
   import { PCFShadowMap } from 'three'
-  import { RARITY_COLORS, type Fighter } from './fighters'
+  import { RARITY_COLORS, RARITY_KEYS, type Fighter } from './fighters'
   import { credits, isUnlocked, maxPower } from './hacks'
   import Celebration from './Celebration.svelte'
   import { powerOf, stats, unlock, unlockPrice, upgrade, upgradeCost } from './game/economy'
@@ -13,6 +13,7 @@
   import { portrait } from './portraits'
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
+  import { t, tOr } from './i18n'
 
   let { fighter, fighters, onSelected }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void } = $props()
 
@@ -28,6 +29,7 @@
   const price = $derived(unlockPrice(fighter.rarity))
   const nextCost = $derived(upgradeCost(power))
   const free = $derived(wallet === Infinity)
+  const priceText = (credits: number) => (free ? $t('common.free') : $t('common.price', { credits }))
   let celebrating = $state<{ label: string; title: string; subtitle: string }>()
   let celebrationTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -41,7 +43,7 @@
     const result = unlock($progress, fighter)
     if (!result.ok) return
     progress.set(result.progress)
-    celebrate('UNLOCKED!', fighter.name, `${fighter.rarity} fighter`)
+    celebrate($t('fighterDetail.unlocked'), fighter.name, $t('fighterDetail.rarityFighter', { rarity: $t(RARITY_KEYS[fighter.rarity]) }))
   }
 
   function buyUpgrade() {
@@ -49,7 +51,7 @@
     if (!result.ok) return
     progress.set(result.progress)
     const s = stats(power, SETTINGS, type)
-    celebrate('UPGRADED!', `Power ${power}`, `❤️ ${s.health}  💥 ${s.damage}`)
+    celebrate($t('fighterDetail.upgraded'), $t('fighterDetail.powerLevel', { power }), `❤️ ${s.health}  💥 ${s.damage}`)
   }
   let previewSkin = $state(untrack(() => wornSkin($progress, fighter.id)))
   const previewOwned = $derived(ownsSkin($progress, fighter.id, previewSkin))
@@ -67,7 +69,7 @@
     const result = buySkin($progress, fighters, fighter, skin, today)
     if (!result.ok) return
     progress.set(result.progress)
-    celebrate('NEW SKIN!', skin.name, fighter.name)
+    celebrate($t('common.newSkin'), skin.name, fighter.name)
   }
 
   function select() {
@@ -94,49 +96,49 @@
       <PrestigeBadge {trophies} size={2.6} />
       <div>
         <h3>{fighter.name}</h3>
-        <div class="rarity">{fighter.rarity} · {fighter.idea}</div>
+        <div class="rarity">{$t(RARITY_KEYS[fighter.rarity])} · {$tOr(`fighter.${fighter.id}.idea`, fighter.idea)}</div>
       </div>
     </div>
 
     <div class="type">
-      <strong>{type.emoji} {type.name}</strong> — {type.about} <span class="super">Super: {type.superName}</span>
+      <strong>{type.emoji} {$t(type.nameKey)}</strong> — {$t(type.aboutKey)} <span class="super">{$t('fighterDetail.super', { name: $t(type.superNameKey) })}</span>
     </div>
 
     <div class="stats">
-      <span>🏆 {trophies} trophies</span>
+      <span>🏆 {$t('fighterDetail.trophies', { count: trophies })}</span>
       <span class="power">
-        ⚡ Power {power}/{max}
+        ⚡ {$t('fighterDetail.power', { power, max })}
         <span class="bar" aria-hidden="true">
           {#each { length: max } as _, i}
             <span class:on={i < power}></span>
           {/each}
         </span>
       </span>
-      <span aria-label="Health">❤️ {fighterStats.health}</span>
-      <span aria-label="Damage">💥 {fighterStats.damage}</span>
+      <span aria-label={$t('fighterDetail.health')}>❤️ {fighterStats.health}</span>
+      <span aria-label={$t('fighterDetail.damage')}>💥 {fighterStats.damage}</span>
     </div>
 
     {#if !unlocked}
       <button class="buy" disabled={wallet < price} onclick={buyUnlock}>
         {#if wallet >= price}
-          🔓 Unlock · {free ? 'free' : `${price} C`}
+          🔓 {$t('fighterDetail.unlock', { price: priceText(price) })}
         {:else}
-          🔒 Need {price - wallet} more C
+          🔒 {$t('common.needMore', { credits: price - wallet })}
         {/if}
       </button>
     {:else if power >= max}
-      <button class="buy" disabled>⚡ Max power</button>
+      <button class="buy" disabled>⚡ {$t('fighterDetail.maxPower')}</button>
     {:else}
       <button class="buy" disabled={wallet < nextCost} onclick={buyUpgrade}>
         {#if wallet >= nextCost}
-          ⚡ Upgrade to Power {power + 1} · {free ? 'free' : `${nextCost} C`}
+          ⚡ {$t('fighterDetail.upgrade', { power: power + 1, price: priceText(nextCost) })}
         {:else}
-          ⚡ Need {nextCost - wallet} more C to upgrade
+          ⚡ {$t('fighterDetail.needMoreToUpgrade', { credits: nextCost - wallet })}
         {/if}
       </button>
     {/if}
 
-    <h4>Skins</h4>
+    <h4>{$t('fighterDetail.skins')}</h4>
     <ul class="skins">
       {#each fighter.skins as skin (skin.id)}
         <li>
@@ -149,9 +151,9 @@
           >
             <img src={portrait(fighter.id, skin.id)} alt="" />
             <span class="skin-name">{skin.name}</span>
-            <span class="skin-rarity">{skin.rarity === 'Default' ? 'Default' : skin.rarity}</span>
+            <span class="skin-rarity">{$t(RARITY_KEYS[skin.rarity])}</span>
             {#if !ownsSkin($progress, fighter.id, skin.id)}
-              <span class="skin-price">🔒 {skinPrice($progress, fighters, fighter, skin, today)} C</span>
+              <span class="skin-price">🔒 {$t('common.price', { credits: skinPrice($progress, fighters, fighter, skin, today) })}</span>
             {/if}
           </button>
         </li>
@@ -163,17 +165,17 @@
     {:else if !previewOwned}
       <button class="select" disabled={wallet < previewPrice} onclick={buyPreviewSkin}>
         {#if wallet === Infinity}
-          BUY SKIN · free
+          {$t('fighterDetail.buySkin', { price: $t('common.free') })}
         {:else if wallet >= previewPrice}
-          BUY SKIN · {previewPrice} C
+          {$t('fighterDetail.buySkin', { price: $t('common.price', { credits: previewPrice }) })}
         {:else}
-          Need {previewPrice - wallet} more C
+          {$t('common.needMore', { credits: previewPrice - wallet })}
         {/if}
       </button>
     {:else if isCurrent}
-      <button class="select" disabled>✔ Selected</button>
+      <button class="select" disabled>✔ {$t('fighterDetail.selected')}</button>
     {:else}
-      <button class="select" onclick={select}>SELECT</button>
+      <button class="select" onclick={select}>{$t('fighterDetail.select')}</button>
     {/if}
   </div>
 </div>

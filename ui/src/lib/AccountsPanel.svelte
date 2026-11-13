@@ -11,27 +11,28 @@
     type NameProblem,
   } from './accounts'
   import { browserLanguage } from './i18n/languages'
+  import { t, type Translate } from './i18n'
   import { totalTrophies } from './progress'
 
   let { onClose }: { onClose: () => void } = $props()
 
-  const MESSAGES: Record<NameProblem, string> = {
-    empty: 'Type a name.',
-    long: `At most ${MAX_NAME} characters.`,
-    taken: 'That name is already used.',
-    full: `You can have up to ${MAX_ACCOUNTS} accounts.`,
+  const MESSAGES: Record<NameProblem, (t: Translate) => string> = {
+    empty: (t) => t('accounts.problem.empty'),
+    long: (t) => t('accounts.problem.long', { max: MAX_NAME }),
+    taken: (t) => t('accounts.problem.taken'),
+    full: (t) => t('accounts.problem.full', { max: MAX_ACCOUNTS }),
   }
 
   let newName = $state('')
   let renaming = $state<string>()
   let renameText = $state('')
-  let error = $state<string>()
+  let error = $state<NameProblem>()
 
   const current = $derived(currentAccount($accounts))
 
   function apply(change: AccountsChange): boolean {
     if (!change.ok) {
-      error = MESSAGES[change.reason]
+      error = change.reason
       return false
     }
     $accounts = change.state
@@ -66,8 +67,8 @@
 <div class="backdrop" onpointerdown={(e) => e.target === e.currentTarget && onClose()}>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="accounts-title">
     <header>
-      <h2 id="accounts-title">Accounts</h2>
-      <button class="close" aria-label="Close" onclick={onClose}>✕</button>
+      <h2 id="accounts-title">{$t('accounts.title')}</h2>
+      <button class="close" aria-label={$t('common.close')} onclick={onClose}>✕</button>
     </header>
 
     <ul>
@@ -75,19 +76,19 @@
         <li class:current={account.id === current.id}>
           {#if renaming === account.id}
             <input
-              aria-label="New name"
+              aria-label={$t('accounts.newName')}
               bind:value={renameText}
               maxlength={MAX_NAME + 4}
               onkeydown={(e) => e.key === 'Enter' && saveRename()}
             />
-            <button class="small ok" onclick={saveRename}>Save</button>
-            <button class="small" onclick={() => (renaming = undefined)}>Cancel</button>
+            <button class="small ok" onclick={saveRename}>{$t('common.save')}</button>
+            <button class="small" onclick={() => (renaming = undefined)}>{$t('common.cancel')}</button>
           {:else}
             <button class="pick" onclick={() => pick(account.id)}>
               <strong>{account.name}</strong>
-              <span>🏆 {totalTrophies(account.progress).toLocaleString()}{account.id === current.id ? ' · playing' : ''}</span>
+              <span>🏆 {totalTrophies(account.progress).toLocaleString()}{account.id === current.id ? ` · ${$t('accounts.playing')}` : ''}</span>
             </button>
-            <button class="small" aria-label="Rename {account.name}" onclick={() => startRename(account.id, account.name)}>✏️</button>
+            <button class="small" aria-label={$t('accounts.rename', { name: account.name })} onclick={() => startRename(account.id, account.name)}>✏️</button>
           {/if}
         </li>
       {/each}
@@ -95,25 +96,25 @@
 
     {#if $accounts.accounts.length < MAX_ACCOUNTS}
       <div class="add">
-        <label for="new-account">New account</label>
+        <label for="new-account">{$t('accounts.newAccount')}</label>
         <div class="row">
           <input
             id="new-account"
             bind:value={newName}
             maxlength={MAX_NAME + 4}
             autocomplete="off"
-            placeholder="Name"
+            placeholder={$t('accounts.namePlaceholder')}
             onkeydown={(e) => e.key === 'Enter' && add()}
           />
-          <button class="small ok" onclick={add}>➕ Add</button>
+          <button class="small ok" onclick={add}>➕ {$t('accounts.add')}</button>
         </div>
       </div>
     {:else}
-      <p class="full">You can have up to {MAX_ACCOUNTS} accounts.</p>
+      <p class="full">{$t('accounts.problem.full', { max: MAX_ACCOUNTS })}</p>
     {/if}
 
     {#if error}
-      <p class="error" role="alert">{error}</p>
+      <p class="error" role="alert">{MESSAGES[error]($t)}</p>
     {/if}
   </div>
 </div>

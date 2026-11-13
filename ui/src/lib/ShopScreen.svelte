@@ -1,11 +1,12 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { RARITY_COLORS, type Fighter, type Skin } from './fighters'
+  import { RARITY_COLORS, RARITY_KEYS, type Fighter, type Skin } from './fighters'
   import { buySkin, ownsSkin, skinOfTheDay, skinPrice } from './game/shop'
   import { SETTINGS } from './game/settings'
   import { credits, isUnlocked } from './hacks'
   import { portrait } from './portraits'
   import { progress } from './accounts'
+  import { t } from './i18n'
 
   let { fighters }: { fighters: Fighter[] } = $props()
 
@@ -49,23 +50,23 @@
   {@const price = skinPrice($progress, fighters, fighter, skin, today)}
   {@const fighterUnlocked = isUnlocked($progress, fighter.id)}
   <li class="item" class:featured class:legendary={skin.rarity === 'Legendary'} style="--rarity: {RARITY_COLORS[skin.rarity]}">
-    {#if featured}<span class="ribbon">⭐ Skin of the day · 30% off</span>{/if}
+    {#if featured}<span class="ribbon">⭐ {$t('shop.skinOfTheDay')}</span>{/if}
     <img src={portrait(fighter.id, skin.id)} alt="" />
     <span class="skin-name">{skin.name}</span>
     <span class="fighter-name">{fighter.name}</span>
-    <span class="rarity">{skin.rarity}</span>
+    <span class="rarity">{$t(RARITY_KEYS[skin.rarity])}</span>
     {#if owned}
-      <span class="owned">✔ Owned</span>
+      <span class="owned">✔ {$t('shop.owned')}</span>
     {:else if !fighterUnlocked}
-      <span class="hint">🔒 Unlock {fighter.name} first</span>
+      <span class="hint">🔒 {$t('shop.unlockFirst', { name: fighter.name })}</span>
     {:else}
       <button class="buy" disabled={wallet < price} onclick={() => buy(fighter, skin)}>
         {#if wallet === Infinity}
-          Buy · free
+          {$t('shop.buy')} · {$t('common.free')}
         {:else if wallet >= price}
-          Buy · {#if featured}<s class="was">{SETTINGS.skinPrices[skin.rarity]}</s>{/if}{price} C
+          {$t('shop.buy')} · {#if featured}<s class="was">{SETTINGS.skinPrices[skin.rarity]}</s>{/if}{$t('common.price', { credits: price })}
         {:else}
-          Need {price - wallet} more C
+          {$t('common.needMore', { credits: price - wallet })}
         {/if}
       </button>
     {/if}
@@ -74,7 +75,7 @@
 
 <div class="shop">
   <p class="wallet">
-    Your credits: <strong>{wallet === Infinity ? '∞' : wallet}</strong> C · win matches to earn more
+    {#each $t('shop.wallet').split(/\{(\w+)\}/) as part, i}{#if i % 2 === 0}{part}{:else}<strong>{wallet === Infinity ? '∞' : wallet}</strong>{/if}{/each}
   </p>
 
   {#if daily}
@@ -93,10 +94,10 @@
 </div>
 
 {#if bought}
-  <Celebration label="NEW SKIN!" title={bought.skin.name} subtitle={bought.fighter.name} />
+  <Celebration label={$t('common.newSkin')} title={bought.skin.name} subtitle={bought.fighter.name} />
   <div class="wear">
-    <button onclick={() => wear(bought!.fighter, bought!.skin)}>Wear it</button>
-    <button class="later" onclick={() => (bought = undefined)}>Later</button>
+    <button onclick={() => wear(bought!.fighter, bought!.skin)}>{$t('shop.wearIt')}</button>
+    <button class="later" onclick={() => (bought = undefined)}>{$t('shop.later')}</button>
   </div>
 {/if}
 

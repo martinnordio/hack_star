@@ -23,6 +23,7 @@
   import { creditsFor, earn, powerOf, stats } from './game/economy'
   import type { RoomConnection } from './net/room'
   import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
+  import { t, type TextKey } from './i18n'
 
   interface Props {
     mode: 'match' | 'training'
@@ -118,8 +119,9 @@
   })
 
   const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
-  const LEVEL_NAMES = { easy: 'Easy', medium: 'Medium', hard: 'Hard' }
-  const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`
+  const LEVEL_NAMES: Record<string, TextKey> = { easy: 'botLevel.easy', medium: 'botLevel.medium', hard: 'botLevel.hard' }
+  const ordinal = (n: number) =>
+    $t(n === 1 ? 'arena.place.first' : n === 2 ? 'arena.place.second' : n === 3 ? 'arena.place.third' : 'arena.place.other', { place: n })
 
   interface Stick {
     id: number
@@ -245,47 +247,47 @@
   {#if hud}
     <div class="hud">
       <div class="timer" class:overtime={hud.overtime} class:hurry={hud.timeLeft <= 10}>{clock(hud.timeLeft)}</div>
-      <div class="left" aria-label="Fighters left">👤 {hud.fightersLeft}</div>
+      <div class="left" aria-label={$t('arena.fightersLeft')}>👤 {hud.fightersLeft}</div>
     </div>
     {#if hud.phase === 'countdown' && hud.countdown > 0}
       {#key hud.countdown}
         <div class="big" role="status">{hud.countdown}</div>
       {/key}
       {#if match}
-        <div class="level-chip">{LEVEL_NAMES[match.settings.botLevel]} · {match.settings.botCount} {match.settings.botCount === 1 ? 'bot' : 'bots'}</div>
+        <div class="level-chip">{$t(LEVEL_NAMES[match.settings.botLevel])} · {$t(match.settings.botCount === 1 ? 'common.bots.one' : 'common.bots.other', { count: match.settings.botCount })}</div>
       {/if}
     {:else if showFight}
-      <div class="big fight" role="status">FIGHT!</div>
+      <div class="big fight" role="status">{$t('arena.fight')}</div>
     {:else if showOvertime && hud.phase === 'fight'}
-      <div class="big overtime" role="status">OVERTIME!<small>No more walls!</small></div>
+      <div class="big overtime" role="status">{$t('arena.overtime')}<small>{$t('arena.noMoreWalls')}</small></div>
     {/if}
   {/if}
 
   {#if showResult && hud?.result}
     {@const r = hud.result}
-    <div class="result {r.kind}" role="dialog" aria-label="Match result">
+    <div class="result {r.kind}" role="dialog" aria-label={$t('arena.result')}>
       <div class="title">
-        {r.kind === 'victory' ? 'VICTORY!' : r.kind === 'defeat' ? 'DEFEAT' : "TIME'S UP"}
+        {$t(r.kind === 'victory' ? 'arena.victory' : r.kind === 'defeat' ? 'arena.defeat' : 'arena.timeUp')}
       </div>
       <img src={portrait(player.fighterId, player.skinId)} alt="" />
       <div class="detail">
         {#if r.kind === 'victory'}
-          {shared ? 'Your team is the last one standing!' : 'Last fighter standing!'}
+          {$t(shared ? 'arena.teamLastStanding' : 'arena.lastStanding')}
         {:else if r.kind === 'defeat'}
-          {shared ? 'Your team' : 'You'} finished {ordinal(r.place)}
+          {$t(shared ? 'arena.teamFinished' : 'arena.youFinished', { place: ordinal(r.place) })}
         {:else}
-          Nobody won this time
+          {$t('arena.nobodyWon')}
         {/if}
       </div>
       {#if reward}
         {@const shown = Math.round(shownTrophies.current)}
         {@const floor = Math.floor(shown / 1000) * 1000}
-        <div class="trophies" aria-label="Trophies">
+        <div class="trophies" aria-label={$t('arena.trophies')}>
           <span class="change" class:zero={reward.change === 0} class:minus={reward.change < 0}>
             {reward.change > 0 ? '+' : ''}{reward.change} 🏆
             <span class="credits">+{earned} <span class="coin">C</span></span>
           </span>
-          <div class="bar" aria-label="{shown} of {nextPrestigeAt(shown)} trophies to the next Prestige">
+          <div class="bar" aria-label={$t('arena.prestigeProgress', { shown, next: nextPrestigeAt(shown) })}>
             <div class="fill" style="width: {((shown - floor) / 1000) * 100}%"></div>
             <span>🏆 {shown} / {nextPrestigeAt(shown)}</span>
           </div>
@@ -293,23 +295,23 @@
         {#if reward.prestigeAfter > reward.prestigeBefore && shown >= reward.after}
           <div class="prestige-up" role="status">
             <PrestigeBadge trophies={reward.after} size={2.2} />
-            <span>PRESTIGE {reward.prestigeAfter}!</span>
+            <span>{$t('arena.prestigeUp', { level: reward.prestigeAfter })}</span>
           </div>
         {/if}
       {/if}
       <div class="actions">
         {#if shared}
-          <button class="again" onclick={onLeave}>Back to the room</button>
+          <button class="again" onclick={onLeave}>{$t('arena.backToRoom')}</button>
         {:else}
-          <button class="again" onclick={onPlayAgain}>Play again</button>
-          <button class="home" onclick={onLeave}>Home</button>
+          <button class="again" onclick={onPlayAgain}>{$t('arena.playAgain')}</button>
+          <button class="home" onclick={onLeave}>{$t('arena.home')}</button>
         {/if}
       </div>
     </div>
   {/if}
 
   {#if showHyper && !showResult}
-    <div class="big hyper" role="status">HYPERCHARGE!</div>
+    <div class="big hyper" role="status">{$t('arena.hypercharge')}</div>
   {/if}
 
   {#if power && !showResult}
@@ -319,10 +321,10 @@
       class:full
       class:hyper={full && power.hyperReady}
       style="--fill: {power.superCharge * 360}deg"
-      aria-label={full ? (power.hyperReady ? 'Hypercharge ready' : 'Super ready') : `Super ${Math.round(power.superCharge * 100)}%`}
+      aria-label={full ? $t(power.hyperReady ? 'arena.hyperReady' : 'arena.superReady') : $t('arena.superCharge', { percent: Math.round(power.superCharge * 100) })}
       onclick={() => (controls.superAuto = true)}
     >
-      <span class="label">{full && power.hyperReady ? 'HYPER' : 'SUPER'}</span>
+      <span class="label">{$t(full && power.hyperReady ? 'arena.hyper' : 'arena.super')}</span>
       {#if !touchDevice}<span class="key">E</span>{/if}
     </button>
   {/if}
@@ -339,7 +341,7 @@
     </div>
   {/each}
 
-  <button class="leave" onclick={onLeave} aria-label="Back to home">◀</button>
+  <button class="leave" onclick={onLeave} aria-label={$t('common.backHome')}>◀</button>
 </div>
 
 <style>

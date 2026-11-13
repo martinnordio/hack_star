@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store'
+import type { TextKey } from '../i18n/en'
 
 /** What a device tells the others about its player (see server `rooms.py`). */
 export interface Member {
@@ -34,14 +35,14 @@ export interface Socket {
   onclose: (() => void) | null
 }
 
-export const ERRORS: Record<string, string> = {
-  'no-room': 'There is no room with that code.',
-  full: 'That room is full (3 players).',
-  started: 'They are playing right now. Try again when the match is over.',
-  'bad-member': 'Your fighter could not be sent. Try again.',
-  'too-many-rooms': 'The server has too many rooms. Try again later.',
-  disconnected: 'Lost the connection to the game server.',
-  closed: 'The host left, so the room is closed.',
+export const ERRORS: Record<string, TextKey> = {
+  'no-room': 'room.error.noRoom',
+  full: 'room.error.full',
+  started: 'room.error.started',
+  'bad-member': 'room.error.badMember',
+  'too-many-rooms': 'room.error.tooManyRooms',
+  disconnected: 'room.error.disconnected',
+  closed: 'room.error.closed',
 }
 
 /** One device's connection to a room on the game server. */
@@ -108,6 +109,7 @@ function openSocket(): Promise<RoomConnection> {
 export interface RoomState {
   connection: RoomConnection
   info: RoomInfo | null
+  /** A text key, or the server's reason when it is unknown. */
   error: string | null
 }
 
