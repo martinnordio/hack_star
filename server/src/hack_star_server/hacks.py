@@ -33,6 +33,12 @@ HACKS: list[Hack] = [
         name="Hypercharge",
         description="Your Super charges 3 times faster and every Super is a Hypercharge.",
     ),
+    Hack(
+        id="creator",
+        code="CREATOR",
+        name="Creator",
+        description="Unlocks the fighter you created.",
+    ),
 ]
 
 

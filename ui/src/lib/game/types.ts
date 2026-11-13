@@ -140,6 +140,8 @@ export const FIGHTER_TYPES: Record<FighterTypeId, FighterType> = {
   },
 }
 
+export const FIGHTER_TYPE_IDS: FighterTypeId[] = ['tank', 'sharpshooter', 'speedy', 'thrower', 'spreader']
+
 export function fighterType(id: string | undefined): FighterType {
   return FIGHTER_TYPES[id as FighterTypeId] ?? BASIC
 }

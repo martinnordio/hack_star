@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { buildCreated } from './custom3d'
 import {
   addEyes,
   addLegendaryGlow,
@@ -341,7 +342,7 @@ function kira(skin: string): Rig {
   return rig
 }
 
-const BUILDERS: Record<string, Builder> = { blaze, rocko, turbo, frosty, luna, pixel, coco, sparky, clank, kira }
+const BUILDERS: Record<string, Builder> = { blaze, rocko, turbo, frosty, luna, pixel, coco, sparky, clank, kira, custom: buildCreated }
 
 export function buildFighter(fighterId: string, skinId = 'default'): Rig {
   return (BUILDERS[fighterId] ?? blaze)(skinId)

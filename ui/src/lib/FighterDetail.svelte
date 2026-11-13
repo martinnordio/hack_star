@@ -14,8 +14,16 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
   import { t, tOr } from './i18n'
+  import { CREATED_ID } from './progress'
 
-  let { fighter, fighters, onSelected }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void } = $props()
+  let {
+    fighter,
+    fighters,
+    onSelected,
+    onChange,
+  }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void; onChange: () => void } = $props()
+
+  const created = $derived(fighter.id === CREATED_ID)
 
   const today = new Date()
 
@@ -96,7 +104,7 @@
       <PrestigeBadge {trophies} size={2.6} />
       <div>
         <h3>{fighter.name}</h3>
-        <div class="rarity">{$t(RARITY_KEYS[fighter.rarity])} · {$tOr(`fighter.${fighter.id}.idea`, fighter.idea)}</div>
+        <div class="rarity">{$t(RARITY_KEYS[fighter.rarity])}{#if !created} · {$tOr(`fighter.${fighter.id}.idea`, fighter.idea)}{/if}</div>
       </div>
     </div>
 
@@ -118,7 +126,14 @@
       <span aria-label={$t('fighterDetail.damage')}>💥 {fighterStats.damage}</span>
     </div>
 
-    {#if !unlocked}
+    {#if created}
+      <button class="buy" onclick={onChange}>✏️ {$t('creator.change')}</button>
+      {#if !unlocked}<p class="locked-note" role="note">🔒 {$t('creator.locked')}</p>{/if}
+    {/if}
+
+    {#if created && !unlocked}
+      <!-- Only the CREATOR hack code unlocks it. -->
+    {:else if !unlocked}
       <button class="buy" disabled={wallet < price} onclick={buyUnlock}>
         {#if wallet >= price}
           🔓 {$t('fighterDetail.unlock', { price: priceText(price) })}
@@ -138,6 +153,7 @@
       </button>
     {/if}
 
+    {#if !created}
     <h4>{$t('fighterDetail.skins')}</h4>
     <ul class="skins">
       {#each fighter.skins as skin (skin.id)}
@@ -159,6 +175,7 @@
         </li>
       {/each}
     </ul>
+    {/if}
 
     {#if !unlocked}
       <!-- The unlock button above says what is needed. -->
@@ -185,6 +202,14 @@
 {/if}
 
 <style>
+  .locked-note {
+    margin: 0.4rem 0;
+    padding: 0.4rem 0.7rem;
+    border-radius: 0.7rem;
+    background: #160f33;
+    border: 2px solid #ffd23f;
+    font-weight: 800;
+  }
   .detail {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -1,6 +1,6 @@
 import type { Fighter, Rarity } from '../fighters'
 import { credits, isUnlocked, maxPower } from '../hacks'
-import type { Progress } from '../progress'
+import { CREATED_ID, type Progress } from '../progress'
 import type { MatchResult } from './match'
 import { SETTINGS, type Settings } from './settings'
 import { BASIC, type FighterType } from './types'
@@ -51,6 +51,7 @@ export function pay(progress: Progress, cost: number): Purchase | Progress {
 }
 
 export function unlock(progress: Progress, fighter: Fighter, settings: Settings = SETTINGS): Purchase {
+  if (fighter.id === CREATED_ID) return { ok: false, reason: 'locked' }
   if (progress.unlockedFighters.includes(fighter.id)) return { ok: false, reason: 'already-unlocked' }
   const cost = unlockPrice(fighter.rarity, settings)
   const paid = pay(progress, cost)

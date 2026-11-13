@@ -40,6 +40,8 @@ export interface Settings {
   skinPrices: Record<'Default' | 'Rare' | 'Super Rare' | 'Epic' | 'Mythic' | 'Legendary', number>
   /** Discount on the skin of the day (0.3 = 30% off). */
   skinOfTheDayDiscount: number
+  /** Changing the created fighter after it was created. */
+  recreateCost: number
   /** Normal hits that fill the Super. */
   superHits: number
   /** Supers that fill the Hypercharge. */
@@ -82,6 +84,7 @@ export const SETTINGS: Settings = {
   unlockPrices: { Default: 0, Rare: 160, 'Super Rare': 430, Epic: 925, Mythic: 1900, Legendary: 3800 },
   skinPrices: { Default: 0, Rare: 100, 'Super Rare': 200, Epic: 300, Mythic: 600, Legendary: 1500 },
   skinOfTheDayDiscount: 0.3,
+  recreateCost: 500,
   superHits: 5,
   supersPerHypercharge: 2,
   hyperchargeSeconds: 5,

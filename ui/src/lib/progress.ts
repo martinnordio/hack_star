@@ -32,6 +32,8 @@ export interface Progress {
 /** Fighters every new account starts with. */
 export const START_FIGHTERS = ['blaze', 'rocko', 'turbo']
 export const START_CREDITS = 500
+/** The created fighter has this id in every account (one per account). */
+export const CREATED_ID = 'custom'
 
 /** The progress of a brand-new account. */
 export function startProgress(): Progress {

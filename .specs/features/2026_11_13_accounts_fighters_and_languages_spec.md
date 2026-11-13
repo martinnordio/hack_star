@@ -196,7 +196,7 @@ _None._
 | **4** | Languages: texts in one place, language per account | ✅ Done | [→ Step 4](#step-4--languages-texts-in-one-place-language-per-account) |
 | **5** | Translations: German, Swiss German, Spanish, Italian | ✅ Done | [→ Step 5](#step-5--translations-german-swiss-german-spanish-italian) |
 | **6** | Password for the QR codes | ✅ Done | [→ Step 6](#step-6--password-for-the-qr-codes) |
-| **7** | Create a fighter and the CREATOR code | ⬜ Not started | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
+| **7** | Create a fighter and the CREATOR code | ✅ Done | [→ Step 7](#step-7--create-a-fighter-and-the-creator-code) |
 | **8** | The created fighter in matches and with friends | ⬜ Not started | [→ Step 8](#step-8--the-created-fighter-in-matches-and-with-friends) |
 | **9** | Five new fighters with nicer graphics | ⬜ Not started | [→ Step 9](#step-9--five-new-fighters-with-nicer-graphics) |
 | **10** | Three more skins for every fighter | ⬜ Not started | [→ Step 10](#step-10--three-more-skins-for-every-fighter) |
@@ -406,16 +406,30 @@ The player designs one fighter, which stays locked until `CREATOR` is entered, a
 it later for 500 credits (S7, S8, S9, S10, S11, S24).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Server: hack `creator` / `CREATOR` in `hacks.py` (D9); `pytest` for redeem and the list.
-- [ ] UI rules: `HackId` `creator`; `withCreated()` (D8); `isUnlocked` for `custom` (D9); `unlock()` refuses it; `recreate()` with `SETTINGS.recreateCost` through `pay()` (D10); tests.
-- [ ] `models/custom3d.ts`: build the created fighter from its look (3 heads, 3 bodies, 2 colours); portrait.
-- [ ] Creator screen: name, type, colours, head, body, live 3D preview; "Create a fighter" entry in the fighter list; locked card saying a hack code is needed; changing shows the price.
-- [ ] Check in the browser: create, see it locked, enter `CREATOR`, select it; change it with and without enough credits; `CREATOR` before creating unlocks it at creation; `/?qr` lists the new code.
-- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+- [x] Record the start time in Notes below.
+- [x] Server: hack `creator` / `CREATOR` in `hacks.py` (D9); `pytest` for redeem and the list.
+- [x] UI rules: `HackId` `creator`; `withCreated()` (D8); `isUnlocked` for `custom` (D9); `unlock()` refuses it; `recreate()` with `SETTINGS.recreateCost` through `pay()` (D10); tests.
+- [x] `models/custom3d.ts`: build the created fighter from its look (3 heads, 3 bodies, 2 colours); portrait.
+- [x] Creator screen: name, type, colours, head, body, live 3D preview; "Create a fighter" entry in the fighter list; locked card saying a hack code is needed; changing shows the price.
+- [x] Check in the browser: create, see it locked, enter `CREATOR`, select it; change it with and without enough credits; `CREATOR` before creating unlocks it at creation; `/?qr` lists the new code.
+- [x] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-13 18:20
+
+- **Change to D8 / D11:** the look travels as the fighter's **skin id** (`lookSkin()`: "L" +
+  type + head + body + two colours, 16 characters). So pictures, the 3D stage, the arena and
+  room members (skin ≤ 20 characters) work unchanged; `buildFighter('custom', skin)` reads the
+  look from it (`models/custom3d.ts`). Step 8 only adds the name for friends.
+- `CREATED_ID` lives in `progress.ts` so `hacks.ts` needs no import of `created.ts` (no cycle).
+- OPENSESAME does not unlock the created fighter; only CREATOR does (S10). The created fighter
+  has the rarity Epic (colour of its card) and no skins; `ownsSkin` treats its look as owned.
+- `saveCreated()` is both create (free) and change (`SETTINGS.recreateCost` 500).
+
+**Done (2026-11-13 · ~35m · Claude Opus 5.5)** — creator screen with live preview, CREATOR code,
+lock, change for 500 C; `npm test` 169 passed (created 7 new), `npm run check` 0 errors,
+`pytest` 28 passed; browser: created "Zappy" (locked, "enter a hack code"), change for 500 C;
+CREATOR first, then created "Robo" → unlocked, selected, shown on Home.
 
 ---
 

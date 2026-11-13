@@ -19,8 +19,10 @@
   import { progress } from './lib/accounts'
   import { wornSkin } from './lib/game/shop'
   import { t } from './lib/i18n'
+  import CreatorScreen from './lib/CreatorScreen.svelte'
+  import { withCreated } from './lib/created'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>` or `?room=<CODE>`.
   const params = new URLSearchParams(location.search)
@@ -30,8 +32,11 @@
   let linkedCode = $state(codeInLink)
 
   let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
-  let openFighter = $state<Fighter>()
-  let fighters = $state<Fighter[]>()
+  let openFighterId = $state<string>()
+  let catalogue = $state<Fighter[]>()
+  // The server's fighters plus this account's created fighter.
+  const fighters = $derived(catalogue ? withCreated(catalogue, $progress) : undefined)
+  const openFighter = $derived(fighters?.find((f) => f.id === openFighterId))
   let hacks = $state<Hack[]>()
   let error = $state(false)
   // The entrance plays once per visit, not when coming back to home.
@@ -43,7 +48,7 @@
     error = false
     Promise.all([loadFighters(), listHacks()])
       .then(([fighterList, hackList]) => {
-        fighters = fighterList
+        catalogue = fighterList
         hacks = hackList
       })
       .catch(() => (error = true))
@@ -119,14 +124,19 @@
     <FighterList
       {fighters}
       onOpen={(id) => {
-        openFighter = fighters?.find((f) => f.id === id)
+        openFighterId = id
         screen = 'fighter'
       }}
+      onCreate={() => (screen = 'creator')}
     />
   </Panel>
 {:else if screen === 'fighter' && openFighter}
   <Panel title={$t('panel.fighter')} onBack={() => (screen = 'fighters')}>
-    <FighterDetail fighter={openFighter} {fighters} onSelected={() => (screen = 'home')} />
+    <FighterDetail fighter={openFighter} {fighters} onSelected={() => (screen = 'home')} onChange={() => (screen = 'creator')} />
+  </Panel>
+{:else if screen === 'creator'}
+  <Panel title={$t($progress.createdFighter ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
+    <CreatorScreen onDone={() => (screen = 'fighters')} />
   </Panel>
 {:else if screen === 'shop'}
   <Panel title={$t('panel.shop')} onBack={() => (screen = 'home')}>

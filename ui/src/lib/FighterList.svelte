@@ -8,8 +8,9 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
   import { t } from './i18n'
+  import { CREATED_ID } from './progress'
 
-  let { fighters, onOpen }: { fighters: Fighter[]; onOpen: (id: string) => void } = $props()
+  let { fighters, onOpen, onCreate }: { fighters: Fighter[]; onOpen: (id: string) => void; onCreate: () => void } = $props()
 </script>
 
 <ul class="grid">
@@ -38,15 +39,37 @@
           <span>🏆 {trophies}</span>
           <span class="power">⚡ {powerOf($progress, fighter.id)}/{maxPower($progress)}</span>
         </span>
-        {#if !unlocked}
+        {#if !unlocked && fighter.id === CREATED_ID}
+          <span class="price">🔒 💻</span>
+        {:else if !unlocked}
           <span class="price">🔒 {$t('common.price', { credits: unlockPrice(fighter.rarity) })}</span>
         {/if}
       </button>
     </li>
   {/each}
+  {#if !$progress.createdFighter}
+    <li>
+      <button class="card create" onclick={onCreate}>
+        <span class="picture plus" aria-hidden="true">➕</span>
+        <span class="name">{$t('creator.title')}</span>
+      </button>
+    </li>
+  {/if}
 </ul>
 
 <style>
+  .create {
+    height: 100%;
+    border-style: dashed;
+    border-color: #ffd23f;
+  }
+
+  .plus {
+    display: grid;
+    place-items: center;
+    font-size: 3rem;
+    min-height: 8rem;
+  }
   .grid {
     list-style: none;
     margin: 0 auto;
