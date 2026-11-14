@@ -47,17 +47,23 @@ value (no router):
 | Screen | File | Notes |
 |--------|------|-------|
 | Home | `lib/Home.svelte`, `lib/HomeScene.svelte`, `lib/AccountsPanel.svelte` | 3D fighter on a podium, entrance animation; the account chip opens the accounts panel (switch, add, rename) |
-| Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought |
-| Create a fighter | `lib/CreatorScreen.svelte`, `lib/created.ts` | Live 3D preview; first fighter is free and usable immediately, extras require `CREATOR` and cost 500 C each; edits cost 500 C (free with `INFINITY`) |
+| Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought; a created fighter shows its own skins (new, change, delete, select) |
+| Create a fighter | `lib/CreatorScreen.svelte`, `lib/created.ts` | Live turning 3D preview (head, body, hands, legs, two colours); first fighter is free and usable immediately, extras require `CREATOR` and cost 500 C each; edits cost 500 C (free with `INFINITY`); with a `skinId` it edits a created skin (colours and parts only, free) |
 | Shop | `lib/ShopScreen.svelte` | Skin of the day first, then every skin; buy, "NEW SKIN!", Wear it |
 | Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words used in the game |
-| Settings | `lib/SettingsScreen.svelte`, `lib/options.ts` | Language (per account), bot level and number of bots (saved under `hack-star.options`), reset of the account |
+| Settings | `lib/SettingsScreen.svelte`, `lib/options.ts`, `lib/AboutPanel.svelte` | Language (per account); bot level, number of bots, music on/off and track, developer mode (saved under `hack-star.options`); reset of the account; the About panel (version from `ui/package.json`, music credits, the repository's `LICENSE`) |
 | Hack | `lib/HackScreen.svelte`, `lib/QrScanner.svelte` | Codes typed or scanned; `/?qr` shows `lib/QrPage.svelte` |
 | Friends | `lib/FriendsScreen.svelte`, `lib/net/room.ts` | Create / join a room (code, QR, `?room=CODE` link), lobby, Start |
 | Match / Training | `lib/Arena.svelte` (HTML: joysticks, HUD, result), `lib/ArenaScene.svelte` (3D) | A new `Arena` is mounted per match |
 
 Extra pages by address: `/?qr` (printable QR codes, after the password `M6D2` — checked in the
-browser, a lock for kids, not security), `/?gallery` (all fighters and skins).
+browser, a lock for kids, not security), `/?gallery` (all fighters and skins; `?gallery=custom`
+for created-fighter parts), `/?dev` (`lib/dev/DevPage.svelte`, the developer page: asks the
+same code once, then turns developer mode on in this browser; English only; one component per
+section — `MusicSection.svelte`).
+
+`App.svelte` also shows the saving notice (`lib/saving.ts`) once per visit when the browser
+does not let the game save.
 
 ### Languages (`ui/src/lib/i18n/`)
 
@@ -102,7 +108,7 @@ Everything is built in code from simple shapes, so there is no art to download o
 | `fighters3d.ts` | `buildFighter(id, skin)` for every fighter and skin; idle animation; see-through in bushes |
 | `heroes3d.ts` | The five newest, more detailed fighters (Marina, Drako, Spectra, Mecha Max, Zeus Jr.) |
 | `skins3d.ts` | The 3 extra skins of every fighter: the default look recoloured plus one extra part (crown, halo, horns, shades, scarf, backpack, cape) |
-| `custom3d.ts` | The created fighter, built from its look (3 heads × 3 bodies × 2 colours) |
+| `custom3d.ts` | The created fighter, built from its look: 5 heads × 5 bodies × 3 hands × 3 legs × 2 colours. Each body is a torso with its own arms and legs; hands and legs 0 use them, 1–2 replace them (claws, big gloves; springs, big boots), so looks saved before hands and legs existed draw exactly as before (`custom3d.test.ts` pins them) |
 | `arena3d.ts` | Tiles, cliffs, rock walls, cacti, crates, barrels, skulls |
 | `dummy3d.ts`, `healthBar.ts` | Training dummy; health bars |
 | `particles.ts` | One pool of reused meshes for dust, flashes, sparks and pieces |
@@ -118,12 +124,14 @@ not know about accounts. The first time, the progress saved before accounts
 `unlocked_at_start`). `resetProgress()` is the Settings reset.
 
 Each progress holds: credits, trophies, power levels, unlocked fighters, owned skins, active
-hacks and their expiry timestamps, chosen fighter and skins, and a collection of created-fighter
-looks. The progress format is version 6. Formats v2 through v5 migrate forward. The v5 single
+hacks and their expiry timestamps, chosen fighter and skins, and a collection of created
+fighters (look and up to 5 created skins). The progress format is version 7. Formats v2 through
+v6 migrate forward: v6 looks get hands and legs 0 (the body's own) and no skins. The v5 single
 created fighter keeps id `custom` and its trophies, power, skins and selection; v4 and earlier
 active timed hacks receive their initial 72-hour expiry. Same-origin tabs reconcile local
 changes with the latest saved state, listen for `storage` events, and refresh when visible.
-Concurrent credit changes are merged as deltas. Hack effects are worked out when shown
+Concurrent credit changes are merged as deltas; created skins merge by id like created
+fighters (a skin id added in two tabs gets the next free id). Hack effects are worked out when shown
 (`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`, `superHack` — applied to the player's fighter when an arena starts), so resetting the hacks
 brings the normal rules back exactly.
 
@@ -138,9 +146,15 @@ Spending happens only on the fighter screen and in the Shop through `unlock()` /
 unlimited-credits hack nothing is taken from the saved credits, so resetting the hacks shows
 the real amount again.
 
-The player's options (bot level, number of bots) are not progress: `lib/options.ts` keeps them
-under their own key `hack-star.options`, each bad value falling back to its default, so the
-progress format did not change.
+The player's options (bot level, number of bots, music, track, developer mode) are not
+progress: `lib/options.ts` keeps them under their own key `hack-star.options`, each bad value
+falling back to its default.
+
+Saving (`lib/saving.ts`): every change is written at once; `saveAccounts` / `saveOptions`
+report whether it worked. `browserStorage()` returns `null` when the browser blocks
+`localStorage` (reading it can throw), and the game then runs on memory storage. A failed save
+shows the notice once per visit. On start `keepSavedData()` calls `navigator.storage.persist()`
+so the browser does not delete the data after a while.
 
 ### Hack duration (`server/src/hack_star_server/hacks.py`, `ui/src/lib/hacks.ts`)
 
@@ -155,8 +169,25 @@ and at the next expiry boundary.
 The collection has up to 15 entries: the first keeps id `custom` and is always usable; extras
 use ids `custom-2` through `custom-15`, require active `CREATOR`, and become inactive when it
 expires without losing their progress. `withCreated()` adds them to the catalogue. Each look
-travels as its **skin id** (`lookSkin()`: "L" + type + head + body + 2 colours, 16 characters),
-so pictures, the 3D stage, the arena and rooms need nothing extra. Bots never use created fighters.
+travels as its **skin id** (`lookSkin()`: "L" + type + head + body + 2 colours, 16 characters
+— or, with head or body above 2 or other hands or legs, "L" + type + head + body + hands +
+legs + 2 colours, 18 characters), so pictures, the 3D stage, the arena and rooms need nothing
+extra; looks an older version can draw keep the 16-character form. The server accepts both.
+Bots never use created fighters.
+
+Created skins (`addCreatedSkin`, `changeCreatedSkin`, `deleteCreatedSkin`,
+`chooseCreatedSkin`): up to 5 per created fighter, ids `s1`…`s5`, free, each with its own
+colours and parts; the chosen one is in `selectedSkins[fighterId]` and `wornSkin()` returns
+its look with the fighter's type, so rooms and models get it like any look.
+
+### Music (`ui/src/lib/music/`, `ui/dev/`)
+
+| File | What |
+|------|------|
+| `music/candidates.ts` | Rules shared by the game and the dev server: allowed licences (CC0, CC BY, made for Hack star), at most 5 chosen and 15 candidates, no delete of a chosen track, `shipped()` |
+| `music/tracks.json`, `music/tracks.ts` | The tracks that ship (written by the developer page); read by Settings, the player and the About panel |
+| `music/player.ts` | `musicTrack(options, tracks)` and one looping audio element; `Arena.svelte` starts it when a match or Training starts and stops it at the end or when the player leaves; it pauses while the tab is hidden |
+| `ui/dev/musicPlugin.ts` | Vite plugin for `npm run dev` only (`apply: 'serve'`): `/__dev/music/list`, `/file/<name>`, `choose` / `unchoose` / `delete` (only from this computer). Choosing copies the MP3 from `ui/dev/music/files/` (git-ignored) to `ui/public/assets/music/` and rewrites `tracks.json`; `ui/dev/music/candidates.json` is the committed list |
 
 ### Playing with friends (`server/.../rooms.py`, `ui/src/lib/net/`)
 
@@ -220,6 +251,15 @@ sequenceDiagram
   bot-only matches.
 - **Add a hack code:** add it to `HACKS` in `server/src/hack_star_server/hacks.py`, add its id
   to `HackId` and its effect in `ui/src/lib/hacks.ts`.
+- **Add a music track:** add it to `ui/dev/music/candidates.json` (title, author, licence,
+  source page, file) and its MP3 to `ui/dev/music/files/`; listen and **Choose** it on
+  `/?dev` (with `npm run dev`), then add it to the music table of
+  `ui/public/assets/LICENSES.md` and commit the changed `tracks.json` and the file in
+  `ui/public/assets/music/`.
+- **Add a created-fighter part:** add the builder to `HEADS` / `BODIES` / `HANDS` / `LEGS` in
+  `ui/src/lib/models/custom3d.ts`, raise `PART_COUNTS` (`progress.ts`) and the lists in
+  `created.ts`, the skin-id pattern in `parseLookSkin()` and the server's `CREATED_LOOK` if a
+  digit grows, and the `creator.<part>.<n>` texts.
 - **Add a spec:** use the spec kit — `Load .specs/kit/requirements/prompt.md` →
   `REQUIREMENTS: <name> — <request>`, then `PLAN:`. Every spec also updates this page and the
   README.
@@ -229,5 +269,6 @@ sequenceDiagram
 | Command | Covers |
 |---------|--------|
 | `cd server; uv run --no-sync pytest` | API: fighters and skins, hack durations, rooms and created-fighter member data |
-| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress, accounts and tab sync, languages, created fighters, 3D models, timed hacks, QR codes and password, vocabulary |
-| `cd ui; npm run check` | Type checks (TypeScript and Svelte) |
+| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress (v2–v7 migration), accounts and tab sync (created fighters and skins), saving and the notice, languages, created fighters and skins, 3D models (created parts), timed hacks, QR codes and password, developer mode, music rules and player, vocabulary |
+| `cd ui; npm run check` | Type checks (TypeScript and Svelte, including `vite.config.ts` and `ui/dev/`) |
+| `cd ui; npm run build` | The production build (it must not contain the dev-only music tools) |

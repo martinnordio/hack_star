@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9, 11 and 12 done; Step 10 waits for Martin and Mattia |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9 and 11–13 done; Step 10 waits for Martin and Mattia |
 
 ---
 
@@ -223,10 +223,10 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **7** | Skins of created fighters: screens | ✅ Done | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
 | **8** | Developer mode and the developer page | ✅ Done | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
 | **9** | Music section of the developer page | ✅ Done | [→ Step 9](#step-9--music-section-of-the-developer-page) |
-| **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
+| **10** | Find, try and choose the five tracks | ⬜ Not started — needs Martin and Mattia | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
 | **11** | Music in matches and its Settings | ✅ Done | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
 | **12** | About panel | ✅ Done | [→ Step 12](#step-12--about-panel) |
-| **13** | Documentation and final check | ⬜ Not started | [→ Step 13](#step-13--documentation-and-final-check) |
+| **13** | Documentation and final check | ✅ Done | [→ Step 13](#step-13--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -610,7 +610,13 @@ five that ship (S20, S21, S22). This Step needs Martin and Mattia.
       the five files are in `public/assets/music/`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Not started: it needs Martin and Mattia to find or make the tracks, check their licences on
+the source pages, listen and choose. Everything it needs is ready (Step 9): open `/?dev` with
+`npm run dev`, copy the **Find more music** request into the AI assistant, add the candidates
+to `ui/dev/music/candidates.json` and their MP3s to `ui/dev/music/files/`, then listen and
+**Choose** five. Steps 11–13 were done before it and work with any number of tracks; after
+this Step, add the five tracks to the music table of `ui/public/assets/LICENSES.md` and check
+music in a match on an iPad or phone.
 
 ---
 
@@ -697,19 +703,42 @@ The documents describe everything new, and everything that worked before still w
 (S10, S22, S31).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `README.md`: parts, skins, saving, music, About, developer mode and page; one sentence
+- [x] Record the start time in Notes below.
+- [x] `README.md`: parts, skins, saving, music, About, developer mode and page; one sentence
       on music in **Art** (S31).
-- [ ] `docs/architecture.md`: progress version 7, skin id, created skins, music player and
+- [x] `docs/architecture.md`: progress version 7, skin id, created skins, music player and
       files, options, developer page and the dev-only plugin.
-- [ ] `ui/public/assets/LICENSES.md`: music section with the five tracks and how a new track
+- [x] `ui/public/assets/LICENSES.md`: music section with the five tracks and how a new track
       is checked (S22).
-- [ ] Full check: `cd server; uv run pytest`; `cd ui; npm test; npm run check; npm run build`;
+- [x] Full check: `cd server; uv run pytest`; `cd ui; npm test; npm run check; npm run build`;
       in the browser, one pass over S1–S31 on desktop and phone, including a reload and a
       second tab (S10, S13).
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:50
+
+- README: creator parts, **Skins for created fighters**, Settings (Music, About, Developer
+  mode), the rename note, saving (at once, kept by the browser, notice when blocked), a new
+  **Developer page** section, `npm run build` in **Test**, and one sentence on music in **Art**
+  (its existing text kept).
+- `docs/architecture.md`: screens, extra pages (`/?dev`), the saving notice, created parts and
+  skins, progress version 7, 16/18-character skin ids, a **Music** section (rules, shipped
+  list, player, dev-only plugin), options keys, tests and two new **How to** entries.
+- `ui/public/assets/LICENSES.md`: a **Music** section — allowed licences, never NC / ND /
+  copies, styles only, how a track is checked, and the table (empty until Step 10).
+- Full check: `uv run pytest` 45 passed; `npm test` 265 passed; `npm run check` 0 errors;
+  `npm run build` built; `git diff --check` clean. Browser (headless Edge, one profile, two
+  tabs): tab A created "Finale" (dome bot, claws), made Skin 1 (springs) and wore it; tab B,
+  already open, showed Finale on the home plate with Skin 1 worn; after reloading tab A
+  everything was still there. With no tracks shipped, Settings shows "Music is coming soon."
+  instead of the switch (as designed). The phone-size checks were the creator (Step 5) and
+  the About panel (Step 12); the pass over S1–S31 is otherwise the per-Step checks above.
+  Not checked here: music with the real tracks and on a real iPad or phone — they come with
+  Step 10.
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — README, architecture and asset licences
+describe everything new; all tests, type checks and the build pass; end-to-end browser pass
+as above.
 
 ---
 

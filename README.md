@@ -112,11 +112,17 @@ Hack star server" with a **Try again** button.
   parts). The types were tuned with bot-only test matches so that each one wins about as often
   as the others.
 - **Create a fighter:** choose a name (1–12 characters), a type, two colours, a head (kid,
-  robot, cat) and a body (kid, robot, armour), with a 3D preview. The first fighter is free and
+  robot, cat, dino, dome bot), a body (kid, robot, armour, hoodie, jet pack), hands (like the
+  body, claws, big gloves) and legs (like the body, springs, big boots), with a turning 3D
+  preview. The first fighter is free and
   usable right away. Changing a fighter costs 500 credits and keeps its trophies and power.
   While `CREATOR` is active, create up to 14 more fighters for 500 credits each; `INFINITY`
   makes creation and changes free. Extra fighters keep their progress but become inactive when
   `CREATOR` expires, and are usable again when it is entered again.
+- **Skins for created fighters:** on a created fighter's screen, **New skin** makes up to 5
+  skins, each with its own colours and parts (same name and type), for free. Choose one and
+  **Select** to wear it at home, in matches and in rooms; **Change skin** and **Delete skin**
+  (tap twice) are there too. Deleting the worn skin puts the default look back on.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
   otherwise; you start with 500). On a fighter's screen:
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
@@ -136,9 +142,14 @@ Hack star server" with a **Try again** button.
   bots), and **Reset coins and trophies**: after a confirmation the account starts again with
   0 credits, 0 trophies, only the start fighters, power 1 and default skins (hack codes and
   created fighters stay; extra created fighters still need `CREATOR` to be active).
+  **Music** turns the music on or off and chooses the track (saved on the device; on at
+  first); it plays during every match and Training and pauses while the tab is hidden.
+  **About Hack star** shows the version, the credits of the music and the MIT licence.
+  **Developer mode** (with the developer code, see below) adds a link to the developer page.
 - **Accounts:** the name under the trophies on the home screen. Tap it to switch account, add
   one (up to 5 per device, names 1–16 characters, all different) or rename one (accounts
-  cannot be deleted). Each account has its own credits, trophies, fighters, skins, hack codes,
+  cannot be deleted). A name typed in the rename box is kept when the panel is closed. Each
+  account has its own credits, trophies, fighters, skins, hack codes,
   created fighters and language. The progress saved before accounts existed became "Player 1".
   Existing saves migrate automatically, preserving the original created fighter and its progress.
   Same-origin tabs reconcile account changes and refresh when brought back to the front.
@@ -175,9 +186,13 @@ Hack star server" with a **Try again** button.
   the 11 limit come back; fighters, levels and skins you got while hacking stay (skins you
   only wore thanks to OPENSESAME go back to Default).
 
-Progress (accounts, chosen fighter, bought and chosen skins, trophies, hack expiry and created
-fighters) is saved in the browser of each device. Open <http://localhost:5180/?gallery> to see
-every fighter and skin side by side.
+Progress (accounts, chosen fighter, bought and chosen skins, trophies, hack expiry, created
+fighters with their parts and skins) and the Settings choices are saved in the browser of each
+device as soon as they change, so they are there after closing the game or turning off the
+device. The game asks the browser to keep this data (Safari may otherwise delete it after
+about a week without playing); when the browser does not allow saving (for example private
+browsing) a notice says so once per visit. Open <http://localhost:5180/?gallery> to see
+every fighter and skin side by side (`?gallery=custom` shows created-fighter parts).
 
 ### Match settings
 
@@ -212,11 +227,26 @@ game with the code, so:
   `https://<network address>:5180`; accept the certificate warning once (the certificate is
   self-signed). Print the QR page from that `https://` address too.
 
+### Developer page
+
+`/?dev` (for example <http://localhost:5180/?dev>) is for the developers; no button leads to
+it for players. The first time it asks for the developer code (the same as the QR page,
+`M6D2`), then the browser stays in **developer mode** until it is turned off in Settings.
+It is in English.
+
+- **Music:** the candidate tracks (up to 15) with title, author, licence and source; **Play**
+  to listen, **Choose** the five that ship (only CC0, CC BY or music made for Hack star),
+  **Delete** the others, and a ready-to-copy request for the AI assistant to find more. The
+  list is `ui/dev/music/candidates.json` (committed); the MP3 files go to
+  `ui/dev/music/files/` (not committed). Choosing copies a track to `ui/public/assets/music/`
+  and writes `ui/src/lib/music/tracks.json`, which the game and the About panel read. These
+  tools work only with `npm run dev` and only from the computer running it.
+
 ## Test
 
 ```powershell
 cd server; uv run pytest
-cd ui; npm test; npm run check
+cd ui; npm test; npm run check; npm run build
 ```
 
 While the server is running on Windows, use `uv run --no-sync pytest` (the running server
@@ -226,6 +256,8 @@ locks its launcher, so `uv` cannot re-install it).
 
 Only original art or art with a free licence (CC0) is used: every fighter, skin and arena is
 built in code from simple shapes. See [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md).
+Music is made for the project or uses a free licence (CC0 or CC BY, credited in the game's
+About panel); no track copies or imitates an existing song or artist.
 
 ## Licence and disclaimer
 
