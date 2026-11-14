@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–3 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–4 done |
 
 ---
 
@@ -217,7 +217,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **1** | Account name on the home screen | ✅ Done | [→ Step 1](#step-1--account-name-on-the-home-screen) |
 | **2** | Saving that lasts, and a notice when it cannot | ✅ Done | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
 | **3** | Look format with hands, legs and skins | ✅ Done | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
-| **4** | New 3D parts | ⬜ Not started | [→ Step 4](#step-4--new-3d-parts) |
+| **4** | New 3D parts | ✅ Done | [→ Step 4](#step-4--new-3d-parts) |
 | **5** | Creator controls for every part | ⬜ Not started | [→ Step 5](#step-5--creator-controls-for-every-part) |
 | **6** | Skins of created fighters: rules and saving | ⬜ Not started | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
 | **7** | Skins of created fighters: screens | ⬜ Not started | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
@@ -380,17 +380,33 @@ Two new heads, two new bodies, and two new hands and legs each, all original and
 option 0 of hands and legs keeps today's look (S1, S2, S3, D2).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Split hands and legs out of the bodies in `models/custom3d.ts`, so option 0 draws exactly
+- [x] Record the start time in Notes below.
+- [x] Split hands and legs out of the bodies in `models/custom3d.ts`, so option 0 draws exactly
       what each body draws today.
-- [ ] Add the new heads, bodies, hands and legs from simple shapes (`models/parts.ts`), in the
+- [x] Add the new heads, bodies, hands and legs from simple shapes (`models/parts.ts`), in the
       game's style; no shape copies a known character.
-- [ ] Test (`fighters3d.test.ts`): every combination builds; an old 16-character look builds
+- [x] Test (`fighters3d.test.ts`): every combination builds; an old 16-character look builds
       the same parts as before.
-- [ ] Check: `cd ui; npm test; npm run check`; look at all combinations in `/?gallery`.
+- [x] Check: `cd ui; npm test; npm run check`; look at all combinations in `/?gallery`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:06
+
+- Each body is now `{ torso, arms, legs }`; hands / legs 0 use the body's own arms and legs.
+- New parts: heads **dino** (spiky crest, snout) and **dome bot** (glass dome, two antennas);
+  bodies **hoodie** (with the kid's arms and legs) and **jet pack** (with the robot's arms and
+  legs); hands **claws** and **big gloves**; legs **springs** and **big boots**. All from
+  spheres, boxes, cones, cylinders and rings.
+- The test went into a new `models/custom3d.test.ts` (next to the code) instead of
+  `fighters3d.test.ts`: it pins a fingerprint (mesh count + position checksum) of the 9
+  version-6 head/body models, recorded before the refactor, and checks that all 225
+  combinations build and differ.
+- `/?gallery=custom` now also shows 10 created looks covering every new part (screenshot
+  checked with headless Edge).
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — two heads, two bodies, two hands and two legs
+added; old looks draw exactly as before. `npm test` 251 passed; `npm run check` 0 errors;
+gallery screenshot shows all new parts.
 
 ---
 
