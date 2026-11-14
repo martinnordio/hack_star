@@ -830,4 +830,4 @@ Tasks set aside for a future spec, so nothing is forgotten.
 - [x] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
 - [x] Review · review page written; no Blocking finding open
 - [x] Spec closed · moved to `.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Pull request · opened with the spec summary; reviewed; merged; branch deleted ([#23](https://github.com/martinnordio/hack_star/pull/23), merged 2026-11-14)
