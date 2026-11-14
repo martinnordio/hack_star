@@ -9,7 +9,9 @@
     CREATED_COLORS,
     CREATED_ID,
     MAX_CREATED_FIGHTERS,
+    HANDS,
     HEADS,
+    LEGS,
     MAX_CREATED_NAME,
     createCost,
     createdLookFor,
@@ -74,7 +76,7 @@
 <div class="creator">
   <div class="stage">
     <Canvas shadows={PCFShadowMap}>
-      <HomeScene fighterId={fighterId ?? CREATED_ID} skinId={skin} entrance={false} />
+      <HomeScene fighterId={fighterId ?? CREATED_ID} skinId={skin} entrance={false} turning />
     </Canvas>
   </div>
 
@@ -108,7 +110,7 @@
       </div>
     {/each}
 
-    {#each [['head', HEADS], ['body', BODIES]] as const as [field, options] (field)}
+    {#each [['head', HEADS], ['body', BODIES], ['hands', HANDS], ['legs', LEGS]] as const as [field, options] (field)}
       <span class="label" id="created-{field}">{$t(`creator.${field}` as TextKey)}</span>
       <div class="choices" role="radiogroup" aria-labelledby="created-{field}">
         {#each options as option (option)}

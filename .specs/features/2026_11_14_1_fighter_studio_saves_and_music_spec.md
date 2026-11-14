@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–4 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–5 done |
 
 ---
 
@@ -218,7 +218,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **2** | Saving that lasts, and a notice when it cannot | ✅ Done | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
 | **3** | Look format with hands, legs and skins | ✅ Done | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
 | **4** | New 3D parts | ✅ Done | [→ Step 4](#step-4--new-3d-parts) |
-| **5** | Creator controls for every part | ⬜ Not started | [→ Step 5](#step-5--creator-controls-for-every-part) |
+| **5** | Creator controls for every part | ✅ Done | [→ Step 5](#step-5--creator-controls-for-every-part) |
 | **6** | Skins of created fighters: rules and saving | ⬜ Not started | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
 | **7** | Skins of created fighters: screens | ⬜ Not started | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
 | **8** | Developer mode and the developer page | ⬜ Not started | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
@@ -417,16 +417,30 @@ The creator lets the player pick head, body, hands and legs independently, with 
 preview, on every device and in every language (S1, S2, S4, S29, S30).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `CreatorScreen.svelte`: pickers for hands and legs, and the extra heads and bodies;
+- [x] Record the start time in Notes below.
+- [x] `CreatorScreen.svelte`: pickers for hands and legs, and the extra heads and bodies;
       changing one part or colour keeps the others.
-- [ ] The preview turns while the player changes parts.
-- [ ] Labels for the new parts in all five languages (`i18n/`).
-- [ ] Check: `cd ui; npm test; npm run check`; in the browser at phone, tablet and desktop size,
+- [x] The preview turns while the player changes parts.
+- [x] Labels for the new parts in all five languages (`i18n/`).
+- [x] Check: `cd ui; npm test; npm run check`; in the browser at phone, tablet and desktop size,
       with mouse and touch: create and edit a fighter, reload, the parts are kept.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:12
+
+- `created.ts`: `HEADS`/`BODIES` 0–4, new `HANDS`/`LEGS` 0–2; the creator loops over all
+  four groups. Hands and legs 0 are labelled "Like the body".
+- `HomeScene.svelte` has a `turning` option (0.6 rad/s), used by the creator only; the home
+  screen is unchanged.
+- Browser check (headless Edge, desktop 1280×800): seven groups shown, every head / body /
+  hands / legs option present, picking Dino, Jet pack, Claws and Springs keeps each choice,
+  saving stores `head 3, body 4, hands 1, legs 1`. Phone size (430×932): screenshot shows the
+  turning preview and the pickers wrapping; the buttons are the existing touch buttons
+  (`touch-action: manipulation`).
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — the creator offers 5 heads, 5 bodies, 3 hands
+and 3 legs with a turning preview, in all five languages. `npm test` 251 passed;
+`npm run check` 0 errors; browser checks as above.
 
 ---
 

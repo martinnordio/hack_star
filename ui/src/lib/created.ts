@@ -10,8 +10,11 @@ export const MAX_CREATED_NAME = 12
 export const MAX_CREATED_FIGHTERS = 15
 
 export const CREATED_COLORS = ['#e8322b', '#ff8a1a', '#ffd23f', '#39d353', '#2fb5ff', '#3a5bff', '#b64dff', '#ff5fa8'] as const
-export const HEADS = [0, 1, 2] as const
-export const BODIES = [0, 1, 2] as const
+export const HEADS = [0, 1, 2, 3, 4] as const
+export const BODIES = [0, 1, 2, 3, 4] as const
+/** 0 is the body's own hands / legs. */
+export const HANDS = [0, 1, 2] as const
+export const LEGS = [0, 1, 2] as const
 
 export type Look = Omit<CreatedLook, 'name'>
 
