@@ -4,7 +4,7 @@ import type { Fighter } from './fighters'
 import { unlock } from './game/economy'
 import { wornSkin } from './game/shop'
 import { currentFighter, isUnlocked, withHack } from './hacks'
-import { defaultProgress, type CreatedLook } from './progress'
+import { defaultProgress, TEMPORARY_HACK_SECONDS, type CreatedLook } from './progress'
 
 const look: CreatedLook = { name: 'Zappy', type: 'thrower', main: '#e8322b', second: '#39d353', head: 2, body: 1 }
 const blaze = { id: 'blaze', name: 'Blaze', rarity: 'Rare', type: 'spreader', idea: '', skins: [], unlocked_at_start: true } as Fighter
@@ -38,12 +38,12 @@ describe('created fighter', () => {
   it('only the CREATOR code unlocks it, not credits or OPENSESAME', () => {
     const p = { ...defaultProgress(), credits: 99_999, createdFighter: look }
     expect(unlock(p, createdFighter(look))).toEqual({ ok: false, reason: 'locked' })
-    expect(isUnlocked(withHack(p, 'unlock_all'), CREATED_ID)).toBe(false)
-    expect(isUnlocked(withHack(p, 'creator'), CREATED_ID)).toBe(true)
+    expect(isUnlocked(withHack(p, 'unlock_all', TEMPORARY_HACK_SECONDS), CREATED_ID)).toBe(false)
+    expect(isUnlocked(withHack(p, 'creator', TEMPORARY_HACK_SECONDS), CREATED_ID)).toBe(true)
   })
 
   it('CREATOR entered before creating unlocks it at creation', () => {
-    const result = saveCreated(withHack(defaultProgress(), 'creator'), look)
+    const result = saveCreated(withHack(defaultProgress(), 'creator', TEMPORARY_HACK_SECONDS), look)
     expect(result.ok && isUnlocked(result.progress, CREATED_ID)).toBe(true)
   })
 
@@ -62,7 +62,7 @@ describe('created fighter', () => {
   it('changing without enough credits is refused; INFINITY makes it free', () => {
     const p = { ...defaultProgress(), credits: 120, createdFighter: look }
     expect(saveCreated(p, look)).toEqual({ ok: false, reason: 'credits', missing: 380 })
-    const free = saveCreated(withHack(p, 'infinite_credits'), look)
+    const free = saveCreated(withHack(p, 'infinite_credits', TEMPORARY_HACK_SECONDS), look)
     expect(free.ok && free.progress.credits).toBe(120)
   })
 })

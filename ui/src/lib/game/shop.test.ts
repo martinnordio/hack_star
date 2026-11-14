@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Fighter } from '../fighters'
 import { withHack } from '../hacks'
-import { defaultProgress, loadProgress, memoryStorage, PROGRESS_KEY, type Progress } from '../progress'
+import { defaultProgress, loadProgress, memoryStorage, PROGRESS_KEY, TEMPORARY_HACK_SECONDS, type Progress } from '../progress'
 import { buySkin, ownsSkin, skinOfTheDay, skinPrice } from './shop'
 
 const skins = (...list: [string, Fighter['rarity']][]) => [
@@ -50,7 +50,7 @@ describe('skins shop', () => {
     expect(skinOfTheDay(p, fighters, nextDay)).not.toEqual(morning)
     const owner = { ...p, ownedSkins: { [morning!.fighter.id]: [morning!.skin.id] } }
     expect(skinOfTheDay(owner, fighters, day)).not.toEqual(morning)
-    expect(skinOfTheDay(withHack(p, 'unlock_all'), fighters, day)).toBeUndefined()
+    expect(skinOfTheDay(withHack(p, 'unlock_all', TEMPORARY_HACK_SECONDS), fighters, day)).toBeUndefined()
   })
 
   it('buys a skin: credits go down and the skin is owned', () => {
@@ -76,8 +76,8 @@ describe('skins shop', () => {
   })
 
   it('hacks: unlock-everything owns all skins; unlimited credits keeps the saved credits', () => {
-    expect(ownsSkin(withHack(defaultProgress(), 'unlock_all'), 'luna', 'galaxy')).toBe(true)
-    const p = withHack(defaultProgress(), 'infinite_credits')
+    expect(ownsSkin(withHack(defaultProgress(), 'unlock_all', TEMPORARY_HACK_SECONDS), 'luna', 'galaxy')).toBe(true)
+    const p = withHack(defaultProgress(), 'infinite_credits', TEMPORARY_HACK_SECONDS)
     const after = ok(buySkin(p, fighters, blaze, skin(blaze, 'phoenix'), day))
     expect(after.credits).toBe(500)
     expect(ownsSkin({ ...after, activeHacks: [] }, 'blaze', 'phoenix')).toBe(true)
@@ -97,7 +97,7 @@ describe('skins shop', () => {
     }
     storage.setItem(PROGRESS_KEY, JSON.stringify(v2))
     const p = loadProgress(storage)
-    expect(p).toMatchObject({ version: 4, credits: 360, trophies: { blaze: 2005 }, unlockedFighters: ['blaze', 'frosty'] })
+    expect(p).toMatchObject({ version: 5, credits: 360, trophies: { blaze: 2005 }, unlockedFighters: ['blaze', 'frosty'] })
     expect(p.ownedSkins).toEqual({ blaze: ['phoenix'] })
   })
 })

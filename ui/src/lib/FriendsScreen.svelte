@@ -2,7 +2,7 @@
   import QRCode from 'qrcode'
   import { onMount, untrack } from 'svelte'
   import type { Fighter } from './fighters'
-  import { currentFighter } from './hacks'
+  import { currentFighter, isHackActive } from './hacks'
   import { powerOf } from './game/economy'
   import { wornSkin } from './game/shop'
   import { codeFrom, createRoom, joinRoom, leaveRoom, room, roomLink, type Member, type Seat } from './net/room'
@@ -27,7 +27,7 @@
       fighter: fighter.id,
       skin: wornSkin(p, fighter.id),
       power: powerOf(p, fighter.id),
-      hyper: p.activeHacks.includes('hypercharge'),
+      hyper: isHackActive(p, 'hypercharge'),
       ...(fighter.id === CREATED_ID && p.createdFighter ? { name: p.createdFighter.name } : {}),
     }
   }

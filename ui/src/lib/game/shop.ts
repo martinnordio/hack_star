@@ -1,5 +1,5 @@
 import type { Fighter, Skin } from '../fighters'
-import { isUnlocked } from '../hacks'
+import { isHackActive, isUnlocked } from '../hacks'
 import { CREATED_ID, type Progress } from '../progress'
 import { lookSkin } from '../created'
 import { pay, type Purchase } from './economy'
@@ -14,7 +14,7 @@ export function ownsSkin(progress: Progress, fighterId: string, skinId: string):
   return (
     skinId === 'default' ||
     fighterId === CREATED_ID ||
-    progress.activeHacks.includes('unlock_all') ||
+    isHackActive(progress, 'unlock_all') ||
     (progress.ownedSkins[fighterId] ?? []).includes(skinId)
   )
 }

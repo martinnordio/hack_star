@@ -8,6 +8,7 @@ export interface Hack {
   code: string
   name: string
   description: string
+  duration_seconds: number | null
 }
 
 export const NORMAL_MAX_POWER = 11
@@ -54,12 +55,29 @@ export function hackLink(origin: string, code: string): string {
   return `${origin}/?hack=${encodeURIComponent(code)}`
 }
 
-export function withHack(progress: Progress, id: HackId): Progress {
-  if (progress.activeHacks.includes(id)) return progress
-  return { ...progress, activeHacks: [...progress.activeHacks, id] }
+export function withHack(progress: Progress, id: HackId, durationSeconds: number | null, now = Date.now()): Progress {
+  const activeHacks = progress.activeHacks.includes(id) ? progress.activeHacks : [...progress.activeHacks, id]
+  return {
+    ...progress,
+    activeHacks,
+    hackExpiries: {
+      ...progress.hackExpiries,
+      [id]: durationSeconds === null ? null : now + durationSeconds * 1000,
+    },
+  }
 }
 
-const has = (progress: Progress, id: HackId) => progress.activeHacks.includes(id)
+export function isHackActive(progress: Progress, id: string, now = Date.now()): boolean {
+  if (!progress.activeHacks.includes(id)) return false
+  const expiry = progress.hackExpiries[id]
+  return expiry === null || (expiry !== undefined && expiry > now)
+}
+
+export function activeHackIds(progress: Progress, now = Date.now()): string[] {
+  return progress.activeHacks.filter((id) => isHackActive(progress, id, now))
+}
+
+const has = (progress: Progress, id: HackId) => isHackActive(progress, id)
 
 /** Credits to show; `Infinity` with the unlimited-credits hack. */
 export function credits(progress: Progress): number {

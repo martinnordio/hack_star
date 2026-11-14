@@ -1,7 +1,7 @@
 # Bug Fixes Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Requirements in progress
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/bug-fixes`
@@ -12,7 +12,10 @@
 | Date | Stage | Command | Model | Note |
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written: bug 1 (creating a fighter with INFINITY); revised: report details (desktop, typed code, 0 C), created fighter usable at once (S7, S8 replace S5); card after the unlocked fighters (S9), tabs update when back in front (S4); CREATOR now allows more created fighters (S10–S14); codes expire after 3 days, POWER22 for ever, 500 C and max 15 (S15–S21); OPENSESAME, re-entering and existing codes (S16, S22); no open questions |
+| 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | clarified: only additional created fighters become inactive when CREATOR expires (S20–S21) |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #17 created |
+| 2026-11-14 | plan | `PLAN:` | GPT-6 Luna | Part 2 written |
+| 2026-11-14 | implementation | `IMPLEMENT:` | GPT-6 Luna | Step 1 done |
 
 ---
 
@@ -130,8 +133,9 @@ Added 2026-11-14 together with the CREATOR change.
   selected, played or changed; their card and detail say they are active again when the CREATOR
   code is entered. Entering CREATOR again makes them usable and changeable. If one of them was
   selected, the Home screen shows another usable fighter.
-- **S21 — First created fighter stays:** The first created fighter (S10) stays usable whether
-  CREATOR is active or not.
+- **S21 — First created fighter stays:** The first created fighter (S10), created without CREATOR,
+  stays usable whether CREATOR is active or not; only additional created fighters become inactive
+  when CREATOR expires (S20).
 - **S22 — OPENSESAME is not for ever:** When OPENSESAME turns off, the fighters that were not bought
   are locked again, as today; bought fighters stay unlocked.
 
@@ -145,4 +149,194 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 
 # Part 2 · Plan
 
-_Written by the plan stage once Part 1 is agreed._
+## 2 · Spec Overview
+
+| Step | Description | Status | Detail |
+|------|-------------|--------|--------|
+| **1** | Timed hack state and expiry rules | ✅ Done | [→ Step 1](#step-1--timed-hack-state-and-expiry-rules) |
+| **2** | Created-fighter data and compatibility | ⬜ Not started | [→ Step 2](#step-2--created-fighter-data-and-compatibility) |
+| **3** | Create, select and manage multiple fighters | ⬜ Not started | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
+| **4** | Created fighters in shared rooms | ⬜ Not started | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
+| **5** | Keep browser tabs in sync | ⬜ Not started | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
+| **6** | Show hack status and time remaining | ⬜ Not started | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
+| **7** | Full regression checks and documentation | ⬜ Not started | [→ Step 7](#step-7--full-regression-checks-and-documentation) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration> · <model>)**`** line to that Step's
+>    **Notes**: date, time it took, the AI model that did the work, a one-line summary and
+>    the verifying test/command result.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records the
+> finish and the duration.
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | Store each timed hack's expiry in the account's saved progress; represent permanent hacks separately from timed ones. | Expiry follows the account across reloads without adding server-side player accounts. |
+| D2 | Treat three days as 72 hours; redeeming an active timed code resets its expiry to 72 hours from that redemption. | This gives the stated re-entry behavior a clear, testable clock rule. |
+| D3 | Migrate the current single `createdFighter` into a collection while preserving its existing fighter id and progress; assign stable distinct ids to added fighters. | Existing saves keep their first fighter's trophies, power, skins and selection, while extra fighters can have independent progress. |
+| D4 | Keep game progress and code expiry in browser localStorage; synchronize tabs from the same origin and refresh a stale tab when it becomes visible. | Accounts are currently device-local; this fixes stale tabs without introducing online accounts or a dependency. |
+| D5 | Extend the existing room member message with a stable created-fighter id, name and look; keep accepting the current `custom` id for older clients. | Friends' browsers need the fighter's appearance without requiring the server to store player saves. |
+| D6 | Keep hack duration metadata with the existing server hack definitions and return it through the existing API. | The API remains the source of which code is timed versus permanent, including future codes. |
+| D7 | Do not add a package. | Existing localStorage, Svelte stores, FastAPI models and test frameworks cover this behavior. |
+
+---
+
+## Step 1 — Timed hack state and expiry rules
+
+### Goal
+Make temporary and permanent hack behavior persist correctly and expire predictably (S16, S17, S19, S22).
+
+### Tasks
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Add duration metadata to the server's hack definitions and API response: 72 hours for INFINITY, OPENSESAME, HYPERCHARGE and CREATOR; permanent for POWER22.
+- [x] Persist timed-code expiry per account; refresh an active code to 72 hours from each successful re-entry, and keep permanent codes without an expiry.
+- [x] Migrate existing progress so previously active timed codes receive 72 hours from the first load after this version is installed; preserve purchased fighters, skins and power levels.
+- [x] Derive active hack effects from current time so expired codes stop affecting credits, unlocks, power and Hypercharge; ensure OPENSESAME does not leave unpurchased fighters unlocked.
+- [x] Add focused tests for expiry boundaries, re-entry, permanent POWER22, legacy progress migration and retained purchases; check with `cd ui; npm test` and `cd server; uv run --no-sync pytest`.
+
+### Notes
+Started: 2026-11-14 09:56
+**Done (2026-11-14 · ~5m · GPT-6 Luna)** — Added server hack durations, v5 expiry persistence/migration and expiry-aware effects. UI tests 228/228, `npm run check` clean, server tests 39/39.
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 2 — Created-fighter data and compatibility
+
+### Goal
+Replace the one-fighter save model with a collection and retain existing saves and first-fighter behavior (S1, S7, S8, S10, S20, S21).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Migrate the saved single fighter to the first item in the collection, preserving its id and all trophy, power, skin and selected-fighter records.
+- [ ] Add pure helpers for identifying each created fighter, its look, whether it is usable, and resolving the current fighter when a selected extra fighter becomes inactive.
+- [ ] Preserve the first fighter's free creation and availability without CREATOR; preserve the 500 C edit price and make INFINITY pay nothing.
+- [ ] Add tests for old-save migration, first-fighter selection, editing without losing progress, INFINITY at 0 C, and extra-fighter inactivity when CREATOR expires.
+- [ ] Verify `cd ui; npm test` and `cd ui; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Create, select and manage multiple fighters
+
+### Goal
+Let players create and manage up to 15 individual fighters, with the right availability, cost, order and feedback (S2, S3, S6, S9–S13, S15, S20, S21).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Extend the creator to create an additional fighter only while CREATOR is active; charge 500 C per extra fighter, or 0 with INFINITY, and refuse creation at insufficient credits or the 15-fighter limit.
+- [ ] Let players open and edit a specific created fighter; retain its own look, trophies and power, and show a useful message when an extra fighter is inactive because CREATOR expired.
+- [ ] Refresh the Fighters screen immediately after create; order created fighters after the last unlocked standard fighter and before locked standard fighters; place the create card according to CREATOR and the 15-fighter limit.
+- [ ] Ensure created fighters are selectable while usable, fall back to another usable fighter if an inactive one was selected, and show the selection in Home, matches and Training.
+- [ ] Update CREATOR descriptions and all new UI messages in English, German, Swiss German, Spanish and Italian.
+- [ ] Add UI/domain tests for create, edit, ordering, max count, insufficient funds, hack states and title/button agreement; verify `cd ui; npm test` and `cd ui; npm run check`.
+- [ ] Check create/select/edit and expiry feedback in the browser at desktop, iPad and phone sizes.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 4 — Created fighters in shared rooms
+
+### Goal
+Transmit each created fighter's identity and appearance so friends see the selected fighter correctly (S6, S14).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Include the stable created-fighter id, name and encoded look in room member data; continue to accept the existing `custom` member shape.
+- [ ] Update server validation and match setup to accept distinct created-fighter ids and derive their type from the encoded look.
+- [ ] Add UI and server tests covering two different created fighters in one room, the legacy `custom` id, malformed looks and the propagated display name.
+- [ ] Verify `cd ui; npm test`, `cd ui; npm run check`, and `cd server; uv run --no-sync pytest`; check a shared match in the browser.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 5 — Keep browser tabs in sync
+
+### Goal
+Prevent stale tabs from losing account progress and refresh them when they become active again (S4).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Synchronize account-store state when another same-origin tab writes the saved accounts.
+- [ ] Reconcile the latest saved account state before a stale tab writes, and refresh from storage when the tab becomes visible; keep account selection and progress scoped correctly.
+- [ ] Add tests using two account stores over shared storage to verify that hacks, credits and created fighters are retained and become visible when switching back to a tab.
+- [ ] Verify `cd ui; npm test` and `cd ui; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 6 — Show hack status and time remaining
+
+### Goal
+Show players whether each active hack is permanent or when it expires (S6, S13, S16–S18).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Show remaining time for timed hacks in days and hours, and a clear permanent status for POWER22; remove expired codes from the active list.
+- [ ] Refresh displayed time at least once per hour while the Hack screen is open, when the page becomes visible, and as the expiry boundary is reached.
+- [ ] Translate all new status labels and update the CREATOR description on the hack screen and printable QR page in all five languages.
+- [ ] Add tests for permanent, active, expiring and expired display states; verify `cd ui; npm test` and `cd ui; npm run check`.
+- [ ] Check the hack list, reset flow, typed code and scanned-code flow in the browser at desktop and phone sizes.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 7 — Full regression checks and documentation
+
+### Goal
+Verify all requirements together and document the new save, code-expiry and multiplayer behavior (S1–S22).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Run the full UI suite, type check and production build: `cd ui; npm test`, `cd ui; npm run check`, `cd ui; npm run build`.
+- [ ] Run all server tests: `cd server; uv run --no-sync pytest`.
+- [ ] Check migration from an existing save, INFINITY with 0 C, create/edit and 15-fighter limit, code expiry and re-entry, OPENSESAME relocking, two-tab refresh, and a shared match with created fighters.
+- [ ] Check key flows at desktop, iPad and phone sizes with mouse and touch; confirm existing single-player, shop, account and room behavior still works.
+- [ ] Update the README and `docs/architecture.md` with the revised creator, save migration, expiry rules and room-member data.
+- [ ] Verify the final diff and rerun any focused test affected by documentation or integration fixes.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|-------------|
+| _None._ | _All requested behavior is included in this spec._ | _—_ |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+| _YYYY-MM-DD_ | _AI assistant (model) / person_ | _requirements / plan / diff_ | _Approve / Request changes_ | _notes_ |
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Implementation · every Step's tasks checked
+- [ ] Review · review page and semantic diff written; code review without Blocking findings
+- [ ] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

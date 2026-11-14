@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   PROGRESS_KEY,
+  TEMPORARY_HACK_SECONDS,
   defaultProgress,
   loadProgress,
   memoryStorage,
@@ -51,6 +52,18 @@ describe('progress', () => {
     const { createdFighter: _, ...rest } = { ...defaultProgress(), credits: 42 }
     const p = parseProgress({ ...rest, version: 3 })
     expect(p).toEqual({ ...defaultProgress(), credits: 42, createdFighter: null })
+  })
+
+  it('migrates version 4 active hacks to 3-day expiries, except permanent POWER22', () => {
+    const { hackExpiries: _hackExpiries, ...progress } = defaultProgress()
+    const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'] }
+    const migrated = parseProgress(legacy, 1000)
+    expect(migrated?.version).toBe(5)
+    expect(migrated?.hackExpiries).toEqual({
+      infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
+      power22: null,
+    })
+    expect(migrated?.credits).toBe(progress.credits)
   })
 
   it('a new account starts with 500 credits, 0 trophies and the start fighters', () => {

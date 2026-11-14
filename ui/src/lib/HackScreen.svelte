@@ -1,6 +1,6 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { codeFromScan, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { t, tOr } from './i18n'
@@ -17,7 +17,7 @@
   let scanning = $state(false)
   let celebrationTimer: ReturnType<typeof setTimeout> | undefined
 
-  const active = $derived(hacks.filter((h) => $progress.activeHacks.includes(h.id as HackId)))
+  const active = $derived(hacks.filter((h) => isHackActive($progress, h.id)))
 
   async function apply(text: string) {
     if (!text.trim() || busy) return
@@ -25,7 +25,7 @@
     error = undefined
     try {
       const hack = await redeem(text)
-      progress.update((p) => withHack(p, hack.id))
+      progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
       code = ''
       celebrating = hack
       clearTimeout(celebrationTimer)
@@ -40,7 +40,7 @@
   }
 
   function reset() {
-    progress.update((p) => ({ ...p, activeHacks: [] }))
+    progress.update((p) => ({ ...p, activeHacks: [], hackExpiries: {} }))
     confirmReset = false
   }
 
