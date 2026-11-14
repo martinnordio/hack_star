@@ -5,7 +5,7 @@ import { addEyes, box, capsule, cone, cylinder, newRig, part, sphere, toon, type
 const SKIN = '#ffd2a8'
 const DARK = '#2a1d1d'
 
-const FALLBACK: Look = { type: 'spreader', main: '#2fb5ff', second: '#ffd23f', head: 0, body: 0 }
+const FALLBACK: Look = { type: 'spreader', main: '#2fb5ff', second: '#ffd23f', head: 0, body: 0, hands: 0, legs: 0 }
 
 function legs(rig: Rig, color: string) {
   const leg = toon(color)
@@ -97,7 +97,7 @@ const HEADS = [kidHead, robotHead, catHead]
 export function buildCreated(skinId: string): Rig {
   const look = parseLookSkin(skinId) ?? FALLBACK
   const rig = newRig()
-  BODIES[look.body](rig, look)
-  HEADS[look.head](rig, look)
+  ;(BODIES[look.body] ?? BODIES[0])(rig, look)
+  ;(HEADS[look.head] ?? HEADS[0])(rig, look)
   return rig
 }

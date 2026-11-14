@@ -16,17 +16,34 @@ export const BODIES = [0, 1, 2] as const
 export type Look = Omit<CreatedLook, 'name'>
 
 /**
- * The look travels as the fighter's skin id ("L" + type + head + body + two colours, 16
- * characters), so the 3D models, pictures and rooms work without knowing about it.
+ * The look travels as the fighter's skin id, so the 3D models, pictures and rooms work without
+ * knowing about it: "L" + type + head + body (+ hands + legs) + two colours. Looks that older
+ * versions can draw keep the 16-character form; others use 18 characters.
  */
 export function lookSkin(look: Look): string {
-  return `L${FIGHTER_TYPE_IDS.indexOf(look.type)}${look.head}${look.body}${look.main.slice(1)}${look.second.slice(1)}`
+  const type = FIGHTER_TYPE_IDS.indexOf(look.type)
+  const colours = `${look.main.slice(1)}${look.second.slice(1)}`
+  const short = look.hands === 0 && look.legs === 0 && look.head <= 2 && look.body <= 2
+  return short
+    ? `L${type}${look.head}${look.body}${colours}`
+    : `L${type}${look.head}${look.body}${look.hands}${look.legs}${colours}`
 }
 
 export function parseLookSkin(skin: string): Look | null {
-  const m = /^L([0-4])([0-2])([0-2])([0-9a-f]{6})([0-9a-f]{6})$/i.exec(skin)
+  const m =
+    skin.length === 16
+      ? /^L([0-4])([0-2])([0-2])()()([0-9a-f]{6})([0-9a-f]{6})$/i.exec(skin)
+      : /^L([0-4])([0-4])([0-4])([0-2])([0-2])([0-9a-f]{6})([0-9a-f]{6})$/i.exec(skin)
   if (!m) return null
-  return { type: FIGHTER_TYPE_IDS[Number(m[1])], head: Number(m[2]), body: Number(m[3]), main: `#${m[4]}`, second: `#${m[5]}` }
+  return {
+    type: FIGHTER_TYPE_IDS[Number(m[1])],
+    head: Number(m[2]),
+    body: Number(m[3]),
+    hands: Number(m[4] || 0),
+    legs: Number(m[5] || 0),
+    main: `#${m[6]}`,
+    second: `#${m[7]}`,
+  }
 }
 
 export function createdFighter(look: CreatedLook, id = CREATED_ID): Fighter {
@@ -70,7 +87,7 @@ export function withCreated(fighters: Fighter[], progress: Progress): Fighter[] 
 }
 
 export function defaultLook(type: FighterTypeId = 'spreader'): CreatedLook {
-  return { name: '', type, main: CREATED_COLORS[4], second: CREATED_COLORS[2], head: 0, body: 0 }
+  return { name: '', type, main: CREATED_COLORS[4], second: CREATED_COLORS[2], head: 0, body: 0, hands: 0, legs: 0 }
 }
 
 export type CreateResult =
@@ -105,6 +122,6 @@ export function saveCreated(progress: Progress, look: CreatedLook, fighterId?: s
   if (!id) return { ok: false, reason: 'limit' }
   const createdFighters = editingIndex >= 0
     ? paid.createdFighters.map((fighter, index) => index === editingIndex ? { ...fighter, look: clean } : fighter)
-    : [...paid.createdFighters, { id, look: clean }]
+    : [...paid.createdFighters, { id, look: clean, skins: [] }]
   return { ok: true, cost, progress: { ...paid, createdFighters }, fighterId: id }
 }

@@ -16,16 +16,25 @@ import { wornSkin } from './game/shop'
 import { currentFighter, isUnlocked, withHack } from './hacks'
 import { defaultProgress, TEMPORARY_HACK_SECONDS, type CreatedLook } from './progress'
 
-const look: CreatedLook = { name: 'Zappy', type: 'thrower', main: '#e8322b', second: '#39d353', head: 2, body: 1 }
+const look: CreatedLook = { name: 'Zappy', type: 'thrower', main: '#e8322b', second: '#39d353', head: 2, body: 1, hands: 0, legs: 0 }
+const made = (id: string, l: CreatedLook = look) => ({ id, look: l, skins: [] })
 const blaze = { id: 'blaze', name: 'Blaze', rarity: 'Rare', type: 'spreader', idea: '', skins: [], unlocked_at_start: true } as Fighter
 
 describe('created fighter', () => {
-  it('its look travels as a 16-character skin id', () => {
+  it('its look travels as a skin id: 16 characters when older versions can draw it, else 18', () => {
     const skin = lookSkin(look)
     expect(skin).toHaveLength(16)
     const { name: _, ...rest } = look
     expect(parseLookSkin(skin)).toEqual(rest)
     expect(parseLookSkin('default')).toBeNull()
+
+    const full = { ...rest, head: 4, body: 3, hands: 2, legs: 1 }
+    expect(lookSkin(full)).toBe('L3432' + '1e8322b39d353')
+    expect(parseLookSkin(lookSkin(full))).toEqual(full)
+    expect(lookSkin({ ...rest, hands: 1 })).toHaveLength(18)
+    expect(parseLookSkin('L321e8322b39d353')).toEqual({ ...rest, head: 2, body: 1, hands: 0, legs: 0 })
+    expect(parseLookSkin('L35000e8322b39d353')).toBeNull()
+    expect(parseLookSkin('L33030e8322b39d353')).toBeNull()
   })
 
   it('creating is free; it joins the fighter list and is usable immediately', () => {
@@ -47,7 +56,7 @@ describe('created fighter', () => {
 
   it('keeps the first fighter usable and requires CREATOR for extra fighters', () => {
     const extra = createdFighter(look, 'custom-2')
-    const p = { ...defaultProgress(), credits: 99_999, createdFighters: [{ id: CREATED_ID, look }, { id: extra.id, look }] }
+    const p = { ...defaultProgress(), credits: 99_999, createdFighters: [made(CREATED_ID), made(extra.id)] }
     expect(unlock(p, extra)).toEqual({ ok: false, reason: 'locked' })
     expect(isUnlocked(p, CREATED_ID)).toBe(true)
     expect(isUnlocked(p, extra.id)).toBe(false)
@@ -60,7 +69,7 @@ describe('created fighter', () => {
     const now = Date.now()
     const p = withHack({
       ...defaultProgress(),
-      createdFighters: [{ id: CREATED_ID, look }, { id: extra.id, look }],
+      createdFighters: [made(CREATED_ID), made(extra.id)],
       selectedFighter: extra.id,
     }, 'creator', TEMPORARY_HACK_SECONDS, now)
     expect(currentFighter(p, withCreated([blaze], p)).id).toBe(extra.id)
@@ -75,7 +84,7 @@ describe('created fighter', () => {
   })
 
   it('changing costs 500 credits and keeps trophies and power', () => {
-    const p = { ...defaultProgress(), credits: 600, createdFighters: [{ id: CREATED_ID, look }], trophies: { custom: 70 }, powerLevels: { custom: 3 } }
+    const p = { ...defaultProgress(), credits: 600, createdFighters: [made(CREATED_ID)], trophies: { custom: 70 }, powerLevels: { custom: 3 } }
     const result = saveCreated(p, { ...look, name: 'Zappy 2' }, CREATED_ID)
     expect(result.ok).toBe(true)
     if (!result.ok) return
@@ -87,7 +96,7 @@ describe('created fighter', () => {
   })
 
   it('changing without enough credits is refused; INFINITY makes it free', () => {
-    const p = { ...defaultProgress(), credits: 120, createdFighters: [{ id: CREATED_ID, look }] }
+    const p = { ...defaultProgress(), credits: 120, createdFighters: [made(CREATED_ID)] }
     expect(saveCreated(p, look, CREATED_ID)).toEqual({ ok: false, reason: 'credits', missing: 380 })
     const free = saveCreated(withHack(p, 'infinite_credits', TEMPORARY_HACK_SECONDS), look, CREATED_ID)
     expect(free.ok && free.progress.credits).toBe(120)
@@ -119,7 +128,7 @@ describe('created fighter', () => {
   it('allocates the first unused stable fighter ID', () => {
     const progress = {
       ...defaultProgress(),
-      createdFighters: [{ id: 'custom', look }, { id: 'custom-3', look }],
+      createdFighters: [made('custom'), made('custom-3')],
     }
     expect(nextCreatedFighterId(progress)).toBe('custom-2')
   })
@@ -128,7 +137,7 @@ describe('created fighter', () => {
     const creator = withHack({
       ...defaultProgress(),
       credits: 700,
-      createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Second' } }],
+      createdFighters: [made('custom'), made('custom-2', { ...look, name: 'Second' })],
       trophies: { custom: 70, 'custom-2': 20 },
       powerLevels: { custom: 3, 'custom-2': 5 },
     }, 'creator', TEMPORARY_HACK_SECONDS)
@@ -142,10 +151,9 @@ describe('created fighter', () => {
   })
 
   it('refuses edits to inactive extras and creation beyond 15 fighters', () => {
-    const createdFighters = Array.from({ length: MAX_CREATED_FIGHTERS }, (_, index) => ({
-      id: index === 0 ? CREATED_ID : `custom-${index + 1}`,
-      look,
-    }))
+    const createdFighters = Array.from({ length: MAX_CREATED_FIGHTERS }, (_, index) =>
+      made(index === 0 ? CREATED_ID : `custom-${index + 1}`),
+    )
     const full = withHack({ ...defaultProgress(), createdFighters }, 'creator', TEMPORARY_HACK_SECONDS)
     expect(canAddCreatedFighter(full)).toBe(false)
     expect(saveCreated(full, look)).toEqual({ ok: false, reason: 'limit' })

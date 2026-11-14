@@ -1,7 +1,7 @@
 import type { FighterTypeId } from './game/types'
 
 export const PROGRESS_KEY = 'hack-star.progress'
-export const PROGRESS_VERSION = 6
+export const PROGRESS_VERSION = 7
 export const TEMPORARY_HACK_SECONDS = 72 * 60 * 60
 const PERMANENT_HACKS = new Set(['power22'])
 
@@ -13,12 +13,32 @@ export interface CreatedLook {
   second: string
   head: number
   body: number
+  /** 0 is the body's own hands. */
+  hands: number
+  /** 0 is the body's own legs. */
+  legs: number
+}
+
+/** A skin the player made for a created fighter: its own colours and parts, same type and name. */
+export interface CreatedSkin {
+  id: string
+  main: string
+  second: string
+  head: number
+  body: number
+  hands: number
+  legs: number
 }
 
 export interface CreatedFighter {
   id: string
   look: CreatedLook
+  skins: CreatedSkin[]
 }
+
+export const PART_COUNTS = { head: 5, body: 5, hands: 3, legs: 3 } as const
+export const MAX_CREATED_SKINS = 5
+const CREATED_SKIN_ID = /^s[1-5]$/
 
 export interface Progress {
   version: typeof PROGRESS_VERSION
@@ -72,7 +92,11 @@ export function resetProgress(progress: Progress): Progress {
     credits: 0,
     activeHacks: [...progress.activeHacks],
     hackExpiries: { ...progress.hackExpiries },
-    createdFighters: progress.createdFighters.map((fighter) => ({ ...fighter, look: { ...fighter.look } })),
+    createdFighters: progress.createdFighters.map((fighter) => ({
+      ...fighter,
+      look: { ...fighter.look },
+      skins: fighter.skins.map((skin) => ({ ...skin })),
+    })),
   }
 }
 
@@ -132,10 +156,40 @@ function isCreatedFighters(value: unknown): value is CreatedFighter[] {
         fighter !== null &&
         typeof fighter.id === 'string' &&
         isCreatedFighterId(fighter.id) &&
-        isCreatedLook(fighter.look),
+        isCreatedLook(fighter.look) &&
+        isCreatedSkins(fighter.skins),
     ) &&
-    new Set(value.map((fighter) => fighter.id)).size === value.length &&
-    (value.length === 0 || value[0].id === CREATED_ID)
+    hasUniqueFirstCreated(value)
+  )
+}
+
+function hasUniqueFirstCreated(value: { id: string }[]): boolean {
+  return new Set(value.map((fighter) => fighter.id)).size === value.length && (value.length === 0 || value[0].id === CREATED_ID)
+}
+
+function isCreatedSkins(value: unknown): value is CreatedSkin[] {
+  return (
+    Array.isArray(value) &&
+    value.length <= MAX_CREATED_SKINS &&
+    value.every((skin) => typeof skin === 'object' && skin !== null && typeof skin.id === 'string' && CREATED_SKIN_ID.test(skin.id) && isParts(skin)) &&
+    new Set(value.map((skin) => skin.id)).size === value.length
+  )
+}
+
+type CreatedFighterV6 = { id: string; look: Omit<CreatedLook, 'hands' | 'legs'> }
+
+function isCreatedFightersV6(value: unknown): value is CreatedFighterV6[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (fighter) =>
+        typeof fighter === 'object' &&
+        fighter !== null &&
+        typeof fighter.id === 'string' &&
+        isCreatedFighterId(fighter.id) &&
+        isCreatedLookV6(fighter.look),
+    ) &&
+    hasUniqueFirstCreated(value)
   )
 }
 
@@ -159,21 +213,54 @@ function isOwnedSkins(value: unknown): boolean {
 const TYPES: readonly string[] = ['tank', 'sharpshooter', 'speedy', 'thrower', 'spreader']
 const COLOR = /^#[0-9a-f]{6}$/i
 
-export function isCreatedLook(value: unknown): value is CreatedLook {
-  if (typeof value !== 'object' || value === null) return false
-  const l = value as Record<string, unknown>
+function isPart(value: unknown, count: number): boolean {
+  return Number.isInteger(value) && (value as number) >= 0 && (value as number) < count
+}
+
+/** Colours and parts, shared by a look and a created skin. */
+function isParts(l: Record<string, unknown>): boolean {
+  return (
+    typeof l.main === 'string' &&
+    COLOR.test(l.main) &&
+    typeof l.second === 'string' &&
+    COLOR.test(l.second) &&
+    isPart(l.head, PART_COUNTS.head) &&
+    isPart(l.body, PART_COUNTS.body) &&
+    isPart(l.hands, PART_COUNTS.hands) &&
+    isPart(l.legs, PART_COUNTS.legs)
+  )
+}
+
+function isNamedType(l: Record<string, unknown>): boolean {
   return (
     typeof l.name === 'string' &&
     l.name.trim().length >= 1 &&
     l.name.length <= 12 &&
     typeof l.type === 'string' &&
-    TYPES.includes(l.type) &&
+    TYPES.includes(l.type)
+  )
+}
+
+export function isCreatedLook(value: unknown): value is CreatedLook {
+  if (typeof value !== 'object' || value === null) return false
+  const l = value as Record<string, unknown>
+  return isNamedType(l) && isParts(l)
+}
+
+/** A look saved before hands and legs existed (version 6 and older). */
+function isCreatedLookV6(value: unknown): value is Omit<CreatedLook, 'hands' | 'legs'> {
+  if (typeof value !== 'object' || value === null) return false
+  const l = value as Record<string, unknown>
+  return (
+    isNamedType(l) &&
     typeof l.main === 'string' &&
     COLOR.test(l.main) &&
     typeof l.second === 'string' &&
     COLOR.test(l.second) &&
     [0, 1, 2].includes(l.head as number) &&
-    [0, 1, 2].includes(l.body as number)
+    [0, 1, 2].includes(l.body as number) &&
+    l.hands === undefined &&
+    l.legs === undefined
   )
 }
 
@@ -190,7 +277,22 @@ function isProgress(value: unknown): value is Progress {
   )
 }
 
-type ProgressV5 = Omit<Progress, 'version' | 'createdFighters'> & { version: 5; createdFighter: CreatedLook | null }
+type ProgressV6 = Omit<Progress, 'version' | 'createdFighters'> & { version: 6; createdFighters: CreatedFighterV6[] }
+
+function isProgressV6(value: unknown): value is ProgressV6 {
+  if (typeof value !== 'object' || value === null) return false
+  const p = value as Record<string, unknown>
+  return (
+    p.version === 6 &&
+    isProgressFields(p) &&
+    isOwnedSkins(p.ownedSkins) &&
+    isHackExpiryMap(p.hackExpiries) &&
+    p.createdFighter === undefined &&
+    isCreatedFightersV6(p.createdFighters)
+  )
+}
+
+type ProgressV5 = Omit<Progress, 'version' | 'createdFighters'> & { version: 5; createdFighter: CreatedFighterV6['look'] | null }
 
 function isProgressV5(value: unknown): value is ProgressV5 {
   if (typeof value !== 'object' || value === null) return false
@@ -200,11 +302,11 @@ function isProgressV5(value: unknown): value is ProgressV5 {
     isProgressFields(p) &&
     isOwnedSkins(p.ownedSkins) &&
     isHackExpiryMap(p.hackExpiries) &&
-    (p.createdFighter === null || isCreatedLook(p.createdFighter))
+    (p.createdFighter === null || isCreatedLookV6(p.createdFighter))
   )
 }
 
-type ProgressV4 = Omit<Progress, 'version' | 'hackExpiries' | 'createdFighters'> & { version: 4; createdFighter: CreatedLook | null }
+type ProgressV4 = Omit<Progress, 'version' | 'hackExpiries' | 'createdFighters'> & { version: 4; createdFighter: CreatedFighterV6['look'] | null }
 
 function isProgressV4(value: unknown): value is ProgressV4 {
   if (typeof value !== 'object' || value === null) return false
@@ -213,15 +315,28 @@ function isProgressV4(value: unknown): value is ProgressV4 {
     p.version === 4 &&
     isProgressFields(p) &&
     isOwnedSkins(p.ownedSkins) &&
-    (p.createdFighter === null || isCreatedLook(p.createdFighter))
+    (p.createdFighter === null || isCreatedLookV6(p.createdFighter))
   )
 }
 
-function migrateV5(progress: ProgressV5): Progress {
+/** Version 6 to 7: hands and legs 0 (the body's own, so every look stays the same) and no skins yet. */
+function migrateV6(progress: ProgressV6): Progress {
+  return {
+    ...progress,
+    version: PROGRESS_VERSION,
+    createdFighters: progress.createdFighters.map((fighter) => ({
+      id: fighter.id,
+      look: { ...fighter.look, hands: 0, legs: 0 },
+      skins: [],
+    })),
+  }
+}
+
+function migrateV5(progress: ProgressV5): ProgressV6 {
   const { createdFighter, ...rest } = progress
   return {
     ...rest,
-    version: PROGRESS_VERSION,
+    version: 6,
     createdFighters: createdFighter ? [{ id: CREATED_ID, look: createdFighter }] : [],
   }
 }
@@ -262,9 +377,10 @@ function migrateV2(value: unknown): ProgressV4 | null {
 /** A saved progress of any known version, or `null` when it is broken or unknown. */
 export function parseProgress(value: unknown, now = Date.now()): Progress | null {
   if (isProgress(value)) return value
-  if (isProgressV5(value)) return migrateV5(value)
+  if (isProgressV6(value)) return migrateV6(value)
+  if (isProgressV5(value)) return migrateV6(migrateV5(value))
   const old = isProgressV4(value) ? value : (migrateV3(value) ?? migrateV2(value))
-  return old ? migrateV5(migrateV4(old, now)) : null
+  return old ? migrateV6(migrateV5(migrateV4(old, now))) : null
 }
 
 /** Older versions are migrated; missing, unreadable or unknown data falls back to a fresh start. */

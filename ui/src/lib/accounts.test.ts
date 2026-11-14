@@ -152,14 +152,14 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en', secondEvents.target)
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2, hands: 0, legs: 0 }
 
     firstProgress.update((p) => ({
       ...p,
       credits: p.credits + 100,
       activeHacks: ['creator'],
       hackExpiries: { creator: Date.now() + 60_000 },
-      createdFighters: [{ id: 'custom', look }],
+      createdFighters: [{ id: 'custom', look, skins: [] }],
     }))
 
     secondProgress.update((p) => ({ ...p, credits: p.credits + 50 }))
@@ -198,7 +198,8 @@ describe('accounts', () => {
       hackExpiries: { creator: Date.now() + 60_000 },
       createdFighters: [{
         id: 'custom',
-        look: { name: 'Original', type: 'tank', main: '#ff0000', second: '#00ff00', head: 0, body: 0 },
+        look: { name: 'Original', type: 'tank', main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 },
+        skins: [],
       }],
     }))
     seed.destroy()
@@ -207,7 +208,7 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en')
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
     const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
 
     firstProgress.update((progress) => {
@@ -247,7 +248,7 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en')
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
     const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
 
     firstProgress.update((progress) => {
@@ -287,7 +288,10 @@ describe('accounts', () => {
         second: '#00ff00',
         head: 0,
         body: 0,
+        hands: 0,
+        legs: 0,
       },
+      skins: [],
     }))
     const seed = createAccountsStore(storage, 'en')
     progressStore(seed).update((progress) => ({
@@ -303,7 +307,7 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en')
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
     const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
 
     firstProgress.update((progress) => {

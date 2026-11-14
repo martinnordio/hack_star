@@ -83,6 +83,14 @@ def test_bad_member_is_refused() -> None:
 
 CREATED = {"fighter": "custom", "skin": "L321e8322b39d353", "power": 3, "hyper": False, "name": "Zappy"}
 CREATED_EXTRA = {"fighter": "custom-2", "skin": "L010ff8a1affd23f", "power": 5, "hyper": False, "name": "Comet"}
+# Head 4, body 3, hands 2, legs 1 (18 characters).
+CREATED_FULL = {"fighter": "custom-3", "skin": "L34321e8322b39d353", "power": 2, "hyper": False, "name": "Nova"}
+
+
+def test_created_fighter_with_hands_and_legs_is_shown_with_its_look() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        send(host, {"type": "create", "member": CREATED_FULL})
+        assert receive(host)["members"] == [{"slot": 0, **CREATED_FULL}]
 
 
 def test_created_fighter_is_shown_with_its_look_and_name() -> None:
@@ -116,6 +124,9 @@ def test_two_created_fighters_keep_distinct_ids_looks_and_names_in_one_room() ->
         {**CREATED, "skin": "default"},
         {**CREATED, "skin": "L921e8322b39d353"},
         {**CREATED, "skin": "L321red000green0"},
+        {**CREATED, "skin": "L35321e8322b39d353"},
+        {**CREATED, "skin": "L34331e8322b39d353"},
+        {**CREATED, "skin": "L3432e8322b39d353"},
         {**CREATED, "name": "x" * 13},
         {**CREATED, "name": "  "},
         {**CREATED_EXTRA, "fighter": "custom-16"},

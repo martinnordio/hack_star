@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–2 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–3 done |
 
 ---
 
@@ -216,7 +216,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 |------|-------------|--------|--------|
 | **1** | Account name on the home screen | ✅ Done | [→ Step 1](#step-1--account-name-on-the-home-screen) |
 | **2** | Saving that lasts, and a notice when it cannot | ✅ Done | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
-| **3** | Look format with hands, legs and skins | ⬜ Not started | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
+| **3** | Look format with hands, legs and skins | ✅ Done | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
 | **4** | New 3D parts | ⬜ Not started | [→ Step 4](#step-4--new-3d-parts) |
 | **5** | Creator controls for every part | ⬜ Not started | [→ Step 5](#step-5--creator-controls-for-every-part) |
 | **6** | Skins of created fighters: rules and saving | ⬜ Not started | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
@@ -344,17 +344,32 @@ Saves, skin ids and rooms carry hands, legs, more heads and bodies and created s
 old saves and old skin ids still work (S1, S12, S17).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `CreatedLook` gets `hands` and `legs`; heads and bodies 0–4, hands and legs 0–2
+- [x] Record the start time in Notes below.
+- [x] `CreatedLook` gets `hands` and `legs`; heads and bodies 0–4, hands and legs 0–2
       (`progress.ts`, `created.ts`).
-- [ ] Skin id with 18 characters; `parseLookSkin` reads 16 and 18 (D1).
-- [ ] Progress version 7 with the migration of D3; `CreatedFighter` gets `skins`.
-- [ ] Server: `CREATED_LOOK` accepts both lengths; `test_rooms.py` covers both.
-- [ ] Tests: old saves of versions 2–6 load with the same look; old and new skin ids round-trip.
-- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+- [x] Skin id with 18 characters; `parseLookSkin` reads 16 and 18 (D1).
+- [x] Progress version 7 with the migration of D3; `CreatedFighter` gets `skins`.
+- [x] Server: `CREATED_LOOK` accepts both lengths; `test_rooms.py` covers both.
+- [x] Tests: old saves of versions 2–6 load with the same look; old and new skin ids round-trip.
+- [x] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:07
+
+- D1 refined: `lookSkin` keeps the **16-character** form whenever the look has hands and legs
+  0 and head and body 0–2 (everything an older version can draw), and uses 18 characters
+  only for new parts. So friends on the previous version keep seeing every existing fighter
+  exactly (S17); an 18-character look falls back to their default created look instead of an
+  error.
+- `PART_COUNTS` (head 5, body 5, hands 3, legs 3) and `MAX_CREATED_SKINS` (5) live in
+  `progress.ts`; a created skin id is `s1`…`s5`. Version 6 saves migrate with D3; versions
+  2–5 go through it too.
+- `custom3d.ts` falls back to the first head / body for parts it cannot draw yet (Step 4 adds
+  them).
+
+**Done (2026-11-14 · ~15m · Claude Opus 5.5)** — progress version 7 with hands, legs and
+created skins, 16/18-character skin ids, server accepts both. `uv run pytest` 45 passed;
+`npm test` 249 passed; `npm run check` 0 errors.
 
 ---
 
