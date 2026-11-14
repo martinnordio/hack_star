@@ -41,6 +41,7 @@
   }
 
   function add() {
+    if (!commitRename()) return
     if (apply(addAccount($accounts, newName, browserLanguage(navigator.languages)))) {
       newName = ''
       onClose()
@@ -48,8 +49,13 @@
   }
 
   function pick(id: string) {
+    if (!commitRename()) return
     $accounts = switchAccount($accounts, id)
     onClose()
+  }
+
+  function close() {
+    if (commitRename()) onClose()
   }
 
   function startRename(id: string, name: string) {
@@ -58,17 +64,21 @@
     error = undefined
   }
 
-  function saveRename() {
-    if (renaming && apply(renameAccount($accounts, renaming, renameText))) renaming = undefined
+  /** A name still being typed is saved, not lost, when the panel closes or another account is picked. */
+  function commitRename(): boolean {
+    if (!renaming) return true
+    if (!apply(renameAccount($accounts, renaming, renameText))) return false
+    renaming = undefined
+    return true
   }
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-<div class="backdrop" onpointerdown={(e) => e.target === e.currentTarget && onClose()}>
+<div class="backdrop" onpointerdown={(e) => e.target === e.currentTarget && close()}>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="accounts-title">
     <header>
       <h2 id="accounts-title">{$t('accounts.title')}</h2>
-      <button class="close" aria-label={$t('common.close')} onclick={onClose}>✕</button>
+      <button class="close" aria-label={$t('common.close')} onclick={close}>✕</button>
     </header>
 
     <ul>
@@ -79,9 +89,9 @@
               aria-label={$t('accounts.newName')}
               bind:value={renameText}
               maxlength={MAX_NAME + 4}
-              onkeydown={(e) => e.key === 'Enter' && saveRename()}
+              onkeydown={(e) => e.key === 'Enter' && commitRename()}
             />
-            <button class="small ok" onclick={saveRename}>{$t('common.save')}</button>
+            <button class="small ok" onclick={commitRename}>{$t('common.save')}</button>
             <button class="small" onclick={() => (renaming = undefined)}>{$t('common.cancel')}</button>
           {:else}
             <button class="pick" onclick={() => pick(account.id)}>

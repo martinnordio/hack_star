@@ -1,7 +1,7 @@
 # Fighter Studio, Saves and Music Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/fighter-studio-saves-and-music`
@@ -15,6 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Step 1 done |
 
 ---
 
@@ -213,7 +214,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
-| **1** | Account name on the home screen | ⬜ Not started | [→ Step 1](#step-1--account-name-on-the-home-screen) |
+| **1** | Account name on the home screen | ✅ Done | [→ Step 1](#step-1--account-name-on-the-home-screen) |
 | **2** | Saving that lasts, and a notice when it cannot | ⬜ Not started | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
 | **3** | Look format with hands, legs and skins | ⬜ Not started | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
 | **4** | New 3D parts | ⬜ Not started | [→ Step 4](#step-4--new-3d-parts) |
@@ -268,18 +269,36 @@ The home screen shows the current account's name, trophies, credits and fighter 
 rename, an account switch or a new account (S8, S9).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Reproduce in the browser (`npm run dev`): rename the current account, close the panel;
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Reproduce in the browser (`npm run dev`): rename the current account, close the panel;
       switch account; add an account. Write down what the home screen shows each time.
-- [ ] Find the cause (how `Home.svelte` reads `$accounts`, the panel's writes, the accounts
+- [x] Find the cause (how `Home.svelte` reads `$accounts`, the panel's writes, the accounts
       store's merge) and write it in Notes.
-- [ ] Fix it with the smallest change; add a regression test in `accounts.test.ts` for the
+- [x] Fix it with the smallest change; add a regression test in `accounts.test.ts` for the
       part that can be tested without a screen.
-- [ ] Check: `cd ui; npm test; npm run check`, and the three browser checks above now show the
+- [x] Check: `cd ui; npm test; npm run check`, and the three browser checks above now show the
       right account at once.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 14:55
+
+**Reproduction** (headless Edge driven over its DevTools protocol against `npm run dev`, one
+and two tabs): renaming with **Save**, adding and switching update the home screen at once.
+The stale name appears when a new name is **typed but not saved**: closing the panel (✕ or a
+tap outside) or picking another account throws the typed name away, so home keeps the old
+name.
+
+**Cause:** `AccountsPanel.svelte` saved a rename only on **Save** / Enter; `onClose` and
+`pick` discarded the edit. The accounts store and `Home.svelte` were correct (checked with a
+store test and in the browser).
+
+**Fix:** `commitRename()` saves a rename in progress before the panel closes, before adding
+and before switching; an invalid name keeps the panel open with its message.
+
+**Done (2026-11-14 · ~5m · Claude Opus 5.5)** — typed names are saved when the accounts panel
+closes or another account is picked; regression test for listeners and saving. `npm test`
+244 passed, `npm run check` 0 errors; browser: ✕, tap outside and switch keep the typed name,
+normal rename / add / switch still show the right account.
 
 ---
 

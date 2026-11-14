@@ -114,6 +114,24 @@ describe('accounts', () => {
     expect(state.accounts[1].name).toBe('MATTIA')
   })
 
+  it('a rename or switch reaches every listener at once and is saved', () => {
+    const storage = memoryStorage()
+    const store = createAccountsStore(storage, 'en')
+    const shown: string[] = []
+    const stop = store.subscribe((s) => shown.push(currentAccount(s).name))
+    store.update((s) => added(s, 'Mattia'))
+    expect(shown.at(-1)).toBe('Mattia')
+    store.update((s) => {
+      const result = renameAccount(s, 'a2', 'Noah')
+      return result.ok ? result.state : s
+    })
+    expect(shown.at(-1)).toBe('Noah')
+    store.update((s) => switchAccount(s, 'a1'))
+    expect(shown.at(-1)).toBe('Player 1')
+    expect(loadAccounts(storage, 'en').accounts.map((a) => a.name)).toEqual(['Player 1', 'Noah'])
+    stop()
+  })
+
   it('keeps accounts, progress and the current account after closing', () => {
     const storage = memoryStorage()
     const store = createAccountsStore(storage, 'en')
