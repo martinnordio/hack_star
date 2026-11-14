@@ -52,7 +52,7 @@ export function canAddCreatedFighter(progress: Progress): boolean {
   )
 }
 
-export function nextCreatedFighterId(progress: Progress): string | undefined {
+export function nextCreatedFighterId(progress: Pick<Progress, 'createdFighters'>): string | undefined {
   const used = new Set(progress.createdFighters.map((fighter) => fighter.id))
   for (let number = 2; number <= MAX_CREATED_FIGHTERS; number++) {
     const id = `custom-${number}`

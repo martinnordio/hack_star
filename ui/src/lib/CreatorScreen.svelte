@@ -8,6 +8,7 @@
     BODIES,
     CREATED_COLORS,
     CREATED_ID,
+    MAX_CREATED_FIGHTERS,
     HEADS,
     MAX_CREATED_NAME,
     createCost,
@@ -16,7 +17,7 @@
     lookSkin,
     saveCreated,
   } from './created'
-  import { credits } from './hacks'
+  import { credits, isHackActive } from './hacks'
   import { FIGHTER_TYPE_IDS, fighterType } from './game/types'
   import HomeScene from './HomeScene.svelte'
   import { t, type TextKey } from './i18n'
@@ -50,6 +51,21 @@
     }
     problem = undefined
     $progress = result.progress
+    const saved = $progress.createdFighters.some(({ look: savedLook }) =>
+      savedLook.name === look.name.trim() && lookSkin(savedLook) === skin,
+    )
+    if (!saved) {
+      if ($progress.createdFighters.length >= MAX_CREATED_FIGHTERS) {
+        problem = $t('creator.limit')
+      } else if ($progress.createdFighters.length > 0 && !isHackActive($progress, 'creator')) {
+        problem = $t('creator.requiresCreator')
+      } else {
+        const price = createCost($progress)
+        const available = credits($progress)
+        problem = available < price ? $t('common.needMore', { credits: price - available }) : $t('creator.limit')
+      }
+      return
+    }
     celebrating = true
     setTimeout(onDone, 1600)
   }

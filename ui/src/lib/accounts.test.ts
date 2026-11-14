@@ -11,7 +11,9 @@ import {
   switchAccount,
   type Accounts,
 } from './accounts'
+import { saveCreated } from './created'
 import { browserLanguage } from './i18n/languages'
+import { MAX_CREATED_FIGHTERS } from './created'
 import { PROGRESS_KEY, defaultProgress, memoryStorage, startProgress } from './progress'
 
 function added(state: Accounts, name: string): Accounts {
@@ -159,6 +161,151 @@ describe('accounts', () => {
     expect(get(secondProgress)).toMatchObject({ activeHacks: [], credits: 500 })
     secondEvents.show()
     expect(get(secondProgress)).toMatchObject({ activeHacks: ['infinite_credits'], credits: 625 })
+
+    first.destroy()
+    second.destroy()
+  })
+
+  it('keeps both fighters when stale tabs create the same next fighter ID', () => {
+    const values = new Map<string, string>()
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => void values.set(key, value),
+    }
+    const seed = createAccountsStore(storage, 'en')
+    progressStore(seed).update((progress) => ({
+      ...progress,
+      credits: 5000,
+      activeHacks: ['creator'],
+      hackExpiries: { creator: Date.now() + 60_000 },
+      createdFighters: [{
+        id: 'custom',
+        look: { name: 'Original', type: 'tank', main: '#ff0000', second: '#00ff00', head: 0, body: 0 },
+      }],
+    }))
+    seed.destroy()
+
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
+
+    firstProgress.update((progress) => {
+      const result = saveCreated(progress, alpha)
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    })
+    secondProgress.update((progress) => {
+      const result = saveCreated(progress, beta)
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    })
+    first.refresh()
+
+    const saved = currentAccount(get(first)).progress
+    expect(saved.createdFighters.map(({ id, look }) => ({ id, name: look.name }))).toEqual([
+      { id: 'custom', name: 'Original' },
+      { id: 'custom-2', name: 'Alpha' },
+      { id: 'custom-3', name: 'Beta' },
+    ])
+    expect(saved.credits).toBe(4000)
+    expect(get(secondProgress).createdFighters.map(({ id, look }) => ({ id, name: look.name }))).toEqual(
+      saved.createdFighters.map(({ id, look }) => ({ id, name: look.name })),
+    )
+
+    first.destroy()
+    second.destroy()
+  })
+
+  it('does not turn simultaneous first creations into an extra fighter without CREATOR', () => {
+    const values = new Map<string, string>()
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => void values.set(key, value),
+    }
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
+
+    firstProgress.update((progress) => {
+      const result = saveCreated(progress, alpha)
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    })
+    secondProgress.update((progress) => {
+      const result = saveCreated(progress, beta)
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    })
+    first.refresh()
+
+    const saved = currentAccount(get(first)).progress
+    expect(saved.createdFighters.map(({ id, look }) => ({ id, name: look.name }))).toEqual([
+      { id: 'custom', name: 'Alpha' },
+    ])
+    expect(saved.credits).toBe(500)
+
+    first.destroy()
+    second.destroy()
+  })
+
+  it('rejects and refunds a stale creation when the last fighter slot is taken', () => {
+    const values = new Map<string, string>()
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => void values.set(key, value),
+    }
+    const existing = Array.from({ length: MAX_CREATED_FIGHTERS - 1 }, (_, index) => ({
+      id: index === 0 ? 'custom' : `custom-${index + 1}`,
+      look: {
+        name: `Existing ${index + 1}`,
+        type: 'tank' as const,
+        main: '#ff0000',
+        second: '#00ff00',
+        head: 0,
+        body: 0,
+      },
+    }))
+    const seed = createAccountsStore(storage, 'en')
+    progressStore(seed).update((progress) => ({
+      ...progress,
+      credits: 5000,
+      activeHacks: ['creator'],
+      hackExpiries: { creator: Date.now() + 60_000 },
+      createdFighters: existing,
+    }))
+    seed.destroy()
+
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
+
+    firstProgress.update((progress) => {
+      const result = saveCreated(progress, alpha)
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    })
+    secondProgress.update((progress) => {
+      const result = saveCreated(progress, beta)
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    })
+    first.refresh()
+
+    const saved = currentAccount(get(first)).progress
+    expect(saved.createdFighters).toHaveLength(MAX_CREATED_FIGHTERS)
+    expect(saved.createdFighters.at(-1)).toMatchObject({ id: 'custom-15', look: alpha })
+    expect(saved.createdFighters.some(({ look }) => look.name === 'Beta')).toBe(false)
+    expect(saved.credits).toBe(4500)
+    expect(get(secondProgress).credits).toBe(4500)
 
     first.destroy()
     second.destroy()

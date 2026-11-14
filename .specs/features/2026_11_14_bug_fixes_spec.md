@@ -16,6 +16,10 @@
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #17 created |
 | 2026-11-14 | plan | `PLAN:` | GPT-6 Luna | Part 2 written |
 | 2026-11-14 | implementation | `IMPLEMENT:` | GPT-6 Luna | Step 1 done |
+| 2026-11-14 | review | `REVIEW:` | GitHub Copilot | Semantic diff written; 1 Blocking S4 finding; `CODE REVIEW:` pending |
+| 2026-11-14 | review | `CODE REVIEW:` | GitHub Copilot | Request changes; 1 Blocking S4 finding; no product edits |
+| 2026-11-14 | review | `REVIEW:` | GitHub Copilot | Re-run after S4 fix; both stale-tab fighters persist with distinct IDs; UI screenshots remain manual |
+| 2026-11-14 | review | `CODE REVIEW:` | GitHub Copilot | Approve with follow-ups; prior S4 blocker resolved; UI screenshots remain manual |
 
 ---
 
@@ -335,7 +339,17 @@ Started: 2026-11-14 12:42
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| _YYYY-MM-DD_ | _AI assistant (model) / person_ | _requirements / plan / diff_ | _Approve / Request changes_ | _notes_ |
+| 2026-11-14 | AI assistant (GitHub Copilot) | semantic diff | Request changes | 1 Blocking: stale tabs can overwrite one extra created fighter (S4); [review page](../review/2026-11-14_feature-bug-fixes.html) |
+| 2026-11-14 | AI assistant (GitHub Copilot) | diff | Request changes | 1 Blocking: concurrent extra-fighter creation loses one look (S4) |
+| 2026-11-14 | AI assistant (GitHub Copilot) | semantic diff follow-up | Approve with follow-ups | S4 collision fixed and regression-tested; UI screenshots remain manual; [updated review page](../review/2026-11-14_feature-bug-fixes.html) |
+| 2026-11-14 | AI assistant (GitHub Copilot) | diff follow-up | Approve with follow-ups | 0 open findings; prior Blocking S4 resolved; visual evidence remains manual |
+| 2026-11-14 | AI assistant (GitHub Copilot) | collision edge-case follow-up | Approve with follow-ups | Same-ID remap is gated by merged CREATOR, credits, and capacity; rejected charges are refunded; 243 UI tests pass |
+
+### Code review 2026-11-14
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | Two stale tabs could both allocate `custom-2`; the local addition replaced the remote look. Resolved by remapping when the merged account permits the creation, otherwise rejecting and refunding it when CREATOR, credits, or capacity disallows it. | spec | test | Blocking (resolved) | `ui/src/lib/accounts.ts`; regressions in `ui/src/lib/accounts.test.ts` |
 
 ---
 
@@ -344,6 +358,7 @@ Started: 2026-11-14 12:42
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked
-- [ ] Review · review page and semantic diff written; code review without Blocking findings
+- [x] Review artifacts · review page and semantic diff written
+- [x] Code review · no Blocking findings remain
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

@@ -1,4 +1,7 @@
 import { derived, writable, type Readable } from 'svelte/store'
+import { nextCreatedFighterId } from './created'
+import { SETTINGS } from './game/settings'
+import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { PROGRESS_KEY, parseProgress, startProgress, type Progress } from './progress'
 
@@ -162,8 +165,17 @@ function mergeMap<T>(
   return merged
 }
 
-function mergeCreatedFighters(base: Progress['createdFighters'], local: Progress['createdFighters'], remote: Progress['createdFighters']) {
+function mergeCreatedFighters(
+  base: Progress['createdFighters'],
+  local: Progress['createdFighters'],
+  remote: Progress['createdFighters'],
+  creatorActive: boolean,
+  infiniteCredits: boolean,
+  availableCredits: number,
+) {
   const merged = [...remote]
+  let acceptedLocalCost = 0
+  let remainingCredits = availableCredits
   for (const original of base) {
     const localFighter = local.find((fighter) => fighter.id === original.id)
     const index = merged.findIndex((fighter) => fighter.id === original.id)
@@ -181,18 +193,27 @@ function mergeCreatedFighters(base: Progress['createdFighters'], local: Progress
   for (const fighter of local) {
     if (!base.some((original) => original.id === fighter.id)) {
       const index = merged.findIndex((existing) => existing.id === fighter.id)
-      if (index >= 0) merged[index] = fighter
-      else merged.push(fighter)
+      const needsCreator = merged.length > 0
+      const cost = needsCreator && !infiniteCredits ? SETTINGS.recreateCost : 0
+      const id = index >= 0 ? nextCreatedFighterId({ createdFighters: merged }) : fighter.id
+      if (
+        (needsCreator && !creatorActive) ||
+        !id ||
+        (cost > 0 && cost > remainingCredits)
+      ) {
+        continue
+      }
+      merged.push({ ...fighter, id })
+      remainingCredits -= cost
+      acceptedLocalCost += cost
     }
   }
-  return merged
+  return { fighters: merged, acceptedLocalCost }
 }
 
 function mergeProgress(base: Progress, local: Progress, remote: Progress): Progress {
   const merged: Progress = { ...remote }
-  if (local.credits !== base.credits) {
-    merged.credits = Math.max(0, remote.credits + local.credits - base.credits)
-  }
+  let rejectedCreationRefund = 0
   if (local.selectedFighter !== base.selectedFighter) merged.selectedFighter = local.selectedFighter
   if (!same(base.trophies, local.trophies)) merged.trophies = mergeMap(base.trophies, local.trophies, remote.trophies)
   if (!same(base.powerLevels, local.powerLevels)) merged.powerLevels = mergeMap(base.powerLevels, local.powerLevels, remote.powerLevels)
@@ -208,7 +229,24 @@ function mergeProgress(base: Progress, local: Progress, remote: Progress): Progr
     merged.activeHacks = mergeStringArray(base.activeHacks, local.activeHacks, remote.activeHacks)
   }
   if (!same(base.createdFighters, local.createdFighters)) {
-    merged.createdFighters = mergeCreatedFighters(base.createdFighters, local.createdFighters, remote.createdFighters)
+    const localAdds = local.createdFighters.filter((fighter) => !base.createdFighters.some((original) => original.id === fighter.id))
+    const localCreationCost = isHackActive(local, 'infinite_credits')
+      ? 0
+      : Math.max(0, localAdds.length - Number(base.createdFighters.length === 0)) * SETTINGS.recreateCost
+    const availableCredits = remote.credits + local.credits - base.credits + localCreationCost
+    const created = mergeCreatedFighters(
+      base.createdFighters,
+      local.createdFighters,
+      remote.createdFighters,
+      isHackActive(merged, 'creator'),
+      isHackActive(merged, 'infinite_credits'),
+      availableCredits,
+    )
+    merged.createdFighters = created.fighters
+    rejectedCreationRefund = localCreationCost - created.acceptedLocalCost
+  }
+  if (local.credits !== base.credits || rejectedCreationRefund !== 0) {
+    merged.credits = Math.max(0, remote.credits + local.credits - base.credits + rejectedCreationRefund)
   }
   return merged
 }

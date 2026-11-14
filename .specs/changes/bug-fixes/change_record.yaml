@@ -1,0 +1,118 @@
+# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+version: 1
+branch: feature/bug-fixes
+base: 24b0f1c
+why: |
+  Players could not use a newly created fighter immediately, and stale browser tabs could
+  overwrite hacks, credits, or fighter progress. Temporary hack codes also had no visible
+  expiry status, while shared-room members could not identify distinct created fighters.
+spec:
+  path: .specs/features/2026_11_14_bug_fixes_spec.md
+  statements: [S1, S2, S3, S4, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22]
+changes:
+  - id: hack-duration-api
+    kind: api
+    change: modified
+    object: GET /api/hacks and POST /api/hacks/redeem
+    note: Hack definitions now expose timed versus permanent duration.
+    statements: [S16, S17]
+    examples:
+      - name: hack-list
+        input: |
+          GET /api/hacks
+  - id: saved-progress-v6
+    kind: data-format
+    change: modified
+    object: hack-star.accounts progress
+    note: Migrate legacy created-fighter saves while preserving progress and hack expiries.
+    statements: [S4, S8, S19, S20, S21]
+    examples:
+      - name: v4-created-fighter
+        input: |
+          parseProgress({
+            version: 4, credits: 500, trophies: {}, powerLevels: {},
+            unlockedFighters: [], activeHacks: ["power22"],
+            selectedFighter: "custom", selectedSkins: {}, ownedSkins: {},
+            createdFighter: {
+              name: "Nova", type: "tank", main: "#ff0000",
+              second: "#00ff00", head: 0, body: 0
+            }
+          })
+  - id: created-fighter-rules
+    kind: output
+    change: modified
+    object: first creation, additional creation, and edit
+    note: First creation is free and usable; CREATOR gates extra fighters, which cost 500 C and retain per-fighter progress.
+    statements: [S1, S7, S8, S10, S11, S12, S15, S19, S20, S21, S22]
+    extraction: manual
+    manual_reason: The v4 baseline represents only one created fighter and cannot execute the additional-fighter input; the head output was exercised with Vitest.
+    examples:
+      - name: create-extra
+        input: |
+          saveCreated(progressWithFirstFighterAndCreatorAt500C, look("Nova"))
+  - id: fighter-management-screens
+    kind: ui
+    change: modified
+    object: Fighters list and created-fighter editor
+    note: Cards, ordering, selection, prices, capacity, and inactive feedback reflect the created-fighter collection.
+    statements: [S2, S3, S6, S9, S10, S11, S12, S13, S15, S20, S21]
+    extraction: manual
+    manual_reason: Matched base/head screenshots with identical mocked account state and viewports were not captured.
+    examples:
+      - name: creator-active
+        input: |
+          progress: one created fighter, active CREATOR, 500 C
+          view: Fighters list and creator
+          viewport: desktop and phone
+          controls: mouse and touch
+        views: [desktop, phone]
+  - id: cross-tab-account-state
+    kind: output
+    change: modified
+    object: account-store writes and refreshes
+    note: Reconcile stale tab changes; remap colliding additions only when the merged account permits them, otherwise reject and refund the creation when CREATOR, credits, or capacity disallows it.
+    statements: [S4]
+    extraction: manual
+    manual_reason: The v4 baseline cannot represent a second created fighter; the head-side two-tab lost-update reproduction was exercised with Vitest.
+    examples:
+      - name: concurrent-credit-and-hack-update
+        input: |
+          base credits: 500
+          tab A changes: +100 C, adds CREATOR and fighter custom
+          stale tab B changes: +50 C
+          then return tab A to the foreground
+  - id: hack-status-screen
+    kind: ui
+    change: modified
+    object: Hack screen and printable QR descriptions
+    note: Show timed days/hours, permanent POWER22, and the updated CREATOR description.
+    statements: [S13, S16, S17, S18]
+    extraction: manual
+    manual_reason: Matched base/head screenshots with identical mocked account state and viewports were not captured.
+    examples:
+      - name: active-and-permanent
+        input: |
+          activeHacks: [infinite_credits, power22]
+          hackExpiries: { infinite_credits: <future timestamp>, power22: null }
+          viewport: desktop and phone
+        views: [desktop, phone]
+  - id: created-fighter-room-member
+    kind: message
+    change: modified
+    object: create/join room member payload
+    note: Add stable created-fighter identity and display name while retaining legacy custom support.
+    statements: [S14]
+    examples:
+      - name: extra-created-fighter
+        input: |
+          {"type":"join","code":"ABCD","member":{
+            "fighter":"custom-2","skin":"L000ff000000ff00",
+            "name":"Nova","power":1,"hyper":false
+          }}
+breaking: |
+  The first created fighter is intentionally usable without CREATOR. Older saves migrate, and the legacy custom room-member ID remains supported.
+review:
+  - question: Does this add server-side player saves or require an account service?
+    answer: No. Progress stays device-local; tabs on the same origin reconcile through localStorage and browser events.
+  - question: Why keep the original created-fighter ID custom?
+    answer: Existing selections, progress maps, and room links continue to refer to the first fighter without remapping.
