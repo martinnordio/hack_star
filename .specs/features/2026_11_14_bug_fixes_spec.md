@@ -158,7 +158,7 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 | **3** | Create, select and manage multiple fighters | ✅ Done | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
 | **4** | Created fighters in shared rooms | ✅ Done | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
 | **5** | Keep browser tabs in sync | ✅ Done | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
-| **6** | Show hack status and time remaining | ⬜ Not started | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
+| **6** | Show hack status and time remaining | ✅ Done | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
 | **7** | Full regression checks and documentation | ⬜ Not started | [→ Step 7](#step-7--full-regression-checks-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -288,14 +288,16 @@ Started: 2026-11-14 12:25
 Show players whether each active hack is permanent or when it expires (S6, S13, S16–S18).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Show remaining time for timed hacks in days and hours, and a clear permanent status for POWER22; remove expired codes from the active list.
-- [ ] Refresh displayed time at least once per hour while the Hack screen is open, when the page becomes visible, and as the expiry boundary is reached.
-- [ ] Translate all new status labels and update the CREATOR description on the hack screen and printable QR page in all five languages.
-- [ ] Add tests for permanent, active, expiring and expired display states; verify `cd ui; npm test` and `cd ui; npm run check`.
-- [ ] Check the hack list, reset flow, typed code and scanned-code flow in the browser at desktop and phone sizes.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Show remaining time for timed hacks in days and hours, and a clear permanent status for POWER22; remove expired codes from the active list.
+- [x] Refresh displayed time at least once per hour while the Hack screen is open, when the page becomes visible, and as the expiry boundary is reached.
+- [x] Translate all new status labels and update the CREATOR description on the hack screen and printable QR page in all five languages.
+- [x] Add tests for permanent, active, expiring and expired display states; verify `cd ui; npm test` and `cd ui; npm run check`.
+- [x] Check the hack list, reset flow, typed code and scanned-code flow in the browser at desktop and phone sizes.
 
 ### Notes
+Started: 2026-11-14 12:32
+**Done (2026-11-14 · ~10m · GitHub Copilot)** — Added translated timed/permanent status, hourly/visibility/expiry refresh and the initial-link one-shot guard. UI tests 240/240; `npm run check` clean; browser verified status, reset, typed/scanned redemption, and 390px layout.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

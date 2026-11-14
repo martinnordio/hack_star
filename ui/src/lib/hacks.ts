@@ -11,6 +11,8 @@ export interface Hack {
   duration_seconds: number | null
 }
 
+export type HackTimeRemaining = { kind: 'permanent' } | { kind: 'timed'; days: number; hours: number }
+
 export const NORMAL_MAX_POWER = 11
 export const HACKED_MAX_POWER = 22
 
@@ -71,6 +73,15 @@ export function isHackActive(progress: Progress, id: string, now = Date.now()): 
   if (!progress.activeHacks.includes(id)) return false
   const expiry = progress.hackExpiries[id]
   return expiry === null || (expiry !== undefined && expiry > now)
+}
+
+export function hackTimeRemaining(progress: Progress, id: string, now = Date.now()): HackTimeRemaining | null {
+  if (!progress.activeHacks.includes(id)) return null
+  const expiry = progress.hackExpiries[id]
+  if (expiry === null) return { kind: 'permanent' }
+  if (expiry === undefined || expiry <= now) return null
+  const hours = Math.ceil((expiry - now) / (60 * 60 * 1000))
+  return { kind: 'timed', days: Math.floor(hours / 24), hours: hours % 24 }
 }
 
 export function activeHackIds(progress: Progress, now = Date.now()): string[] {

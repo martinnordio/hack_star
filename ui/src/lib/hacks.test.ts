@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { activeHackIds, codeFromScan, credits, hackLink, isHackActive, isQrPassword, isUnlocked, maxPower, superHack, withHack } from './hacks'
+import { activeHackIds, codeFromScan, credits, hackLink, hackTimeRemaining, isHackActive, isQrPassword, isUnlocked, maxPower, superHack, withHack } from './hacks'
 import { defaultProgress, TEMPORARY_HACK_SECONDS } from './progress'
 
 describe('QR password', () => {
@@ -68,5 +68,16 @@ describe('hacks', () => {
     const permanent = withHack(defaultProgress(), 'power22', null, now)
     expect(isHackActive(permanent, 'power22', now + 100_000_000_000)).toBe(true)
     expect(activeHackIds(permanent, now + 100_000_000_000)).toEqual(['power22'])
+  })
+
+  it('reports timed days and hours, permanent status, and no status after expiry', () => {
+    const now = 1_000_000
+    const timed = withHack(defaultProgress(), 'infinite_credits', 72 * 60 * 60, now)
+    const permanent = withHack(defaultProgress(), 'power22', null, now)
+
+    expect(hackTimeRemaining(timed, 'infinite_credits', now)).toEqual({ kind: 'timed', days: 3, hours: 0 })
+    expect(hackTimeRemaining(timed, 'infinite_credits', now + 47 * 60 * 60 * 1000)).toEqual({ kind: 'timed', days: 1, hours: 1 })
+    expect(hackTimeRemaining(timed, 'infinite_credits', now + 72 * 60 * 60 * 1000)).toBeNull()
+    expect(hackTimeRemaining(permanent, 'power22', now + 100_000_000_000)).toEqual({ kind: 'permanent' })
   })
 })

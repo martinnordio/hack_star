@@ -106,6 +106,8 @@ export const en = {
   'hackScreen.active': 'Active hacks',
   'hackScreen.none': 'No hacks yet. Find a code!',
   'hackScreen.on': 'ON',
+  'hackScreen.permanent': 'Permanent',
+  'hackScreen.timeRemaining': '{days}d {hours}h left',
   'hackScreen.confirmReset': 'Turn all hacks off?',
   'hackScreen.reset': 'Reset all hacks',
 

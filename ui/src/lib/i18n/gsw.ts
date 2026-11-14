@@ -108,6 +108,8 @@ export const gsw: Record<TextKey, string> = {
   'hackScreen.active': 'Aktivi Hacks',
   'hackScreen.none': 'No kei Hacks. Find en Code!',
   'hackScreen.on': 'AA',
+  'hackScreen.permanent': 'Für immer',
+  'hackScreen.timeRemaining': '{days}T {hours}Std no übrig',
   'hackScreen.confirmReset': 'Alli Hacks abstelle?',
   'hackScreen.reset': 'Alli Hacks zruggsetze',
 

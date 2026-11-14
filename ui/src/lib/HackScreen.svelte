@@ -1,6 +1,6 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { codeFromScan, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, hackTimeRemaining, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { t, tOr } from './i18n'
@@ -9,6 +9,7 @@
   let { hacks, initialCode }: { hacks: Hack[]; initialCode?: string } = $props()
 
   let code = $state('')
+  let now = $state(Date.now())
   let busy = $state(false)
   let error = $state<'hackScreen.unknownCode' | 'common.serverDown'>()
   let shake = $state(false)
@@ -16,8 +17,31 @@
   let confirmReset = $state(false)
   let scanning = $state(false)
   let celebrationTimer: ReturnType<typeof setTimeout> | undefined
+  let handledInitialCode: string | undefined
 
-  const active = $derived(hacks.filter((h) => isHackActive($progress, h.id)))
+  const active = $derived(hacks.filter((h) => isHackActive($progress, h.id, now)))
+
+  $effect(() => {
+    const updateTime = () => (now = Date.now())
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') updateTime()
+    }
+    const interval = window.setInterval(updateTime, 60 * 60 * 1000)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => {
+      window.clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  })
+
+  $effect(() => {
+    const expiries = active
+      .map((hack) => $progress.hackExpiries[hack.id])
+      .filter((expiry): expiry is number => expiry !== undefined && expiry !== null)
+    if (expiries.length === 0) return
+    const timeout = window.setTimeout(() => (now = Date.now()), Math.max(0, Math.min(...expiries) - Date.now() + 1))
+    return () => window.clearTimeout(timeout)
+  })
 
   async function apply(text: string) {
     if (!text.trim() || busy) return
@@ -26,6 +50,7 @@
     try {
       const hack = await redeem(text)
       progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      now = Date.now()
       code = ''
       celebrating = hack
       clearTimeout(celebrationTimer)
@@ -45,7 +70,10 @@
   }
 
   $effect(() => {
-    if (initialCode) apply(initialCode)
+    if (initialCode && handledInitialCode !== initialCode) {
+      handledInitialCode = initialCode
+      apply(initialCode)
+    }
   })
 </script>
 
@@ -99,9 +127,17 @@
     {:else}
       <ul class="active">
         {#each active as hack (hack.id)}
+          {@const remaining = hackTimeRemaining($progress, hack.id, now)}
           <li>
             <span class="on">{$t('hackScreen.on')}</span>
-            <span><strong>{$tOr(`hack.${hack.id}.name`, hack.name)}</strong><br />{$tOr(`hack.${hack.id}.description`, hack.description)}</span>
+            <span class="details">
+              <strong>{$tOr(`hack.${hack.id}.name`, hack.name)}</strong><br />{$tOr(`hack.${hack.id}.description`, hack.description)}
+              {#if remaining?.kind === 'permanent'}
+                <small class="duration">{$t('hackScreen.permanent')}</small>
+              {:else if remaining?.kind === 'timed'}
+                <small class="duration">{$t('hackScreen.timeRemaining', { days: remaining.days, hours: remaining.hours })}</small>
+              {/if}
+            </span>
           </li>
         {/each}
       </ul>
@@ -271,6 +307,17 @@
     background: #39ff88;
     color: #06210f;
     font-weight: 900;
+  }
+
+  .details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .duration {
+    display: block;
+    margin-top: 0.25rem;
+    font-weight: 800;
   }
 
   .reset,

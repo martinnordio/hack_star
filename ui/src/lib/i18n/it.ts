@@ -108,6 +108,8 @@ export const it: Record<TextKey, string> = {
   'hackScreen.active': 'Hack attivi',
   'hackScreen.none': 'Ancora nessun hack. Trova un codice!',
   'hackScreen.on': 'ON',
+  'hackScreen.permanent': 'Permanente',
+  'hackScreen.timeRemaining': '{days} g {hours} h rimanenti',
   'hackScreen.confirmReset': 'Spegnere tutti gli hack?',
   'hackScreen.reset': 'Azzera tutti gli hack',
 
