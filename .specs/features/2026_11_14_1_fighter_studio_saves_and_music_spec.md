@@ -16,6 +16,7 @@
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
 | 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–13 done; music kept out of the repository (S32, D16); up to ten tracks and licence links (S33) |
+| 2026-11-14 | review | `REVIEW:` | Claude Opus 5.5 | semantic diff written |
 
 ---
 
@@ -781,6 +782,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-14 | Claude Opus 5.5 | semantic diff | — | [review page](../review/2026-11-14_feature-fighter-studio-saves-and-music.html) |
 
 ---
 
@@ -789,6 +791,6 @@ Tasks set aside for a future spec, so nothing is forgotten.
 - [x] Requirements · Part 1 agreed (S1..S31 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

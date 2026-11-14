@@ -1,0 +1,6 @@
+ui/dev/music/candidates.local.json  not ignored
+ui/src/lib/music/tracks.local.json  not ignored
+ui/dev/music/files/x.mp3  not ignored
+ui/public/assets/music/x.mp3  not ignored
+LICENSE  not ignored
+vite server.fs: (not set)
