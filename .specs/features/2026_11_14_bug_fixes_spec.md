@@ -156,7 +156,7 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 | **1** | Timed hack state and expiry rules | ✅ Done | [→ Step 1](#step-1--timed-hack-state-and-expiry-rules) |
 | **2** | Created-fighter data and compatibility | ✅ Done | [→ Step 2](#step-2--created-fighter-data-and-compatibility) |
 | **3** | Create, select and manage multiple fighters | ✅ Done | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
-| **4** | Created fighters in shared rooms | ⬜ Not started | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
+| **4** | Created fighters in shared rooms | ✅ Done | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
 | **5** | Keep browser tabs in sync | ⬜ Not started | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
 | **6** | Show hack status and time remaining | ⬜ Not started | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
 | **7** | Full regression checks and documentation | ⬜ Not started | [→ Step 7](#step-7--full-regression-checks-and-documentation) |
@@ -204,11 +204,6 @@ Make temporary and permanent hack behavior persist correctly and expire predicta
 Started: 2026-11-14 09:56
 **Done (2026-11-14 · ~5m · GPT-6 Luna)** — Added server hack durations, v5 expiry persistence/migration and expiry-aware effects. UI tests 228/228, `npm run check` clean, server tests 39/39.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
-
----
-
-## Step 2 — Created-fighter data and compatibility
-
 ### Goal
 Replace the one-fighter save model with a collection and retain existing saves and first-fighter behavior (S1, S7, S8, S10, S20, S21).
 
@@ -255,13 +250,15 @@ Started: 2026-11-14 10:12
 Transmit each created fighter's identity and appearance so friends see the selected fighter correctly (S6, S14).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Include the stable created-fighter id, name and encoded look in room member data; continue to accept the existing `custom` member shape.
-- [ ] Update server validation and match setup to accept distinct created-fighter ids and derive their type from the encoded look.
-- [ ] Add UI and server tests covering two different created fighters in one room, the legacy `custom` id, malformed looks and the propagated display name.
-- [ ] Verify `cd ui; npm test`, `cd ui; npm run check`, and `cd server; uv run --no-sync pytest`; check a shared match in the browser.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Include the stable created-fighter id, name and encoded look in room member data; continue to accept the existing `custom` member shape.
+- [x] Update server validation and match setup to accept distinct created-fighter ids and derive their type from the encoded look.
+- [x] Add UI and server tests covering two different created fighters in one room, the legacy `custom` id, malformed looks and the propagated display name.
+- [x] Verify `cd ui; npm test`, `cd ui; npm run check`, and `cd server; uv run --no-sync pytest`; check a shared match in the browser.
 
 ### Notes
+Started: 2026-11-14 12:10
+**Done (2026-11-14 · ~15m · GPT-6 Luna)** — Added stable created-fighter room IDs, names and encoded looks; retained legacy `custom` support. UI tests 238/238, type check clean, server tests 41/41; browser confirmed two created fighters joining the same live match.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

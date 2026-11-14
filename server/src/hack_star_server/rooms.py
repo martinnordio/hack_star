@@ -21,8 +21,8 @@ CODE_LENGTH = 4
 MAX_MEMBERS = 3
 MAX_MESSAGE = 64 * 1024
 MAX_ROOMS = 100
-CREATED = "custom"
-FIGHTER_IDS = {f.id for f in FIGHTERS} | {CREATED}
+CREATED_FIGHTER_ID = re.compile(r"^custom(?:-(?:[2-9]|1[0-5]))?$")
+FIGHTER_IDS = {f.id for f in FIGHTERS}
 # The look of a created fighter: "L", type 0-4, head 0-2, body 0-2, two colours.
 CREATED_LOOK = re.compile(r"^L[0-4][0-2][0-2][0-9a-fA-F]{12}$")
 
@@ -39,15 +39,17 @@ class Member(BaseModel):
     @field_validator("fighter")
     @classmethod
     def known_fighter(cls, value: str) -> str:
-        if value not in FIGHTER_IDS:
+        if value not in FIGHTER_IDS and not CREATED_FIGHTER_ID.fullmatch(value):
             raise ValueError("unknown fighter")
         return value
 
     @model_validator(mode="after")
     def created_fighter_has_a_look(self) -> "Member":
-        if self.fighter == CREATED and not (CREATED_LOOK.match(self.skin) and self.name and self.name.strip()):
+        if CREATED_FIGHTER_ID.fullmatch(self.fighter) and not (
+            CREATED_LOOK.fullmatch(self.skin) and self.name and self.name.strip()
+        ):
             raise ValueError("a created fighter needs its look and name")
-        if self.fighter != CREATED and self.name is not None:
+        if not CREATED_FIGHTER_ID.fullmatch(self.fighter) and self.name is not None:
             raise ValueError("only a created fighter has a name")
         return self
 

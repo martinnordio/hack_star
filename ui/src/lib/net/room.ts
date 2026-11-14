@@ -1,5 +1,11 @@
 import { writable } from 'svelte/store'
 import type { TextKey } from '../i18n/en'
+import { createdLookFor } from '../created'
+import { powerOf } from '../game/economy'
+import { wornSkin } from '../game/shop'
+import { currentFighter, isHackActive } from '../hacks'
+import type { Fighter } from '../fighters'
+import type { Progress } from '../progress'
 
 /** What a device tells the others about its player (see server `rooms.py`). */
 export interface Member {
@@ -10,6 +16,18 @@ export interface Member {
   hyper: boolean
   /** The name of a created fighter (its look is in `skin`). */
   name?: string
+}
+
+export function memberFor(progress: Progress, fighters: Fighter[]): Member {
+  const fighter = currentFighter(progress, fighters)
+  const look = createdLookFor(progress, fighter.id)
+  return {
+    fighter: fighter.id,
+    skin: wornSkin(progress, fighter.id),
+    power: powerOf(progress, fighter.id),
+    hyper: isHackActive(progress, 'hypercharge'),
+    ...(look ? { name: look.name } : {}),
+  }
 }
 
 export interface Seat extends Member {
