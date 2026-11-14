@@ -135,7 +135,7 @@
     <FighterDetail fighter={openFighter} {fighters} onSelected={() => (screen = 'home')} onChange={() => (screen = 'creator')} />
   </Panel>
 {:else if screen === 'creator'}
-  <Panel title={$t($progress.createdFighter ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
+  <Panel title={$t($progress.createdFighters.length ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
     <CreatorScreen onDone={() => (screen = 'fighters')} />
   </Panel>
 {:else if screen === 'shop'}

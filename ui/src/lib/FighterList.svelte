@@ -8,7 +8,7 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
   import { t } from './i18n'
-  import { CREATED_ID } from './progress'
+  import { isCreatedFighterId } from './progress'
 
   let { fighters, onOpen, onCreate }: { fighters: Fighter[]; onOpen: (id: string) => void; onCreate: () => void } = $props()
 </script>
@@ -39,7 +39,7 @@
           <span>🏆 {trophies}</span>
           <span class="power">⚡ {powerOf($progress, fighter.id)}/{maxPower($progress)}</span>
         </span>
-        {#if !unlocked && fighter.id === CREATED_ID}
+        {#if !unlocked && isCreatedFighterId(fighter.id)}
           <span class="price">🔒 💻</span>
         {:else if !unlocked}
           <span class="price">🔒 {$t('common.price', { credits: unlockPrice(fighter.rarity) })}</span>
@@ -47,7 +47,7 @@
       </button>
     </li>
   {/each}
-  {#if !$progress.createdFighter}
+  {#if !$progress.createdFighters.length}
     <li>
       <button class="card create" onclick={onCreate}>
         <span class="picture plus" aria-hidden="true">➕</span>

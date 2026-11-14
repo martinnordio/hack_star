@@ -27,9 +27,9 @@ export function parseLookSkin(skin: string): Look | null {
   return { type: FIGHTER_TYPE_IDS[Number(m[1])], head: Number(m[2]), body: Number(m[3]), main: `#${m[4]}`, second: `#${m[5]}` }
 }
 
-export function createdFighter(look: CreatedLook): Fighter {
+export function createdFighter(look: CreatedLook, id = CREATED_ID): Fighter {
   return {
-    id: CREATED_ID,
+    id,
     name: look.name,
     rarity: 'Epic',
     type: look.type,
@@ -39,9 +39,13 @@ export function createdFighter(look: CreatedLook): Fighter {
   }
 }
 
-/** The catalogue plus the account's created fighter, if it has one. */
+export function createdLookFor(progress: Progress, fighterId: string): CreatedLook | undefined {
+  return progress.createdFighters.find((fighter) => fighter.id === fighterId)?.look
+}
+
+/** The catalogue plus the account's created fighters, if it has any. */
 export function withCreated(fighters: Fighter[], progress: Progress): Fighter[] {
-  return progress.createdFighter ? [...fighters, createdFighter(progress.createdFighter)] : fighters
+  return [...fighters, ...progress.createdFighters.map(({ id, look }) => createdFighter(look, id))]
 }
 
 export function defaultLook(type: FighterTypeId = 'spreader'): CreatedLook {
@@ -55,7 +59,7 @@ export type CreateResult =
 
 /** The price of saving `look`: free the first time, `recreateCost` for every change after. */
 export function createCost(progress: Progress, settings = SETTINGS): number {
-  return progress.createdFighter ? settings.recreateCost : 0
+  return progress.createdFighters.length ? settings.recreateCost : 0
 }
 
 /** Creates or changes the created fighter; it keeps its trophies, power level and lock. */
@@ -65,5 +69,9 @@ export function saveCreated(progress: Progress, look: CreatedLook, settings = SE
   const cost = createCost(progress, settings)
   const paid = pay(progress, cost)
   if ('ok' in paid) return paid as CreateResult
-  return { ok: true, cost, progress: { ...paid, createdFighter: clean } }
+  const first = paid.createdFighters[0]
+  const createdFighters = first
+    ? [{ ...first, look: clean }, ...paid.createdFighters.slice(1)]
+    : [{ id: CREATED_ID, look: clean }]
+  return { ok: true, cost, progress: { ...paid, createdFighters } }
 }

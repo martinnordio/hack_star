@@ -1,4 +1,4 @@
-import { CREATED_ID, type Progress } from './progress'
+import { isCreatedFighterId, type Progress } from './progress'
 import { SETTINGS } from './game/settings'
 
 export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge' | 'creator'
@@ -85,8 +85,10 @@ export function credits(progress: Progress): number {
 }
 
 export function isUnlocked(progress: Progress, fighterId: string): boolean {
-  // Only the CREATOR code unlocks the created fighter (not credits, not OPENSESAME).
-  if (fighterId === CREATED_ID) return has(progress, 'creator') && progress.createdFighter !== null
+  if (isCreatedFighterId(fighterId)) {
+    const index = progress.createdFighters.findIndex((fighter) => fighter.id === fighterId)
+    return index === 0 || (index > 0 && has(progress, 'creator'))
+  }
   return has(progress, 'unlock_all') || progress.unlockedFighters.includes(fighterId)
 }
 

@@ -154,7 +154,7 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Timed hack state and expiry rules | ✅ Done | [→ Step 1](#step-1--timed-hack-state-and-expiry-rules) |
-| **2** | Created-fighter data and compatibility | ⬜ Not started | [→ Step 2](#step-2--created-fighter-data-and-compatibility) |
+| **2** | Created-fighter data and compatibility | ✅ Done | [→ Step 2](#step-2--created-fighter-data-and-compatibility) |
 | **3** | Create, select and manage multiple fighters | ⬜ Not started | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
 | **4** | Created fighters in shared rooms | ⬜ Not started | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
 | **5** | Keep browser tabs in sync | ⬜ Not started | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
@@ -213,14 +213,16 @@ Started: 2026-11-14 09:56
 Replace the one-fighter save model with a collection and retain existing saves and first-fighter behavior (S1, S7, S8, S10, S20, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Migrate the saved single fighter to the first item in the collection, preserving its id and all trophy, power, skin and selected-fighter records.
-- [ ] Add pure helpers for identifying each created fighter, its look, whether it is usable, and resolving the current fighter when a selected extra fighter becomes inactive.
-- [ ] Preserve the first fighter's free creation and availability without CREATOR; preserve the 500 C edit price and make INFINITY pay nothing.
-- [ ] Add tests for old-save migration, first-fighter selection, editing without losing progress, INFINITY at 0 C, and extra-fighter inactivity when CREATOR expires.
-- [ ] Verify `cd ui; npm test` and `cd ui; npm run check`.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Migrate the saved single fighter to the first item in the collection, preserving its id and all trophy, power, skin and selected-fighter records.
+- [x] Add pure helpers for identifying each created fighter, its look, whether it is usable, and resolving the current fighter when a selected extra fighter becomes inactive.
+- [x] Preserve the first fighter's free creation and availability without CREATOR; preserve the 500 C edit price and make INFINITY pay nothing.
+- [x] Add tests for old-save migration, first-fighter selection, editing without losing progress, INFINITY at 0 C, and extra-fighter inactivity when CREATOR expires.
+- [x] Verify `cd ui; npm test` and `cd ui; npm run check`.
 
 ### Notes
+Started: 2026-11-14 10:07
+**Done (2026-11-14 · ~5m · GPT-6 Luna)** — Migrated v5 saves to the v6 created-fighter collection, preserved first-fighter progress and usability, and added expiry-aware extra-fighter behavior. UI tests 231/231; `npm run check` clean.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

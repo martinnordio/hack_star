@@ -49,16 +49,19 @@ describe('progress', () => {
   )
 
   it('migrates version 3: everything kept, no created fighter', () => {
-    const { createdFighter: _, ...rest } = { ...defaultProgress(), credits: 42 }
+    const { createdFighters: _createdFighters, hackExpiries: _hackExpiries, ...rest } = {
+      ...defaultProgress(),
+      credits: 42,
+    }
     const p = parseProgress({ ...rest, version: 3 })
-    expect(p).toEqual({ ...defaultProgress(), credits: 42, createdFighter: null })
+    expect(p).toEqual({ ...defaultProgress(), credits: 42 })
   })
 
   it('migrates version 4 active hacks to 3-day expiries, except permanent POWER22', () => {
-    const { hackExpiries: _hackExpiries, ...progress } = defaultProgress()
-    const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'] }
+    const { hackExpiries: _hackExpiries, createdFighters: _createdFighters, ...progress } = defaultProgress()
+    const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'], createdFighter: null }
     const migrated = parseProgress(legacy, 1000)
-    expect(migrated?.version).toBe(5)
+    expect(migrated?.version).toBe(6)
     expect(migrated?.hackExpiries).toEqual({
       infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
       power22: null,
@@ -66,12 +69,42 @@ describe('progress', () => {
     expect(migrated?.credits).toBe(progress.credits)
   })
 
+  it('migrates version 5 created fighter to the collection without losing fighter progress', () => {
+    const look = { name: 'Zap', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+    const { createdFighters: _createdFighters, ...v5Base } = defaultProgress()
+    const v5 = {
+      ...v5Base,
+      version: 5,
+      credits: 321,
+      activeHacks: ['power22'],
+      hackExpiries: { power22: null },
+      selectedFighter: 'custom',
+      trophies: { custom: 42 },
+      powerLevels: { custom: 13 },
+      selectedSkins: { custom: 'neon' },
+      ownedSkins: { custom: ['neon'] },
+      createdFighter: look,
+    }
+    const migrated = parseProgress(v5, 1000)
+    expect(migrated).toMatchObject({
+      version: 6,
+      credits: 321,
+      selectedFighter: 'custom',
+      trophies: { custom: 42 },
+      powerLevels: { custom: 13 },
+      selectedSkins: { custom: 'neon' },
+      ownedSkins: { custom: ['neon'] },
+      createdFighters: [{ id: 'custom', look }],
+    })
+    expect(migrated?.hackExpiries).toEqual({ power22: null })
+  })
+
   it('a new account starts with 500 credits, 0 trophies and the start fighters', () => {
     const p = startProgress()
     expect(p.credits).toBe(500)
     expect(totalTrophies(p)).toBe(0)
     expect(p.unlockedFighters).toContain('blaze')
-    expect(p.createdFighter).toBeNull()
+    expect(p.createdFighters).toEqual([])
   })
 
   it('reset: 0 credits and trophies, start fighters, power 1, default skins; hacks and created fighter kept', () => {
@@ -86,7 +119,7 @@ describe('progress', () => {
       selectedSkins: { blaze: 'phoenix' },
       ownedSkins: { blaze: ['phoenix'] },
       activeHacks: ['power22'],
-      createdFighter: look,
+      createdFighters: [{ id: 'custom', look }],
     }
     const p = resetProgress(before)
     expect(p.credits).toBe(0)
@@ -97,13 +130,13 @@ describe('progress', () => {
     expect(p.ownedSkins).toEqual({})
     expect(p.selectedFighter).toBe('blaze')
     expect(p.activeHacks).toEqual(['power22'])
-    expect(p.createdFighter).toEqual(look)
+    expect(p.createdFighters).toEqual([{ id: 'custom', look }])
   })
 
   it('refuses a created fighter with a bad look', () => {
     const look = { name: 'Zap', type: 'tank', main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
-    expect(parseProgress({ ...defaultProgress(), createdFighter: look })?.createdFighter).toEqual(look)
-    expect(parseProgress({ ...defaultProgress(), createdFighter: { ...look, main: 'red' } })).toBeNull()
-    expect(parseProgress({ ...defaultProgress(), createdFighter: { ...look, head: 3 } })).toBeNull()
+    expect(parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look }] })?.createdFighters[0].look).toEqual(look)
+    expect(parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look: { ...look, main: 'red' } }] })).toBeNull()
+    expect(parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look: { ...look, head: 3 } }] })).toBeNull()
   })
 })

@@ -1,7 +1,7 @@
 import type { FighterTypeId } from './game/types'
 
 export const PROGRESS_KEY = 'hack-star.progress'
-export const PROGRESS_VERSION = 5
+export const PROGRESS_VERSION = 6
 export const TEMPORARY_HACK_SECONDS = 72 * 60 * 60
 const PERMANENT_HACKS = new Set(['power22'])
 
@@ -13,6 +13,11 @@ export interface CreatedLook {
   second: string
   head: number
   body: number
+}
+
+export interface CreatedFighter {
+  id: string
+  look: CreatedLook
 }
 
 export interface Progress {
@@ -30,14 +35,18 @@ export interface Progress {
   selectedSkins: Record<string, string>
   /** Bought skin ids per fighter id; the default skin is always owned. */
   ownedSkins: Record<string, string[]>
-  createdFighter: CreatedLook | null
+  createdFighters: CreatedFighter[]
 }
 
 /** Fighters every new account starts with (the server's `unlocked_at_start`). */
 export const START_FIGHTERS = ['blaze', 'rocko', 'turbo', 'marina']
 export const START_CREDITS = 500
-/** The created fighter has this id in every account (one per account). */
+/** The original created fighter keeps this id so existing selections and room links still work. */
 export const CREATED_ID = 'custom'
+
+export function isCreatedFighterId(id: string): boolean {
+  return /^custom(?:-(?:[2-9]|1[0-5]))?$/.test(id)
+}
 
 /** The progress of a brand-new account. */
 export function startProgress(): Progress {
@@ -52,7 +61,7 @@ export function startProgress(): Progress {
     selectedFighter: START_FIGHTERS[0],
     selectedSkins: {},
     ownedSkins: {},
-    createdFighter: null,
+    createdFighters: [],
   }
 }
 
@@ -63,7 +72,7 @@ export function resetProgress(progress: Progress): Progress {
     credits: 0,
     activeHacks: [...progress.activeHacks],
     hackExpiries: { ...progress.hackExpiries },
-    createdFighter: progress.createdFighter,
+    createdFighters: progress.createdFighters.map((fighter) => ({ ...fighter, look: { ...fighter.look } })),
   }
 }
 
@@ -80,7 +89,7 @@ export function defaultProgress(): Progress {
     selectedFighter: 'blaze',
     selectedSkins: {},
     ownedSkins: {},
-    createdFighter: null,
+    createdFighters: [],
   }
 }
 
@@ -111,6 +120,22 @@ function isHackExpiryMap(value: unknown): value is Record<string, number | null>
     typeof value === 'object' &&
     value !== null &&
     Object.values(value).every((expiry) => expiry === null || (Number.isSafeInteger(expiry) && expiry >= 0))
+  )
+}
+
+function isCreatedFighters(value: unknown): value is CreatedFighter[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (fighter) =>
+        typeof fighter === 'object' &&
+        fighter !== null &&
+        typeof fighter.id === 'string' &&
+        isCreatedFighterId(fighter.id) &&
+        isCreatedLook(fighter.look),
+    ) &&
+    new Set(value.map((fighter) => fighter.id)).size === value.length &&
+    (value.length === 0 || value[0].id === CREATED_ID)
   )
 }
 
@@ -160,11 +185,26 @@ function isProgress(value: unknown): value is Progress {
     isProgressFields(p) &&
     isOwnedSkins(p.ownedSkins) &&
     isHackExpiryMap(p.hackExpiries) &&
+    p.createdFighter === undefined &&
+    isCreatedFighters(p.createdFighters)
+  )
+}
+
+type ProgressV5 = Omit<Progress, 'version' | 'createdFighters'> & { version: 5; createdFighter: CreatedLook | null }
+
+function isProgressV5(value: unknown): value is ProgressV5 {
+  if (typeof value !== 'object' || value === null) return false
+  const p = value as Record<string, unknown>
+  return (
+    p.version === 5 &&
+    isProgressFields(p) &&
+    isOwnedSkins(p.ownedSkins) &&
+    isHackExpiryMap(p.hackExpiries) &&
     (p.createdFighter === null || isCreatedLook(p.createdFighter))
   )
 }
 
-type ProgressV4 = Omit<Progress, 'version' | 'hackExpiries'> & { version: 4 }
+type ProgressV4 = Omit<Progress, 'version' | 'hackExpiries' | 'createdFighters'> & { version: 4; createdFighter: CreatedLook | null }
 
 function isProgressV4(value: unknown): value is ProgressV4 {
   if (typeof value !== 'object' || value === null) return false
@@ -177,10 +217,19 @@ function isProgressV4(value: unknown): value is ProgressV4 {
   )
 }
 
-function migrateV4(progress: ProgressV4, now: number): Progress {
+function migrateV5(progress: ProgressV5): Progress {
+  const { createdFighter, ...rest } = progress
+  return {
+    ...rest,
+    version: PROGRESS_VERSION,
+    createdFighters: createdFighter ? [{ id: CREATED_ID, look: createdFighter }] : [],
+  }
+}
+
+function migrateV4(progress: ProgressV4, now: number): ProgressV5 {
   return {
     ...progress,
-    version: PROGRESS_VERSION,
+    version: 5,
     hackExpiries: Object.fromEntries(
       progress.activeHacks.map((id) => [id, PERMANENT_HACKS.has(id) ? null : now + TEMPORARY_HACK_SECONDS * 1000]),
     ),
@@ -213,8 +262,9 @@ function migrateV2(value: unknown): ProgressV4 | null {
 /** A saved progress of any known version, or `null` when it is broken or unknown. */
 export function parseProgress(value: unknown, now = Date.now()): Progress | null {
   if (isProgress(value)) return value
+  if (isProgressV5(value)) return migrateV5(value)
   const old = isProgressV4(value) ? value : (migrateV3(value) ?? migrateV2(value))
-  return old ? migrateV4(old, now) : null
+  return old ? migrateV5(migrateV4(old, now)) : null
 }
 
 /** Older versions are migrated; missing, unreadable or unknown data falls back to a fresh start. */

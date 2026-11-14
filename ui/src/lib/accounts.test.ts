@@ -29,7 +29,11 @@ describe('accounts', () => {
 
   it('the progress saved before accounts becomes Player 1, nothing lost', () => {
     const storage = memoryStorage()
-    const { createdFighter: _, ...v3 } = { ...defaultProgress(), credits: 1234, version: 3 }
+    const { createdFighters: _createdFighters, hackExpiries: _hackExpiries, ...v3 } = {
+      ...defaultProgress(),
+      credits: 1234,
+      version: 3,
+    }
     storage.setItem(PROGRESS_KEY, JSON.stringify(v3))
     const account = currentAccount(loadAccounts(storage, 'en'))
     expect(account.name).toBe('Player 1')

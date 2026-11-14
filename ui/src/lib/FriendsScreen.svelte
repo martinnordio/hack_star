@@ -11,7 +11,7 @@
   import QrScanner from './QrScanner.svelte'
   import { options } from './options'
   import { t, tOr } from './i18n'
-  import { CREATED_ID } from './progress'
+  import { createdLookFor } from './created'
 
   let { fighters, initialCode, onStart }: { fighters: Fighter[]; initialCode?: string; onStart: () => void } = $props()
 
@@ -28,7 +28,7 @@
       skin: wornSkin(p, fighter.id),
       power: powerOf(p, fighter.id),
       hyper: isHackActive(p, 'hypercharge'),
-      ...(fighter.id === CREATED_ID && p.createdFighter ? { name: p.createdFighter.name } : {}),
+      ...(createdLookFor(p, fighter.id) ? { name: createdLookFor(p, fighter.id)!.name } : {}),
     }
   }
 

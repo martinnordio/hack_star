@@ -14,7 +14,7 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
   import { t, tOr } from './i18n'
-  import { CREATED_ID } from './progress'
+  import { isCreatedFighterId } from './progress'
 
   let {
     fighter,
@@ -23,7 +23,7 @@
     onChange,
   }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void; onChange: () => void } = $props()
 
-  const created = $derived(fighter.id === CREATED_ID)
+  const created = $derived(isCreatedFighterId(fighter.id))
 
   const today = new Date()
 

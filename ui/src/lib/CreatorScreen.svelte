@@ -11,6 +11,7 @@
     HEADS,
     MAX_CREATED_NAME,
     createCost,
+    createdLookFor,
     defaultLook,
     lookSkin,
     saveCreated,
@@ -23,11 +24,11 @@
 
   let { onDone }: { onDone: () => void } = $props()
 
-  let look = $state<CreatedLook>(untrack(() => ({ ...($progress.createdFighter ?? defaultLook()) })))
+  let look = $state<CreatedLook>(untrack(() => ({ ...(createdLookFor($progress, CREATED_ID) ?? defaultLook()) })))
   let problem = $state<string>()
   let celebrating = $state(false)
 
-  const editing = $derived($progress.createdFighter !== null)
+  const editing = $derived($progress.createdFighters.length > 0)
   const cost = $derived(createCost($progress))
   const wallet = $derived(credits($progress))
   const skin = $derived(lookSkin(look))
