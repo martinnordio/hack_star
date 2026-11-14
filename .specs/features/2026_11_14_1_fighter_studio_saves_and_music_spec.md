@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9 and 11 done; Step 10 waits for Martin and Mattia |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9, 11 and 12 done; Step 10 waits for Martin and Mattia |
 
 ---
 
@@ -225,7 +225,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **9** | Music section of the developer page | ✅ Done | [→ Step 9](#step-9--music-section-of-the-developer-page) |
 | **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
 | **11** | Music in matches and its Settings | ✅ Done | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
-| **12** | About panel | ⬜ Not started | [→ Step 12](#step-12--about-panel) |
+| **12** | About panel | ✅ Done | [→ Step 12](#step-12--about-panel) |
 | **13** | Documentation and final check | ⬜ Not started | [→ Step 13](#step-13--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -660,16 +660,33 @@ Settings opens an About panel with the game's name, version, music credits and t
 (S23, S29, S30).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `AboutPanel.svelte` opened from Settings: name, version and licence text (D14), the
+- [x] Record the start time in Notes below.
+- [x] `AboutPanel.svelte` opened from Settings: name, version and licence text (D14), the
       credit of every track in `music/tracks.json` (title, author, licence, link), and the
       copyright line.
-- [ ] Texts in all five languages (the licence text stays in English, as written).
-- [ ] Check: `cd ui; npm test; npm run check; npm run build`; the panel shows on phone and
+- [x] Texts in all five languages (the licence text stays in English, as written).
+- [x] Check: `cd ui; npm test; npm run check; npm run build`; the panel shows on phone and
       desktop and lists all five tracks.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:44
+
+- Settings → **About Hack star** opens a dialog: "Hack star", "Version 0.1.0" (from
+  `ui/package.json`), **Music** with one line per shipped track (title — author · licence
+  linked to the source) or "No music yet.", and **Licence**: the full text of the repository's
+  `LICENSE` (imported with `?raw`, so it includes the copyright line "© 2026 Martin Nordio and
+  Mattia Nordio"). The file's fixed line breaks are joined per paragraph so it reads well on a
+  phone; the words are unchanged.
+- `vite.config.ts`: `server.fs.allow` lets the dev server read `../LICENSE`; the build bundles
+  the text.
+- Browser check at phone size (430×932): name, version, "No music yet.", five licence
+  paragraphs; screenshot checked. The track list renders from `TRACKS`; with no tracks chosen
+  yet it shows the empty message — the five credits are checked again in Step 13 once
+  Step 10 is done.
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — About panel with name, version, music credits
+and the MIT licence. `npm test` 265 passed; `npm run check` 0 errors; `npm run build` built
+(licence text in the bundle); browser check as above.
 
 ---
 

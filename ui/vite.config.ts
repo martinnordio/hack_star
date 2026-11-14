@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => ({
     host: true,
     port: 5180,
     strictPort: true,
+    // The About panel shows the repository's LICENSE (outside ui/).
+    fs: { allow: ['.', '../LICENSE'] },
     proxy: {
       // `ws` also forwards the room WebSockets (`/api/rooms`).
       '/api': { target: 'http://127.0.0.1:8180', ws: true },

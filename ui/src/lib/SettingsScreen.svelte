@@ -6,6 +6,9 @@
   import { language, setLanguage, t, type TextKey } from './i18n'
   import { LANGUAGES, LANGUAGE_NAMES } from './i18n/languages'
   import { turnOnDeveloper } from './dev/developer'
+  import AboutPanel from './AboutPanel.svelte'
+
+  let aboutOpen = $state(false)
   import { TRACKS } from './music/tracks'
   import { musicTrack } from './music/player'
 
@@ -152,7 +155,21 @@
   {/if}
 </section>
 
+<section>
+  <button class="plain about" onclick={() => (aboutOpen = true)}>ℹ️ {$t('about.open')}</button>
+</section>
+
+{#if aboutOpen}
+  <AboutPanel onClose={() => (aboutOpen = false)} />
+{/if}
+
 <style>
+  .about {
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.8rem;
+    font-weight: 800;
+  }
+
   .music {
     display: flex;
     flex-wrap: wrap;
