@@ -157,7 +157,7 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 | **2** | Created-fighter data and compatibility | ✅ Done | [→ Step 2](#step-2--created-fighter-data-and-compatibility) |
 | **3** | Create, select and manage multiple fighters | ✅ Done | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
 | **4** | Created fighters in shared rooms | ✅ Done | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
-| **5** | Keep browser tabs in sync | ⬜ Not started | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
+| **5** | Keep browser tabs in sync | ✅ Done | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
 | **6** | Show hack status and time remaining | ⬜ Not started | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
 | **7** | Full regression checks and documentation | ⬜ Not started | [→ Step 7](#step-7--full-regression-checks-and-documentation) |
 
@@ -269,13 +269,15 @@ Started: 2026-11-14 12:10
 Prevent stale tabs from losing account progress and refresh them when they become active again (S4).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Synchronize account-store state when another same-origin tab writes the saved accounts.
-- [ ] Reconcile the latest saved account state before a stale tab writes, and refresh from storage when the tab becomes visible; keep account selection and progress scoped correctly.
-- [ ] Add tests using two account stores over shared storage to verify that hacks, credits and created fighters are retained and become visible when switching back to a tab.
-- [ ] Verify `cd ui; npm test` and `cd ui; npm run check`.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Synchronize account-store state when another same-origin tab writes the saved accounts.
+- [x] Reconcile the latest saved account state before a stale tab writes, and refresh from storage when the tab becomes visible; keep account selection and progress scoped correctly.
+- [x] Add tests using two account stores over shared storage to verify that hacks, credits and created fighters are retained and become visible when switching back to a tab.
+- [x] Verify `cd ui; npm test` and `cd ui; npm run check`.
 
 ### Notes
+Started: 2026-11-14 12:25
+**Done (2026-11-14 · ~6m · GitHub Copilot)** — Added three-way account reconciliation, additive concurrent credit merging, and storage/visibility refresh. UI tests 239/239; `npm run check` clean; two-page browser check confirmed live credit and created-fighter refresh.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

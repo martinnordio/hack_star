@@ -20,6 +20,35 @@ function added(state: Accounts, name: string): Accounts {
   return result.state
 }
 
+function syncTarget() {
+  const storageListeners = new Set<(event: Event) => void>()
+  const visibilityListeners = new Set<() => void>()
+  let visibilityState: DocumentVisibilityState = 'visible'
+  const target = {
+    addEventListener: (_type: 'storage', listener: (event: Event) => void) => storageListeners.add(listener),
+    removeEventListener: (_type: 'storage', listener: (event: Event) => void) => storageListeners.delete(listener),
+    document: {
+      get visibilityState() { return visibilityState },
+      addEventListener: (_type: 'visibilitychange', listener: () => void) => visibilityListeners.add(listener),
+      removeEventListener: (_type: 'visibilitychange', listener: () => void) => visibilityListeners.delete(listener),
+    },
+  } as unknown as Window
+  return {
+    target,
+    storageChanged() {
+      for (const listener of storageListeners) listener({ key: ACCOUNTS_KEY } as StorageEvent as Event)
+    },
+    hide() {
+      visibilityState = 'hidden'
+      for (const listener of visibilityListeners) listener()
+    },
+    show() {
+      visibilityState = 'visible'
+      for (const listener of visibilityListeners) listener()
+    },
+  }
+}
+
 describe('accounts', () => {
   it('a new device starts with one new player called Player 1', () => {
     const state = loadAccounts(memoryStorage(), 'it')
@@ -93,6 +122,46 @@ describe('accounts', () => {
     expect(again.current).toBe('a2')
     expect(currentAccount(again).progress.credits).toBe(77)
     expect(get(progressStore(createAccountsStore(storage, 'en'))).credits).toBe(77)
+  })
+
+  it('merges stale tab writes and refreshes the right account on storage and visibility changes', () => {
+    const storage = memoryStorage()
+    const firstEvents = syncTarget()
+    const secondEvents = syncTarget()
+    const first = createAccountsStore(storage, 'en', firstEvents.target)
+    const second = createAccountsStore(storage, 'en', secondEvents.target)
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+
+    firstProgress.update((p) => ({
+      ...p,
+      credits: p.credits + 100,
+      activeHacks: ['creator'],
+      hackExpiries: { creator: Date.now() + 60_000 },
+      createdFighters: [{ id: 'custom', look }],
+    }))
+
+    secondProgress.update((p) => ({ ...p, credits: p.credits + 50 }))
+    firstEvents.storageChanged()
+
+    expect(get(firstProgress)).toMatchObject({ activeHacks: ['creator'], credits: 650, createdFighters: [{ id: 'custom', look }] })
+    expect(get(secondProgress)).toMatchObject({ activeHacks: ['creator'], credits: 650, createdFighters: [{ id: 'custom', look }] })
+
+    first.update((state) => added(state, 'Mattia'))
+    secondEvents.storageChanged()
+    expect(currentAccount(get(first)).id).toBe('a2')
+    expect(currentAccount(get(second)).id).toBe('a2')
+    expect(get(secondProgress)).toMatchObject({ activeHacks: [], credits: 500, createdFighters: [] })
+
+    firstProgress.update((p) => ({ ...p, credits: p.credits + 125, activeHacks: ['infinite_credits'] }))
+    secondEvents.hide()
+    expect(get(secondProgress)).toMatchObject({ activeHacks: [], credits: 500 })
+    secondEvents.show()
+    expect(get(secondProgress)).toMatchObject({ activeHacks: ['infinite_credits'], credits: 625 })
+
+    first.destroy()
+    second.destroy()
   })
 
   it('falls back to the old progress when the accounts are broken', () => {
