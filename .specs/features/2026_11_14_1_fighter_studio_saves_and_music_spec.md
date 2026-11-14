@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–6 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–7 done |
 
 ---
 
@@ -220,7 +220,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **4** | New 3D parts | ✅ Done | [→ Step 4](#step-4--new-3d-parts) |
 | **5** | Creator controls for every part | ✅ Done | [→ Step 5](#step-5--creator-controls-for-every-part) |
 | **6** | Skins of created fighters: rules and saving | ✅ Done | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
-| **7** | Skins of created fighters: screens | ⬜ Not started | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
+| **7** | Skins of created fighters: screens | ✅ Done | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
 | **8** | Developer mode and the developer page | ⬜ Not started | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
 | **9** | Music section of the developer page | ⬜ Not started | [→ Step 9](#step-9--music-section-of-the-developer-page) |
 | **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
@@ -485,15 +485,32 @@ The player can create, change, delete and choose a created fighter's skins on sc
 chosen skin shows on the home screen, in matches and in rooms (S5, S6, S17, S29, S30).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Screens: a skins area for created fighters (the creator or the fighter detail —
+- [x] Record the start time in Notes below.
+- [x] Screens: a skins area for created fighters (the creator or the fighter detail —
       following the existing skin screens), with a preview and the five-skin limit shown.
-- [ ] Texts in all five languages.
-- [ ] Check: `cd ui; npm test; npm run check`; in the browser: make two skins, wear one, see it
+- [x] Texts in all five languages.
+- [x] Check: `cd ui; npm test; npm run check`; in the browser: make two skins, wear one, see it
       on the home screen, in a match and in a friend's room on a second device or tab.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:21
+
+- `FighterDetail.svelte`: for an unlocked created fighter, a **Skins · n/5** row (default + its
+  skins, with portraits) to preview and **SELECT**; **New skin** (while fewer than five),
+  **Change skin** and **Delete skin** (a second tap confirms).
+- `CreatorScreen.svelte` has a skin mode (`skinId` `'new'` or `s1`…`s5`): the same preview and
+  colour / part pickers, without name and type, saved free. `App.svelte` opens it from the
+  fighter page and returns there.
+- Browser check (headless Edge): created "Skinny", made Skin 1 (Dino head, big boots) and
+  Skin 2 (jet pack) — "Save skin · free", count 0/5 → 2/5, the new skin is worn; wearing
+  Skin 1 sets `selectedSkins.custom = s1` and the home screen shows Skinny; deleting Skin 2
+  needs the second tap and keeps Skin 1 worn. In a match and in rooms the worn look comes from
+  `wornSkin()` / `memberFor()` (unit tests of Step 6; the server accepts 18-character looks,
+  Step 3) — not re-checked with two live devices.
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — created fighters' skins can be made, changed,
+deleted and worn on screen, in all five languages. `npm test` 256 passed; `npm run check`
+0 errors; browser check as above.
 
 ---
 

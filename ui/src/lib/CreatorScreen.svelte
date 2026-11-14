@@ -18,6 +18,9 @@
     defaultLook,
     lookSkin,
     saveCreated,
+    addCreatedSkin,
+    changeCreatedSkin,
+    skinPartsOf,
   } from './created'
   import { credits, isHackActive } from './hacks'
   import { FIGHTER_TYPE_IDS, fighterType } from './game/types'
@@ -25,18 +28,41 @@
   import { t, type TextKey } from './i18n'
   import type { CreatedLook } from './progress'
 
-  let { fighterId, onDone }: { fighterId?: string; onDone: () => void } = $props()
+  /** With `skinId` (`'new'` or a skin id) it edits a skin of `fighterId`: colours and parts only, free. */
+  let { fighterId, skinId, onDone }: { fighterId?: string; skinId?: string; onDone: () => void } = $props()
 
-  let look = $state<CreatedLook>(untrack(() => ({ ...(fighterId ? (createdLookFor($progress, fighterId) ?? defaultLook()) : defaultLook()) })))
+  function startLook(): CreatedLook {
+    const base = fighterId ? (createdLookFor($progress, fighterId) ?? defaultLook()) : defaultLook()
+    const skin = $progress.createdFighters.find((f) => f.id === fighterId)?.skins.find((s) => s.id === skinId)
+    return { ...base, ...(skin ? skinPartsOf(skin) : {}) }
+  }
+
+  let look = $state<CreatedLook>(untrack(startLook))
   let problem = $state<string>()
   let celebrating = $state(false)
 
+  const skinMode = $derived(skinId !== undefined && fighterId !== undefined)
   const editing = $derived(fighterId !== undefined)
   const cost = $derived(createCost($progress, fighterId))
   const wallet = $derived(credits($progress))
   const skin = $derived(lookSkin(look))
 
+  function saveSkin(id: string) {
+    const result = skinId === 'new'
+      ? addCreatedSkin($progress, id, skinPartsOf(look))
+      : changeCreatedSkin($progress, id, skinId ?? '', skinPartsOf(look))
+    if (!result.ok) {
+      problem = $t(result.reason === 'limit' ? 'createdSkins.limit' : 'creator.missing')
+      return
+    }
+    problem = undefined
+    $progress = result.progress
+    celebrating = true
+    setTimeout(onDone, 1600)
+  }
+
   function save() {
+    if (skinMode && fighterId) return saveSkin(fighterId)
     const result = saveCreated($progress, look, fighterId)
     if (!result.ok) {
       problem = result.reason === 'name'
@@ -81,6 +107,7 @@
   </div>
 
   <div class="form">
+    {#if !skinMode}
     <label for="created-name">{$t('creator.name')}</label>
     <input id="created-name" bind:value={look.name} maxlength={MAX_CREATED_NAME} autocomplete="off" />
 
@@ -93,6 +120,7 @@
         </button>
       {/each}
     </div>
+    {/if}
 
     {#each [['main', 'creator.mainColor'], ['second', 'creator.secondColor']] as const as [field, label] (field)}
       <span class="label" id="created-{field}">{$t(label)}</span>
@@ -124,7 +152,9 @@
     {#if problem}<p class="problem" role="alert">{problem}</p>{/if}
 
     <button class="save" onclick={save}>
-      {#if !editing && !$progress.createdFighters.length}
+      {#if skinMode}
+        💾 {$t('createdSkins.save', { price: $t('common.free') })}
+      {:else if !editing && !$progress.createdFighters.length}
         ✨ {$t('creator.create')}
       {:else if !editing}
         ✨ {$t('creator.createPrice', { price: wallet === Infinity ? $t('common.free') : $t('common.price', { credits: cost }) })}
@@ -136,7 +166,7 @@
 </div>
 
 {#if celebrating}
-  <Celebration label={$t('creator.created')} title={look.name.trim()} subtitle={$t(fighterType(look.type).nameKey)} />
+  <Celebration label={$t(skinMode ? 'createdSkins.saved' : 'creator.created')} title={look.name.trim()} subtitle={$t(fighterType(look.type).nameKey)} />
 {/if}
 
 <style>

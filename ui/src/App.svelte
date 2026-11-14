@@ -35,6 +35,7 @@
   let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
   let openFighterId = $state<string>()
   let creatorFighterId = $state<string>()
+  let creatorSkinId = $state<string>()
   let catalogue = $state<Fighter[]>()
   // The server's fighters plus this account's created fighter.
   const fighters = $derived(catalogue ? withCreated(catalogue, $progress) : undefined)
@@ -143,17 +144,29 @@
       onSelected={() => (screen = 'home')}
       onChange={(id) => {
         creatorFighterId = id
+        creatorSkinId = undefined
+        screen = 'creator'
+      }}
+      onSkin={(id, skinId) => {
+        creatorFighterId = id
+        creatorSkinId = skinId
         screen = 'creator'
       }}
     />
   </Panel>
 {:else if screen === 'creator'}
-  <Panel title={$t(creatorFighterId ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
+  <Panel
+    title={$t(creatorSkinId ? (creatorSkinId === 'new' ? 'createdSkins.newTitle' : 'createdSkins.editTitle') : creatorFighterId ? 'creator.editTitle' : 'creator.title')}
+    onBack={() => (screen = creatorSkinId ? 'fighter' : 'fighters')}
+  >
     <CreatorScreen
       fighterId={creatorFighterId}
+      skinId={creatorSkinId}
       onDone={() => {
+        const backToFighter = creatorSkinId !== undefined
         creatorFighterId = undefined
-        screen = 'fighters'
+        creatorSkinId = undefined
+        screen = backToFighter ? 'fighter' : 'fighters'
       }}
     />
   </Panel>
