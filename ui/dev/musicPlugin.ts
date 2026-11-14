@@ -48,7 +48,7 @@ async function readId(req: IncomingMessage): Promise<string> {
   return typeof id === 'string' ? id : ''
 }
 
-/** Changes only from this computer: the dev server also listens on the Wi-Fi for phones. */
+/** Only this computer: the dev server also listens on the Wi-Fi for phones. */
 function fromThisComputer(req: IncomingMessage): boolean {
   const address = req.socket.remoteAddress ?? ''
   return address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1'
@@ -80,6 +80,7 @@ export function musicDevTools(): Plugin {
       server.middlewares.use('/__dev/music', async (req, res) => {
         try {
           const url = new URL(req.url ?? '/', 'http://localhost')
+          if (!fromThisComputer(req)) return send(res, 403, { ok: false, reason: 'Only from the computer that runs npm run dev.' })
           if (req.method === 'GET' && url.pathname === '/list') {
             const tracks = await readList()
             return send(res, 200, tracks.map((t) => ({ ...t, hasFile: existsSync(join(FILES, t.file)) })))
@@ -91,7 +92,6 @@ export function musicDevTools(): Plugin {
           }
           const action = url.pathname.slice(1)
           if (req.method === 'POST' && ['choose', 'unchoose', 'delete'].includes(action)) {
-            if (!fromThisComputer(req)) return send(res, 403, { ok: false, reason: 'Only from the computer that runs npm run dev.' })
             const result = await change(await readId(req), action)
             return send(res, result.ok ? 200 : 400, result)
           }

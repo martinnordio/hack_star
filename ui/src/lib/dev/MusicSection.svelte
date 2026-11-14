@@ -71,7 +71,7 @@
 </script>
 
 {#if !available}
-  <p>The music tools work only with <code>npm run dev</code> (they are not part of the built game).</p>
+  <p>The music tools work only with <code>npm run dev</code>, on the computer that runs it (they are not part of the built game).</p>
 {:else}
   <p>
     {tracks.length} of at most {MAX_CANDIDATES} candidates · <strong>{chosen} of {MAX_CHOSEN} chosen</strong> for the game on this computer.
