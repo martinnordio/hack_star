@@ -159,7 +159,7 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 | **4** | Created fighters in shared rooms | ✅ Done | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
 | **5** | Keep browser tabs in sync | ✅ Done | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
 | **6** | Show hack status and time remaining | ✅ Done | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
-| **7** | Full regression checks and documentation | ⬜ Not started | [→ Step 7](#step-7--full-regression-checks-and-documentation) |
+| **7** | Full regression checks and documentation | ✅ Done | [→ Step 7](#step-7--full-regression-checks-and-documentation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -308,15 +308,17 @@ Started: 2026-11-14 12:32
 Verify all requirements together and document the new save, code-expiry and multiplayer behavior (S1–S22).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Run the full UI suite, type check and production build: `cd ui; npm test`, `cd ui; npm run check`, `cd ui; npm run build`.
-- [ ] Run all server tests: `cd server; uv run --no-sync pytest`.
-- [ ] Check migration from an existing save, INFINITY with 0 C, create/edit and 15-fighter limit, code expiry and re-entry, OPENSESAME relocking, two-tab refresh, and a shared match with created fighters.
-- [ ] Check key flows at desktop, iPad and phone sizes with mouse and touch; confirm existing single-player, shop, account and room behavior still works.
-- [ ] Update the README and `docs/architecture.md` with the revised creator, save migration, expiry rules and room-member data.
-- [ ] Verify the final diff and rerun any focused test affected by documentation or integration fixes.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Run the full UI suite, type check and production build: `cd ui; npm test`, `cd ui; npm run check`, `cd ui; npm run build`.
+- [x] Run all server tests: `cd server; uv run --no-sync pytest`.
+- [x] Check migration from an existing save, INFINITY with 0 C, create/edit and 15-fighter limit, code expiry and re-entry, OPENSESAME relocking, two-tab refresh, and a shared match with created fighters.
+- [x] Check key flows at desktop, iPad and phone sizes with mouse and touch; confirm existing single-player, shop, account and room behavior still works.
+- [x] Update the README and `docs/architecture.md` with the revised creator, save migration, expiry rules and room-member data.
+- [x] Verify the final diff and rerun any focused test affected by documentation or integration fixes.
 
 ### Notes
+Started: 2026-11-14 12:42
+**Done (2026-11-14 · ~5m · GitHub Copilot)** — Updated the README and architecture guide for the v6 migration, created-fighter rules, hack expiry and room payload. UI tests 240/240, type checks clean, production build successful (large-chunk advisory), server tests 41/41; final diff clean.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
@@ -341,7 +343,7 @@ Verify all requirements together and document the new save, code-expiry and mult
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked
+- [x] Implementation · every Step's tasks checked
 - [ ] Review · review page and semantic diff written; code review without Blocking findings
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

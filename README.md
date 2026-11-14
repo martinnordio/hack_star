@@ -111,11 +111,12 @@ Hack star server" with a **Try again** button.
   and Zeus Jr. are the newest and most detailed fighters (shiny and glowing parts, more moving
   parts). The types were tuned with bot-only test matches so that each one wins about as often
   as the others.
-- **Create a fighter:** the last card of the fighter list. Choose a name (1–12 characters), a
-  type, two colours, a head (kid, robot, cat) and a body (kid, robot, armour), with a 3D
-  preview. One per account; creating it is free, changing it later costs 500 credits (it keeps
-  its trophies and power). It stays locked until the hack code `CREATOR` is entered; then it
-  plays like any fighter of its type, also with friends.
+- **Create a fighter:** choose a name (1–12 characters), a type, two colours, a head (kid,
+  robot, cat) and a body (kid, robot, armour), with a 3D preview. The first fighter is free and
+  usable right away. Changing a fighter costs 500 credits and keeps its trophies and power.
+  While `CREATOR` is active, create up to 14 more fighters for 500 credits each; `INFINITY`
+  makes creation and changes free. Extra fighters keep their progress but become inactive when
+  `CREATOR` expires, and are usable again when it is entered again.
 - **Credits, unlocking and upgrading:** every match gives credits (**+100** for a victory, +20
   otherwise; you start with 500). On a fighter's screen:
   - **Unlock** a locked fighter for its price: Rare 160, Super Rare 430, Epic 925, Mythic 1900,
@@ -134,11 +135,13 @@ Hack star server" with a **Try again** button.
   **Hard**) and number of bots (1–5) for every match (saved on the device; default Easy and 3
   bots), and **Reset coins and trophies**: after a confirmation the account starts again with
   0 credits, 0 trophies, only the start fighters, power 1 and default skins (hack codes and
-  the created fighter stay).
+  created fighters stay; extra created fighters still need `CREATOR` to be active).
 - **Accounts:** the name under the trophies on the home screen. Tap it to switch account, add
   one (up to 5 per device, names 1–16 characters, all different) or rename one (accounts
   cannot be deleted). Each account has its own credits, trophies, fighters, skins, hack codes,
-  created fighter and language. The progress saved before accounts existed became "Player 1".
+  created fighters and language. The progress saved before accounts existed became "Player 1".
+  Existing saves migrate automatically, preserving the original created fighter and its progress.
+  Same-origin tabs reconcile account changes and refresh when brought back to the front.
 - **Friends:** play together, each on your own iPad, phone or computer on the same Wi-Fi — you
   and up to 2 friends **on one team against the bots**:
   1. One player taps **Friends → Create a room** and gets a 4-letter code and a QR code.
@@ -149,7 +152,8 @@ Hack star server" with a **Try again** button.
      total, at least one bot) and everyone starts along the bottom of the arena.
   4. Shots never hurt teammates; teammates' health bars are blue. The team wins if one of you
      is the last one standing. Each player gets trophies and credits on their own device, and
-     hacks work only on the device that entered them.
+     hacks work only on the device that entered them. Created fighters send their stable ID,
+     name and look so friends see the same fighter.
   5. After the match, **Back to the room** to play again. If a friend leaves, a bot takes over
      their fighter; if the host leaves, the room closes and the friends get a draw.
 - **Hack:** type a hack code or scan its QR code:
@@ -160,14 +164,20 @@ Hack star server" with a **Try again** button.
   | `OPENSESAME` | Every fighter and skin unlocked (no need to buy skins) |
   | `POWER22` | Power levels up to 22 instead of 11 (power 22: ❤️ 9920 💥 1488 in matches) |
   | `HYPERCHARGE` | Your Super charges 3 times faster and every Super is a Hypercharge |
-  | `CREATOR` | Unlocks the fighter you created |
+  | `CREATOR` | Allows up to 15 created fighters per account |
+
+  `INFINITY`, `OPENSESAME`, `HYPERCHARGE` and `CREATOR` last 3 days; entering one again while
+  active restarts its 3 days. `POWER22` is permanent. The Hack screen shows time remaining or
+  the permanent status. The first created fighter stays usable without `CREATOR`; only extra
+  fighters become inactive when that code expires.
 
   **Reset all hacks** on the same screen goes back to the normal rules: the real credits and
   the 11 limit come back; fighters, levels and skins you got while hacking stay (skins you
   only wore thanks to OPENSESAME go back to Default).
 
-Progress (accounts, chosen fighter, bought and chosen skins, trophies) is saved in the browser of each device. Open
-<http://localhost:5180/?gallery> to see every fighter and skin side by side.
+Progress (accounts, chosen fighter, bought and chosen skins, trophies, hack expiry and created
+fighters) is saved in the browser of each device. Open <http://localhost:5180/?gallery> to see
+every fighter and skin side by side.
 
 ### Match settings
 
