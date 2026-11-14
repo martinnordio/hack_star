@@ -3,7 +3,7 @@ import { pay } from './game/economy'
 import { SETTINGS } from './game/settings'
 import { FIGHTER_TYPE_IDS, type FighterTypeId } from './game/types'
 import { isHackActive, isUnlocked } from './hacks'
-import { CREATED_ID, isCreatedFighterId, isCreatedLook, type CreatedLook, type Progress } from './progress'
+import { CREATED_ID, isCreatedFighterId, isCreatedLook, MAX_CREATED_SKINS, type CreatedFighter, type CreatedLook, type CreatedSkin, type Progress } from './progress'
 
 export { CREATED_ID }
 export const MAX_CREATED_NAME = 12
@@ -63,6 +63,67 @@ export function createdFighter(look: CreatedLook, id = CREATED_ID): Fighter {
 
 export function createdLookFor(progress: Progress, fighterId: string): CreatedLook | undefined {
   return progress.createdFighters.find((fighter) => fighter.id === fighterId)?.look
+}
+
+/** Colours and parts of a created skin, without its id. */
+export type SkinParts = Omit<CreatedSkin, 'id'>
+
+export function skinPartsOf(look: SkinParts): SkinParts {
+  return { main: look.main, second: look.second, head: look.head, body: look.body, hands: look.hands, legs: look.legs }
+}
+
+/** The look a created fighter shows: its default look, or one of its skins (same type). */
+export function createdSkinLook(fighter: CreatedFighter, skinId: string): Look {
+  const skin = fighter.skins.find((s) => s.id === skinId)
+  return { type: fighter.look.type, ...skinPartsOf(skin ?? fighter.look) }
+}
+
+export function nextCreatedSkinId(skins: CreatedSkin[]): string | undefined {
+  for (let n = 1; n <= MAX_CREATED_SKINS; n++) {
+    if (!skins.some((skin) => skin.id === `s${n}`)) return `s${n}`
+  }
+  return undefined
+}
+
+export type SkinChange = { ok: true; progress: Progress; skinId: string } | { ok: false; reason: 'limit' | 'missing' }
+
+function withFighter(progress: Progress, fighterId: string, change: (fighter: CreatedFighter) => CreatedFighter): Progress {
+  return {
+    ...progress,
+    createdFighters: progress.createdFighters.map((fighter) => (fighter.id === fighterId ? change(fighter) : fighter)),
+  }
+}
+
+/** Adds a skin (free, at most five per fighter) and wears it. */
+export function addCreatedSkin(progress: Progress, fighterId: string, parts: SkinParts): SkinChange {
+  const fighter = progress.createdFighters.find((f) => f.id === fighterId)
+  if (!fighter) return { ok: false, reason: 'missing' }
+  const skinId = nextCreatedSkinId(fighter.skins)
+  if (!skinId) return { ok: false, reason: 'limit' }
+  const added = withFighter(progress, fighterId, (f) => ({ ...f, skins: [...f.skins, { id: skinId, ...skinPartsOf(parts) }] }))
+  return { ok: true, skinId, progress: chooseCreatedSkin(added, fighterId, skinId) }
+}
+
+export function changeCreatedSkin(progress: Progress, fighterId: string, skinId: string, parts: SkinParts): SkinChange {
+  const fighter = progress.createdFighters.find((f) => f.id === fighterId)
+  if (!fighter?.skins.some((s) => s.id === skinId)) return { ok: false, reason: 'missing' }
+  const changed = withFighter(progress, fighterId, (f) => ({
+    ...f,
+    skins: f.skins.map((s) => (s.id === skinId ? { id: skinId, ...skinPartsOf(parts) } : s)),
+  }))
+  return { ok: true, skinId, progress: changed }
+}
+
+/** Deletes a skin; a fighter wearing it goes back to its default look. */
+export function deleteCreatedSkin(progress: Progress, fighterId: string, skinId: string): Progress {
+  const deleted = withFighter(progress, fighterId, (f) => ({ ...f, skins: f.skins.filter((s) => s.id !== skinId) }))
+  return progress.selectedSkins[fighterId] === skinId ? chooseCreatedSkin(deleted, fighterId, 'default') : deleted
+}
+
+/** Wears a skin of a created fighter, or its default look (`'default'`). */
+export function chooseCreatedSkin(progress: Progress, fighterId: string, skinId: string): Progress {
+  const { [fighterId]: _previous, ...others } = progress.selectedSkins
+  return { ...progress, selectedSkins: skinId === 'default' ? others : { ...others, [fighterId]: skinId } }
 }
 
 export function canAddCreatedFighter(progress: Progress): boolean {

@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–5 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–6 done |
 
 ---
 
@@ -219,7 +219,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **3** | Look format with hands, legs and skins | ✅ Done | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
 | **4** | New 3D parts | ✅ Done | [→ Step 4](#step-4--new-3d-parts) |
 | **5** | Creator controls for every part | ✅ Done | [→ Step 5](#step-5--creator-controls-for-every-part) |
-| **6** | Skins of created fighters: rules and saving | ⬜ Not started | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
+| **6** | Skins of created fighters: rules and saving | ✅ Done | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
 | **7** | Skins of created fighters: screens | ⬜ Not started | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
 | **8** | Developer mode and the developer page | ⬜ Not started | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
 | **9** | Music section of the developer page | ⬜ Not started | [→ Step 9](#step-9--music-section-of-the-developer-page) |
@@ -451,17 +451,30 @@ A created fighter can have up to five free skins with their own colours and part
 worn like other skins, kept across reloads and tabs (S5, S6, S7, S13, S17).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Rules in `created.ts`: add, change and delete a skin (at most five, free); deleting the
+- [x] Record the start time in Notes below.
+- [x] Rules in `created.ts`: add, change and delete a skin (at most five, free); deleting the
       worn skin puts the default look back on (D4).
-- [ ] `wornSkin()` and the room member send the chosen skin's look (D4).
-- [ ] Cross-tab merge of skins (D5) in `accounts.ts`.
-- [ ] Tests: the limit of five, free, delete of the worn skin, type and stats unchanged (S7),
+- [x] `wornSkin()` and the room member send the chosen skin's look (D4).
+- [x] Cross-tab merge of skins (D5) in `accounts.ts`.
+- [x] Tests: the limit of five, free, delete of the worn skin, type and stats unchanged (S7),
       merge of two tabs adding and deleting skins.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:16
+
+- `created.ts`: `addCreatedSkin` (wears the new skin), `changeCreatedSkin`,
+  `deleteCreatedSkin`, `chooseCreatedSkin`, `createdSkinLook`. `wornSkin()` builds the look
+  from the chosen skin with the fighter's own type, so `memberFor()` (rooms), the 3D models
+  and pictures need no change.
+- Merge (D5): skins merge by id like created fighters; when two tabs add a skin with the same
+  new id, the second gets the next free id (both are kept, up to five). A tab that wore its
+  own new skin may then wear the other tab's skin with that id — acceptable, it is a choice
+  the player can change at once.
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — up to five free skins per created fighter,
+worn at home, in matches and in rooms, merged across tabs. `npm test` 256 passed;
+`npm run check` 0 errors.
 
 ---
 

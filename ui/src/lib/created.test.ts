@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  addCreatedSkin,
   canAddCreatedFighter,
+  changeCreatedSkin,
+  chooseCreatedSkin,
   CREATED_ID,
   createdFighter,
+  deleteCreatedSkin,
   lookSkin,
   MAX_CREATED_FIGHTERS,
   nextCreatedFighterId,
@@ -14,7 +18,8 @@ import type { Fighter } from './fighters'
 import { unlock } from './game/economy'
 import { wornSkin } from './game/shop'
 import { currentFighter, isUnlocked, withHack } from './hacks'
-import { defaultProgress, TEMPORARY_HACK_SECONDS, type CreatedLook } from './progress'
+import { memberFor } from './net/room'
+import { defaultProgress, MAX_CREATED_SKINS, TEMPORARY_HACK_SECONDS, type CreatedLook } from './progress'
 
 const look: CreatedLook = { name: 'Zappy', type: 'thrower', main: '#e8322b', second: '#39d353', head: 2, body: 1, hands: 0, legs: 0 }
 const made = (id: string, l: CreatedLook = look) => ({ id, look: l, skins: [] })
@@ -169,5 +174,60 @@ describe('created fighter', () => {
     const locked = { ...blaze, id: 'locked', name: 'Locked' }
     const list = withCreated([locked, blaze], first.progress)
     expect(list.map((fighter) => fighter.id)).toEqual(['blaze', 'custom', 'locked'])
+  })
+})
+
+describe('skins of created fighters', () => {
+  const parts = { main: '#ff5fa8', second: '#3a5bff', head: 4, body: 3, hands: 2, legs: 1 }
+  const created = () => {
+    const result = saveCreated({ ...defaultProgress(), credits: 7 }, look)
+    if (!result.ok) throw new Error(result.reason)
+    return result.progress
+  }
+
+  it('adds up to five free skins and wears the new one', () => {
+    let p = created()
+    for (let n = 1; n <= MAX_CREATED_SKINS; n++) {
+      const added = addCreatedSkin(p, CREATED_ID, { ...parts, head: n - 1 })
+      expect(added).toMatchObject({ ok: true, skinId: `s${n}` })
+      if (added.ok) p = added.progress
+    }
+    expect(p.credits).toBe(7)
+    expect(p.selectedSkins[CREATED_ID]).toBe('s5')
+    expect(addCreatedSkin(p, CREATED_ID, parts)).toEqual({ ok: false, reason: 'limit' })
+    expect(addCreatedSkin(p, 'custom-9', parts)).toEqual({ ok: false, reason: 'missing' })
+  })
+
+  it('the worn skin keeps the type, trophies and power; only the look changes', () => {
+    const p = { ...created(), trophies: { custom: 30 }, powerLevels: { custom: 4 } }
+    const added = addCreatedSkin(p, CREATED_ID, parts)
+    if (!added.ok) throw new Error(added.reason)
+    const worn = parseLookSkin(wornSkin(added.progress, CREATED_ID))
+    expect(worn).toEqual({ type: look.type, ...parts })
+    expect(added.progress.trophies).toEqual({ custom: 30 })
+    expect(added.progress.powerLevels).toEqual({ custom: 4 })
+    expect(added.progress.createdFighters[0].look).toEqual(look)
+    expect(wornSkin(chooseCreatedSkin(added.progress, CREATED_ID, 'default'), CREATED_ID)).toBe(lookSkin(look))
+  })
+
+  it('changes a skin, and deleting the worn skin puts the default look back on', () => {
+    const added = addCreatedSkin(created(), CREATED_ID, parts)
+    if (!added.ok) throw new Error(added.reason)
+    const changed = changeCreatedSkin(added.progress, CREATED_ID, 's1', { ...parts, main: '#39d353' })
+    if (!changed.ok) throw new Error(changed.reason)
+    expect(parseLookSkin(wornSkin(changed.progress, CREATED_ID))?.main).toBe('#39d353')
+    expect(changeCreatedSkin(changed.progress, CREATED_ID, 's2', parts)).toEqual({ ok: false, reason: 'missing' })
+
+    const deleted = deleteCreatedSkin(changed.progress, CREATED_ID, 's1')
+    expect(deleted.createdFighters[0].skins).toEqual([])
+    expect(deleted.selectedSkins[CREATED_ID]).toBeUndefined()
+    expect(wornSkin(deleted, CREATED_ID)).toBe(lookSkin(look))
+  })
+
+  it('friends in a room get the worn skin as the look', () => {
+    const added = addCreatedSkin(created(), CREATED_ID, parts)
+    if (!added.ok) throw new Error(added.reason)
+    const member = memberFor({ ...added.progress, selectedFighter: CREATED_ID }, [createdFighter(look)])
+    expect(member).toMatchObject({ fighter: CREATED_ID, skin: lookSkin({ type: look.type, ...parts }), name: look.name })
   })
 })

@@ -1,9 +1,9 @@
 import { derived, writable, type Readable } from 'svelte/store'
-import { nextCreatedFighterId } from './created'
+import { nextCreatedFighterId, nextCreatedSkinId } from './created'
 import { SETTINGS } from './game/settings'
 import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
-import { PROGRESS_KEY, parseProgress, startProgress, type Progress } from './progress'
+import { MAX_CREATED_SKINS, PROGRESS_KEY, parseProgress, startProgress, type CreatedSkin, type Progress } from './progress'
 import { browserStorage, reportSave } from './saving'
 
 export const ACCOUNTS_KEY = 'hack-star.accounts'
@@ -169,6 +169,30 @@ function mergeMap<T>(
   return merged
 }
 
+/** Same rules as created fighters: a local change wins; a skin id taken in both tabs gets the next free id. */
+function mergeCreatedSkins(base: CreatedSkin[], local: CreatedSkin[], remote: CreatedSkin[]): CreatedSkin[] {
+  const merged = [...remote]
+  for (const original of base) {
+    const localSkin = local.find((skin) => skin.id === original.id)
+    const index = merged.findIndex((skin) => skin.id === original.id)
+    if (!localSkin) {
+      if (index >= 0) merged.splice(index, 1)
+    } else if (!same(original, localSkin)) {
+      if (index >= 0) merged[index] = localSkin
+      else merged.push(localSkin)
+    }
+  }
+  for (const skin of local) {
+    if (base.some((original) => original.id === skin.id)) continue
+    const existing = merged.find((other) => other.id === skin.id)
+    if (existing && same(existing, skin)) continue
+    const id = existing ? nextCreatedSkinId(merged) : skin.id
+    if (!id || merged.length >= MAX_CREATED_SKINS) continue
+    merged.push({ ...skin, id })
+  }
+  return merged
+}
+
 function mergeCreatedFighters(
   base: Progress['createdFighters'],
   local: Progress['createdFighters'],
@@ -187,9 +211,8 @@ function mergeCreatedFighters(
       if (index >= 0) merged.splice(index, 1)
     } else if (!same(original, localFighter)) {
       const remoteFighter = index >= 0 ? merged[index] : original
-      const fighter = same(localFighter.look, original.look)
-        ? { ...remoteFighter, look: remoteFighter.look }
-        : { ...remoteFighter, look: localFighter.look }
+      const look = same(localFighter.look, original.look) ? remoteFighter.look : localFighter.look
+      const fighter = { ...remoteFighter, look, skins: mergeCreatedSkins(original.skins, localFighter.skins, remoteFighter.skins) }
       if (index >= 0) merged[index] = fighter
       else merged.push(fighter)
     }

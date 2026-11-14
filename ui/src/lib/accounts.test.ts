@@ -11,7 +11,7 @@ import {
   switchAccount,
   type Accounts,
 } from './accounts'
-import { saveCreated } from './created'
+import { addCreatedSkin, deleteCreatedSkin, saveCreated } from './created'
 import { browserLanguage } from './i18n/languages'
 import { MAX_CREATED_FIGHTERS } from './created'
 import { PROGRESS_KEY, defaultProgress, memoryStorage, startProgress } from './progress'
@@ -180,6 +180,44 @@ describe('accounts', () => {
     secondEvents.show()
     expect(get(secondProgress)).toMatchObject({ activeHacks: ['infinite_credits'], credits: 625 })
 
+    first.destroy()
+    second.destroy()
+  })
+
+  it('merges created skins of two tabs: adds from both, deletions kept, same id renumbered', () => {
+    const storage = memoryStorage()
+    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
+    const parts = { main: '#123456', second: '#654321', head: 1, body: 1, hands: 1, legs: 1 }
+    const seed = createAccountsStore(storage, 'en')
+    progressStore(seed).update((p) => ({
+      ...p,
+      createdFighters: [{ id: 'custom', look, skins: [{ id: 's1', ...parts }, { id: 's2', ...parts, head: 2 }] }],
+    }))
+    seed.destroy()
+
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    firstProgress.update((p) => {
+      const added = addCreatedSkin(p, 'custom', { ...parts, main: '#aaaaaa' })
+      if (!added.ok) throw new Error(added.reason)
+      return deleteCreatedSkin(added.progress, 'custom', 's1')
+    })
+    secondProgress.update((p) => {
+      const added = addCreatedSkin(p, 'custom', { ...parts, main: '#bbbbbb' })
+      if (!added.ok) throw new Error(added.reason)
+      return added.progress
+    })
+    first.refresh()
+
+    const skins = currentAccount(get(first)).progress.createdFighters[0].skins
+    expect(skins.map((s) => [s.id, s.main])).toEqual([
+      ['s2', '#123456'],
+      ['s3', '#aaaaaa'],
+      ['s1', '#bbbbbb'],
+    ])
+    expect(get(secondProgress).createdFighters[0].skins).toEqual(skins)
     first.destroy()
     second.destroy()
   })
