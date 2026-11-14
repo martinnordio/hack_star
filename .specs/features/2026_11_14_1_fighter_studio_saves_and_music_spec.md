@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Step 1 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–2 done |
 
 ---
 
@@ -215,7 +215,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Account name on the home screen | ✅ Done | [→ Step 1](#step-1--account-name-on-the-home-screen) |
-| **2** | Saving that lasts, and a notice when it cannot | ⬜ Not started | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
+| **2** | Saving that lasts, and a notice when it cannot | ✅ Done | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
 | **3** | Look format with hands, legs and skins | ⬜ Not started | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
 | **4** | New 3D parts | ⬜ Not started | [→ Step 4](#step-4--new-3d-parts) |
 | **5** | Creator controls for every part | ⬜ Not started | [→ Step 5](#step-5--creator-controls-for-every-part) |
@@ -309,17 +309,31 @@ Saved data is kept for long, every change is saved at once, and the player is to
 browser blocks saving (S10, S11, S14, S15, S16).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Ask the browser to keep the data on start (D6).
-- [ ] Make `saveAccounts` and `saveOptions` report whether saving worked; show a short
+- [x] Record the start time in Notes below.
+- [x] Ask the browser to keep the data on start (D6).
+- [x] Make `saveAccounts` and `saveOptions` report whether saving worked; show a short
       notice once per visit when it did not, in all five languages (S15, S29).
-- [ ] Tests: a storage that throws makes the notice appear once; a normal storage saves each
+- [x] Tests: a storage that throws makes the notice appear once; a normal storage saves each
       change right away (S11); options and accounts reload as saved (S10).
-- [ ] Check that leaving a match early still gives no reward (S16) and record it.
-- [ ] Check: `cd ui; npm test; npm run check`; in a private window the notice appears once.
+- [x] Check that leaving a match early still gives no reward (S16) and record it.
+- [x] Check: `cd ui; npm test; npm run check`; in a private window the notice appears once.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:00
+
+- New `lib/saving.ts`: the notice state (`none` → `shown` → `dismissed`), `browserStorage()`
+  (reading `localStorage` can itself throw when the browser blocks it — the game then runs
+  on memory storage instead of failing to start) and `keepSavedData()` (D6), called from
+  `main.ts`. The notice is in `App.svelte`, text `saving.blocked` in all five languages.
+- S16: `Arena.svelte` gives trophies and credits only in its end-of-match handler; leaving
+  early calls `onLeave` without a reward — unchanged.
+- Browser check: headless Edge with `Storage.prototype.setItem` throwing (same effect as a
+  blocked storage) — the notice appears on the first failed save, the game keeps working, and
+  it does not come back after **Close**.
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — saves report success, blocked storage no
+longer stops the game and shows a notice once per visit, the browser is asked to keep the
+data. `npm test` 248 passed, `npm run check` 0 errors; browser check as above.
 
 ---
 

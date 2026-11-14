@@ -8,6 +8,7 @@ export const it: Record<TextKey, string> = {
   'common.serverDown': 'Impossibile raggiungere il server di Hack star.',
   'common.tryAgain': 'Riprova',
   'common.close': 'Chiudi',
+  'saving.blocked': 'Questo browser non permette di salvare: perderai i progressi quando chiudi il gioco.',
   'common.save': 'Salva',
   'common.cancel': 'Annulla',
   'common.no': 'No',

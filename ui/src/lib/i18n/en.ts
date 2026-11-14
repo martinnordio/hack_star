@@ -6,6 +6,7 @@ export const en = {
   'common.serverDown': 'Cannot reach the Hack star server.',
   'common.tryAgain': 'Try again',
   'common.close': 'Close',
+  'saving.blocked': 'This browser does not allow saving: your progress will be lost when you close the game.',
   'common.save': 'Save',
   'common.cancel': 'Cancel',
   'common.no': 'No',

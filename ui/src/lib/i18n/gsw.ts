@@ -8,6 +8,7 @@ export const gsw: Record<TextKey, string> = {
   'common.serverDown': 'Dä Hack star Server isch nöd erreichbar.',
   'common.tryAgain': 'Nomal probiere',
   'common.close': 'Zuemache',
+  'saving.blocked': 'Dä Browser laht nüt speichere: Din Fortschritt gaht verlore, wänn du s Spiel zuemachsch.',
   'common.save': 'Speichere',
   'common.cancel': 'Abbräche',
   'common.no': 'Nei',

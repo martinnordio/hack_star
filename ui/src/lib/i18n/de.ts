@@ -8,6 +8,7 @@ export const de: Record<TextKey, string> = {
   'common.serverDown': 'Der Hack star Server ist nicht erreichbar.',
   'common.tryAgain': 'Nochmal versuchen',
   'common.close': 'Schließen',
+  'saving.blocked': 'Dieser Browser erlaubt kein Speichern: Dein Fortschritt geht verloren, wenn du das Spiel schließt.',
   'common.save': 'Speichern',
   'common.cancel': 'Abbrechen',
   'common.no': 'Nein',

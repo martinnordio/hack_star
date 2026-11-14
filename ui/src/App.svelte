@@ -21,6 +21,7 @@
   import { t } from './lib/i18n'
   import CreatorScreen from './lib/CreatorScreen.svelte'
   import { withCreated } from './lib/created'
+  import { dismissSaveNotice, saveNotice } from './lib/saving'
 
   type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
 
@@ -190,7 +191,43 @@
   </Panel>
 {/if}
 
+{#if $saveNotice === 'shown'}
+  <div class="save-notice" role="alert">
+    <span>{$t('saving.blocked')}</span>
+    <button onclick={dismissSaveNotice}>{$t('common.close')}</button>
+  </div>
+{/if}
+
 <style>
+  .save-notice {
+    position: fixed;
+    left: 50%;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 50;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: min(34rem, calc(100% - 2rem));
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: #2a1d1d;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 0.3rem 1rem #0008;
+  }
+
+  .save-notice button {
+    flex: none;
+    padding: 0.4rem 0.8rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: #ffd23f;
+    color: #2a1d1d;
+    font: inherit;
+    cursor: pointer;
+  }
+
   .message {
     position: fixed;
     inset: 0;

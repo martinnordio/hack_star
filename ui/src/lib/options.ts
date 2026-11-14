@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store'
 import type { BotLevel } from './game/settings'
+import { browserStorage, reportSave } from './saving'
 
 export const OPTIONS_KEY = 'hack-star.options'
 export const BOT_COUNTS = [1, 2, 3, 4, 5] as const
@@ -33,17 +34,20 @@ export function loadOptions(storage: KeyValueStorage): Options {
   return options
 }
 
-export function saveOptions(storage: KeyValueStorage, options: Options): void {
+/** Whether the options could be saved. */
+export function saveOptions(storage: KeyValueStorage, options: Options): boolean {
   try {
     storage.setItem(OPTIONS_KEY, JSON.stringify(options))
+    return true
   } catch {
     // Storage blocked: the choice lasts until the page is closed.
+    return false
   }
 }
 
 function createOptionsStore(storage: KeyValueStorage) {
   const store = writable(loadOptions(storage))
-  store.subscribe((options) => saveOptions(storage, options))
+  store.subscribe((options) => reportSave(saveOptions(storage, options)))
   return store
 }
 
@@ -55,4 +59,6 @@ function memoryStorage(): KeyValueStorage {
   }
 }
 
-export const options = createOptionsStore(typeof window === 'undefined' ? memoryStorage() : window.localStorage)
+export const options = createOptionsStore(
+  (typeof window === 'undefined' ? null : browserStorage()) ?? memoryStorage(),
+)

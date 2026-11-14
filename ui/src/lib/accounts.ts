@@ -4,6 +4,7 @@ import { SETTINGS } from './game/settings'
 import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { PROGRESS_KEY, parseProgress, startProgress, type Progress } from './progress'
+import { browserStorage, reportSave } from './saving'
 
 export const ACCOUNTS_KEY = 'hack-star.accounts'
 export const MAX_ACCOUNTS = 5
@@ -126,11 +127,14 @@ export function loadAccounts(storage: KeyValueStorage, language: Language): Acco
   return firstAccounts(old ?? startProgress(), language)
 }
 
-export function saveAccounts(storage: KeyValueStorage, state: Accounts): void {
+/** Whether the accounts could be saved. */
+export function saveAccounts(storage: KeyValueStorage, state: Accounts): boolean {
   try {
     storage.setItem(ACCOUNTS_KEY, JSON.stringify(state))
+    return true
   } catch {
     // Storage full or blocked (private browsing): the game keeps working without saving.
+    return false
   }
 }
 
@@ -289,7 +293,7 @@ function mergeAccounts(base: Accounts, local: Accounts, remote: Accounts): Accou
 
 export function createAccountsStore(storage: KeyValueStorage, language: Language, target?: SyncTarget) {
   const initial = loadAccounts(storage, language)
-  saveAccounts(storage, initial)
+  reportSave(saveAccounts(storage, initial))
   const store = writable(initial)
   let base = initial
   let syncedState: Accounts | null = null
@@ -300,7 +304,7 @@ export function createAccountsStore(storage: KeyValueStorage, language: Language
     }
     const latest = loadAccounts(storage, language)
     const merged = mergeAccounts(base, state, latest)
-    if (!same(merged, latest)) saveAccounts(storage, merged)
+    if (!same(merged, latest)) reportSave(saveAccounts(storage, merged))
     base = merged
     if (!same(state, merged)) {
       syncedState = merged
@@ -359,9 +363,11 @@ function memoryStorage(): KeyValueStorage {
 }
 
 const inBrowser = typeof window !== 'undefined'
+const storage = inBrowser ? browserStorage() : null
+if (inBrowser && !storage) reportSave(false)
 
 export const accounts = createAccountsStore(
-  inBrowser ? window.localStorage : memoryStorage(),
+  storage ?? memoryStorage(),
   browserLanguage(inBrowser ? navigator.languages : []),
   inBrowser ? window : undefined,
 )
