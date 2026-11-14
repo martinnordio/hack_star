@@ -23,6 +23,6 @@ More creator parts, created-fighter skins, safer saves, the account-name fix, an
 | config | git-ignored music files, `LICENSE` access | added | S23, S32 |
 
 **Top findings:**
-1. Should-fix · the dev server's GET `/__dev/music/list` and `/file/…` answer Wi-Fi devices too; only changes are limited to this computer.
+1. Resolved · the dev server's `/__dev/music` requests now answer only the computer running `npm run dev` (038e88d).
 2. Should-fix · S30 checked only headless; real iPad / phone checks moved to spec 5.
-3. Nit · `/__dev/music` middleware has no test (C7).
+3. Nit · `/__dev/music` middleware has no test (C7); deferred to spec 5's end-to-end test.

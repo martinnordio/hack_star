@@ -28,7 +28,7 @@ seeing it. This spec adds a **Graphics** section to the developer page of spec 1
 **Print QR codes** link, which players should no longer see, behind developer mode.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [Fighter studio, saves and music](2026_11_14_1_fighter_studio_saves_and_music_spec.md) —
+- [Fighter studio, saves and music](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md) —
   **must be done first**: it adds developer mode in Settings (S24) and the developer page
   `/?dev` with its code check and the **Music** section (S25–S28).
 - `ui/src/main.ts` — pages chosen by address: `/?qr` (`QrPage.svelte`), `/?gallery`

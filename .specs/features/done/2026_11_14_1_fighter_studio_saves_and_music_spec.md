@@ -1,7 +1,7 @@
 # Fighter Studio, Saves and Music Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on `feature/fighter-studio-saves-and-music`
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/fighter-studio-saves-and-music`
@@ -17,6 +17,8 @@
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
 | 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–13 done; music kept out of the repository (S32, D16); up to ten tracks and licence links (S33) |
 | 2026-11-14 | review | `REVIEW:` | Claude Opus 5.5 | semantic diff written |
+| 2026-11-14 | review | `REVIEW:` | Claude Opus 5.5 | second pass: finding 1 resolved |
+| 2026-11-14 | implementation | `CLOSE:` | Claude Opus 5.5 | spec closed |
 
 ---
 
@@ -34,11 +36,11 @@ adds the basics of a hidden developer page and a developer mode; spec 2 adds the
 review to the same page.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [Bug fixes spec](done/2026_11_14_bug_fixes_spec.md) — created-fighter collection, stable
+- [Bug fixes spec](2026_11_14_bug_fixes_spec.md) — created-fighter collection, stable
   ids, account saving and cross-tab sync; this spec builds on it.
-- [Accounts, fighters and languages spec](done/2026_11_13_accounts_fighters_and_languages_spec.md)
+- [Accounts, fighters and languages spec](2026_11_13_accounts_fighters_and_languages_spec.md)
   — up to 5 accounts per browser, each with its own name, language and progress.
-- [Skins shop spec](done/2026_11_12_skins_shop_spec.md) — owning, choosing and wearing skins.
+- [Skins shop spec](2026_11_12_skins_shop_spec.md) — owning, choosing and wearing skins.
 - `ui/src/lib/CreatorScreen.svelte`, `ui/src/lib/created.ts` — the creator: type, two colours
   from 8, head and body from 3 each; the look travels as a 16-character skin id.
 - `ui/src/lib/models/custom3d.ts`, `ui/src/lib/models/parts.ts` — created fighters built in
@@ -71,10 +73,10 @@ review to the same page.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and product questions |
-| [architecture.md](../../docs/architecture.md) | How the server and the UI are organised |
-| [README](../../README.md) | How to install, run, test and play |
-| [Asset licences](../../ui/public/assets/LICENSES.md) | Where every asset comes from and its licence |
+| [overall_req.md](../../overall_req.md) | Overall game idea and product questions |
+| [architecture.md](../../../docs/architecture.md) | How the server and the UI are organised |
+| [README](../../../README.md) | How to install, run, test and play |
+| [Asset licences](../../../ui/public/assets/LICENSES.md) | Where every asset comes from and its licence |
 
 ## 1 · Specs
 
@@ -211,6 +213,10 @@ review to the same page.
   can be chosen instead of five; a CC BY licence must name its version; the About panel and
   the developer page link each licence to its official page, and the developer page shows the
   credit a source asks for. The developer page has its own dark, scrolling background.
+- **S34 — Music tools only on this computer (added while implementing):** Every request of
+  the developer page's music tools (list, play, choose, unchoose, delete) is answered only for
+  the computer that runs `npm run dev`; other devices on the Wi-Fi get a refusal (review
+  finding 1).
 
 ### Open questions
 
@@ -222,6 +228,33 @@ free tool, and free-music libraries under CC0 or CC BY._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** Created fighters can be made from five heads and bodies and three hands and legs,
+with a turning 3D preview, and each can have up to five free skins of its own that are worn at
+home, in matches and in rooms. Saves move to version 7 and still load every older save; the
+game asks the browser to keep its data and warns once per visit when saving is blocked; a
+typed account rename is no longer lost. Music plays during matches with an on/off switch and
+a track choice in Settings, and an About panel shows the version, the music credits (title,
+author or requested credit, licence linked to its official page) and the MIT licence. A hidden
+developer page (`/?dev`, behind developer mode) lets each developer listen to up to 15
+candidates and choose up to ten, all on their own computer.
+
+**Differs from the plan:** Music is never committed (S32, D16): the repository's track lists
+stay empty, each developer's lists and files are git-ignored, and `LICENSES.md` explains the
+recommended licences instead of naming tracks. Up to ten tracks instead of five, CC BY must
+name its version, and licences link to their official pages (S33). After review, every
+music-tool request is limited to the computer running `npm run dev` (S34). Real iPad / phone
+checks moved to spec 5.
+
+**Files:** `ui/src/lib/created.ts`, `progress.ts`, `accounts.ts`, `saving.ts`, `options.ts`,
+`models/custom3d.ts`, `CreatorScreen.svelte`, `FighterDetail.svelte`, `AccountsPanel.svelte`,
+`SettingsScreen.svelte`, `AboutPanel.svelte`, `Arena.svelte`, `App.svelte`, `main.ts`,
+`music/` (`candidates.ts`, `player.ts`, `tracks.ts`), `dev/` (`DevPage.svelte`,
+`MusicSection.svelte`, `developer.ts`), `ui/dev/musicPlugin.ts`, `ui/vite.config.ts`,
+`ui/.gitignore`, the five `i18n/` dictionaries, `server/src/hack_star_server/rooms.py`, README,
+`docs/architecture.md`, `ui/public/assets/LICENSES.md`.
 
 ## 2 · Spec Overview
 
@@ -774,7 +807,9 @@ Tasks set aside for a future spec, so nothing is forgotten.
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Music on the home screen and in menus | S19 asks for matches only | a later music spec, if wanted |
-| Graphics section of the developer page | Spec 2 | [Graphics review](2026_11_14_2_graphics_review_spec.md) |
+| Graphics section of the developer page | Spec 2 | [Graphics review](../2026_11_14_2_graphics_review_spec.md) |
+| Music, About and creator on a real iPad and phone; Mattia looks at the creator (S30) | Checked only in a headless browser | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| A test for the `/__dev/music` middleware (review finding 3) | Its rules are unit-tested; the middleware is dev-only | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
 
 ---
 
@@ -782,7 +817,8 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-14 | Claude Opus 5.5 | semantic diff | — | [review page](../review/2026-11-14_feature-fighter-studio-saves-and-music.html) |
+| 2026-11-14 | Claude Opus 5.5 | semantic diff | — | [review page](../../review/2026-11-14_feature-fighter-studio-saves-and-music.html) |
+| 2026-11-14 | Claude Opus 5.5 | semantic diff (second pass) | Approve | finding 1 (dev tools reachable from Wi-Fi) resolved in 038e88d; 1 should-fix → spec 5, 1 nit deferred |
 
 ---
 
@@ -790,7 +826,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [x] Requirements · Part 1 agreed (S1..S31 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [x] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

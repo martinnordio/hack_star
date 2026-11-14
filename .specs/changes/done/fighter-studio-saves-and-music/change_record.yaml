@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
 version: 1
 branch: feature/fighter-studio-saves-and-music
 base: 9549e24
@@ -8,7 +8,7 @@ why: |
   also asked for music while they play. Music must stay out of the public repository, so each
   developer chooses tracks locally on a hidden developer page, and the game credits them.
 spec:
-  path: .specs/features/2026_11_14_1_fighter_studio_saves_and_music_spec.md
+  path: .specs/features/done/2026_11_14_1_fighter_studio_saves_and_music_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S17, S18, S19, S20, S22, S23, S24, S25, S26, S27, S28, S29, S30, S31, S32, S33]
 changes:
   - id: created-look-id

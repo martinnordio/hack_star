@@ -19,7 +19,7 @@
 
 ## Context
 
-Spec 1 ([fighter studio, saves and music](2026_11_14_1_fighter_studio_saves_and_music_spec.md))
+Spec 1 ([fighter studio, saves and music](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md))
 was checked with unit tests and in a headless desktop browser, sometimes at phone size, but
 never on a real iPad or phone. Three checks were left open there. This spec does them, adds a
 check of every screen on several screen sizes, and adds an end-to-end test that plays the
@@ -44,7 +44,7 @@ game from start to finish, so later specs can be checked the same way.
 
 | Document | Purpose |
 |----------|---------|
-| [Spec 1](2026_11_14_1_fighter_studio_saves_and_music_spec.md) | The features to check and the checks left open |
+| [Spec 1](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md) | The features to check and the checks left open |
 | [README](../../README.md) | How to run, play on a device, address options |
 | [architecture.md](../../docs/architecture.md) | Screens and modules |
 
