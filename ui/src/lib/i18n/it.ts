@@ -101,6 +101,13 @@ export const it: Record<TextKey, string> = {
     'Sei sicuro? Questo account torna a 0 crediti e 0 trofei, i combattenti tornano bloccati e i livelli di potenza e le skin spariscono. I codici hack e il combattente che hai creato restano.',
   'settings.reset': 'Azzera crediti e trofei',
   'settings.resetDone': 'Fatto: questo account ricomincia da capo.',
+  'settings.developer': 'Modalità sviluppatore',
+  'settings.developerTurnOn': 'Attiva la modalità sviluppatore',
+  'settings.developerTurnOff': 'Disattiva',
+  'settings.developerCode': 'Codice sviluppatore',
+  'settings.developerWrongCode': 'Questo non è il codice sviluppatore.',
+  'settings.developerOn': 'La modalità sviluppatore è attiva in questo browser.',
+  'settings.developerPage': 'Pagina sviluppatori',
 
   'hackScreen.enterCode': '> INSERISCI CODICE HACK_',
   'hackScreen.go': 'Hack!',

@@ -9,10 +9,12 @@ export const BOT_COUNTS = [1, 2, 3, 4, 5] as const
 export interface Options {
   botLevel: BotLevel
   botCount: number
+  /** Developer mode on this device (the code is checked when it is turned on). */
+  developer: boolean
 }
 
 export function defaultOptions(): Options {
-  return { botLevel: 'easy', botCount: 3 }
+  return { botLevel: 'easy', botCount: 3, developer: false }
 }
 
 type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem'>
@@ -28,6 +30,7 @@ export function loadOptions(storage: KeyValueStorage): Options {
     const o = raw as Record<string, unknown>
     if (typeof o.botLevel === 'string' && LEVELS.includes(o.botLevel)) options.botLevel = o.botLevel as BotLevel
     if ((BOT_COUNTS as readonly unknown[]).includes(o.botCount)) options.botCount = o.botCount as number
+    if (typeof o.developer === 'boolean') options.developer = o.developer
   } catch {
     // Unreadable: keep the defaults.
   }

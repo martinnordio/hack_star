@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–7 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–8 done |
 
 ---
 
@@ -221,7 +221,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **5** | Creator controls for every part | ✅ Done | [→ Step 5](#step-5--creator-controls-for-every-part) |
 | **6** | Skins of created fighters: rules and saving | ✅ Done | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
 | **7** | Skins of created fighters: screens | ✅ Done | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
-| **8** | Developer mode and the developer page | ⬜ Not started | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
+| **8** | Developer mode and the developer page | ✅ Done | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
 | **9** | Music section of the developer page | ⬜ Not started | [→ Step 9](#step-9--music-section-of-the-developer-page) |
 | **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
 | **11** | Music in matches and its Settings | ⬜ Not started | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
@@ -521,17 +521,29 @@ Developer mode can be turned on in Settings with the code, and the hidden develo
 `/?dev` opens with its code check and an empty Music section (S24, S25, S29, S30).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `options.ts`: `developer` (D7); Settings control to turn it on (asks the code, wrong code
+- [x] Record the start time in Notes below.
+- [x] `options.ts`: `developer` (D7); Settings control to turn it on (asks the code, wrong code
       message) and off; texts in all five languages.
-- [ ] In developer mode, Settings shows a button to the developer page.
-- [ ] `/?dev` in `main.ts` and `dev/DevPage.svelte` (D8): asks the code when developer mode is
+- [x] In developer mode, Settings shows a button to the developer page.
+- [x] `/?dev` in `main.ts` and `dev/DevPage.svelte` (D8): asks the code when developer mode is
       off and turns it on; English only.
-- [ ] Tests: options load and save `developer`; a wrong code does not turn it on.
-- [ ] Check: `cd ui; npm test; npm run check; npm run build`; no player screen links to `/?dev`.
+- [x] Tests: options load and save `developer`; a wrong code does not turn it on.
+- [x] Check: `cd ui; npm test; npm run check; npm run build`; no player screen links to `/?dev`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:25
+
+- `dev/developer.ts` `turnOnDeveloper(code)` (the QR code `M6D2`, spaces trimmed) is used by
+  Settings and by the developer page. `dev/MusicSection.svelte` is a placeholder until Step 9.
+- Browser check: home and Settings have no link to `/?dev` while developer mode is off; a wrong
+  code shows "That is not the developer code."; `M6D2` turns it on, saves
+  `developer: true` in `hack-star.options` and shows the **Developer page** link and
+  **Turn off**. `/?dev` in a fresh browser asks the code, then shows the Music section.
+  The only reference to `?dev` outside `lib/dev/` is that Settings link.
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — developer mode per browser and the hidden
+developer page with its code check. `npm test` 258 passed; `npm run check` 0 errors;
+`npm run build` built; browser checks as above.
 
 ---
 

@@ -101,6 +101,13 @@ export const gsw: Record<TextKey, string> = {
     'Bisch sicher? Das Konto hät dänn 0 Credits und 0 Trophäe, d Kämpfer sind wieder gsperrt, Power-Stufe und Skins sind wäg. Hack-Codes und din sälber gmachte Kämpfer bliibed.',
   'settings.reset': 'Credits und Trophäe zruggsetze',
   'settings.resetDone': 'Fertig: Das Konto fangt nöi aa.',
+  'settings.developer': 'Entwicklermodus',
+  'settings.developerTurnOn': 'Entwicklermodus iischalte',
+  'settings.developerTurnOff': 'Usschalte',
+  'settings.developerCode': 'Entwicklercode',
+  'settings.developerWrongCode': 'Das isch nöd de Entwicklercode.',
+  'settings.developerOn': 'De Entwicklermodus isch i dem Browser aa.',
+  'settings.developerPage': 'Entwicklersiite',
 
   'hackScreen.enterCode': '> HACK-CODE IIGÄ_',
   'hackScreen.go': 'Hack!',

@@ -101,6 +101,13 @@ export const es: Record<TextKey, string> = {
     '¿Seguro? Esta cuenta se queda con 0 créditos y 0 trofeos, los luchadores vuelven a estar bloqueados y los niveles de poder y las skins desaparecen. Los códigos hack y el luchador que creaste se quedan.',
   'settings.reset': 'Reiniciar créditos y trofeos',
   'settings.resetDone': 'Hecho: esta cuenta empieza de nuevo.',
+  'settings.developer': 'Modo desarrollador',
+  'settings.developerTurnOn': 'Activar el modo desarrollador',
+  'settings.developerTurnOff': 'Desactivar',
+  'settings.developerCode': 'Código de desarrollador',
+  'settings.developerWrongCode': 'Ese no es el código de desarrollador.',
+  'settings.developerOn': 'El modo desarrollador está activado en este navegador.',
+  'settings.developerPage': 'Página de desarrollo',
 
   'hackScreen.enterCode': '> INTRODUCE EL CÓDIGO HACK_',
   'hackScreen.go': '¡Hack!',

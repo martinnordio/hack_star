@@ -101,6 +101,13 @@ export const de: Record<TextKey, string> = {
     'Bist du sicher? Dieses Konto hat dann 0 Credits und 0 Trophäen, die Kämpfer sind wieder gesperrt, Power-Stufen und Skins sind weg. Hack-Codes und dein selbst erstellter Kämpfer bleiben.',
   'settings.reset': 'Credits und Trophäen zurücksetzen',
   'settings.resetDone': 'Fertig: Dieses Konto fängt neu an.',
+  'settings.developer': 'Entwicklermodus',
+  'settings.developerTurnOn': 'Entwicklermodus einschalten',
+  'settings.developerTurnOff': 'Ausschalten',
+  'settings.developerCode': 'Entwicklercode',
+  'settings.developerWrongCode': 'Das ist nicht der Entwicklercode.',
+  'settings.developerOn': 'Der Entwicklermodus ist in diesem Browser an.',
+  'settings.developerPage': 'Entwicklerseite',
 
   'hackScreen.enterCode': '> HACK-CODE EINGEBEN_',
   'hackScreen.go': 'Hack!',

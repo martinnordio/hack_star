@@ -5,9 +5,21 @@
   import { resetProgress } from './progress'
   import { language, setLanguage, t, type TextKey } from './i18n'
   import { LANGUAGES, LANGUAGE_NAMES } from './i18n/languages'
+  import { turnOnDeveloper } from './dev/developer'
 
   let confirming = $state(false)
   let resetDone = $state(false)
+  let askingCode = $state(false)
+  let code = $state('')
+  let wrongCode = $state(false)
+
+  function submitCode() {
+    wrongCode = !turnOnDeveloper(code)
+    if (!wrongCode) {
+      askingCode = false
+      code = ''
+    }
+  }
 
   function reset() {
     $progress = resetProgress($progress)
@@ -86,7 +98,62 @@
   {/if}
 </section>
 
+<section class="developer">
+  <h3>{$t('settings.developer')}</h3>
+  {#if $options.developer}
+    <p class="note">{$t('settings.developerOn')}</p>
+    <div class="row">
+      <a class="plain link" href="/?dev">🛠️ {$t('settings.developerPage')}</a>
+      <button class="plain" onclick={() => ($options.developer = false)}>{$t('settings.developerTurnOff')}</button>
+    </div>
+  {:else if askingCode}
+    <form class="row" onsubmit={(e) => (e.preventDefault(), submitCode())}>
+      <label class="sr" for="developer-code">{$t('settings.developerCode')}</label>
+      <input
+        id="developer-code"
+        type="password"
+        autocomplete="off"
+        placeholder={$t('settings.developerCode')}
+        bind:value={code}
+        oninput={() => (wrongCode = false)}
+      />
+      <button class="plain" type="submit">{$t('settings.developerTurnOn')}</button>
+      <button class="plain" type="button" onclick={() => ((askingCode = false), (wrongCode = false))}>{$t('common.cancel')}</button>
+    </form>
+    {#if wrongCode}<p class="warn" role="alert">{$t('settings.developerWrongCode')}</p>{/if}
+  {:else}
+    <button class="plain" onclick={() => (askingCode = true)}>🛠️ {$t('settings.developerTurnOn')}</button>
+  {/if}
+</section>
+
 <style>
+  .developer input {
+    padding: 0.45rem 0.7rem;
+    border-radius: 0.8rem;
+    border: 3px solid #000;
+    font: inherit;
+  }
+
+  .link {
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    border: 3px solid #000;
+    border-radius: 0.8rem;
+    background: #160f33cc;
+    box-shadow: 0 0.25rem 0 #000;
+    color: white;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
   section {
     max-width: 40rem;
     margin: 0 auto 1rem;

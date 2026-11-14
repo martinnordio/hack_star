@@ -99,6 +99,13 @@ export const en = {
     'Are you sure? This account gets 0 credits and 0 trophies, fighters are locked again, power levels and skins are gone. Hack codes and your created fighter stay.',
   'settings.reset': 'Reset coins and trophies',
   'settings.resetDone': 'Done: this account starts again.',
+  'settings.developer': 'Developer mode',
+  'settings.developerTurnOn': 'Turn on developer mode',
+  'settings.developerTurnOff': 'Turn off',
+  'settings.developerCode': 'Developer code',
+  'settings.developerWrongCode': 'That is not the developer code.',
+  'settings.developerOn': 'Developer mode is on in this browser.',
+  'settings.developerPage': 'Developer page',
 
   'hackScreen.enterCode': '> ENTER HACK CODE_',
   'hackScreen.go': 'Hack!',

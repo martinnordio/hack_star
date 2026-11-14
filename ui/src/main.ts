@@ -3,10 +3,11 @@ import './app.css'
 import App from './App.svelte'
 import Gallery from './lib/Gallery.svelte'
 import QrPage from './lib/QrPage.svelte'
+import DevPage from './lib/dev/DevPage.svelte'
 import { keepSavedData } from './lib/saving'
 
 const params = new URLSearchParams(location.search)
-const page = params.has('gallery') ? Gallery : params.has('qr') ? QrPage : App
+const page = params.has('gallery') ? Gallery : params.has('qr') ? QrPage : params.has('dev') ? DevPage : App
 keepSavedData()
 
 const app = mount(page, {
