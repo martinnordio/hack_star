@@ -155,7 +155,7 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 |------|-------------|--------|--------|
 | **1** | Timed hack state and expiry rules | ✅ Done | [→ Step 1](#step-1--timed-hack-state-and-expiry-rules) |
 | **2** | Created-fighter data and compatibility | ✅ Done | [→ Step 2](#step-2--created-fighter-data-and-compatibility) |
-| **3** | Create, select and manage multiple fighters | ⬜ Not started | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
+| **3** | Create, select and manage multiple fighters | ✅ Done | [→ Step 3](#step-3--create-select-and-manage-multiple-fighters) |
 | **4** | Created fighters in shared rooms | ⬜ Not started | [→ Step 4](#step-4--created-fighters-in-shared-rooms) |
 | **5** | Keep browser tabs in sync | ⬜ Not started | [→ Step 5](#step-5--keep-browser-tabs-in-sync) |
 | **6** | Show hack status and time remaining | ⬜ Not started | [→ Step 6](#step-6--show-hack-status-and-time-remaining) |
@@ -233,16 +233,18 @@ Started: 2026-11-14 10:07
 Let players create and manage up to 15 individual fighters, with the right availability, cost, order and feedback (S2, S3, S6, S9–S13, S15, S20, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Extend the creator to create an additional fighter only while CREATOR is active; charge 500 C per extra fighter, or 0 with INFINITY, and refuse creation at insufficient credits or the 15-fighter limit.
-- [ ] Let players open and edit a specific created fighter; retain its own look, trophies and power, and show a useful message when an extra fighter is inactive because CREATOR expired.
-- [ ] Refresh the Fighters screen immediately after create; order created fighters after the last unlocked standard fighter and before locked standard fighters; place the create card according to CREATOR and the 15-fighter limit.
-- [ ] Ensure created fighters are selectable while usable, fall back to another usable fighter if an inactive one was selected, and show the selection in Home, matches and Training.
-- [ ] Update CREATOR descriptions and all new UI messages in English, German, Swiss German, Spanish and Italian.
-- [ ] Add UI/domain tests for create, edit, ordering, max count, insufficient funds, hack states and title/button agreement; verify `cd ui; npm test` and `cd ui; npm run check`.
-- [ ] Check create/select/edit and expiry feedback in the browser at desktop, iPad and phone sizes.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Extend the creator to create an additional fighter only while CREATOR is active; charge 500 C per extra fighter, or 0 with INFINITY, and refuse creation at insufficient credits or the 15-fighter limit.
+- [x] Let players open and edit a specific created fighter; retain its own look, trophies and power, and show a useful message when an extra fighter is inactive because CREATOR expired.
+- [x] Refresh the Fighters screen immediately after create; order created fighters after the last unlocked standard fighter and before locked standard fighters; place the create card according to CREATOR and the 15-fighter limit.
+- [x] Ensure created fighters are selectable while usable, fall back to another usable fighter if an inactive one was selected, and show the selection in Home, matches and Training.
+- [x] Update CREATOR descriptions and all new UI messages in English, German, Swiss German, Spanish and Italian.
+- [x] Add UI/domain tests for create, edit, ordering, max count, insufficient funds, hack states and title/button agreement; verify `cd ui; npm test` and `cd ui; npm run check`.
+- [x] Check create/select/edit and expiry feedback in the browser at desktop, iPad and phone sizes.
 
 ### Notes
+Started: 2026-11-14 10:12
+**Done (2026-11-14 · ~2h · GPT-6 Luna)** — Added multi-fighter creation/editing with CREATOR gating, 500 C pricing, 15-fighter limit, ordering, inactive-state fallback and five-language copy. UI tests 236/236; `npm run check` clean; browser flow verified at desktop, tablet and phone widths without horizontal overflow.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

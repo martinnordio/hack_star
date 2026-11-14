@@ -21,7 +21,7 @@
     fighters,
     onSelected,
     onChange,
-  }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void; onChange: () => void } = $props()
+  }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void; onChange: (id: string) => void } = $props()
 
   const created = $derived(isCreatedFighterId(fighter.id))
 
@@ -127,8 +127,11 @@
     </div>
 
     {#if created}
-      <button class="buy" onclick={onChange}>✏️ {$t('creator.change')}</button>
-      {#if !unlocked}<p class="locked-note" role="note">🔒 {$t('creator.locked')}</p>{/if}
+      {#if unlocked}
+        <button class="buy" onclick={() => onChange(fighter.id)}>✏️ {$t('creator.change')}</button>
+      {:else}
+        <p class="locked-note" role="note">🔒 {$t('creator.locked')}</p>
+      {/if}
     {/if}
 
     {#if created && !unlocked}
