@@ -5,6 +5,7 @@
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/fighter-studio-saves-and-music`
+> **Issue:** #19
 
 ## Stage log
 
@@ -12,6 +13,7 @@
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | GitHub Copilot | Part 1 drafted from the creator expansion notes; product choices remain open |
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
+| 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 
 ---
 

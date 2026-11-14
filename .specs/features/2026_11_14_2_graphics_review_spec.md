@@ -5,6 +5,7 @@
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/graphics-review`
+> **Issue:** #20
 
 ## Stage log
 
@@ -12,6 +13,7 @@
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written (spec 2 of 4) |
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed from "Asset Review Page and Developer Mode"; developer mode and the developer page moved to spec 1; open questions answered |
+| 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #20 created |
 
 ---
 

@@ -5,6 +5,7 @@
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/originality-review`
+> **Issue:** #22
 
 ## Stage log
 
@@ -12,6 +13,7 @@
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written (spec 4 of 4) |
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: open questions answered (S10–S13) |
+| 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #22 created |
 
 ---
 
