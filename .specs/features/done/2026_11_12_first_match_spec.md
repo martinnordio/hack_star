@@ -1,6 +1,6 @@
 # First Match Spec
 
-> **Author:** Hack star team
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -16,8 +16,8 @@
 Hack star can be played: the player runs and shoots in the canyon, but nothing shoots back and
 nobody wins. This spec adds the first real match, a "last fighter standing" fight against bots,
 like Showdown in Brawl Stars. It is F4 in the
-[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md). The numbers the game designer
-still has to choose (see "Questions to the game designer" in [overall_req.md](../../overall_req.md)) are
+[MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md). The numbers Mattia
+still has to choose (see "Questions to Mattia" in [overall_req.md](../../overall_req.md)) are
 settings with a default, so his answers change one value each.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
@@ -34,7 +34,7 @@ settings with a default, so his answers change one value each.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea, planned specs and the questions to the game designer |
+| [overall_req.md](../../overall_req.md) | Overall game idea, planned specs and the questions to Mattia |
 | [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
@@ -69,7 +69,7 @@ settings with a default, so his answers change one value each.
 
 ### Open questions
 
-_None. The answers the game designer still has to give (match length, number of bots, bot level, time-up
+_None. The answers Mattia still has to give (match length, number of bots, bot level, time-up
 result, bots fighting each other) use the defaults above, set in one place (S10)._
 
 <!-- spec-nx:plan -->
@@ -105,11 +105,11 @@ result, bots fighting each other) use the defaults above, set in one place (S10)
 | D1 | `World` gets a list of fighters (the player is fighter 0, bots after it); shots remember who fired them; hits work on fighters and dummies | One set of rules for training and matches; F5+ (trophies, power) build on it |
 | D2 | Bot brains in plain TypeScript (`game/bots.ts`), deciding each frame what a bot wants to do (move direction, shoot direction) through the same `move`/`fire` as the player | Bots follow the same rules as the player; testable with `vitest` |
 | D3 | A `Match` (`game/match.ts`) wraps a `World`: countdown, timer, knock-out order, result | Keeps match flow separate from arena rules |
-| D4 | All match numbers in `game/settings.ts` (`MATCH_SECONDS`, `BOT_COUNT`, `BOT_LEVEL`, `TIME_UP_RESULT`, health, healing); bot levels as a small table | S10: the game designer's answers become one-line changes |
+| D4 | All match numbers in `game/settings.ts` (`MATCH_SECONDS`, `BOT_COUNT`, `BOT_LEVEL`, `TIME_UP_RESULT`, health, healing); bot levels as a small table | S10: Mattia's answers become one-line changes |
 | D5 | Match runs in the browser, like the demo (no server during play) | No lag on Wi-Fi; the result is kept in the browser for F5 |
 | D6 | Start points for up to 9 fighters added to the canyon layout | Up to 8 bots possible without layout changes |
 | D7 | New `docs/architecture.md` describes the parts of the game and how they fit; README gets "How to play a match" | The user asked that every spec comes with documentation |
-| D8 | The address can override match length, bot count and level (`?seconds=30&bots=5&level=hard`), within limits | Try the game designer's answers without changing code; lets browser checks reach every ending quickly |
+| D8 | The address can override match length, bot count and level (`?seconds=30&bots=5&level=hard`), within limits | Try Mattia's answers without changing code; lets browser checks reach every ending quickly |
 
 ---
 

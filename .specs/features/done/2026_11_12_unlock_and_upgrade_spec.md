@@ -1,6 +1,6 @@
 # Unlock and Upgrade Spec
 
-> **Author:** Hack star team
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -39,7 +39,7 @@ in the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to the game designer |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to Mattia |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
@@ -76,7 +76,7 @@ in the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 ### Open questions
 
-_None. "How strong should bots be?" is added to the questions to the game designer; until then bots play
+_None. "How strong should bots be?" is added to the questions to Mattia; until then bots play
 at power 5 (S6, S10)._
 
 <!-- spec-nx:plan -->
@@ -191,14 +191,14 @@ Everything works on every screen size; the documentation explains credits and po
 - [x] README: earning credits, unlocking, upgrading, power; the hacks' effects.
 - [x] `docs/architecture.md`: `game/economy.ts`, stats in matches.
 - [x] Info vocabulary: add "Upgrade".
-- [x] Questions to the game designer: add "How strong should bots be?".
+- [x] Questions to Mattia: add "How strong should bots be?".
 
 ### Notes
 Started: 2026-11-12 11:32
 
 Removed the second "🔒 Locked" button on locked fighters (the unlock button already says what is needed).
 
-**Done (2026-11-12 · ~2m)** — 4 sizes: Blaze "Upgrade to Power 8 · 140 C" and Luna "Need 1400 more C" reachable, no sideways scrolling; `pytest` 15 passed, `npm test` 67 passed, `svelte-check` 0 errors, build ok; README, `docs/architecture.md`, vocabulary (25 words) and questions to the game designer updated; links resolve.
+**Done (2026-11-12 · ~2m)** — 4 sizes: Blaze "Upgrade to Power 8 · 140 C" and Luna "Need 1400 more C" reachable, no sideways scrolling; `pytest` 15 passed, `npm test` 67 passed, `svelte-check` 0 errors, build ok; README, `docs/architecture.md`, vocabulary (25 words) and questions to Mattia updated; links resolve.
 
 ---
 
@@ -208,7 +208,7 @@ Removed the second "🔒 Locked" button on locked fighters (the unlock button al
 |------|--------|------------------|
 | Buying skins | Next feature | Later spec (F7) |
 | Coins and Power Points as separate currencies | One currency is easier for kids | Later spec, if wanted |
-| Bots matched to the player's trophies or power | Waits for the game designer's answer | Later spec |
+| Bots matched to the player's trophies or power | Waits for Mattia's answer | Later spec |
 
 ---
 

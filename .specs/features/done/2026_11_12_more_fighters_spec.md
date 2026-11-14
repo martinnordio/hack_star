@@ -1,6 +1,6 @@
 # More Fighters Spec
 
-> **Author:** Hack star team
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -13,7 +13,7 @@
 
 ## Context
 
-The game designer asked to "add more figures". Today there are 6 fighters that all fight the same way, so
+Mattia asked to "add more figures". Today there are 6 fighters that all fight the same way, so
 the only difference is their look. This spec adds **4 new fighters** and gives every fighter its
 own way of attacking, so choosing, unlocking and upgrading a fighter really matters. It is F9 in
 the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
@@ -32,7 +32,7 @@ the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and the game designer's answers |
+| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
@@ -62,7 +62,7 @@ the [MVP and architecture spec](2026_11_12_mvp_and_architecture_spec.md).
 
 ### Open questions
 
-- **Q1 (game designer):** Names or ideas for the new fighters? Until they answer, the game invents them
+- **Q1 (Mattia):** Names or ideas for the new fighters? Until he answers, the game invents them
   (Coco, Sparky, Sir Clank, Kira — see D2); renaming later is a one-line change per fighter.
 
 <!-- spec-nx:plan -->
@@ -189,7 +189,7 @@ Started: 2026-11-12 13:49
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Names from the game designer | Waits for their answer (Q1) | Rename when they answer |
+| Names from Mattia | Waits for his answer (Q1) | Rename when he answers |
 | A third skin for the new fighters | One each is enough to start | Later spec |
 | Gadgets and Star Powers | Not asked yet | Later spec |
 

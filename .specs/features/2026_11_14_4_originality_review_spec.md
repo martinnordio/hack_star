@@ -1,6 +1,6 @@
 # Originality Review Spec
 
-> **Author:** Hack star team
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ⬜ Requirements in progress
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14

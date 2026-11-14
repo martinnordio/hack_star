@@ -36,12 +36,12 @@ For the spec 2, make good graphics and don't complicate the game itselft and the
 
 # Spec future
 
-# Questions to the game designer:
+# Questions to Mattia:
 
 How long should a match be?
 How many bots should the player face?
 
-Until the game designer answers, the game uses the default in brackets; each one is a single setting.
+Until Mattia answers, the game uses the default in brackets; each one is a single setting.
 
 
 * When you lose, should the fighter lose trophies? (no)
@@ -49,7 +49,7 @@ Until the game designer answers, the game uses the default in brackets; each one
 * Which game mode after this one: Gem Grab, Brawl Ball, or something else?
 * Any names for new fighters or new hack codes?
 
-# Feedback from the game designer
+# Feedback from Mattia
 
 * How long should a match be? (2 minutes)
 yes, 2 minutes. 
@@ -85,9 +85,9 @@ Hiper charge QR code
 | Hypercharge QR code | F10 [super and hypercharge](features/done/2026_11_12_super_and_hypercharge_spec.md) ✅ done |
 | Up to 2 friends to play | F11 [play with friends](features/done/2026_11_12_play_with_friends_spec.md) ✅ done (same team, same Wi-Fi) |
 
-## New questions to the game designer
+## New questions to Mattia
 
-Until they answer, the game uses the default in brackets.
+Until he answers, the game uses the default in brackets.
 
 Answered:
 * After the extra minute, what happens? **It is a draw** (a normal draw: 0 trophies, 20 credits).

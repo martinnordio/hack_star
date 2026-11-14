@@ -1,7 +1,7 @@
 # Play with Friends Spec
 
-> **Author:** Hack star team
-> **Status:** ✅ Done (with defaults for the game designer's open answers)
+> **Author:** Martin Nordio and Mattia Nordio
+> **Status:** ✅ Done (with defaults for Mattia's open answers)
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
 > **Branch:** `feature/play-with-friends`
@@ -13,7 +13,7 @@
 
 ## Context
 
-The game designer: "the players should have up to 2 friends to play". Today Hack star is single-player
+Mattia: "the players should have up to 2 friends to play". Today Hack star is single-player
 against bots, all in the browser. Playing with friends means each kid plays on their own device
 (iPad, phone, computer) in the same match, so the Python server must connect the devices. This
 is the biggest change so far; it is F11 in the
@@ -31,7 +31,7 @@ is the biggest change so far; it is F11 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and the game designer's answers |
+| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
@@ -58,10 +58,10 @@ is the biggest change so far; it is F11 in the
 
 ### Open questions
 
-- **Q1 (game designer):** Are friends on **your team** against bots (like Duo/Trio Showdown), or does
+- **Q1 (Mattia):** Are friends on **your team** against bots (like Duo/Trio Showdown), or does
   everyone fight everyone? **Default used:** same team against the bots; shots do not hurt
   teammates; the team wins if one of you is the last one standing.
-- **Q2 (game designer / developer):** Only in the same room/Wi-Fi, or also over the internet from
+- **Q2 (Mattia / Martin):** Only in the same room/Wi-Fi, or also over the internet from
   different houses? **Default used:** same Wi-Fi (the internet needs the server online and a
   login, which is much more work).
 
@@ -219,7 +219,7 @@ Still to try by hand: a real match on two or three devices on the same Wi-Fi (th
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Everyone against everyone with friends | Waits for the game designer (Q1) | Later spec, if wanted |
+| Everyone against everyone with friends | Waits for Mattia (Q1) | Later spec, if wanted |
 | Playing from different houses (internet) | Needs an online server and logins (Q2) | Later spec, if wanted |
 | Chat or emotes | Not asked | Later spec |
 

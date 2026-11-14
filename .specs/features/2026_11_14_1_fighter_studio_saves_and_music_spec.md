@@ -1,6 +1,6 @@
 # Fighter Studio, Saves and Music Spec
 
-> **Author:** Hack star team
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** 🔄 In progress
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
@@ -161,7 +161,8 @@ review to the same page.
 - **S23 — About panel:** Settings opens an **About** panel showing the game's name and
   version, the credits of every shipped track (title linked to its source, author or the
   exact credit the source asks for, and the licence linked to its official Creative Commons
-  page), a note that the tracks are unchanged and not under the MIT licence, and the MIT licence with its copyright line, both read from `LICENSE`. The credits are read from the developer's local track list, so they always match
+  page), a note that the tracks are unchanged and not under the MIT licence, and the MIT licence with its copyright line (© 2026 Martin Nordio and Mattia
+  Nordio). The credits are read from the developer's local track list, so they always match
   the tracks in the build.
 
 ### Developer mode and developer page
@@ -270,7 +271,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | D13 | One music player module (`ui/src/lib/music/player.ts`) with a single looping audio element; the match starts and stops it, and it pauses while the tab is hidden. | Starting from the PLAY tap satisfies the browsers' autoplay rule; one element means one track at a time (S19). |
 | D14 | The About panel reads the version from `ui/package.json` and the licence text from the repository's `LICENSE` (Vite `?raw` import), so they never drift. | S23 shows the real version and the exact licence. |
 | D15 | Step 1 finds the cause of the stale account name before fixing it; the fix stays in `Home.svelte` / `accounts.ts`, with a regression test at store level and a recorded browser check — no component-test library is added. | A check on 2026-11-14 showed the store itself passes the new name; adding a DOM test library would be a new dependency for one test. |
-| D16 | Music stays local (replaces D9, S32): `candidates.json` and `tracks.json` in the repository stay empty; the developer page writes only git-ignored `ui/dev/music/candidates.local.json`, `ui/src/lib/music/tracks.local.json`, `ui/dev/music/files/` and `ui/public/assets/music/`. The page and the game use the union of the repository list and the local list (`mergeCandidates`, `import.meta.glob`), the local entry winning. | The team wants to publish no music and take no responsibility for third-party licences; each developer chooses tracks locally. |
+| D16 | Music stays local (replaces D9, S32): `candidates.json` and `tracks.json` in the repository stay empty; the developer page writes only git-ignored `ui/dev/music/candidates.local.json`, `ui/src/lib/music/tracks.local.json`, `ui/dev/music/files/` and `ui/public/assets/music/`. The page and the game use the union of the repository list and the local list (`mergeCandidates`, `import.meta.glob`), the local entry winning. | Martin and Mattia want to publish no music and take no responsibility for third-party licences; each developer chooses tracks locally. |
 
 ---
 
@@ -608,7 +609,7 @@ checks as above.
 
 ### Goal
 Up to 15 candidate tracks are found or made, checked and listened to, and the team chooses the
-five that ship (S20, S21, S22). This Step needs the whole team.
+five that ship (S20, S21, S22). This Step needs Martin and Mattia.
 
 ### Tasks
 - [x] Record the start time in Notes below.
@@ -616,7 +617,7 @@ five that ship (S20, S21, S22). This Step needs the whole team.
       for each, check the licence on the source's own page (CC0, CC BY, or made by us — never
       NC or ND) and record title, author, source and licence.
 - [x] Download them into `ui/dev/music/` (D9, D11).
-- [x] The team listens on the developer page and choose five; delete the rest or keep
+- [x] Martin and Mattia listen on the developer page and choose five; delete the rest or keep
       them as candidates.
 - [x] Check: `src/lib/music/tracks.json` lists five tracks, each with its licence and credit;
       the five files are in `public/assets/music/`.
@@ -627,7 +628,7 @@ Started: 2026-11-14 16:00
 - 15 candidates found in a free-music library (5 CC0, 9 CC BY 3.0, 1 CC BY 4.0, read on each
   track's page on 2026-11-14); left out: CC BY-SA tracks, a track that may arrange a known
   melody, and files over the size limit.
-- The team chose five on the developer page (kept locally, not named here).
+- Martin and Mattia chose five on the developer page (kept locally, not named here).
 - Changed while implementing (S32, D16): the music is **not** committed. The list and the
   choices moved to the git-ignored `candidates.local.json` / `tracks.local.json`; the
   repository's `candidates.json` and `tracks.json` stay empty. So the last check now reads
@@ -663,7 +664,7 @@ on or off and chooses the track (S18, S19, S29, S30).
 ### Notes
 Started: 2026-11-14 15:37
 
-- Done before Step 10 (which needs the whole team): everything works with any number of
+- Done before Step 10 (which needs Martin and Mattia): everything works with any number of
   shipped tracks. With none (today), Settings shows "Music is coming soon." and matches stay
   silent; once `tracks.json` lists tracks, the switch and the track list appear.
 - `music/tracks.ts` gives the shipped list a type (`tracks.json` is written by the developer
@@ -703,7 +704,8 @@ Started: 2026-11-14 15:44
 - Settings → **About Hack star** opens a dialog: "Hack star", "Version 0.1.0" (from
   `ui/package.json`), **Music** with one line per shipped track (title — author · licence
   linked to the source) or "No music yet.", and **Licence**: the full text of the repository's
-  `LICENSE` (imported with `?raw`, so it includes the copyright line). The file's fixed line breaks are joined per paragraph so it reads well on a
+  `LICENSE` (imported with `?raw`, so it includes the copyright line "© 2026 Martin Nordio and
+  Mattia Nordio"). The file's fixed line breaks are joined per paragraph so it reads well on a
   phone; the words are unchanged.
 - `vite.config.ts`: `server.fs.allow` lets the dev server read `../LICENSE`; the build bundles
   the text.

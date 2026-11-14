@@ -1,6 +1,6 @@
 # Super and Hypercharge Spec
 
-> **Author:** Hack star team
+> **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -13,7 +13,7 @@
 
 ## Context
 
-The game designer asked for a **Hypercharge QR code**. In Brawl Stars a fighter charges its **Super** (a
+Mattia asked for a **Hypercharge QR code**. In Brawl Stars a fighter charges its **Super** (a
 special attack) by hitting enemies, and a **Hypercharge** makes the Super extra strong for a
 short time. Hack star has neither yet, so this spec adds the Super, the Hypercharge, and a hack
 code that gives Hypercharge. It is F10 in the
@@ -33,7 +33,7 @@ part of F8).
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and the game designer's answers |
+| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
@@ -62,7 +62,7 @@ part of F8).
 
 ### Open questions
 
-- **Q1 (game designer):** What should the Hypercharge QR code do: every Super a Hypercharge (default),
+- **Q1 (Mattia):** What should the Hypercharge QR code do: every Super a Hypercharge (default),
   Hypercharge always on, or something else?
 
 <!-- spec-nx:plan -->

@@ -7,7 +7,7 @@ a check and a commit. The specs and the documentation are kept up to date while 
 grows, so the repository explains itself.
 
 The whole game (server, 3D browser UI, ten fighters, hack codes, shop, Supers, overtime and
-playing with friends) was built in one day this way, with
+playing with friends) was built in one day this way, by Martin Nordio and Mattia Nordio with
 an AI coding assistant (Claude Opus 5.5 in VS Code).
 
 ## What was used
@@ -17,7 +17,7 @@ an AI coding assistant (Claude Opus 5.5 in VS Code).
 | spec-nx | [`.spec-nx/`](.spec-nx/) (git submodule of [spec-nx](https://github.com/martinnordio/spec-nx)) | The methodology and the generator of the kit |
 | Generated kit | [`.specs/kit/`](.specs/kit/) | What spec-nx generated for this repository (see below) |
 | Kit settings | [`.specs/spec-nx.json`](.specs/spec-nx.json) | Stages `requirements` → `plan` → `implementation` → `review` → `pr`, git host GitHub with linked issues, PowerShell, languages Python / TypeScript / Svelte / PowerShell |
-| Vision | [`.specs/overall_req.md`](.specs/overall_req.md) | The idea of the game in our own words, and the questions for the game designer with the answers |
+| Vision | [`.specs/overall_req.md`](.specs/overall_req.md) | The idea of the game in our own words, and the questions for Mattia with his answers |
 | Specs | [`.specs/features/done/`](.specs/features/done/) | One file per feature, all finished |
 
 ### The generated kit (`.specs/kit/`)
@@ -43,8 +43,8 @@ guidelines and the agent permissions.
 ## How it was used
 
 1. **Vision first.** We wrote what we wanted in [overall_req.md](.specs/overall_req.md), in plain
-   words, with a list of questions for the game designer. The game used a default for
-   each question until it was answered; each answer became a requirement or a new spec.
+   words, with a list of questions for Mattia (the game designer). The game used a default for
+   each question until he answered; each answer became a requirement or a new spec.
 2. **One spec per feature.** The requirements stage wrote Part 1 (what, not how). Open
    questions were answered before planning.
 3. **Plan in steps.** The plan stage added Part 2: decisions with their reasons, and 3–5 Steps.
