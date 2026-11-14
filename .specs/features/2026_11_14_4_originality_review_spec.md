@@ -11,6 +11,7 @@
 | Date | Stage | Command | Model | Note |
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written (spec 4 of 4) |
+| 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: open questions answered (S10–S13) |
 
 ---
 
@@ -75,17 +76,20 @@ neutral, factual wording. It changes no game code.
   or its owner, and proposes changes; it does not change them.
 - **S9 — No game change:** The game's code, assets and texts do not change; the findings are
   written into this spec.
+- **S10 — Same kind of game:** The proposals keep Hack star the same kind of game and give it
+  its own identity; they do not turn it into a different kind of game.
+- **S11 — Game words listed, not renamed:** Game words such as "Hypercharge" are listed with
+  alternatives (S3); renaming them is one of the candidates for the short list (S6), not part
+  of this spec.
+- **S12 — Wording of the original idea:** The review proposes new wording for the sentences
+  of `.specs/overall_req.md` that compare the game's look to another game; the file itself is
+  not changed.
+- **S13 — Worlds:** For the "different worlds" idea, the review describes both options — a
+  theme only (arena look and music) and a theme with its own rules — and recommends one.
 
 ### Open questions
 
-- Should game words such as "Hypercharge" be renamed soon (a future spec), or only listed?
-  Proposed: listed here; renaming is one of the candidates in S6.
-- How different should the game become: the same kind of game with our own identity, or a
-  different kind of game? Proposed: the same kind, with our own identity.
-- `.specs/overall_req.md` says the game should "look really like" Brawl Stars. It is your own
-  document — should the review propose new wording for it?
-- Should each future world (from `ideas.md`) be a theme only (arena look and music), or also
-  change the rules?
+_None — answered on 2026-11-14._
 
 <!-- spec-nx:plan -->
 

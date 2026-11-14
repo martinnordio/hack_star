@@ -11,6 +11,7 @@
 | Date | Stage | Command | Model | Note |
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written (spec 3 of 4) |
+| 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: open questions answered (S10–S13); link to the renamed spec 2 |
 
 ---
 
@@ -31,8 +32,8 @@ and recommends a way of working. It changes no game code.
   every asset gets a licence line.
 - `/?gallery` (`ui/src/lib/Gallery.svelte`) — all fighters and skins in one 3D scene, useful
   to compare results with today's look.
-- [Asset review page and developer mode](2026_11_14_2_asset_review_and_developer_mode_spec.md)
-  — a page to load candidate 3D models; if it exists by then, trial results can be viewed
+- [Graphics review](2026_11_14_2_graphics_review_spec.md) — the **Graphics** section of the
+  developer page loads candidate 3D models; if it exists by then, trial results can be viewed
   there.
 
 **New:**
@@ -64,8 +65,8 @@ and recommends a way of working. It changes no game code.
   drawings; for each trial, the input, the result (picture or file), the time it took and a
   short judgement are recorded.
 - **S6 — Side by side:** The trial results are compared with each other and with today's
-  fighters at the same size and lights (for example in `/?gallery` or the review page of
-  spec 2).
+  fighters at the same size and lights (for example in `/?gallery` or the Graphics section of
+  the developer page, spec 2).
 - **S7 — Recommendation:** The research ends with one recommended way to go from our drawing
   to a model in the game, step by step, and one fallback, each with what it costs and what it
   needs from us.
@@ -74,16 +75,19 @@ and recommends a way of working. It changes no game code.
 - **S9 — No game change:** The game's code and assets do not change; trial results are not
   added to the game. The findings are written into this spec.
 
+- **S10 — Free use only:** Only tools usable for free are compared and tried; paid tools or
+  paid trials are not used.
+- **S11 — Accounts:** Where a tool needs an account or a minimum age (often 13 or 18), Martin
+  creates and uses the account.
+- **S12 — 3D first:** The research is mostly about 3D models; 2D (portraits, icons, menu
+  screens) gets a short section of its own.
+- **S13 — Results described, not kept:** Trial results are described in this spec with
+  pictures; their files are not added to the repository. Martin and Mattia choose the two
+  drawings for the trials when the trials start.
+
 ### Open questions
 
-- Only free tools, or also paid tools with a free trial? Proposed: free use only.
-- Many online tools need an account from age 13 or 18; Martin creates and uses the accounts?
-  Proposed: yes.
-- Which two drawings are used for the trials?
-- 3D first, or also 2D (portraits, icons, menu screens)? Proposed: 3D first, 2D as a short
-  section.
-- Are trial results with a clear licence kept in the repository for a later spec, or only
-  described? Proposed: only described, with pictures in this spec.
+_None — answered on 2026-11-14._
 
 <!-- spec-nx:plan -->
 
