@@ -2,10 +2,7 @@
 name = "hack-star-server"
 version = "0.1.0"
 description = "Hack star game server"
-authors = [
-    { name = "Martin Nordio", email = "martin.nordio@gmail.com" },
-    { name = "Mattia Nordio" },
-]
+license = "MIT"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.162.5",

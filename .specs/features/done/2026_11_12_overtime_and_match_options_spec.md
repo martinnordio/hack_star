@@ -1,6 +1,6 @@
 # Overtime and Match Options Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -13,7 +13,7 @@
 
 ## Context
 
-Mattia's feedback ([overall_req.md](../../overall_req.md), "Feedback from Mattia"): matches stay
+The game designer's feedback ([overall_req.md](../../overall_req.md), "Feedback from the game designer"): matches stay
 2 minutes against 3 bots that also fight each other, but the **bot level should be chosen in a
 configuration**, and when time runs out with bots still in, **the match goes on for another
 minute without walls**. This is F8 in the
@@ -34,14 +34,14 @@ minute without walls**. This is F8 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and Mattia's answers |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the game designer's answers |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
 - **S1 — Confirmed defaults:** A match lasts 2 minutes, against 3 bots, and bots also fight each
-  other (Mattia confirmed; no change).
+  other (the game designer confirmed; no change).
 - **S2 — Settings screen:** A **Settings** button on the home screen opens a screen where the
   player picks the **bot level** (Easy, Medium, Hard) and the **number of bots** (1 to 5). The
   default is Easy and 3 bots.
@@ -63,9 +63,9 @@ minute without walls**. This is F8 in the
 
 ### Open questions
 
-- **Q1 (Mattia) — answered 2026-11-12:** "Then it is a draw but …" → **it is a draw**. A draw
+- **Q1 (game designer) — answered 2026-11-12:** "Then it is a draw but …" → **it is a draw**. A draw
   after overtime gives the same as "time's up" today (0 trophies, 20 credits).
-- **Q2 (Mattia):** Should harder bots give more trophies or credits? Default: no, the same.
+- **Q2 (game designer):** Should harder bots give more trophies or credits? Default: no, the same.
 
 <!-- spec-nx:plan -->
 
@@ -190,7 +190,7 @@ Home now has 6 side buttons (2 × 3 in landscape, 3 × 2 in portrait). On a phon
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| More trophies for harder bots | Waits for Mattia (Q2) | Later spec, if wanted |
+| More trophies for harder bots | Waits for the game designer (Q2) | Later spec, if wanted |
 | Sound and music settings | No sound yet | Later spec |
 
 ---

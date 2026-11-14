@@ -8,7 +8,7 @@
 
 A top-down arena browser game for kids, with **hack codes** that give unlimited
 credits, unlock every fighter and allow power levels up to 22. It runs on a desktop, iPad and
-phone browser. Made by Martin Nordio and Mattia Nordio.
+phone browser.
 
 - Vision: [.specs/overall_req.md](.specs/overall_req.md)
 - Feature list and MVP scope: [MVP and architecture spec](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md)
@@ -245,8 +245,8 @@ It is in English.
   copies a track to `ui/public/assets/music/` and writes `ui/src/lib/music/tracks.local.json`,
   which the game and the About panel read. All of these are git-ignored; the repository's
   `candidates.json` and `tracks.json` stay empty (the page shows both lists together, your
-  own entry winning). Example tracks to download yourself are in
-  [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md) — check their licences
+  own entry winning). The recommended licences and what each one needs are in
+  [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md) — check each track's licence
   yourself. These tools work only with `npm run dev` and only from the computer running it.
 
 ## Test

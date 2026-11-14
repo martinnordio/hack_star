@@ -1,6 +1,6 @@
 # Basic UI Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12

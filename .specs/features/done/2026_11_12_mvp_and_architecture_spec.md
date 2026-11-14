@@ -1,6 +1,6 @@
 # MVP and Architecture Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -81,7 +81,7 @@ names and logos are copyrighted and are not used.
 | F9 | More fighters (10) with fighter types and different attacks | [more fighters](2026_11_12_more_fighters_spec.md) | later (done) |
 | F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](2026_11_12_super_and_hypercharge_spec.md) | later (done) |
 | F11 | Play with up to 2 friends on their own devices | [play with friends](2026_11_12_play_with_friends_spec.md) | later (done) |
-| F12 | A second mode (Gem Grab or another, Mattia to choose) | — | later |
+| F12 | A second mode (Gem Grab or another, the game designer to choose) | — | later |
 | F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](2026_11_14_bug_fixes_spec.md) | ✅ |
 
 ## 1 · Specs

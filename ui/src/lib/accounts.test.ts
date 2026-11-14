@@ -74,7 +74,7 @@ describe('accounts', () => {
 
   it('adds accounts up to 5 and refuses a sixth', () => {
     let state = loadAccounts(memoryStorage(), 'en')
-    for (const name of ['Mattia', 'Luca', 'Sofia', 'Noah']) state = added(state, name)
+    for (const name of ['Alex', 'Luca', 'Sofia', 'Noah']) state = added(state, name)
     expect(state.accounts).toHaveLength(5)
     expect(currentAccount(state).name).toBe('Noah')
     expect(addAccount(state, 'Mia', 'en')).toEqual({ ok: false, reason: 'full' })
@@ -98,7 +98,7 @@ describe('accounts', () => {
   it('new accounts start fresh; switching shows the other progress', () => {
     const storage = memoryStorage()
     storage.setItem(PROGRESS_KEY, JSON.stringify(defaultProgress()))
-    let state = added(loadAccounts(storage, 'en'), 'Mattia')
+    let state = added(loadAccounts(storage, 'en'), 'Alex')
     expect(currentAccount(state).progress).toEqual(startProgress())
     state = switchAccount(state, 'a1')
     expect(currentAccount(state).progress.trophies.blaze).toBe(1240)
@@ -106,12 +106,12 @@ describe('accounts', () => {
   })
 
   it('renames with the same rules, keeping its own name allowed', () => {
-    let state = added(loadAccounts(memoryStorage(), 'en'), 'Mattia')
+    let state = added(loadAccounts(memoryStorage(), 'en'), 'Alex')
     expect(renameAccount(state, 'a2', 'player 1')).toEqual({ ok: false, reason: 'taken' })
-    const result = renameAccount(state, 'a2', 'MATTIA')
+    const result = renameAccount(state, 'a2', 'ALEX')
     expect(result.ok).toBe(true)
     if (result.ok) state = result.state
-    expect(state.accounts[1].name).toBe('MATTIA')
+    expect(state.accounts[1].name).toBe('ALEX')
   })
 
   it('a rename or switch reaches every listener at once and is saved', () => {
@@ -119,8 +119,8 @@ describe('accounts', () => {
     const store = createAccountsStore(storage, 'en')
     const shown: string[] = []
     const stop = store.subscribe((s) => shown.push(currentAccount(s).name))
-    store.update((s) => added(s, 'Mattia'))
-    expect(shown.at(-1)).toBe('Mattia')
+    store.update((s) => added(s, 'Alex'))
+    expect(shown.at(-1)).toBe('Alex')
     store.update((s) => {
       const result = renameAccount(s, 'a2', 'Noah')
       return result.ok ? result.state : s
@@ -135,7 +135,7 @@ describe('accounts', () => {
   it('keeps accounts, progress and the current account after closing', () => {
     const storage = memoryStorage()
     const store = createAccountsStore(storage, 'en')
-    store.update((s) => added(s, 'Mattia'))
+    store.update((s) => added(s, 'Alex'))
     const progress = progressStore(store)
     progress.update((p) => ({ ...p, credits: 77 }))
     const again = loadAccounts(storage, 'de')
@@ -168,7 +168,7 @@ describe('accounts', () => {
     expect(get(firstProgress)).toMatchObject({ activeHacks: ['creator'], credits: 650, createdFighters: [{ id: 'custom', look }] })
     expect(get(secondProgress)).toMatchObject({ activeHacks: ['creator'], credits: 650, createdFighters: [{ id: 'custom', look }] })
 
-    first.update((state) => added(state, 'Mattia'))
+    first.update((state) => added(state, 'Alex'))
     secondEvents.storageChanged()
     expect(currentAccount(get(first)).id).toBe('a2')
     expect(currentAccount(get(second)).id).toBe('a2')

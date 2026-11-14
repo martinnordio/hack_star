@@ -1,6 +1,6 @@
 # Trophies and Prestige Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -35,7 +35,7 @@ first playable version (F0–F5) is complete.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to Mattia |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to the game designer |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
@@ -55,13 +55,13 @@ first playable version (F0–F5) is complete.
 - **S7 — Only matches count:** Training never changes trophies; leaving a match before it ends
   changes nothing.
 - **S8 — Settings:** Trophies for a win (default 10) and for a defeat (default 0) are set in
-  one place with the match settings, so Mattia's answer is a one-line change.
+  one place with the match settings, so the game designer's answer is a one-line change.
 - **S9 — Documentation:** README and `docs/architecture.md` describe how trophies and
   Prestige work.
 
 ### Open questions
 
-_None. "Should a defeat take trophies?" is one of the questions to Mattia; until then a defeat
+_None. "Should a defeat take trophies?" is one of the questions to the game designer; until then a defeat
 takes none (S2, S8)._
 
 <!-- spec-nx:plan -->
@@ -163,7 +163,7 @@ Started: 2026-11-12 11:08
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Trophies by place in a defeat (e.g. 2nd gets +5) | Waits for Mattia's answer on defeats | Later spec |
+| Trophies by place in a defeat (e.g. 2nd gets +5) | Waits for the game designer's answer on defeats | Later spec |
 | Win streaks, Trophy Road rewards | Not needed for the first playable version | Later spec |
 | Unlocking fighters with credits; power levels | F6 | Later spec |
 

@@ -1,6 +1,6 @@
 # Accounts, Create a Fighter, New Fighters and Languages Spec
 
-> **Author:** Martin Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Complete — closed on feature/accounts-fighters-and-languages
 > **Created:** 2026-11-13
 > **Last updated:** 2026-11-13
@@ -24,7 +24,7 @@
 
 ## Context
 
-Mattia and his friends share one device and want their own progress, a fighter they design
+Kids share one device and want their own progress, a fighter they design
 themselves, more and better-looking fighters and skins, and the game in their own language.
 Parents want to start over (reset) and to keep the printed QR codes away from the kids. All of
 it is in one spec, as the user asked.
@@ -146,7 +146,7 @@ agreed as enough.
 - **S16 — Much nicer graphics:** The 5 new fighters look clearly more detailed and impressive
   than the current ones: compared side by side on the gallery page, each has a more detailed
   body (at least twice as many parts as a current fighter), shiny or glowing materials, and an
-  idle animation in which at least 3 parts move. Mattia agrees they look nicer.
+  idle animation in which at least 3 parts move. The game designer agrees they look nicer.
 - **S17 — Still smooth:** A match with the new fighters still runs smoothly on an iPad (no
   visible stutter), as matches do today.
 
@@ -387,7 +387,7 @@ Started: 2026-11-13 17:48
 - 264 texts per language. Rarities: Standard / Selten / Superselten / Episch / Mythisch /
   Legendär (gsw: Sälte, Supersälte), es Estándar … Legendario, it Standard … Leggendario.
   Super, Hypercharge, Prestige and Showdown stay as kids say them, explained on the Info page.
-- Words to look at with Mattia: Swiss German spellings ("Iistellige", "Sälte", "Läbe"), the
+- Words to look at with the game designer: Swiss German spellings ("Iistellige", "Sälte", "Läbe"), the
   Spreader type ("Streuer" / "Dispersor" / "Ventaglio").
 
 **Done (2026-11-13 · ~20m · Claude Opus 5.5)** — German, Swiss German, Spanish and Italian
@@ -494,7 +494,7 @@ current fighters, and matches stay smooth (S15, S16, S17).
 - [x] `fighters.py`: the 5 fighters from S15 (Marina `unlocked_at_start`); `pytest` for 15 fighters and the start set.
 - [x] `parts.ts`: shiny and glowing material helpers, animated parts list (D13).
 - [x] Builders for the 5 fighters: at least twice the parts of a current fighter, shiny or glowing materials, idle animation moving 3 or more parts; shot colours; gallery; ideas in all 5 languages.
-- [ ] Check in the browser: `/?gallery` side by side with the old fighters (screenshot for Mattia); a match with 3 new fighters at iPad size without stutter (frame rate in the browser's performance panel ≥ 30 fps).
+- [ ] Check in the browser: `/?gallery` side by side with the old fighters (screenshot for the game designer); a match with 3 new fighters at iPad size without stutter (frame rate in the browser's performance panel ≥ 30 fps).
 - [x] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
 
 ### Notes
@@ -507,12 +507,12 @@ Started: 2026-11-13 19:20
   spinners (3 or more), and 5 or more shiny or glowing parts.
 - Frame rate: a match with 5 bots in headless Edge at 1024×768 runs at 60 fps.
 - **Open:** the side-by-side look in `/?gallery` was not reviewed visually in this session (no
-  screenshots left); Mattia should look at the gallery and say whether they look nicer (S16),
+  screenshots left); the game designer should look at the gallery and say whether they look nicer (S16),
   and the frame rate should be checked once on a real iPad (S17).
 
 **Done (2026-11-13 · ~40m · Claude Opus 5.5)** — five new fighters (Marina free) with richer
 models; `pytest` 37 passed, `npm test` 180 passed, `npm run check` 0 errors; headless match
-60 fps. Visual review by Mattia still open.
+60 fps. Visual review by the game designer still open.
 
 ---
 
@@ -574,7 +574,7 @@ Started: 2026-11-13 20:10
 - **Open (needs eyes, screenshots ran out in this session):**
   1. Look at every screen at phone, iPad and desktop size, portrait and landscape (accounts
      panel, creator, Settings with languages and reset, QR password) — S21.
-  2. Mattia compares the five new fighters with the old ones in `/?gallery` — S16.
+  2. The game designer compares the five new fighters with the old ones in `/?gallery` — S16.
   3. Check the 45 new skins in `/?gallery` and fix any that look wrong — S14.
   4. Play one match on a real iPad with new fighters — S17.
   5. A native speaker reads the Swiss German texts (Zurich) — S20.
@@ -592,7 +592,7 @@ words) and all automated checks; visual checks listed above are still open.
 |------|--------|------------------|
 | Accounts shared between devices (cloud sync, login) | Accounts are per device and browser; syncing needs a server store and logins | a future online accounts spec |
 | Translated fighter, skin and code names | Agreed: names stay the same in every language | — |
-| Visual check: the five new fighters next to the old ones in `/?gallery` (Mattia), and a match on a real iPad (Step 9; S16, S17) | Screenshots could not be reviewed in the implementing session; deferred at CLOSE by the user | before merging pull request for #15 |
+| Visual check: the five new fighters next to the old ones in `/?gallery` (the game designer), and a match on a real iPad (Step 9; S16, S17) | Screenshots could not be reviewed in the implementing session; deferred at CLOSE by the user | before merging pull request for #15 |
 | Visual check: the 45 new skins in `/?gallery`; shop, buy and wear one, skin of the day (Step 10; S14) | Same | before merging pull request for #15 |
 | Visual check: every screen at phone, iPad and desktop, portrait and landscape; Swiss German read by a native speaker (Step 11; S20, S21) | Same | before merging pull request for #15 |
 | Free the cloned 3D materials with the rig (review finding 2) | Memory only, no visible effect | a future 3D clean-up spec |

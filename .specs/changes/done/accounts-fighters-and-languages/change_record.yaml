@@ -3,7 +3,7 @@ version: 1
 branch: feature/accounts-fighters-and-languages
 base: 7c6b910
 why: |
-  Mattia and his friends share one device and want their own progress, a fighter they design
+  Kids share one device and want their own progress, a fighter they design
   themselves, more and nicer fighters and skins, and the game in their own language. Parents
   want to start over and to keep the printed QR codes away from the kids. Before this branch a
   device had one progress, ten fighters, one or two skins each and English only.

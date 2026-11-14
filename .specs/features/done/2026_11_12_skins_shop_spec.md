@@ -1,6 +1,6 @@
 # Skins Shop Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Done
 > **Created:** 2026-11-12
 > **Last updated:** 2026-11-12
@@ -35,7 +35,7 @@ the "unlock everything" hack really unlock every skin. It is F7 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to Mattia |
+| [overall_req.md](../../overall_req.md) | Overall game idea and the questions to the game designer |
 | [architecture.md](../../../docs/architecture.md) | How the code is organised |
 | [README](../../../README.md) | How to install, run and play |
 
@@ -171,7 +171,7 @@ Started: 2026-11-12 11:55
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Bots wearing skins | Nice extra, not asked | Later spec |
-| More skins (Mattia's ideas) | Waits for Mattia | Later spec |
+| More skins (the game designer's ideas) | Waits for the game designer | Later spec |
 | Gems as a second currency | One currency is easier for kids | Later spec, if wanted |
 
 ---

@@ -1,6 +1,6 @@
 # Graphics Review Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ⬜ Requirements in progress
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14

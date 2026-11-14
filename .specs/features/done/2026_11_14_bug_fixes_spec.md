@@ -1,6 +1,6 @@
 # Bug Fixes Spec
 
-> **Author:** Martin Nordio
+> **Author:** Hack star team
 > **Status:** ✅ Complete — closed on `feature/bug-fixes`
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
@@ -29,7 +29,7 @@
 
 ## Context
 
-This spec collects the bugs that players report (mostly Mattia and his friends) so they are fixed
+This spec collects the bugs that players report (mostly the game designer and friends) so they are fixed
 together in one branch. Each reported bug gets its own group of statements below; new bugs are
 added with `REQUIREMENTS: 2026_11_14_bug_fixes_spec.md — <bug>` until the plan is written.
 
@@ -54,7 +54,7 @@ added with `REQUIREMENTS: 2026_11_14_bug_fixes_spec.md — <bug>` until the plan
    "💾 Save changes · 500 C": the second try costs 500 C. Without INFINITY and with fewer than
    500 C this shows "Need … more C" — matching what was reported.
 4. In the user's open browser tabs, one tab still showed "Player 1" with 680 C while the saved
-   game had switched to "Mattia" without hacks: tabs do not see each other's changes, and the
+   game had switched to another account without hacks: tabs do not see each other's changes, and the
    last tab to save wins. Opening a hack QR code with the camera opens a **new** tab, so a hack
    entered there can be missing (or overwritten) in the tab the kid goes back to.
 5. The created fighter shows 🔒 💻 and "Locked: enter a hack code…" even with INFINITY, by

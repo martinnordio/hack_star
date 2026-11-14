@@ -1,6 +1,6 @@
 # Art Tools Research Spec
 
-> **Author:** Martin Nordio and Mattia Nordio
+> **Author:** Hack star team
 > **Status:** ⬜ Requirements in progress
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
@@ -79,12 +79,12 @@ and recommends a way of working. It changes no game code.
 
 - **S10 — Free use only:** Only tools usable for free are compared and tried; paid tools or
   paid trials are not used.
-- **S11 — Accounts:** Where a tool needs an account or a minimum age (often 13 or 18), Martin
-  creates and uses the account.
+- **S11 — Accounts:** Where a tool needs an account or a minimum age (often 13 or 18), an adult
+  of the team creates and uses the account.
 - **S12 — 3D first:** The research is mostly about 3D models; 2D (portraits, icons, menu
   screens) gets a short section of its own.
 - **S13 — Results described, not kept:** Trial results are described in this spec with
-  pictures; their files are not added to the repository. Martin and Mattia choose the two
+  pictures; their files are not added to the repository. The team chooses the two
   drawings for the trials when the trials start.
 
 ### Open questions

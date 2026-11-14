@@ -1,4 +1,4 @@
-/** Match settings. Answers from Mattia (see "Questions to Mattia" in .specs/overall_req.md) go here. */
+/** Match settings. Answers from the game designer (see "Questions to the game designer" in .specs/overall_req.md) go here. */
 
 export type BotLevel = 'easy' | 'medium' | 'hard'
 
