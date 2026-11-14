@@ -106,6 +106,7 @@ export const gsw: Record<TextKey, string> = {
   'about.version': 'Version {version}',
   'about.music': 'Musig',
   'about.noMusic': 'No kei Musig.',
+  'about.musicNote': 'Jedes Stück wird unverändert bruucht und bhaltet sini eigeni Lizenz (obe verlinkt); d MIT-Lizenz unde gilt für Hack star, nöd für d Musig.',
   'about.licence': 'Lizenz',
   'about.licenceIntro': 'Hack star isch Open Source under de MIT-Lizenz:',
   'settings.music': 'Musig',

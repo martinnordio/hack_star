@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { choose, isAllowedLicence, MAX_CHOSEN, mergeCandidates, parseCandidates, remove, shipped, unchoose, type Candidate } from './candidates'
+import { choose, isAllowedLicence, licenceUrl, MAX_CHOSEN, mergeCandidates, parseCandidates, remove, shipped, unchoose, type Candidate } from './candidates'
 
 const track = (n: number, extra: Partial<Candidate> = {}): Candidate => ({
   id: `t${n}`,
@@ -13,22 +13,31 @@ const track = (n: number, extra: Partial<Candidate> = {}): Candidate => ({
 })
 
 describe('music candidates', () => {
-  it('allows only CC0, CC BY or music made for the project', () => {
-    for (const ok of ['CC0', 'CC0 1.0', 'CC BY', 'CC BY 3.0', 'cc by 4.0', 'Made for Hack star']) expect(isAllowedLicence(ok)).toBe(true)
-    for (const bad of ['CC BY-NC 4.0', 'CC BY-ND 4.0', 'CC BY-SA 4.0', 'All rights reserved', '', 'CC BY 5.0']) expect(isAllowedLicence(bad)).toBe(false)
+  it('allows only CC0, CC BY with its version, or music made for the project', () => {
+    for (const ok of ['CC0', 'CC0 1.0', 'CC BY 3.0', 'cc by 4.0', 'Made for Hack star']) expect(isAllowedLicence(ok)).toBe(true)
+    for (const bad of ['CC BY', 'CC BY-NC 4.0', 'CC BY-ND 4.0', 'CC BY-SA 4.0', 'All rights reserved', '', 'CC BY 5.0']) expect(isAllowedLicence(bad)).toBe(false)
   })
 
-  it('chooses at most five, and only with an allowed licence', () => {
-    let tracks = [1, 2, 3, 4, 5, 6].map((n) => track(n))
+  it('links each licence to its official page', () => {
+    expect(licenceUrl('CC0')).toBe('https://creativecommons.org/publicdomain/zero/1.0/')
+    expect(licenceUrl('CC BY 3.0')).toBe('https://creativecommons.org/licenses/by/3.0/')
+    expect(licenceUrl('CC BY 4.0')).toBe('https://creativecommons.org/licenses/by/4.0/')
+    expect(licenceUrl('Made for Hack star')).toBeUndefined()
+    expect(licenceUrl('CC BY-SA 3.0')).toBeUndefined()
+  })
+
+  it('chooses at most ten, and only with an allowed licence', () => {
+    let tracks = Array.from({ length: MAX_CHOSEN + 1 }, (_, i) => track(i + 1))
     for (let n = 1; n <= MAX_CHOSEN; n++) {
       const result = choose(tracks, `t${n}`)
       expect(result.ok).toBe(true)
       if (result.ok) tracks = result.tracks
     }
-    expect(choose(tracks, 't6')).toMatchObject({ ok: false })
-    expect(choose([track(7, { licence: 'CC BY-NC 4.0' })], 't7')).toMatchObject({ ok: false })
+    expect(MAX_CHOSEN).toBe(10)
+    expect(choose(tracks, `t${MAX_CHOSEN + 1}`)).toMatchObject({ ok: false })
+    expect(choose([track(20, { licence: 'CC BY-NC 4.0' })], 't20')).toMatchObject({ ok: false })
     expect(choose(tracks, 'nope')).toMatchObject({ ok: false })
-    expect(shipped(tracks).map((t) => t.id)).toEqual(['t1', 't2', 't3', 't4', 't5'])
+    expect(shipped(tracks)).toHaveLength(MAX_CHOSEN)
     expect(shipped(tracks)[0]).not.toHaveProperty('chosen')
   })
 

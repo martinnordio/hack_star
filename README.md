@@ -238,8 +238,8 @@ It is in English.
 
 - **Music:** the repository has **no music**; each developer adds tracks on their own
   computer, and they are never committed. The section lists the candidate tracks (up to 15)
-  with title, author, licence and source; **Play** to listen, **Choose** up to five for the
-  game (only tracks marked CC0, CC BY or made for Hack star), **Delete** the others, and a
+  with title, author, licence (linked to its official page) and source; **Play** to listen, **Choose** up to ten for the
+  game (only tracks marked CC0, CC BY with its version, e.g. `CC BY 3.0`, or made for Hack star), **Delete** the others, and a
   ready-to-copy request for the AI assistant to find more. Your candidates go in
   `ui/dev/music/candidates.local.json` and their MP3s in `ui/dev/music/files/`; choosing
   copies a track to `ui/public/assets/music/` and writes `ui/src/lib/music/tracks.local.json`,

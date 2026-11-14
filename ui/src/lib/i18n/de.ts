@@ -106,6 +106,7 @@ export const de: Record<TextKey, string> = {
   'about.version': 'Version {version}',
   'about.music': 'Musik',
   'about.noMusic': 'Noch keine Musik.',
+  'about.musicNote': 'Jedes Stück wird unverändert verwendet und behält seine eigene Lizenz (oben verlinkt); die MIT-Lizenz unten gilt für Hack star, nicht für die Musik.',
   'about.licence': 'Lizenz',
   'about.licenceIntro': 'Hack star ist Open Source unter der MIT-Lizenz:',
   'settings.music': 'Musik',

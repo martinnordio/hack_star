@@ -24,8 +24,11 @@ page**). Those tracks and the lists that name them (`ui/dev/music/candidates.loc
 git-ignored and are never committed or published. The repository's own lists,
 `ui/dev/music/candidates.json` and `ui/src/lib/music/tracks.json`, stay empty.
 
-The developer page only accepts tracks whose licence is said to be CC0, CC BY or "Made for
-Hack star", and the game credits CC BY tracks in its **About** panel. Neither check is a
+The developer page only accepts tracks whose licence is said to be CC0, CC BY with its
+version or "Made for Hack star". The game's **About** panel credits every chosen track from
+the developer's local list: title linked to its source, author (or the exact credit the
+source asks for, field `credit`), the licence linked to its official Creative Commons page,
+and a note that the tracks are unchanged and not under the MIT licence. Neither check is a
 licence review.
 
 ### Examples developers may download themselves

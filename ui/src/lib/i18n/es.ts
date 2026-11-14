@@ -106,6 +106,7 @@ export const es: Record<TextKey, string> = {
   'about.version': 'Versión {version}',
   'about.music': 'Música',
   'about.noMusic': 'Todavía no hay música.',
+  'about.musicNote': 'Cada canción se usa sin cambios y conserva su propia licencia (enlazada arriba); la licencia MIT de abajo cubre Hack star, no la música.',
   'about.licence': 'Licencia',
   'about.licenceIntro': 'Hack star es de código abierto con la licencia MIT:',
   'settings.music': 'Música',

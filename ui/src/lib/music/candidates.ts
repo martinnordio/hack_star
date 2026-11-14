@@ -10,21 +10,33 @@ export interface Track {
   source: string
   /** File name in `ui/dev/music/files/` and, once chosen, in `ui/public/assets/music/`. */
   file: string
+  /** The exact credit the author asks for on the source page, if any (shown instead of the author). */
+  credit?: string
 }
 
 export interface Candidate extends Track {
   chosen: boolean
 }
 
-export const MAX_CHOSEN = 5
+export const MAX_CHOSEN = 10
 export const MAX_CANDIDATES = 15
 const FILE = /^[\w-]+\.mp3$/
 const ID = /^[a-z0-9-]{1,40}$/
+const CC0 = /^CC0(?: 1\.0)?$/i
+const CC_BY = /^CC BY ([1-4])\.0$/i
 
-/** CC0, CC BY (any version, credited in the About panel) or made for the project; never NC or ND. */
+/** CC0, CC BY with its version (credited in the About panel) or made for the project; never NC, ND or SA. */
 export function isAllowedLicence(licence: string): boolean {
   const l = licence.trim()
-  return /^CC0(?: 1\.0)?$/i.test(l) || /^CC BY(?: [1-4]\.0)?$/i.test(l) || /^Made for Hack star$/i.test(l)
+  return CC0.test(l) || CC_BY.test(l) || /^Made for Hack star$/i.test(l)
+}
+
+/** The official page of the licence, linked in the credits; none for music made for the project. */
+export function licenceUrl(licence: string): string | undefined {
+  const l = licence.trim()
+  if (CC0.test(l)) return 'https://creativecommons.org/publicdomain/zero/1.0/'
+  const by = CC_BY.exec(l)
+  return by ? `https://creativecommons.org/licenses/by/${by[1]}.0/` : undefined
 }
 
 export function isTrackFile(file: string): boolean {
@@ -43,6 +55,7 @@ function isCandidate(value: unknown): value is Candidate {
     typeof c.source === 'string' &&
     typeof c.file === 'string' &&
     isTrackFile(c.file) &&
+    (c.credit === undefined || typeof c.credit === 'string') &&
     typeof c.chosen === 'boolean'
   )
 }
@@ -64,7 +77,7 @@ export function choose(tracks: Candidate[], id: string): ListChange {
   const track = tracks.find((t) => t.id === id)
   if (!track) return { ok: false, reason: 'Unknown track.' }
   if (track.chosen) return { ok: true, tracks }
-  if (!isAllowedLicence(track.licence)) return { ok: false, reason: `"${track.licence}" is not allowed: only CC0, CC BY or made for Hack star.` }
+  if (!isAllowedLicence(track.licence)) return { ok: false, reason: `"${track.licence}" is not allowed: only CC0, CC BY with its version (e.g. CC BY 3.0) or made for Hack star.` }
   if (tracks.filter((t) => t.chosen).length >= MAX_CHOSEN) return { ok: false, reason: `Already ${MAX_CHOSEN} tracks chosen: unchoose one first.` }
   return { ok: true, tracks: tracks.map((t) => (t.id === id ? { ...t, chosen: true } : t)) }
 }

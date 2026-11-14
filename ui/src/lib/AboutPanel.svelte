@@ -2,6 +2,7 @@
   import { version } from '../../package.json'
   import licence from '../../../LICENSE?raw'
   import { t } from './i18n'
+  import { licenceUrl } from './music/candidates'
   import { TRACKS } from './music/tracks'
 
   let { onClose }: { onClose: () => void } = $props()
@@ -27,14 +28,17 @@
     {#if TRACKS.length === 0}
       <p>{$t('about.noMusic')}</p>
     {:else}
-      <ul class="credits">
+      <ul class="credits" lang="en">
         {#each TRACKS as track (track.id)}
+          {@const url = licenceUrl(track.licence)}
           <li>
-            <strong>{track.title}</strong> — {track.author} ·
-            <a href={track.source} target="_blank" rel="noopener noreferrer">{track.licence}</a>
+            “<a href={track.source} target="_blank" rel="noopener noreferrer">{track.title}</a>” —
+            {track.credit ?? track.author} ·
+            {#if url}<a href={url} target="_blank" rel="noopener noreferrer license">{track.licence}</a>{:else}{track.licence}{/if}
           </li>
         {/each}
       </ul>
+      <p class="note">{$t('about.musicNote')}</p>
     {/if}
 
     <h3>{$t('about.licence')}</h3>

@@ -8,6 +8,7 @@
 </script>
 
 <!-- Developer page (/?dev): English only, reached by its address or from Settings in developer mode. -->
+<div class="page">
 <main>
   <header>
     <h1>Hack star · developer page</h1>
@@ -32,8 +33,20 @@
     </section>
   {/if}
 </main>
+</div>
 
 <style>
+  /* The game's html/body do not scroll, so the page scrolls inside its own full-screen layer. */
+  .page {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    background: linear-gradient(#2c1d7a, #1b1446);
+    color: white;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
   main {
     max-width: 64rem;
     margin: 0 auto;

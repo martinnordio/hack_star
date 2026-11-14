@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isAllowedLicence, MAX_CANDIDATES, MAX_CHOSEN, type Candidate } from '../music/candidates'
+  import { isAllowedLicence, licenceUrl, MAX_CANDIDATES, MAX_CHOSEN, type Candidate } from '../music/candidates'
 
   type Row = Candidate & { hasFile: boolean }
 
@@ -16,10 +16,10 @@
 
   const REQUEST = `Find candidate music tracks for Hack star (an open-source, MIT-licensed browser game).
 - Moods: big-drum anthemic pop-rock; a funky dance groove; classic arcade or chiptune game music. Styles only: no track that imitates a specific artist or song.
-- Licence: CC0, or CC BY (any version, the credit is shown in the game), or made by us. Never NC (non-commercial) or ND (no changes). Check the licence on the source's own page.
+- Licence: CC0, or CC BY with its version (e.g. CC BY 3.0; the credit is shown in the game), or made by us. Never NC (non-commercial), ND (no changes) or SA (share-alike). Check the licence on the source's own page.
 - No copied or sampled recordings, melodies or lyrics.
 - At most ${MAX_CANDIDATES} candidates in total (now {count}); MP3, at most about 3 MB each.
-- For each track record: id (lowercase, dashes), title, author, licence, source (the page with the licence), file (<id>.mp3).
+- For each track record: id (lowercase, dashes), title, author, licence, source (the page with the licence), file (<id>.mp3), and credit (only if the page asks for an exact credit text).
 - Add each one to ui/dev/music/candidates.local.json (git-ignored, never committed) with "chosen": false, and download its MP3 into ui/dev/music/files/.`
 
   const request = $derived(REQUEST.replace('{count}', String(tracks.length)))
@@ -93,9 +93,17 @@
           <tr class:chosen={track.chosen}>
             <td>
               <strong>{track.title}</strong><br />
-              {track.author} · <a href={track.source} target="_blank" rel="noopener noreferrer">source</a>
+              {track.author} · <a href={track.source} target="_blank" rel="noopener noreferrer">source page</a>
+              {#if track.credit}<br /><small>Credit asked for: {track.credit}</small>{/if}
             </td>
-            <td class:bad={!isAllowedLicence(track.licence)}>{track.licence}</td>
+            <td class:bad={!isAllowedLicence(track.licence)}>
+              {#if licenceUrl(track.licence)}
+                <a href={licenceUrl(track.licence)} target="_blank" rel="noopener noreferrer license">{track.licence}</a>
+              {:else}
+                {track.licence}
+              {/if}
+              {#if !isAllowedLicence(track.licence)}<br /><small>not allowed</small>{/if}
+            </td>
             <td>
               {#if track.hasFile}
                 <button onclick={() => toggle(track)}>{playing === track.id ? '■ Stop' : '▶ Play'}</button>

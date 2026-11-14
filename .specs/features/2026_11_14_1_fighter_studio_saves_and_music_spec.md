@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–13 done; music kept out of the repository (S32, D16) |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–13 done; music kept out of the repository (S32, D16); up to ten tracks and licence links (S33) |
 
 ---
 
@@ -138,30 +138,32 @@ review to the same page.
 ### Music
 
 - **S18 — Music switch:** Settings has a control to turn music on or off and to choose one of
-  five tracks. Music is on the first time; the choice is saved on this device for all its
+  the shipped tracks (up to ten). Music is on the first time; the choice is saved on this device for all its
   accounts, and kept as in S10.
 - **S19 — When it plays:** With music on, the chosen track plays during every match —
   against bots, in Training and with friends — starting when the match starts and stopping
   when it ends or the player leaves it. It pauses while the tab is hidden and goes on when the
   tab is shown again and the match is still running. With music off, the game is silent.
-- **S20 — Choosing the five:** On the developer page (S25), the team listens to up to 15
-  candidate tracks and marks the five that ship; the five are chosen only after listening and
+- **S20 — Choosing the tracks:** On the developer page (S25), the team listens to up to 15
+  candidate tracks and marks up to ten that ship; they are chosen only after listening and
   after their licences are checked (S22). Players never see or hear the other candidates, and
   their files are not part of the game players download.
 - **S21 — Moods:** The five tracks cover different moods, for example big-drum anthemic
   pop-rock, a funky dance groove, and classic arcade or chiptune game music. These are
   styles only: no track imitates a specific artist or song.
 - **S22 — Music rights:** Every candidate and shipped track is made for the project, or is
-  under CC0, or under CC BY (any version) with its credit shown as in S23. Licences that
-  forbid commercial use (NC) or changes (ND) are never used. No track copies or samples an
+  under CC0, or under CC BY with its version (e.g. CC BY 3.0) with its credit shown as in S23. Licences that
+  forbid commercial use (NC) or changes (ND), or ask for share-alike (SA), are never used. No track copies or samples an
   existing recording, melody or lyrics.
 
 ### About and credits
 
 - **S23 — About panel:** Settings opens an **About** panel showing the game's name and
-  version, the credits of every shipped track (title, author, licence and a link to the
-  source), and the MIT licence with its copyright line (© 2026 Martin Nordio and Mattia
-  Nordio).
+  version, the credits of every shipped track (title linked to its source, author or the
+  exact credit the source asks for, and the licence linked to its official Creative Commons
+  page), a note that the tracks are unchanged and not under the MIT licence, and the MIT licence with its copyright line (© 2026 Martin Nordio and Mattia
+  Nordio). The credits are read from the developer's local track list, so they always match
+  the tracks in the build.
 
 ### Developer mode and developer page
 
@@ -204,6 +206,10 @@ review to the same page.
   download themselves, saying they are not included and that whoever uses them must check
   each licence on its source page and is responsible for it. This replaces the shipped tracks
   and the repository credits of S20, S22 and S31.
+- **S33 — Up to ten tracks and licence links (added while implementing):** Up to ten tracks
+  can be chosen instead of five; a CC BY licence must name its version; the About panel and
+  the developer page link each licence to its official page, and the developer page shows the
+  credit a source asks for. The developer page has its own dark, scrolling background.
 
 ### Open questions
 

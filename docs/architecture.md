@@ -184,7 +184,7 @@ its look with the fighter's type, so rooms and models get it like any look.
 
 | File | What |
 |------|------|
-| `music/candidates.ts` | Rules shared by the game and the dev server: allowed licences (CC0, CC BY, made for Hack star), at most 5 chosen and 15 candidates, no delete of a chosen track, `shipped()`, `mergeCandidates()` (repository list + local list, local wins) |
+| `music/candidates.ts` | Rules shared by the game and the dev server: allowed licences (CC0, CC BY with its version, made for Hack star), `licenceUrl()` (official licence page), at most 10 chosen and 15 candidates, no delete of a chosen track, `shipped()`, `mergeCandidates()` (repository list + local list, local wins) |
 | `music/tracks.json`, `music/tracks.ts` | `TRACKS`: `tracks.json` (repository, always empty) together with the optional, git-ignored `tracks.local.json` written by the developer page (`import.meta.glob`, so a missing local file is fine); read by Settings, the player and the About panel |
 | `music/player.ts` | `musicTrack(options, tracks)` and one looping audio element; `Arena.svelte` starts it when a match or Training starts and stops it at the end or when the player leaves; it pauses while the tab is hidden |
 | `ui/dev/musicPlugin.ts` | Vite plugin for `npm run dev` only (`apply: 'serve'`): `/__dev/music/list`, `/file/<name>`, `choose` / `unchoose` / `delete` (only from this computer). It reads `ui/dev/music/candidates.json` (repository, empty) plus `candidates.local.json`, and writes only local, git-ignored files: `candidates.local.json`, `tracks.local.json`, MP3s in `ui/dev/music/files/` and `ui/public/assets/music/`. The repository never contains music |

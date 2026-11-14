@@ -104,6 +104,7 @@ export const en = {
   'about.version': 'Version {version}',
   'about.music': 'Music',
   'about.noMusic': 'No music yet.',
+  'about.musicNote': 'Each track is used unchanged and keeps its own licence (linked above); the MIT licence below covers Hack star, not the music.',
   'about.licence': 'Licence',
   'about.licenceIntro': 'Hack star is open source under the MIT licence:',
   'settings.music': 'Music',
