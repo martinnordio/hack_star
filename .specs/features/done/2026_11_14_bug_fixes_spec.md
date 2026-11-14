@@ -21,6 +21,7 @@
 | 2026-11-14 | review | `REVIEW:` | GitHub Copilot | Re-run after S4 fix; both stale-tab fighters persist with distinct IDs; UI screenshots remain manual |
 | 2026-11-14 | review | `CODE REVIEW:` | GitHub Copilot | Approve with follow-ups; prior S4 blocker resolved; UI screenshots remain manual |
 | 2026-11-14 | implementation | `CLOSE:` | GitHub Copilot | Spec closed; implementation, regression coverage and review artifacts complete |
+| 2026-11-14 | pr | `PR:` | GitHub Copilot | Pull request opened and issue summary updated |
 
 ---
 
