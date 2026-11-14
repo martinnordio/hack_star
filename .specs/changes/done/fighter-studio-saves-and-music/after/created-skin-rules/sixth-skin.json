@@ -1,0 +1,37 @@
+[
+  {
+    "add": 1,
+    "ok": true,
+    "skinId": "s1"
+  },
+  {
+    "add": 2,
+    "ok": true,
+    "skinId": "s2"
+  },
+  {
+    "add": 3,
+    "ok": true,
+    "skinId": "s3"
+  },
+  {
+    "add": 4,
+    "ok": true,
+    "skinId": "s4"
+  },
+  {
+    "add": 5,
+    "ok": true,
+    "skinId": "s5"
+  },
+  {
+    "add": 6,
+    "ok": false,
+    "reason": "limit"
+  },
+  {
+    "deleteWorn": "s5",
+    "wearsAfter": "default",
+    "type": "tank"
+  }
+]

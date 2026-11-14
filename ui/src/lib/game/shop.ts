@@ -1,7 +1,7 @@
 import type { Fighter, Skin } from '../fighters'
 import { isHackActive, isUnlocked } from '../hacks'
 import { isCreatedFighterId, type Progress } from '../progress'
-import { lookSkin } from '../created'
+import { createdSkinLook, lookSkin } from '../created'
 import { pay, type Purchase } from './economy'
 import { SETTINGS, type Settings } from './settings'
 
@@ -22,8 +22,8 @@ export function ownsSkin(progress: Progress, fighterId: string, skinId: string):
 /** The skin a fighter wears: the chosen one if it is owned (it may not be after a hack reset). */
 export function wornSkin(progress: Progress, fighterId: string): string {
   if (isCreatedFighterId(fighterId)) {
-    const look = progress.createdFighters.find((fighter) => fighter.id === fighterId)?.look
-    return look ? lookSkin(look) : 'default'
+    const fighter = progress.createdFighters.find((f) => f.id === fighterId)
+    return fighter ? lookSkin(createdSkinLook(fighter, progress.selectedSkins[fighterId] ?? 'default')) : 'default'
   }
   const chosen = progress.selectedSkins[fighterId] ?? 'default'
   return ownsSkin(progress, fighterId, chosen) ? chosen : 'default'

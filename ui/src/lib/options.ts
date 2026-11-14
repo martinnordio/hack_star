@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store'
 import type { BotLevel } from './game/settings'
+import { browserStorage, reportSave } from './saving'
 
 export const OPTIONS_KEY = 'hack-star.options'
 export const BOT_COUNTS = [1, 2, 3, 4, 5] as const
@@ -8,10 +9,16 @@ export const BOT_COUNTS = [1, 2, 3, 4, 5] as const
 export interface Options {
   botLevel: BotLevel
   botCount: number
+  /** Developer mode on this device (the code is checked when it is turned on). */
+  developer: boolean
+  /** Music in matches. */
+  music: boolean
+  /** Id of the chosen track; empty or unknown means the first track. */
+  track: string
 }
 
 export function defaultOptions(): Options {
-  return { botLevel: 'easy', botCount: 3 }
+  return { botLevel: 'easy', botCount: 3, developer: false, music: true, track: '' }
 }
 
 type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem'>
@@ -27,23 +34,29 @@ export function loadOptions(storage: KeyValueStorage): Options {
     const o = raw as Record<string, unknown>
     if (typeof o.botLevel === 'string' && LEVELS.includes(o.botLevel)) options.botLevel = o.botLevel as BotLevel
     if ((BOT_COUNTS as readonly unknown[]).includes(o.botCount)) options.botCount = o.botCount as number
+    if (typeof o.developer === 'boolean') options.developer = o.developer
+    if (typeof o.music === 'boolean') options.music = o.music
+    if (typeof o.track === 'string' && o.track.length <= 40) options.track = o.track
   } catch {
     // Unreadable: keep the defaults.
   }
   return options
 }
 
-export function saveOptions(storage: KeyValueStorage, options: Options): void {
+/** Whether the options could be saved. */
+export function saveOptions(storage: KeyValueStorage, options: Options): boolean {
   try {
     storage.setItem(OPTIONS_KEY, JSON.stringify(options))
+    return true
   } catch {
     // Storage blocked: the choice lasts until the page is closed.
+    return false
   }
 }
 
 function createOptionsStore(storage: KeyValueStorage) {
   const store = writable(loadOptions(storage))
-  store.subscribe((options) => saveOptions(storage, options))
+  store.subscribe((options) => reportSave(saveOptions(storage, options)))
   return store
 }
 
@@ -55,4 +68,6 @@ function memoryStorage(): KeyValueStorage {
   }
 }
 
-export const options = createOptionsStore(typeof window === 'undefined' ? memoryStorage() : window.localStorage)
+export const options = createOptionsStore(
+  (typeof window === 'undefined' ? null : browserStorage()) ?? memoryStorage(),
+)

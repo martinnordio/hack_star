@@ -23,11 +23,11 @@ describe('room', () => {
   })
 
   it('sends each created fighter ID, encoded look and name in its room member', () => {
-    const look = { name: 'Comet', type: 'tank' as const, main: '#ff8a1a', second: '#ffd23f', head: 1, body: 0 }
+    const look = { name: 'Comet', type: 'tank' as const, main: '#ff8a1a', second: '#ffd23f', head: 1, body: 0, hands: 0, legs: 0 }
     const fighter = createdFighter(look, 'custom-2')
     const progress = {
       ...defaultProgress(),
-      createdFighters: [{ id: 'custom', look: { ...look, name: 'Nova' } }, { id: fighter.id, look }],
+      createdFighters: [{ id: 'custom', look: { ...look, name: 'Nova' }, skins: [] }, { id: fighter.id, look, skins: [] }],
       selectedFighter: fighter.id,
     }
     expect(memberFor(progress, [fighter])).toMatchObject({

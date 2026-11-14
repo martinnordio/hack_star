@@ -1,7 +1,14 @@
 <script lang="ts">
   import { Canvas, T } from '@threlte/core'
+  import { lookSkin } from './created'
   import FighterStage from './FighterStage.svelte'
   import { VARIANTS } from './models/skins3d'
+
+  // Created fighters: every head and body, and each body with new hands and legs.
+  const created: [string, string][] = [0, 1, 2, 3, 4].flatMap((n) => [
+    ['custom', lookSkin({ type: 'tank', main: '#2fb5ff', second: '#ffd23f', head: n, body: n, hands: 0, legs: 0 })],
+    ['custom', lookSkin({ type: 'tank', main: '#e8322b', second: '#39d353', head: (n + 2) % 5, body: n, hands: 1 + (n % 2), legs: 2 - (n % 2) })],
+  ])
 
   const all: [string, string][] = [
     ['blaze', 'default'], ['blaze', 'lava'], ['blaze', 'phoenix'],
@@ -16,6 +23,7 @@
     ['kira', 'default'], ['kira', 'sakura'],
     ['marina', 'default'], ['drako', 'default'], ['spectra', 'default'], ['mecha', 'default'], ['zeus', 'default'],
     ...Object.entries(VARIANTS).flatMap(([fighter, skins]) => Object.keys(skins).map((skin): [string, string] => [fighter, skin])),
+    ...created,
   ]
   const only = new URLSearchParams(location.search).get('gallery')
   const combos = only ? all.filter(([f]) => f === only) : all

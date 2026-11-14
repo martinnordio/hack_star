@@ -1,0 +1,14 @@
+{
+  "log": [
+    "pause",
+    "play /assets/music/t1.mp3",
+    "— hidden",
+    "pause",
+    "— shown",
+    "play /assets/music/t1.mp3",
+    "— stop",
+    "pause"
+  ],
+  "musicOff": null,
+  "noTracks": null
+}

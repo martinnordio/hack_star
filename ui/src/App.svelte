@@ -21,6 +21,7 @@
   import { t } from './lib/i18n'
   import CreatorScreen from './lib/CreatorScreen.svelte'
   import { withCreated } from './lib/created'
+  import { dismissSaveNotice, saveNotice } from './lib/saving'
 
   type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
 
@@ -34,6 +35,7 @@
   let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
   let openFighterId = $state<string>()
   let creatorFighterId = $state<string>()
+  let creatorSkinId = $state<string>()
   let catalogue = $state<Fighter[]>()
   // The server's fighters plus this account's created fighter.
   const fighters = $derived(catalogue ? withCreated(catalogue, $progress) : undefined)
@@ -142,17 +144,29 @@
       onSelected={() => (screen = 'home')}
       onChange={(id) => {
         creatorFighterId = id
+        creatorSkinId = undefined
+        screen = 'creator'
+      }}
+      onSkin={(id, skinId) => {
+        creatorFighterId = id
+        creatorSkinId = skinId
         screen = 'creator'
       }}
     />
   </Panel>
 {:else if screen === 'creator'}
-  <Panel title={$t(creatorFighterId ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
+  <Panel
+    title={$t(creatorSkinId ? (creatorSkinId === 'new' ? 'createdSkins.newTitle' : 'createdSkins.editTitle') : creatorFighterId ? 'creator.editTitle' : 'creator.title')}
+    onBack={() => (screen = creatorSkinId ? 'fighter' : 'fighters')}
+  >
     <CreatorScreen
       fighterId={creatorFighterId}
+      skinId={creatorSkinId}
       onDone={() => {
+        const backToFighter = creatorSkinId !== undefined
         creatorFighterId = undefined
-        screen = 'fighters'
+        creatorSkinId = undefined
+        screen = backToFighter ? 'fighter' : 'fighters'
       }}
     />
   </Panel>
@@ -190,7 +204,43 @@
   </Panel>
 {/if}
 
+{#if $saveNotice === 'shown'}
+  <div class="save-notice" role="alert">
+    <span>{$t('saving.blocked')}</span>
+    <button onclick={dismissSaveNotice}>{$t('common.close')}</button>
+  </div>
+{/if}
+
 <style>
+  .save-notice {
+    position: fixed;
+    left: 50%;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 50;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: min(34rem, calc(100% - 2rem));
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: #2a1d1d;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 0.3rem 1rem #0008;
+  }
+
+  .save-notice button {
+    flex: none;
+    padding: 0.4rem 0.8rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: #ffd23f;
+    color: #2a1d1d;
+    font: inherit;
+    cursor: pointer;
+  }
+
   .message {
     position: fixed;
     inset: 0;

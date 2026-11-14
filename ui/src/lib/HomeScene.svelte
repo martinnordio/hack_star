@@ -11,10 +11,12 @@
     /** Play the entrance (drop-in, burst) instead of starting at rest. */
     entrance: boolean
     skipped?: boolean
+    /** Turn the fighter slowly, so every side can be seen (creator preview). */
+    turning?: boolean
     onEntranceEnd?: () => void
   }
 
-  let { fighterId, skinId, entrance, skipped = false, onEntranceEnd }: Props = $props()
+  let { fighterId, skinId, entrance, skipped = false, turning = false, onEntranceEnd }: Props = $props()
 
   const ENTRANCE_SECONDS = 2.2
 
@@ -72,8 +74,10 @@
   })
 
   let time = 0
+  let turn = $state(0)
   useTask((delta) => {
     time += delta
+    if (turning) turn = (turn + delta * 0.6) % (Math.PI * 2)
     rays.rotation.z = time * 0.15
     rayMaterial.opacity = 0.12 + Math.sin(time * 1.5) * 0.04
 
@@ -122,6 +126,6 @@
   <T.TorusGeometry args={[1.5, 0.05, 8, 48]} />
 </T.Mesh>
 
-<FighterStage {fighterId} {skinId} position={[0, fighterY, 0]} rotationY={spin} scale={1.25} />
+<FighterStage {fighterId} {skinId} position={[0, fighterY, 0]} rotationY={spin + turn} scale={1.25} />
 
 <T is={burst} />

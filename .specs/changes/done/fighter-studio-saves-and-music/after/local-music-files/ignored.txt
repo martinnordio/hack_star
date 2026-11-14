@@ -1,0 +1,6 @@
+ui/dev/music/candidates.local.json  ignored by ui/.gitignore:16:dev/music/candidates.local.json
+ui/src/lib/music/tracks.local.json  ignored by ui/.gitignore:17:src/lib/music/tracks.local.json
+ui/dev/music/files/x.mp3  ignored by ui/.gitignore:15:dev/music/files/
+ui/public/assets/music/x.mp3  ignored by ui/.gitignore:18:public/assets/music/
+LICENSE  not ignored
+vite server.fs: fs: { allow: ['.', '../LICENSE'] },

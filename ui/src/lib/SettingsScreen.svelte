@@ -5,9 +5,28 @@
   import { resetProgress } from './progress'
   import { language, setLanguage, t, type TextKey } from './i18n'
   import { LANGUAGES, LANGUAGE_NAMES } from './i18n/languages'
+  import { turnOnDeveloper } from './dev/developer'
+  import AboutPanel from './AboutPanel.svelte'
+
+  let aboutOpen = $state(false)
+  import { TRACKS } from './music/tracks'
+  import { musicTrack } from './music/player'
+
+  const currentTrack = $derived(musicTrack({ ...$options, music: true }, TRACKS)?.id)
 
   let confirming = $state(false)
   let resetDone = $state(false)
+  let askingCode = $state(false)
+  let code = $state('')
+  let wrongCode = $state(false)
+
+  function submitCode() {
+    wrongCode = !turnOnDeveloper(code)
+    if (!wrongCode) {
+      askingCode = false
+      code = ''
+    }
+  }
 
   function reset() {
     $progress = resetProgress($progress)
@@ -70,6 +89,28 @@
 
 <p class="note">{$t('settings.note')}</p>
 
+<section>
+  <h3>{$t('settings.music')}</h3>
+  {#if TRACKS.length === 0}
+    <p class="note">{$t('settings.musicNone')}</p>
+  {:else}
+    <div class="music" role="radiogroup" aria-label={$t('settings.music')}>
+      <button class="plain" role="radio" aria-checked={$options.music} onclick={() => ($options.music = true)}>🎵 {$t('settings.musicOn')}</button>
+      <button class="plain" role="radio" aria-checked={!$options.music} onclick={() => ($options.music = false)}>🔇 {$t('settings.musicOff')}</button>
+    </div>
+    {#if $options.music}
+      <div class="music tracks" role="radiogroup" aria-label={$t('settings.musicTrack')}>
+        {#each TRACKS as track (track.id)}
+          <button class="plain" role="radio" aria-checked={currentTrack === track.id} onclick={() => ($options.track = track.id)}>
+            {track.title}
+          </button>
+        {/each}
+      </div>
+    {/if}
+    <p class="note">{$t('settings.musicNote')}</p>
+  {/if}
+</section>
+
 <section class="reset">
   <h3>{$t('settings.startAgain')}</h3>
   {#if confirming}
@@ -86,7 +127,92 @@
   {/if}
 </section>
 
+<section class="developer">
+  <h3>{$t('settings.developer')}</h3>
+  {#if $options.developer}
+    <p class="note">{$t('settings.developerOn')}</p>
+    <div class="row">
+      <a class="plain link" href="/?dev">🛠️ {$t('settings.developerPage')}</a>
+      <button class="plain" onclick={() => ($options.developer = false)}>{$t('settings.developerTurnOff')}</button>
+    </div>
+  {:else if askingCode}
+    <form class="row" onsubmit={(e) => (e.preventDefault(), submitCode())}>
+      <label class="sr" for="developer-code">{$t('settings.developerCode')}</label>
+      <input
+        id="developer-code"
+        type="password"
+        autocomplete="off"
+        placeholder={$t('settings.developerCode')}
+        bind:value={code}
+        oninput={() => (wrongCode = false)}
+      />
+      <button class="plain" type="submit">{$t('settings.developerTurnOn')}</button>
+      <button class="plain" type="button" onclick={() => ((askingCode = false), (wrongCode = false))}>{$t('common.cancel')}</button>
+    </form>
+    {#if wrongCode}<p class="warn" role="alert">{$t('settings.developerWrongCode')}</p>{/if}
+  {:else}
+    <button class="plain" onclick={() => (askingCode = true)}>🛠️ {$t('settings.developerTurnOn')}</button>
+  {/if}
+</section>
+
+<section>
+  <button class="plain about" onclick={() => (aboutOpen = true)}>ℹ️ {$t('about.open')}</button>
+</section>
+
+{#if aboutOpen}
+  <AboutPanel onClose={() => (aboutOpen = false)} />
+{/if}
+
 <style>
+  .about {
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.8rem;
+    font-weight: 800;
+  }
+
+  .music {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .music button {
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.8rem;
+    font-weight: 800;
+  }
+
+  .tracks {
+    margin-top: 0.5rem;
+  }
+
+  .developer input {
+    padding: 0.45rem 0.7rem;
+    border-radius: 0.8rem;
+    border: 3px solid #000;
+    font: inherit;
+  }
+
+  .link {
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    border: 3px solid #000;
+    border-radius: 0.8rem;
+    background: #160f33cc;
+    box-shadow: 0 0.25rem 0 #000;
+    color: white;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
   section {
     max-width: 40rem;
     margin: 0 auto 1rem;

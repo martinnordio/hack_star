@@ -14,16 +14,44 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
   import { t, tOr } from './i18n'
-  import { isCreatedFighterId } from './progress'
+  import { isCreatedFighterId, MAX_CREATED_SKINS } from './progress'
+  import { chooseCreatedSkin, createdSkinLook, deleteCreatedSkin, lookSkin } from './created'
 
   let {
     fighter,
     fighters,
     onSelected,
     onChange,
-  }: { fighter: Fighter; fighters: Fighter[]; onSelected: () => void; onChange: (id: string) => void } = $props()
+    onSkin,
+  }: {
+    fighter: Fighter
+    fighters: Fighter[]
+    onSelected: () => void
+    onChange: (id: string) => void
+    /** Opens the skin editor of a created fighter: `'new'` or a skin id. */
+    onSkin: (fighterId: string, skinId: string) => void
+  } = $props()
 
   const created = $derived(isCreatedFighterId(fighter.id))
+  const createdRecord = $derived($progress.createdFighters.find((f) => f.id === fighter.id))
+  let previewCreated = $state(untrack(() => $progress.selectedSkins[fighter.id] ?? 'default'))
+  let confirmDelete = $state(false)
+
+  function previewCreatedSkin(skinId: string) {
+    if (!createdRecord) return
+    previewCreated = skinId
+    previewSkin = lookSkin(createdSkinLook(createdRecord, skinId))
+    confirmDelete = false
+  }
+
+  function deletePreviewed() {
+    if (!confirmDelete) {
+      confirmDelete = true
+      return
+    }
+    progress.update((p) => deleteCreatedSkin(p, fighter.id, previewCreated))
+    previewCreatedSkin('default')
+  }
 
   const today = new Date()
 
@@ -81,11 +109,11 @@
   }
 
   function select() {
-    progress.update((p) => ({
-      ...p,
-      selectedFighter: fighter.id,
-      selectedSkins: { ...p.selectedSkins, [fighter.id]: previewSkin },
-    }))
+    progress.update((p) =>
+      created
+        ? { ...chooseCreatedSkin(p, fighter.id, previewCreated), selectedFighter: fighter.id }
+        : { ...p, selectedFighter: fighter.id, selectedSkins: { ...p.selectedSkins, [fighter.id]: previewSkin } },
+    )
     onSelected()
   }
 </script>
@@ -154,6 +182,36 @@
           ⚡ {$t('fighterDetail.needMoreToUpgrade', { credits: nextCost - wallet })}
         {/if}
       </button>
+    {/if}
+
+    {#if created && unlocked && createdRecord}
+      <h4>{$t('fighterDetail.skins')} · {createdRecord.skins.length}/{MAX_CREATED_SKINS}</h4>
+      <ul class="skins">
+        {#each ['default', ...createdRecord.skins.map((s) => s.id)] as skinId, i (skinId)}
+          <li>
+            <button
+              class="skin"
+              class:active={previewCreated === skinId}
+              style="--skin-rarity: {RARITY_COLORS[fighter.rarity]}"
+              onclick={() => previewCreatedSkin(skinId)}
+            >
+              <img src={portrait(fighter.id, lookSkin(createdSkinLook(createdRecord, skinId)))} alt="" />
+              <span class="skin-name">{skinId === 'default' ? $t('createdSkins.default') : $t('createdSkins.skin', { n: i })}</span>
+            </button>
+          </li>
+        {/each}
+      </ul>
+      <div class="skin-actions">
+        {#if createdRecord.skins.length < MAX_CREATED_SKINS}
+          <button onclick={() => onSkin(fighter.id, 'new')}>➕ {$t('createdSkins.new')}</button>
+        {/if}
+        {#if previewCreated !== 'default'}
+          <button onclick={() => onSkin(fighter.id, previewCreated)}>✏️ {$t('createdSkins.edit')}</button>
+          <button class="danger" onclick={deletePreviewed}>
+            🗑️ {confirmDelete ? $t('createdSkins.confirmDelete') : $t('createdSkins.delete')}
+          </button>
+        {/if}
+      </div>
     {/if}
 
     {#if !created}
@@ -377,6 +435,29 @@
     font-weight: 800;
     text-transform: uppercase;
     color: var(--skin-rarity);
+  }
+
+  .skin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .skin-actions button {
+    padding: 0.35rem 0.8rem;
+    border-radius: 0.8rem;
+    border: 3px solid #000;
+    background: #160f33;
+    box-shadow: 0 0.2rem 0 #000;
+    color: white;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .skin-actions .danger {
+    background: #8a1030;
   }
 
   .skin-price {

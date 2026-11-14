@@ -5,6 +5,7 @@
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/art-tools-research`
+> **Issue:** #21
 
 ## Stage log
 
@@ -12,6 +13,7 @@
 |------|-------|---------|-------|------|
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 written (spec 3 of 4) |
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: open questions answered (S10–S13); link to the renamed spec 2 |
+| 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #21 created |
 
 ---
 

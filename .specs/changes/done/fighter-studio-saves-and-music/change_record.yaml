@@ -1,0 +1,192 @@
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
+version: 1
+branch: feature/fighter-studio-saves-and-music
+base: 9549e24
+why: |
+  The fighter creator had few parts and no skins of its own, the home screen kept an old account
+  name after a rename, and nothing protected saves from being cleared by the browser. Players
+  also asked for music while they play. Music must stay out of the public repository, so each
+  developer chooses tracks locally on a hidden developer page, and the game credits them.
+spec:
+  path: .specs/features/done/2026_11_14_1_fighter_studio_saves_and_music_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S17, S18, S19, S20, S22, S23, S24, S25, S26, S27, S28, S29, S30, S31, S32, S33]
+changes:
+  - id: created-look-id
+    kind: message
+    change: modified
+    object: created-fighter skin id in room messages (server CREATED_LOOK)
+    note: The 16-character id stays valid; an 18-character id adds head/body 0-4 and hands/legs 0-2.
+    statements: [S1, S17]
+    examples:
+      - name: old-and-new-id
+        input: |
+          CREATED_LOOK.match("L000ff000000ff00")      # 16 characters, previous version
+          CREATED_LOOK.match("L04421ff000000ff00")    # 18 characters, new parts
+  - id: saved-progress-v7
+    kind: data-format
+    change: modified
+    object: hack-star.accounts progress (version 7)
+    note: Created fighters gain hands, legs and up to five skins; v2-v6 saves load with the same look.
+    statements: [S10, S12, S13]
+    examples:
+      - name: v6-created-fighter
+        input: |
+          parseProgress({ version: 6, credits: 500, createdFighters: [{ id: "custom",
+            look: { name: "Nova", type: "tank", main: "#ff0000", second: "#00ff00",
+                    head: 1, body: 2 } }] })
+  - id: created-skin-rules
+    kind: output
+    change: added
+    object: add, change, delete and wear a created fighter's skin
+    note: At most five, free; deleting the worn skin wears the default look; type and stats unchanged.
+    statements: [S5, S6, S7]
+    examples:
+      - name: sixth-skin
+        input: |
+          addCreatedSkin(progressWithFiveSkins, "custom", look)
+  - id: creator-screen
+    kind: ui
+    change: modified
+    object: creator (new fighter and skin mode)
+    note: Five heads and bodies, three hands and legs, turning preview; skin mode keeps type and name.
+    statements: [S1, S2, S3, S4, S29, S30]
+    examples:
+      - name: new-fighter
+        input: |
+          route=/ → Fighters → Create, CREATOR active, 500 C
+        views: [desktop, phone]
+  - id: fighter-detail-skins
+    kind: ui
+    change: modified
+    object: created fighter's screen with its skins
+    note: Default look plus up to five skins, New skin while fewer than five, edit and delete.
+    statements: [S5, S6, S29, S30]
+    examples:
+      - name: two-skins
+        input: |
+          one created fighter with two skins, the second worn
+        views: [desktop, phone]
+  - id: account-name-home
+    kind: output
+    change: modified
+    object: account name on the home screen after rename / switch
+    note: A typed but unsaved rename is now saved when the panel closes or another account is picked.
+    statements: [S8, S9]
+    extraction: manual
+    manual_reason: Component behaviour of AccountsPanel.svelte; it was reproduced and fixed with a browser check in Step 1, not re-captured here.
+    examples:
+      - name: rename-then-close
+        input: |
+          accounts panel → rename "Player 1" to "Alex" → close without pressing Save
+  - id: saving-notice
+    kind: message
+    change: added
+    object: saving.blocked notice and persistent storage request
+    note: Shown once per visit when localStorage cannot be written; navigator.storage.persist() asked once.
+    statements: [S11, S14, S15, S29]
+    examples:
+      - name: private-browsing
+        input: |
+          localStorage.setItem throws QuotaExceededError
+  - id: options-music-developer
+    kind: config
+    change: modified
+    object: hack-star.options
+    note: New keys music (true), track ("" = first), developer (false); older options load with these defaults.
+    statements: [S18, S24, S10]
+    examples:
+      - name: defaults
+        input: |
+          parseOptions({ botLevel: "easy", botCount: 3 })
+  - id: music-in-matches
+    kind: output
+    change: added
+    object: music player in a match
+    note: Starts with the match, stops at the end or when leaving, pauses while the tab is hidden; silent when off or no tracks.
+    statements: [S19]
+    examples:
+      - name: match-lifecycle
+        input: |
+          start("t1") → hidden → shown → stop()   (fake audio element)
+  - id: settings-screen
+    kind: ui
+    change: modified
+    object: Settings
+    note: Music on/off and track list (or "Music is coming soon."), About button, Developer mode with code.
+    statements: [S18, S23, S24, S29, S30]
+    examples:
+      - name: with-tracks
+        input: |
+          route=/ → Settings, five local tracks, developer mode off
+        views: [desktop, phone]
+  - id: about-panel
+    kind: ui
+    change: added
+    object: About panel
+    note: Name, version, credits (title → source, author or credit, licence → official page), the not-MIT note, LICENSE text.
+    statements: [S23, S29, S30, S33]
+    examples:
+      - name: five-credits
+        input: |
+          route=/ → Settings → About Hack star, five local tracks
+        views: [desktop, phone]
+  - id: developer-page
+    kind: ui
+    change: added
+    object: /?dev developer page with the Music section
+    note: Asks for the code once; lists candidates with play, choose (up to ten), unchoose, delete, licence links and the request text.
+    statements: [S24, S25, S26, S27, S28, S33]
+    examples:
+      - name: music-section
+        input: |
+          route=/?dev, developer mode on, 15 local candidates, 5 chosen
+        views: [desktop]
+  - id: dev-music-endpoints
+    kind: api
+    change: added
+    object: dev server /__dev/music (list, file, choose, unchoose, delete)
+    note: Only under npm run dev and only from the same computer; writes only git-ignored local files.
+    statements: [S26, S27, S32]
+    extraction: manual
+    manual_reason: Vite middleware has no OpenAPI description; the contract is shown from the plugin's request handling.
+    examples:
+      - name: list
+        input: |
+          GET /__dev/music/list   (from 127.0.0.1)
+  - id: music-licence-rules
+    kind: output
+    change: added
+    object: isAllowedLicence, licenceUrl, choose limit
+    note: CC0, CC BY with its version or made for Hack star; never NC, ND or SA; at most ten chosen and 15 candidates.
+    statements: [S20, S22, S33]
+    examples:
+      - name: licences
+        input: |
+          ["CC0", "CC BY", "CC BY 3.0", "CC BY-SA 4.0"].map(l => [isAllowedLicence(l), licenceUrl(l)])
+  - id: local-music-files
+    kind: config
+    change: added
+    object: git-ignored music files and the LICENSE file access
+    note: ui/.gitignore keeps tracks and local lists out of git; vite fs.allow lets the dev server read ../LICENSE.
+    statements: [S32, S23]
+    examples:
+      - name: ignored
+        input: |
+          git check-ignore ui/dev/music/candidates.local.json ui/src/lib/music/tracks.local.json ui/dev/music/files/x.mp3 ui/public/assets/music/x.mp3
+breaking: |
+  None for players: older saves (v2-v6) and options load, and the previous 16-character skin id
+  is still accepted by the server and the game. A friend on the previous version cannot show an
+  18-character look and sees the fighter's default instead (S17).
+review:
+  - question: Why is no music in the repository, while the game plays music?
+    answer: |
+      To publish no third-party music. Each developer chooses tracks locally; the build includes
+      only what that developer chose, and the About panel credits exactly those tracks (S32, D16).
+  - question: Is the developer code a security control?
+    answer: |
+      No. It is the QR code M6D2 and is in the public source; it only keeps kids out. The music
+      tools that write files run only under npm run dev and only from the same computer.
+  - question: Can a malformed local list break the game?
+    answer: |
+      No. parseCandidates and the tracks loader drop entries with a bad id, file name or licence,
+      and a byte-order mark is accepted.

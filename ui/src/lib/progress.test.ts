@@ -61,7 +61,7 @@ describe('progress', () => {
     const { hackExpiries: _hackExpiries, createdFighters: _createdFighters, ...progress } = defaultProgress()
     const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'], createdFighter: null }
     const migrated = parseProgress(legacy, 1000)
-    expect(migrated?.version).toBe(6)
+    expect(migrated?.version).toBe(7)
     expect(migrated?.hackExpiries).toEqual({
       infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
       power22: null,
@@ -87,16 +87,34 @@ describe('progress', () => {
     }
     const migrated = parseProgress(v5, 1000)
     expect(migrated).toMatchObject({
-      version: 6,
+      version: 7,
       credits: 321,
       selectedFighter: 'custom',
       trophies: { custom: 42 },
       powerLevels: { custom: 13 },
       selectedSkins: { custom: 'neon' },
       ownedSkins: { custom: ['neon'] },
-      createdFighters: [{ id: 'custom', look }],
+      createdFighters: [{ id: 'custom', look: { ...look, hands: 0, legs: 0 }, skins: [] }],
     })
     expect(migrated?.hackExpiries).toEqual({ power22: null })
+  })
+
+  it('migrates version 6: every look keeps its parts, gets hands and legs 0 and no skins', () => {
+    const look = { name: 'Zap', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 2, body: 1 }
+    const v6 = {
+      ...defaultProgress(),
+      version: 6,
+      trophies: { 'custom-2': 9 },
+      createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Two' } }],
+    }
+    const migrated = parseProgress(v6)
+    expect(migrated?.version).toBe(7)
+    expect(migrated?.trophies).toEqual({ 'custom-2': 9 })
+    expect(migrated?.createdFighters).toEqual([
+      { id: 'custom', look: { ...look, hands: 0, legs: 0 }, skins: [] },
+      { id: 'custom-2', look: { ...look, name: 'Two', hands: 0, legs: 0 }, skins: [] },
+    ])
+    expect(parseProgress({ ...v6, createdFighters: [{ id: 'custom', look: { ...look, head: 3 } }] })).toBeNull()
   })
 
   it('a new account starts with 500 credits, 0 trophies and the start fighters', () => {
@@ -108,7 +126,8 @@ describe('progress', () => {
   })
 
   it('reset: 0 credits and trophies, start fighters, power 1, default skins; hacks and created fighter kept', () => {
-    const look = { name: 'Zap', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+    const look = { name: 'Zap', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2, hands: 1, legs: 2 }
+    const skins = [{ id: 's1', main: '#123456', second: '#654321', head: 4, body: 0, hands: 2, legs: 0 }]
     const before = {
       ...defaultProgress(),
       credits: 900,
@@ -119,7 +138,7 @@ describe('progress', () => {
       selectedSkins: { blaze: 'phoenix' },
       ownedSkins: { blaze: ['phoenix'] },
       activeHacks: ['power22'],
-      createdFighters: [{ id: 'custom', look }],
+      createdFighters: [{ id: 'custom', look, skins }],
     }
     const p = resetProgress(before)
     expect(p.credits).toBe(0)
@@ -130,13 +149,21 @@ describe('progress', () => {
     expect(p.ownedSkins).toEqual({})
     expect(p.selectedFighter).toBe('blaze')
     expect(p.activeHacks).toEqual(['power22'])
-    expect(p.createdFighters).toEqual([{ id: 'custom', look }])
+    expect(p.createdFighters).toEqual([{ id: 'custom', look, skins }])
   })
 
-  it('refuses a created fighter with a bad look', () => {
-    const look = { name: 'Zap', type: 'tank', main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
-    expect(parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look }] })?.createdFighters[0].look).toEqual(look)
-    expect(parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look: { ...look, main: 'red' } }] })).toBeNull()
-    expect(parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look: { ...look, head: 3 } }] })).toBeNull()
+  it('refuses a created fighter with a bad look or bad skins', () => {
+    const look = { name: 'Zap', type: 'tank', main: '#ff0000', second: '#00ff00', head: 4, body: 2, hands: 2, legs: 1 }
+    const skin = { id: 's1', main: '#123456', second: '#654321', head: 0, body: 0, hands: 0, legs: 0 }
+    const withFighter = (fighter: object) => parseProgress({ ...defaultProgress(), createdFighters: [{ id: 'custom', look, skins: [], ...fighter }] })
+    expect(withFighter({})?.createdFighters[0].look).toEqual(look)
+    expect(withFighter({ look: { ...look, main: 'red' } })).toBeNull()
+    expect(withFighter({ look: { ...look, head: 5 } })).toBeNull()
+    expect(withFighter({ look: { ...look, hands: 3 } })).toBeNull()
+    expect(withFighter({ skins: [skin] })?.createdFighters[0].skins).toEqual([skin])
+    expect(withFighter({ skins: [skin, skin] })).toBeNull()
+    expect(withFighter({ skins: [{ ...skin, id: 's6' }] })).toBeNull()
+    expect(withFighter({ skins: [1, 2, 3, 4, 5, 6].map((n) => ({ ...skin, id: `s${n}` })) })).toBeNull()
+    expect(withFighter({ skins: undefined })).toBeNull()
   })
 })

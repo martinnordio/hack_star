@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  addCreatedSkin,
   canAddCreatedFighter,
+  changeCreatedSkin,
+  chooseCreatedSkin,
   CREATED_ID,
   createdFighter,
+  deleteCreatedSkin,
   lookSkin,
   MAX_CREATED_FIGHTERS,
   nextCreatedFighterId,
@@ -14,18 +18,28 @@ import type { Fighter } from './fighters'
 import { unlock } from './game/economy'
 import { wornSkin } from './game/shop'
 import { currentFighter, isUnlocked, withHack } from './hacks'
-import { defaultProgress, TEMPORARY_HACK_SECONDS, type CreatedLook } from './progress'
+import { memberFor } from './net/room'
+import { defaultProgress, MAX_CREATED_SKINS, TEMPORARY_HACK_SECONDS, type CreatedLook } from './progress'
 
-const look: CreatedLook = { name: 'Zappy', type: 'thrower', main: '#e8322b', second: '#39d353', head: 2, body: 1 }
+const look: CreatedLook = { name: 'Zappy', type: 'thrower', main: '#e8322b', second: '#39d353', head: 2, body: 1, hands: 0, legs: 0 }
+const made = (id: string, l: CreatedLook = look) => ({ id, look: l, skins: [] })
 const blaze = { id: 'blaze', name: 'Blaze', rarity: 'Rare', type: 'spreader', idea: '', skins: [], unlocked_at_start: true } as Fighter
 
 describe('created fighter', () => {
-  it('its look travels as a 16-character skin id', () => {
+  it('its look travels as a skin id: 16 characters when older versions can draw it, else 18', () => {
     const skin = lookSkin(look)
     expect(skin).toHaveLength(16)
     const { name: _, ...rest } = look
     expect(parseLookSkin(skin)).toEqual(rest)
     expect(parseLookSkin('default')).toBeNull()
+
+    const full = { ...rest, head: 4, body: 3, hands: 2, legs: 1 }
+    expect(lookSkin(full)).toBe('L3432' + '1e8322b39d353')
+    expect(parseLookSkin(lookSkin(full))).toEqual(full)
+    expect(lookSkin({ ...rest, hands: 1 })).toHaveLength(18)
+    expect(parseLookSkin('L321e8322b39d353')).toEqual({ ...rest, head: 2, body: 1, hands: 0, legs: 0 })
+    expect(parseLookSkin('L35000e8322b39d353')).toBeNull()
+    expect(parseLookSkin('L33030e8322b39d353')).toBeNull()
   })
 
   it('creating is free; it joins the fighter list and is usable immediately', () => {
@@ -47,7 +61,7 @@ describe('created fighter', () => {
 
   it('keeps the first fighter usable and requires CREATOR for extra fighters', () => {
     const extra = createdFighter(look, 'custom-2')
-    const p = { ...defaultProgress(), credits: 99_999, createdFighters: [{ id: CREATED_ID, look }, { id: extra.id, look }] }
+    const p = { ...defaultProgress(), credits: 99_999, createdFighters: [made(CREATED_ID), made(extra.id)] }
     expect(unlock(p, extra)).toEqual({ ok: false, reason: 'locked' })
     expect(isUnlocked(p, CREATED_ID)).toBe(true)
     expect(isUnlocked(p, extra.id)).toBe(false)
@@ -60,7 +74,7 @@ describe('created fighter', () => {
     const now = Date.now()
     const p = withHack({
       ...defaultProgress(),
-      createdFighters: [{ id: CREATED_ID, look }, { id: extra.id, look }],
+      createdFighters: [made(CREATED_ID), made(extra.id)],
       selectedFighter: extra.id,
     }, 'creator', TEMPORARY_HACK_SECONDS, now)
     expect(currentFighter(p, withCreated([blaze], p)).id).toBe(extra.id)
@@ -75,7 +89,7 @@ describe('created fighter', () => {
   })
 
   it('changing costs 500 credits and keeps trophies and power', () => {
-    const p = { ...defaultProgress(), credits: 600, createdFighters: [{ id: CREATED_ID, look }], trophies: { custom: 70 }, powerLevels: { custom: 3 } }
+    const p = { ...defaultProgress(), credits: 600, createdFighters: [made(CREATED_ID)], trophies: { custom: 70 }, powerLevels: { custom: 3 } }
     const result = saveCreated(p, { ...look, name: 'Zappy 2' }, CREATED_ID)
     expect(result.ok).toBe(true)
     if (!result.ok) return
@@ -87,7 +101,7 @@ describe('created fighter', () => {
   })
 
   it('changing without enough credits is refused; INFINITY makes it free', () => {
-    const p = { ...defaultProgress(), credits: 120, createdFighters: [{ id: CREATED_ID, look }] }
+    const p = { ...defaultProgress(), credits: 120, createdFighters: [made(CREATED_ID)] }
     expect(saveCreated(p, look, CREATED_ID)).toEqual({ ok: false, reason: 'credits', missing: 380 })
     const free = saveCreated(withHack(p, 'infinite_credits', TEMPORARY_HACK_SECONDS), look, CREATED_ID)
     expect(free.ok && free.progress.credits).toBe(120)
@@ -119,7 +133,7 @@ describe('created fighter', () => {
   it('allocates the first unused stable fighter ID', () => {
     const progress = {
       ...defaultProgress(),
-      createdFighters: [{ id: 'custom', look }, { id: 'custom-3', look }],
+      createdFighters: [made('custom'), made('custom-3')],
     }
     expect(nextCreatedFighterId(progress)).toBe('custom-2')
   })
@@ -128,7 +142,7 @@ describe('created fighter', () => {
     const creator = withHack({
       ...defaultProgress(),
       credits: 700,
-      createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Second' } }],
+      createdFighters: [made('custom'), made('custom-2', { ...look, name: 'Second' })],
       trophies: { custom: 70, 'custom-2': 20 },
       powerLevels: { custom: 3, 'custom-2': 5 },
     }, 'creator', TEMPORARY_HACK_SECONDS)
@@ -142,10 +156,9 @@ describe('created fighter', () => {
   })
 
   it('refuses edits to inactive extras and creation beyond 15 fighters', () => {
-    const createdFighters = Array.from({ length: MAX_CREATED_FIGHTERS }, (_, index) => ({
-      id: index === 0 ? CREATED_ID : `custom-${index + 1}`,
-      look,
-    }))
+    const createdFighters = Array.from({ length: MAX_CREATED_FIGHTERS }, (_, index) =>
+      made(index === 0 ? CREATED_ID : `custom-${index + 1}`),
+    )
     const full = withHack({ ...defaultProgress(), createdFighters }, 'creator', TEMPORARY_HACK_SECONDS)
     expect(canAddCreatedFighter(full)).toBe(false)
     expect(saveCreated(full, look)).toEqual({ ok: false, reason: 'limit' })
@@ -161,5 +174,60 @@ describe('created fighter', () => {
     const locked = { ...blaze, id: 'locked', name: 'Locked' }
     const list = withCreated([locked, blaze], first.progress)
     expect(list.map((fighter) => fighter.id)).toEqual(['blaze', 'custom', 'locked'])
+  })
+})
+
+describe('skins of created fighters', () => {
+  const parts = { main: '#ff5fa8', second: '#3a5bff', head: 4, body: 3, hands: 2, legs: 1 }
+  const created = () => {
+    const result = saveCreated({ ...defaultProgress(), credits: 7 }, look)
+    if (!result.ok) throw new Error(result.reason)
+    return result.progress
+  }
+
+  it('adds up to five free skins and wears the new one', () => {
+    let p = created()
+    for (let n = 1; n <= MAX_CREATED_SKINS; n++) {
+      const added = addCreatedSkin(p, CREATED_ID, { ...parts, head: n - 1 })
+      expect(added).toMatchObject({ ok: true, skinId: `s${n}` })
+      if (added.ok) p = added.progress
+    }
+    expect(p.credits).toBe(7)
+    expect(p.selectedSkins[CREATED_ID]).toBe('s5')
+    expect(addCreatedSkin(p, CREATED_ID, parts)).toEqual({ ok: false, reason: 'limit' })
+    expect(addCreatedSkin(p, 'custom-9', parts)).toEqual({ ok: false, reason: 'missing' })
+  })
+
+  it('the worn skin keeps the type, trophies and power; only the look changes', () => {
+    const p = { ...created(), trophies: { custom: 30 }, powerLevels: { custom: 4 } }
+    const added = addCreatedSkin(p, CREATED_ID, parts)
+    if (!added.ok) throw new Error(added.reason)
+    const worn = parseLookSkin(wornSkin(added.progress, CREATED_ID))
+    expect(worn).toEqual({ type: look.type, ...parts })
+    expect(added.progress.trophies).toEqual({ custom: 30 })
+    expect(added.progress.powerLevels).toEqual({ custom: 4 })
+    expect(added.progress.createdFighters[0].look).toEqual(look)
+    expect(wornSkin(chooseCreatedSkin(added.progress, CREATED_ID, 'default'), CREATED_ID)).toBe(lookSkin(look))
+  })
+
+  it('changes a skin, and deleting the worn skin puts the default look back on', () => {
+    const added = addCreatedSkin(created(), CREATED_ID, parts)
+    if (!added.ok) throw new Error(added.reason)
+    const changed = changeCreatedSkin(added.progress, CREATED_ID, 's1', { ...parts, main: '#39d353' })
+    if (!changed.ok) throw new Error(changed.reason)
+    expect(parseLookSkin(wornSkin(changed.progress, CREATED_ID))?.main).toBe('#39d353')
+    expect(changeCreatedSkin(changed.progress, CREATED_ID, 's2', parts)).toEqual({ ok: false, reason: 'missing' })
+
+    const deleted = deleteCreatedSkin(changed.progress, CREATED_ID, 's1')
+    expect(deleted.createdFighters[0].skins).toEqual([])
+    expect(deleted.selectedSkins[CREATED_ID]).toBeUndefined()
+    expect(wornSkin(deleted, CREATED_ID)).toBe(lookSkin(look))
+  })
+
+  it('friends in a room get the worn skin as the look', () => {
+    const added = addCreatedSkin(created(), CREATED_ID, parts)
+    if (!added.ok) throw new Error(added.reason)
+    const member = memberFor({ ...added.progress, selectedFighter: CREATED_ID }, [createdFighter(look)])
+    expect(member).toMatchObject({ fighter: CREATED_ID, skin: lookSkin({ type: look.type, ...parts }), name: look.name })
   })
 })

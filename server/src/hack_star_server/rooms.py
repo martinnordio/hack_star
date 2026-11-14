@@ -23,8 +23,9 @@ MAX_MESSAGE = 64 * 1024
 MAX_ROOMS = 100
 CREATED_FIGHTER_ID = re.compile(r"^custom(?:-(?:[2-9]|1[0-5]))?$")
 FIGHTER_IDS = {f.id for f in FIGHTERS}
-# The look of a created fighter: "L", type 0-4, head 0-2, body 0-2, two colours.
-CREATED_LOOK = re.compile(r"^L[0-4][0-2][0-2][0-9a-fA-F]{12}$")
+# The look of a created fighter: "L", type 0-4, head and body (0-2), two colours; or with
+# head and body 0-4 followed by hands and legs 0-2.
+CREATED_LOOK = re.compile(r"^L[0-4](?:[0-2][0-2]|[0-4][0-4][0-2][0-2])[0-9a-fA-F]{12}$")
 
 
 class Member(BaseModel):

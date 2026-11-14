@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+# Music stays on each developer's computer: never committed (see public/assets/LICENSES.md).
+dev/music/files/
+dev/music/candidates.local.json
+src/lib/music/tracks.local.json
+public/assets/music/
 
 # Editor directories and files
 .vscode/*

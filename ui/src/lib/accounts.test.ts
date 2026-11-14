@@ -11,7 +11,7 @@ import {
   switchAccount,
   type Accounts,
 } from './accounts'
-import { saveCreated } from './created'
+import { addCreatedSkin, deleteCreatedSkin, saveCreated } from './created'
 import { browserLanguage } from './i18n/languages'
 import { MAX_CREATED_FIGHTERS } from './created'
 import { PROGRESS_KEY, defaultProgress, memoryStorage, startProgress } from './progress'
@@ -114,6 +114,24 @@ describe('accounts', () => {
     expect(state.accounts[1].name).toBe('MATTIA')
   })
 
+  it('a rename or switch reaches every listener at once and is saved', () => {
+    const storage = memoryStorage()
+    const store = createAccountsStore(storage, 'en')
+    const shown: string[] = []
+    const stop = store.subscribe((s) => shown.push(currentAccount(s).name))
+    store.update((s) => added(s, 'Mattia'))
+    expect(shown.at(-1)).toBe('Mattia')
+    store.update((s) => {
+      const result = renameAccount(s, 'a2', 'Noah')
+      return result.ok ? result.state : s
+    })
+    expect(shown.at(-1)).toBe('Noah')
+    store.update((s) => switchAccount(s, 'a1'))
+    expect(shown.at(-1)).toBe('Player 1')
+    expect(loadAccounts(storage, 'en').accounts.map((a) => a.name)).toEqual(['Player 1', 'Noah'])
+    stop()
+  })
+
   it('keeps accounts, progress and the current account after closing', () => {
     const storage = memoryStorage()
     const store = createAccountsStore(storage, 'en')
@@ -134,14 +152,14 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en', secondEvents.target)
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2 }
+    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2, hands: 0, legs: 0 }
 
     firstProgress.update((p) => ({
       ...p,
       credits: p.credits + 100,
       activeHacks: ['creator'],
       hackExpiries: { creator: Date.now() + 60_000 },
-      createdFighters: [{ id: 'custom', look }],
+      createdFighters: [{ id: 'custom', look, skins: [] }],
     }))
 
     secondProgress.update((p) => ({ ...p, credits: p.credits + 50 }))
@@ -166,6 +184,44 @@ describe('accounts', () => {
     second.destroy()
   })
 
+  it('merges created skins of two tabs: adds from both, deletions kept, same id renumbered', () => {
+    const storage = memoryStorage()
+    const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
+    const parts = { main: '#123456', second: '#654321', head: 1, body: 1, hands: 1, legs: 1 }
+    const seed = createAccountsStore(storage, 'en')
+    progressStore(seed).update((p) => ({
+      ...p,
+      createdFighters: [{ id: 'custom', look, skins: [{ id: 's1', ...parts }, { id: 's2', ...parts, head: 2 }] }],
+    }))
+    seed.destroy()
+
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    firstProgress.update((p) => {
+      const added = addCreatedSkin(p, 'custom', { ...parts, main: '#aaaaaa' })
+      if (!added.ok) throw new Error(added.reason)
+      return deleteCreatedSkin(added.progress, 'custom', 's1')
+    })
+    secondProgress.update((p) => {
+      const added = addCreatedSkin(p, 'custom', { ...parts, main: '#bbbbbb' })
+      if (!added.ok) throw new Error(added.reason)
+      return added.progress
+    })
+    first.refresh()
+
+    const skins = currentAccount(get(first)).progress.createdFighters[0].skins
+    expect(skins.map((s) => [s.id, s.main])).toEqual([
+      ['s2', '#123456'],
+      ['s3', '#aaaaaa'],
+      ['s1', '#bbbbbb'],
+    ])
+    expect(get(secondProgress).createdFighters[0].skins).toEqual(skins)
+    first.destroy()
+    second.destroy()
+  })
+
   it('keeps both fighters when stale tabs create the same next fighter ID', () => {
     const values = new Map<string, string>()
     const storage = {
@@ -180,7 +236,8 @@ describe('accounts', () => {
       hackExpiries: { creator: Date.now() + 60_000 },
       createdFighters: [{
         id: 'custom',
-        look: { name: 'Original', type: 'tank', main: '#ff0000', second: '#00ff00', head: 0, body: 0 },
+        look: { name: 'Original', type: 'tank', main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 },
+        skins: [],
       }],
     }))
     seed.destroy()
@@ -189,7 +246,7 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en')
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
     const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
 
     firstProgress.update((progress) => {
@@ -229,7 +286,7 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en')
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
     const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
 
     firstProgress.update((progress) => {
@@ -269,7 +326,10 @@ describe('accounts', () => {
         second: '#00ff00',
         head: 0,
         body: 0,
+        hands: 0,
+        legs: 0,
       },
+      skins: [],
     }))
     const seed = createAccountsStore(storage, 'en')
     progressStore(seed).update((progress) => ({
@@ -285,7 +345,7 @@ describe('accounts', () => {
     const second = createAccountsStore(storage, 'en')
     const firstProgress = progressStore(first)
     const secondProgress = progressStore(second)
-    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0 }
+    const alpha = { name: 'Alpha', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }
     const beta = { ...alpha, name: 'Beta', main: '#0000ff' }
 
     firstProgress.update((progress) => {
