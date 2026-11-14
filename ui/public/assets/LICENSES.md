@@ -17,27 +17,43 @@ Every asset added to `ui/public/assets/` gets a line below.
 
 ## Music
 
-The game's music is either made for Hack star or uses a licence that lets anyone use, change
-and share it with this MIT-licensed game:
+**This repository contains no music and does not offer or distribute any.** The game plays
+music only when a developer adds tracks on their own computer (see the README, **Developer
+page**). Those tracks and the lists that name them (`ui/dev/music/candidates.local.json`,
+`ui/src/lib/music/tracks.local.json`, `ui/dev/music/files/`, `ui/public/assets/music/`) are
+git-ignored and are never committed or published. The repository's own lists,
+`ui/dev/music/candidates.json` and `ui/src/lib/music/tracks.json`, stay empty.
 
-- **CC0** — no conditions;
-- **CC BY** (any version) — the author is credited in the game's **About** panel and below.
+The developer page only accepts tracks whose licence is said to be CC0, CC BY or "Made for
+Hack star", and the game credits CC BY tracks in its **About** panel. Neither check is a
+licence review.
 
-Never used: licences that forbid commercial use (NC) or changes (ND), music without a clear
-licence, and anything that copies or samples an existing recording, melody or lyrics. The
-moods we look for (anthemic pop-rock, funky dance grooves, arcade / chiptune) are styles
-only: no track imitates a specific artist or song.
+### Examples developers may download themselves
 
-**How a track is checked before it ships**
+These free tracks were found on OpenGameArt on 2026-11-14 as examples of the moods we like
+(anthemic pop-rock, funky grooves, arcade / chiptune). They are **not included here**. The
+licence shown is what the source page stated on that day; it may change and may have
+conditions. **Anyone who downloads or uses them must read and check the licence on the
+source page themselves and is responsible for following it.** The authors of Hack star make
+no statement that any track may be used, and accept no responsibility for its use.
 
-1. The licence is read on the source's own page (not a copy elsewhere) and written in
-   `ui/dev/music/candidates.json` with the source link.
-2. The developer page (`/?dev`, Music) refuses to choose a track whose licence is not CC0,
-   CC BY or "Made for Hack star".
-3. Martin and Mattia listen to it on the developer page and choose it.
-4. It gets a line in the table below (and its credit appears in the About panel from
-   `ui/src/lib/music/tracks.json`).
+| Track | Author | Source | Licence stated on the source page |
+|-------|--------|--------|-----------------------------------|
+| Tactical Pursuit | Matthew Pablo | [OpenGameArt](https://opengameart.org/content/tactical-pursuit) | CC BY 3.0 |
+| Red Moon | Alex McCulloch (Pro Sensory) | [OpenGameArt](https://opengameart.org/content/red-moon) | CC0 |
+| Heavy Metal Riffs - 3HR.MT3 | Tri-Tachyon | [OpenGameArt](https://opengameart.org/content/heavy-metal-riffs-3hrmt3) | CC BY 4.0 |
+| Battle Theme A | cynicmusic | [OpenGameArt](https://opengameart.org/content/battle-theme-a) | CC0 |
+| Rise of Spirit | Alexandr Zhelanov | [OpenGameArt](https://opengameart.org/content/rise-of-spirit) | CC BY 3.0 |
+| Funked Up | Joth | [OpenGameArt](https://opengameart.org/content/funked-up) | CC0 |
+| Birthday Cake | Viktor Kraus | [OpenGameArt](https://opengameart.org/content/birthday-cake) | CC BY 3.0 |
+| Deliciously Sour | Matthew Pablo | [OpenGameArt](https://opengameart.org/content/deliciously-sour) | CC BY 3.0 |
+| tEcHNo gEeK | mrpoly | [OpenGameArt](https://opengameart.org/content/techno-geek) | CC0 |
+| Well oiled, shiny Oscillators | Viktor Kraus | [OpenGameArt](https://opengameart.org/content/well-oiled-shiny-oscillators) | CC BY 3.0 |
+| Happy Arcade Tune | rezoner | [OpenGameArt](https://opengameart.org/content/happy-arcade-tune) | CC BY 3.0 |
+| Space Dimensions (8bit/Retro Version) | Matthew Pablo | [OpenGameArt](https://opengameart.org/content/space-dimensions-8bitretro-version) | CC BY 3.0 |
+| Grey Sector (8-Bit) | FoxSynergy | [OpenGameArt](https://opengameart.org/content/grey-sector-8-bit) | CC BY 3.0 |
+| 8-bit Action 1 (8-bit Music Pack) | CodeManu | [OpenGameArt](https://opengameart.org/content/8-bit-music-pack-loopable) | CC BY 3.0 |
+| Awake! (Megawall-10) | cynicmusic | [OpenGameArt](https://opengameart.org/content/awake-megawall-10) | CC0 |
 
-| Track | Author | Source | Licence |
-|-------|--------|--------|---------|
-| _none yet: the five tracks are chosen on the developer page_ | | | |
+Some authors ask for a specific credit on their page (for example Red Moon and Heavy Metal
+Riffs); follow what the page asks.

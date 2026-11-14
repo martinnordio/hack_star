@@ -20,7 +20,7 @@
 - No copied or sampled recordings, melodies or lyrics.
 - At most ${MAX_CANDIDATES} candidates in total (now {count}); MP3, at most about 3 MB each.
 - For each track record: id (lowercase, dashes), title, author, licence, source (the page with the licence), file (<id>.mp3).
-- Add each one to ui/dev/music/candidates.json with "chosen": false, and download its MP3 into ui/dev/music/files/.`
+- Add each one to ui/dev/music/candidates.local.json (git-ignored, never committed) with "chosen": false, and download its MP3 into ui/dev/music/files/.`
 
   const request = $derived(REQUEST.replace('{count}', String(tracks.length)))
 
@@ -74,8 +74,9 @@
   <p>The music tools work only with <code>npm run dev</code> (they are not part of the built game).</p>
 {:else}
   <p>
-    {tracks.length} of at most {MAX_CANDIDATES} candidates · <strong>{chosen} of {MAX_CHOSEN} chosen</strong> for the game.
-    Candidates live in <code>ui/dev/music/</code>; chosen tracks are copied to <code>ui/public/assets/music/</code>.
+    {tracks.length} of at most {MAX_CANDIDATES} candidates · <strong>{chosen} of {MAX_CHOSEN} chosen</strong> for the game on this computer.
+    Music stays on this computer: your list is <code>ui/dev/music/candidates.local.json</code> and chosen tracks are copied to
+    <code>ui/public/assets/music/</code> — all git-ignored, never committed. Check each licence on its source page yourself.
   </p>
 
   {#if message}<p class="message" role="alert">{message}</p>{/if}

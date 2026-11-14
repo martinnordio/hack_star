@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { choose, isAllowedLicence, MAX_CHOSEN, parseCandidates, remove, shipped, unchoose, type Candidate } from './candidates'
+import { choose, isAllowedLicence, MAX_CHOSEN, mergeCandidates, parseCandidates, remove, shipped, unchoose, type Candidate } from './candidates'
 
 const track = (n: number, extra: Partial<Candidate> = {}): Candidate => ({
   id: `t${n}`,
@@ -43,5 +43,13 @@ describe('music candidates', () => {
     expect(parseCandidates({ tracks: [track(1), { ...track(2), file: '../secret.mp3' }, { ...track(3), id: 'Bad Id' }, 42] })).toEqual([track(1)])
     expect(parseCandidates(null)).toEqual([])
     expect(parseCandidates({})).toEqual([])
+  })
+
+  it('adds this computer\'s list to the repository\'s; the local entry wins', () => {
+    const repository = [track(1), track(2)]
+    const local = [track(2, { chosen: true }), track(3)]
+    expect(mergeCandidates(repository, local)).toEqual([track(1), track(2, { chosen: true }), track(3)])
+    expect(mergeCandidates([], local)).toEqual(local)
+    expect(mergeCandidates(repository, [])).toEqual(repository)
   })
 })

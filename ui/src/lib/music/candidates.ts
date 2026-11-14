@@ -53,6 +53,11 @@ export function parseCandidates(value: unknown): Candidate[] {
   return Array.isArray(tracks) ? tracks.filter(isCandidate) : []
 }
 
+/** The repository's list together with this computer's own list; for the same id the local entry wins. */
+export function mergeCandidates(repository: Candidate[], local: Candidate[]): Candidate[] {
+  return [...repository.filter((t) => !local.some((l) => l.id === t.id)), ...local]
+}
+
 export type ListChange = { ok: true; tracks: Candidate[] } | { ok: false; reason: string }
 
 export function choose(tracks: Candidate[], id: string): ListChange {

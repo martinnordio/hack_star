@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9 and 11–13 done; Step 10 waits for Martin and Mattia |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–13 done; music kept out of the repository (S32, D16) |
 
 ---
 
@@ -198,6 +198,12 @@ review to the same page.
   current text and gains one sentence on music (for example "Music is made for the project or
   uses a free licence (CC0 or CC BY, credited in the game's About panel); see
   ui/public/assets/LICENSES.md.").
+- **S32 — No music in the repository (added while implementing):** The repository contains
+  no music and offers none: tracks, their lists and choices stay on each developer's computer
+  and are never committed. `ui/public/assets/LICENSES.md` lists example tracks developers may
+  download themselves, saying they are not included and that whoever uses them must check
+  each licence on its source page and is responsible for it. This replaces the shipped tracks
+  and the repository credits of S20, S22 and S31.
 
 ### Open questions
 
@@ -223,7 +229,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **7** | Skins of created fighters: screens | ✅ Done | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
 | **8** | Developer mode and the developer page | ✅ Done | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
 | **9** | Music section of the developer page | ✅ Done | [→ Step 9](#step-9--music-section-of-the-developer-page) |
-| **10** | Find, try and choose the five tracks | ⬜ Not started — needs Martin and Mattia | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
+| **10** | Find, try and choose the five tracks | ✅ Done | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
 | **11** | Music in matches and its Settings | ✅ Done | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
 | **12** | About panel | ✅ Done | [→ Step 12](#step-12--about-panel) |
 | **13** | Documentation and final check | ✅ Done | [→ Step 13](#step-13--documentation-and-final-check) |
@@ -259,6 +265,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | D13 | One music player module (`ui/src/lib/music/player.ts`) with a single looping audio element; the match starts and stops it, and it pauses while the tab is hidden. | Starting from the PLAY tap satisfies the browsers' autoplay rule; one element means one track at a time (S19). |
 | D14 | The About panel reads the version from `ui/package.json` and the licence text from the repository's `LICENSE` (Vite `?raw` import), so they never drift. | S23 shows the real version and the exact licence. |
 | D15 | Step 1 finds the cause of the stale account name before fixing it; the fix stays in `Home.svelte` / `accounts.ts`, with a regression test at store level and a recorded browser check — no component-test library is added. | A check on 2026-11-14 showed the store itself passes the new name; adding a DOM test library would be a new dependency for one test. |
+| D16 | Music stays local (replaces D9, S32): `candidates.json` and `tracks.json` in the repository stay empty; the developer page writes only git-ignored `ui/dev/music/candidates.local.json`, `ui/src/lib/music/tracks.local.json`, `ui/dev/music/files/` and `ui/public/assets/music/`. The page and the game use the union of the repository list and the local list (`mergeCandidates`, `import.meta.glob`), the local entry winning. | Martin and Mattia want to publish no music and take no responsibility for third-party licences; each developer chooses tracks locally. |
 
 ---
 
@@ -599,24 +606,37 @@ Up to 15 candidate tracks are found or made, checked and listened to, and the te
 five that ship (S20, S21, S22). This Step needs Martin and Mattia.
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] With the section's request, find or make up to 15 candidates covering the moods of S21;
+- [x] Record the start time in Notes below.
+- [x] With the section's request, find or make up to 15 candidates covering the moods of S21;
       for each, check the licence on the source's own page (CC0, CC BY, or made by us — never
       NC or ND) and record title, author, source and licence.
-- [ ] Download them into `ui/dev/music/` (D9, D11).
-- [ ] Martin and Mattia listen on the developer page and choose five; delete the rest or keep
+- [x] Download them into `ui/dev/music/` (D9, D11).
+- [x] Martin and Mattia listen on the developer page and choose five; delete the rest or keep
       them as candidates.
-- [ ] Check: `src/lib/music/tracks.json` lists five tracks, each with its licence and credit;
+- [x] Check: `src/lib/music/tracks.json` lists five tracks, each with its licence and credit;
       the five files are in `public/assets/music/`.
 
 ### Notes
-Not started: it needs Martin and Mattia to find or make the tracks, check their licences on
-the source pages, listen and choose. Everything it needs is ready (Step 9): open `/?dev` with
-`npm run dev`, copy the **Find more music** request into the AI assistant, add the candidates
-to `ui/dev/music/candidates.json` and their MP3s to `ui/dev/music/files/`, then listen and
-**Choose** five. Steps 11–13 were done before it and work with any number of tracks; after
-this Step, add the five tracks to the music table of `ui/public/assets/LICENSES.md` and check
-music in a match on an iPad or phone.
+Started: 2026-11-14 16:00
+
+- 15 candidates found on OpenGameArt (5 CC0, 9 CC BY 3.0, 1 CC BY 4.0, read on each track's
+  page on 2026-11-14), 0.6–4.0 MB MP3s; left out: CC BY-SA tracks, "Classical Pop" (may
+  arrange a known melody) and files over the size limit. Red Moon is credited to Alex
+  McCulloch as its page asks.
+- Martin and Mattia chose five on the developer page: Tactical Pursuit, Heavy Metal Riffs —
+  3HR.MT3, Battle Theme A, Funked Up, Deliciously Sour.
+- Changed while implementing (S32, D16): the music is **not** committed. The list and the
+  choices moved to the git-ignored `candidates.local.json` / `tracks.local.json`; the
+  repository's `candidates.json` and `tracks.json` stay empty. So the last check now reads
+  `tracks.local.json` (five tracks with licence and credit) on this computer.
+  `ui/public/assets/LICENSES.md` lists the 15 tracks only as examples to download yourself,
+  with the disclaimer.
+- Browser check: Settings lists the five tracks and the About panel credits them (local
+  files); `git status` shows no music file or local list.
+
+**Done (2026-11-14 · ~20m · Claude Opus 5.5)** — 15 examples found, five chosen and playing
+locally; nothing of the music is in the repository. `npm test` 266 passed; `npm run check`
+0 errors.
 
 ---
 

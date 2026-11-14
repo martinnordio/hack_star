@@ -1,29 +1,35 @@
 // Development only (`npm run dev`): the developer page's music tools. Never part of `npm run build`.
+// Music stays on this computer: changes go to the git-ignored *.local.json files and public/assets/music/.
 import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { createReadStream, existsSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { join } from 'node:path'
 import type { Plugin } from 'vite'
-import { choose, isTrackFile, parseCandidates, remove, shipped, unchoose, type Candidate, type ListChange } from '../src/lib/music/candidates.ts'
+import { choose, isTrackFile, mergeCandidates, parseCandidates, remove, shipped, unchoose, type Candidate, type ListChange } from '../src/lib/music/candidates.ts'
 
 const ROOT = join(import.meta.dirname, '..')
 const LIST = join(ROOT, 'dev', 'music', 'candidates.json')
+const LOCAL_LIST = join(ROOT, 'dev', 'music', 'candidates.local.json')
 const FILES = join(ROOT, 'dev', 'music', 'files')
 const PUBLIC = join(ROOT, 'public', 'assets', 'music')
-const SHIPPED = join(ROOT, 'src', 'lib', 'music', 'tracks.json')
+const LOCAL_SHIPPED = join(ROOT, 'src', 'lib', 'music', 'tracks.local.json')
 
-async function readList(): Promise<Candidate[]> {
+async function readCandidates(file: string): Promise<Candidate[]> {
   try {
     // Windows editors may save the file with a byte-order mark.
-    return parseCandidates(JSON.parse((await readFile(LIST, 'utf-8')).replace(/^\uFEFF/, '')))
+    return parseCandidates(JSON.parse((await readFile(file, 'utf-8')).replace(/^\uFEFF/, '')))
   } catch {
     return []
   }
 }
 
+async function readList(): Promise<Candidate[]> {
+  return mergeCandidates(await readCandidates(LIST), await readCandidates(LOCAL_LIST))
+}
+
 async function writeLists(tracks: Candidate[]): Promise<void> {
-  await writeFile(LIST, JSON.stringify({ tracks }, null, 2) + '\n', 'utf-8')
-  await writeFile(SHIPPED, JSON.stringify(shipped(tracks), null, 2) + '\n', 'utf-8')
+  await writeFile(LOCAL_LIST, JSON.stringify({ tracks }, null, 2) + '\n', 'utf-8')
+  await writeFile(LOCAL_SHIPPED, JSON.stringify(shipped(tracks), null, 2) + '\n', 'utf-8')
 }
 
 function send(res: ServerResponse, status: number, body: unknown): void {

@@ -143,7 +143,9 @@ Hack star server" with a **Try again** button.
   0 credits, 0 trophies, only the start fighters, power 1 and default skins (hack codes and
   created fighters stay; extra created fighters still need `CREATOR` to be active).
   **Music** turns the music on or off and chooses the track (saved on the device; on at
-  first); it plays during every match and Training and pauses while the tab is hidden.
+  first); it plays during every match and Training and pauses while the tab is hidden. The
+  repository has no music, so it shows "Music is coming soon." until a developer adds tracks
+  locally.
   **About Hack star** shows the version, the credits of the music and the MIT licence.
   **Developer mode** (with the developer code, see below) adds a link to the developer page.
 - **Accounts:** the name under the trophies on the home screen. Tap it to switch account, add
@@ -234,13 +236,18 @@ it for players. The first time it asks for the developer code (the same as the Q
 `M6D2`), then the browser stays in **developer mode** until it is turned off in Settings.
 It is in English.
 
-- **Music:** the candidate tracks (up to 15) with title, author, licence and source; **Play**
-  to listen, **Choose** the five that ship (only CC0, CC BY or music made for Hack star),
-  **Delete** the others, and a ready-to-copy request for the AI assistant to find more. The
-  list is `ui/dev/music/candidates.json` (committed); the MP3 files go to
-  `ui/dev/music/files/` (not committed). Choosing copies a track to `ui/public/assets/music/`
-  and writes `ui/src/lib/music/tracks.json`, which the game and the About panel read. These
-  tools work only with `npm run dev` and only from the computer running it.
+- **Music:** the repository has **no music**; each developer adds tracks on their own
+  computer, and they are never committed. The section lists the candidate tracks (up to 15)
+  with title, author, licence and source; **Play** to listen, **Choose** up to five for the
+  game (only tracks marked CC0, CC BY or made for Hack star), **Delete** the others, and a
+  ready-to-copy request for the AI assistant to find more. Your candidates go in
+  `ui/dev/music/candidates.local.json` and their MP3s in `ui/dev/music/files/`; choosing
+  copies a track to `ui/public/assets/music/` and writes `ui/src/lib/music/tracks.local.json`,
+  which the game and the About panel read. All of these are git-ignored; the repository's
+  `candidates.json` and `tracks.json` stay empty (the page shows both lists together, your
+  own entry winning). Example tracks to download yourself are in
+  [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md) — check their licences
+  yourself. These tools work only with `npm run dev` and only from the computer running it.
 
 ## Test
 
@@ -256,8 +263,8 @@ locks its launcher, so `uv` cannot re-install it).
 
 Only original art or art with a free licence (CC0) is used: every fighter, skin and arena is
 built in code from simple shapes. See [ui/public/assets/LICENSES.md](ui/public/assets/LICENSES.md).
-Music is made for the project or uses a free licence (CC0 or CC BY, credited in the game's
-About panel); no track copies or imitates an existing song or artist.
+This repository contains no music: developers may add tracks on their own computer (see
+**Developer page**), and are responsible for checking each track's licence themselves.
 
 ## Licence and disclaimer
 
