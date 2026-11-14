@@ -1,7 +1,7 @@
 # Bug Fixes Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on `feature/bug-fixes`
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/bug-fixes`
@@ -20,6 +20,7 @@
 | 2026-11-14 | review | `CODE REVIEW:` | GitHub Copilot | Request changes; 1 Blocking S4 finding; no product edits |
 | 2026-11-14 | review | `REVIEW:` | GitHub Copilot | Re-run after S4 fix; both stale-tab fighters persist with distinct IDs; UI screenshots remain manual |
 | 2026-11-14 | review | `CODE REVIEW:` | GitHub Copilot | Approve with follow-ups; prior S4 blocker resolved; UI screenshots remain manual |
+| 2026-11-14 | implementation | `CLOSE:` | GitHub Copilot | Spec closed; implementation, regression coverage and review artifacts complete |
 
 ---
 
@@ -33,7 +34,7 @@ added with `REQUIREMENTS: 2026_11_14_bug_fixes_spec.md — <bug>` until the plan
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - Created fighter, its price and lock — spec
-  [2026_11_13_accounts_fighters_and_languages_spec.md](done/2026_11_13_accounts_fighters_and_languages_spec.md):
+  [2026_11_13_accounts_fighters_and_languages_spec.md](2026_11_13_accounts_fighters_and_languages_spec.md):
   creating is free the first time, every change costs 500 C, only the CREATOR code unlocks it.
   Code: `ui/src/lib/created.ts` (`createCost`, `saveCreated`), `ui/src/lib/CreatorScreen.svelte`,
   `ui/src/lib/FighterList.svelte` (the "Create a fighter" card), `ui/src/App.svelte` (screen title).
@@ -63,9 +64,9 @@ added with `REQUIREMENTS: 2026_11_14_bug_fixes_spec.md — <bug>` until the plan
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and planned specs |
+| [architecture.md](../../../docs/architecture.md) | How the code is organised |
+| [README](../../../README.md) | How to install, run and play |
 
 ## 1 · Specs
 
@@ -97,7 +98,7 @@ not be played.
   lock: its card in the Fighters list looks like the other unlocked fighters, it can be selected,
   then shows on the Home screen and is played in matches, Training and with friends — no hack
   code needed. This changes S10/S11 of
-  [2026_11_13_accounts_fighters_and_languages_spec.md](done/2026_11_13_accounts_fighters_and_languages_spec.md).
+  [2026_11_13_accounts_fighters_and_languages_spec.md](2026_11_13_accounts_fighters_and_languages_spec.md).
 - **S8 — Prices stay:** Without INFINITY, the first creation stays free and every change costs
   500 C; the created fighter keeps its trophies and power level when it is changed.
 - **S9 — Place in the list:** In the Fighters list, the created fighter's card comes right after
@@ -152,6 +153,14 @@ _None. More reported bugs can still be added with `REQUIREMENTS:` before the pla
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** The spec's 22 requirements are implemented: created fighters can be managed with stable identities and independent progress; saves migrate and synchronize across tabs; timed hacks expire predictably; and friends see created-fighter identities in shared rooms. The final S4 follow-up arbitrates same-ID creations against merged CREATOR, credit and capacity rules, refunding rejected charges and reporting the rejection in the creator.
+
+**Differs from the plan:** The final review added policy-aware handling for concurrent creations. An eligible collision is remapped; a creation that violates merged account rules is rejected and refunded. Matched UI screenshots remain a manual follow-up.
+
+**Files:** Created-fighter and account logic/tests, progress and hack handling, room payload/server validation/tests, creator and hack screens/locales, README and architecture documentation, and the semantic review artifacts.
 
 ## 2 · Spec Overview
 
@@ -339,9 +348,9 @@ Started: 2026-11-14 12:42
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-14 | AI assistant (GitHub Copilot) | semantic diff | Request changes | 1 Blocking: stale tabs can overwrite one extra created fighter (S4); [review page](../review/2026-11-14_feature-bug-fixes.html) |
+| 2026-11-14 | AI assistant (GitHub Copilot) | semantic diff | Request changes | 1 Blocking: stale tabs can overwrite one extra created fighter (S4); [review page](../../review/2026-11-14_feature-bug-fixes.html) |
 | 2026-11-14 | AI assistant (GitHub Copilot) | diff | Request changes | 1 Blocking: concurrent extra-fighter creation loses one look (S4) |
-| 2026-11-14 | AI assistant (GitHub Copilot) | semantic diff follow-up | Approve with follow-ups | S4 collision fixed and regression-tested; UI screenshots remain manual; [updated review page](../review/2026-11-14_feature-bug-fixes.html) |
+| 2026-11-14 | AI assistant (GitHub Copilot) | semantic diff follow-up | Approve with follow-ups | S4 collision fixed and regression-tested; UI screenshots remain manual; [updated review page](../../review/2026-11-14_feature-bug-fixes.html) |
 | 2026-11-14 | AI assistant (GitHub Copilot) | diff follow-up | Approve with follow-ups | 0 open findings; prior Blocking S4 resolved; visual evidence remains manual |
 | 2026-11-14 | AI assistant (GitHub Copilot) | collision edge-case follow-up | Approve with follow-ups | Same-ID remap is gated by merged CREATOR, credits, and capacity; rejected charges are refunded; 243 UI tests pass |
 
@@ -360,5 +369,5 @@ Started: 2026-11-14 12:42
 - [x] Implementation · every Step's tasks checked
 - [x] Review artifacts · review page and semantic diff written
 - [x] Code review · no Blocking findings remain
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

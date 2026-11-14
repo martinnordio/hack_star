@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
 version: 1
 branch: feature/bug-fixes
 base: 24b0f1c
@@ -7,7 +7,7 @@ why: |
   overwrite hacks, credits, or fighter progress. Temporary hack codes also had no visible
   expiry status, while shared-room members could not identify distinct created fighters.
 spec:
-  path: .specs/features/2026_11_14_bug_fixes_spec.md
+  path: .specs/features/done/2026_11_14_bug_fixes_spec.md
   statements: [S1, S2, S3, S4, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22]
 changes:
   - id: hack-duration-api
