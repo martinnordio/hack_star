@@ -1,6 +1,6 @@
 # PowerShell — baseline
 
-> Rules for PowerShell in Hack star (today: the kit's GitHub scripts in `.specs/kit/tools/`).
+> Rules for the PowerShell scripts of the project and of this kit (`.specs/kit/tools/`).
 > `.specs/guidelines/powershell.md` wins over this file. Reference:
 > [PowerShell docs](https://learn.microsoft.com/powershell/scripting/).
 
@@ -24,7 +24,7 @@
 
 - `$ErrorActionPreference = 'Stop'` at the top; `try` / `catch` where the user needs a clear
   message.
-- Check the exit code of external programs (`gh`, `git`, `uv`, `npm`: `$LASTEXITCODE`) and
+- Check the exit code of external programs (`gh`, `git`, `uv`, `npm`) with `$LASTEXITCODE` and
   stop on failure.
 - Never print secrets; read tokens from environment variables, never from parameters with
   defaults.
@@ -38,5 +38,5 @@
 
 ## Checks before a Step is done
 
-- The script parses (`[System.Management.Automation.Language.Parser]::ParseFile`) and the dry
-  run shows the expected result.
+- The script parses (`[System.Management.Automation.Language.Parser]::ParseFile`), contains
+  only ASCII, and the dry run shows the expected result.

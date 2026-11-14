@@ -21,9 +21,10 @@
 ## Stage log
 
 <!-- Every stage that writes to this spec adds a row: which stage, which command, and which AI
-     model did it. Use the model's exact name (e.g. "Claude Opus 5.5"); write "person" for
-     edits made by hand. If the last row has the same date, stage and model, update it
-     instead of adding a new one. Rows are never removed. -->
+     model did it — the model that ran that command, as the assistant's runtime reports it,
+     never copied from earlier rows, the settings or the kit's README ("unknown model" if it
+     cannot tell); write "person" for edits made by hand. If the last row has the same date,
+     stage and model, update it instead of adding a new one. Rows are never removed. -->
 
 | Date | Stage | Command | Model | Note |
 |------|-------|---------|-------|------|
@@ -35,19 +36,19 @@
 
 ## Context
 
-What this feature gives the player, in two or three sentences, and why it matters for Hack star.
+What this feature is about, in two or three sentences, and why it is needed.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [existing screen, server module or spec that this feature touches or extends]
+- [existing screen, module, endpoint or spec that this feature touches or extends]
 
 **New:**
 - [what does not exist yet]
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and planned specs |
-| [architecture.md](../../docs/architecture.md) | How the code is organised |
-| [README](../../README.md) | How to install, run and play |
+| [overall_req.md](../overall_req.md) | Overall game idea and product questions |
+| [architecture.md](../../docs/architecture.md) | How the server and the UI are organised |
+| [README](../../README.md) | How to install, run, test and play |
 
 ## 1 · Specs
 
@@ -58,12 +59,12 @@ Clear, testable statements: each describes WHAT the game does, not HOW.
 - **S3:** [Short requirement statement]
 
 <details>
-<summary>Example (trophies)</summary>
+<summary>Example (a game feature)</summary>
 
-- **S1 — Win trophies:** When the player wins a match, the fighter used gains 10 trophies.
-- **S2 — Trophy count:** Each fighter's card shows its trophy count.
-- **S3 — Prestige badge:** A fighter with 1000 trophies or more shows a badge with its prestige number.
-- **S4 — Screen sizes:** S1–S3 work on a desktop browser, an iPad and a phone, in portrait and landscape.
+- **S1 — Rename:** The player can rename a created fighter to a name of 1–12 characters.
+- **S2 — Empty name:** An empty name is refused with a message, in every game language.
+- **S3 — Kept:** The new name is kept after the page is reloaded and shows in a friend's room.
+- **S4 — Unchanged:** Trophies, power and skins of the fighter stay as they were.
 
 </details>
 
@@ -140,7 +141,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| _Example: Play with friends over the internet_ | _Rooms work on the same Wi-Fi only_ | _`yyyy_mm_dd_online_rooms_spec.md`_ |
+| _Example: Trade fighters between accounts_ | _Needs server-side accounts_ | _`yyyy_mm_dd_trading_spec.md`_ |
 
 ---
 
@@ -156,7 +157,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [ ] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [ ] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked
-- [ ] Review · review page and semantic diff written; code review without Blocking findings
+- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [ ] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

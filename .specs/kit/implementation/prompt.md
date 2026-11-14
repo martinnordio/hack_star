@@ -1,7 +1,7 @@
 # Stage: Implementation
 
-Do the Steps of a planned Hack star spec **one at a time**, keeping the spec true while you
-work, and **close** the spec when every Step is done.
+Do the Steps of a planned spec **one at a time**, keeping the spec true while you work, and
+**close** the spec when every Step is done.
 
 ## Commands
 
@@ -21,6 +21,13 @@ Checks that the work is complete, writes what was built, and moves the spec to
 
 Always: `../skills/developer.md` — the role you take in this stage.
 
+## Model name
+
+Wherever this prompt says *your model*, write the name of the model that runs this command
+now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
+(its `model` is the model that generated the kit), from the kit's README or from examples. If
+you cannot tell, ask the user once; otherwise write `unknown model`.
+
 ## Files this stage uses
 
 Paths are relative to this file (`.specs/kit/implementation/`).
@@ -28,16 +35,21 @@ Paths are relative to this file (`.specs/kit/implementation/`).
 | File | Use |
 |------|-----|
 | `../skills/developer.md` | Your role while implementing |
-| `../guidelines/<language>.md` | Baseline rules: `python.md` (server), `typescript.md` and `svelte.md` (UI), `powershell.md` |
-| `../guidelines/commits.md` | Commit messages with the issue reference `#<n>` |
+| `../guidelines/<language>.md` | Baseline rules: `python.md`, `typescript.md`, `svelte.md`, `powershell.md` |
+| `../guidelines/commits.md` | How commit messages are written, with the issue reference |
 | `.specs/guidelines/<language>.md` | The project's own rules, if they exist; they win over the baseline |
-| `docs/architecture.md` | Where things are: server, screens, game rules, 3D models, rooms |
+| `docs/architecture.md` | Where things live in the server and the UI |
 | `../spec_template.md` | The Step completion protocol and the Definition of Done |
-| `.specs/spec-nx.json` | `stages` (which Definition of Done lines apply) |
 
-Checks of the project: `cd server; uv run pytest` and `cd ui; npm test; npm run check`
-(`npm run build` before closing); for screens, a look in the browser at phone, iPad and
-desktop size (`cd ui; npm run dev`, server `cd server; uv run hack-star-server`).
+## Checks
+
+| Part | Command | When |
+|------|---------|------|
+| Server | `cd server; uv run pytest` (`uv run --no-sync pytest` while the server is running on Windows) | Python changed |
+| UI tests | `cd ui; npm test` | TypeScript or Svelte changed |
+| UI types | `cd ui; npm run check` | TypeScript or Svelte changed |
+| UI bundle | `cd ui; npm run build` | Last Step, or imports / assets changed |
+| Scripts | parse with `[System.Management.Automation.Language.Parser]::ParseFile` | PowerShell changed |
 
 ---
 
@@ -45,7 +57,7 @@ desktop size (`cd ui; npm run dev`, server `cd server; uv run hack-star-server`)
 
 1. **Pick the Step.** The one named, or the first Step not ✅ Done in **2 · Spec Overview**.
    Stop and say so if:
-   - Part 2 has no Steps (run `PLAN:` first);
+   - Part 2 has no Steps (run the plan stage first);
    - an earlier Step is not done and the user did not name this Step on purpose;
    - the Step's tasks are unclear — ask; never guess.
 
@@ -59,12 +71,11 @@ desktop size (`cd ui; npm run dev`, server `cd server; uv run hack-star-server`)
 
 4. **Read before writing.** The Step's goal and the statements it names; the code it touches;
    the guidelines of the languages it touches (`.specs/guidelines/<language>.md` first, then
-   `../guidelines/<language>.md`); `docs/architecture.md`.
+   `../guidelines/<language>.md`); the matching section of `docs/architecture.md`.
 
 5. **Do the tasks, in order.** The smallest change that does the task. After each task, run
-   the checks that apply and tick the task only when they pass. Every new player-visible text
-   goes into all five dictionaries in `ui/src/lib/i18n/`. Work outside the Step goes into
-   **Deferred Items**, not into the code.
+   the checks above that apply, and tick the task only when they pass. Work outside the Step
+   goes into **Deferred Items**, not into the code.
 
 6. **Check the Step.** Run the check named in its last task. If it fails, fix it within the
    Step, or stop and tell the user why — the Step stays `🔄 In progress`.
@@ -72,20 +83,21 @@ desktop size (`cd ui; npm run dev`, server `cd server; uv run hack-star-server`)
 7. **Finish, in one edit** (the template's *Step completion protocol*):
    - all tasks ticked; the Step's row `✅ Done`;
    - a Done line in its Notes: `**Done (YYYY-MM-DD · ~<duration> · <model>)** — <summary>.
-     <check and its result>`, with the exact name of the AI model you are;
+     <check and its result>`, where `<model>` is your model;
    - **Last updated** today; a **Stage log** row: today, `implementation`, `IMPLEMENT:`, your
      model, `Step <n> done`.
 
-8. **Report and suggest the commit.** What changed (files), the check result, anything
+8. **Report and suggest the commit.** What changed (files), the check results, anything
    deferred, and a commit message:
 
    ```
    Step <n>: <Step description> (#<issue>)
    ```
 
-   If the spec has no issue yet, say so and offer `CREATE ISSUE:` (requirements stage) before
-   the first commit. The user commits. Then the next step: `IMPLEMENT: <spec file>` for the
-   next Step, or `CLOSE: <spec file>` when all Steps are done.
+   following `../guidelines/commits.md`. If the spec has no issue yet, say so and offer
+   `CREATE ISSUE:` (requirements stage) before the first commit. The user commits. Then the
+   next step: `IMPLEMENT: <spec file>` for the next Step, or, when all Steps are done,
+   `REVIEW: <spec file>` and then `CLOSE: <spec file>`.
 
 ## CLOSE
 
@@ -118,14 +130,14 @@ desktop size (`cd ui; npm run dev`, server `cd server; uv run hack-star-server`)
    - A **Stage log** row: today, `implementation`, `CLOSE:`, your model, `spec closed`.
    - `git mv` the spec to `.specs/features/done/` (the name stays the same).
    - Relative links in the spec are one level deeper now: change `../` to `../../` and check
-     that every link resolves. Fix links **to** the spec from other files (`SPEC-NX.md`,
-     `.specs/overall_req.md` is the user's — only report links there).
+     that every link resolves. Fix links **to** the spec from other files (for example
+     `SPEC-NX.md`); `.specs/overall_req.md` is the user's — only report links there.
    - If the review stage wrote `.specs/changes/<name>/`, `git mv` it to
      `.specs/changes/done/<name>/` and fix the links (the review pages in `.specs/review/` stay
      where they are).
 
-7. **Report** and suggest the commit `Close the spec (#<issue>)`. Next: `REVIEW:` if not run
-   yet, then `PR: <spec file>` — the closed spec ships in the same pull request.
+7. **Report** and suggest the commit `Close the spec (#<issue>)`. The next step is
+   `PR: <spec file>` — the closed spec ships in the same pull request.
 
 ## Never
 

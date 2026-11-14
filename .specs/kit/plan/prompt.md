@@ -1,8 +1,8 @@
 # Stage: Plan
 
-Write **Part 2 · Plan** of a Hack star spec whose requirements (Part 1) are agreed: Steps with
-goals and tasks, decisions, deferred items and a Definition of Done. The plan says *how*; it
-never changes *what* (Part 1).
+Write **Part 2 · Plan** of a spec whose requirements (Part 1) are agreed: Steps with goals and
+tasks, decisions, deferred items and a Definition of Done. The plan says *how*; it never
+changes *what* (Part 1).
 
 ## Command
 
@@ -17,6 +17,13 @@ kept; the rest is re-planned.
 - Always: `../skills/architect.md` — the role you take in this stage.
 - Also: `../skills/requirements_engineer.md` — to check that Part 1 is ready (first step below).
 
+## Model name
+
+Wherever this prompt says *your model*, write the name of the model that runs this command
+now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
+(its `model` is the model that generated the kit), from the kit's README or from examples. If
+you cannot tell, ask the user once; otherwise write `unknown model`.
+
 ## Files this stage uses
 
 Paths are relative to this file (`.specs/kit/plan/`).
@@ -26,9 +33,8 @@ Paths are relative to this file (`.specs/kit/plan/`).
 | `../skills/architect.md` | Your role while planning |
 | `../skills/requirements_engineer.md` | How to judge whether Part 1 is ready |
 | `../spec_template.md` | The shape of Part 2 (Overview, Decisions, Steps, Deferred, Review Log, Definition of Done) |
-| `../guidelines/` | Baseline coding rules (python, typescript, svelte, powershell); `.specs/guidelines/` wins if it exists |
-| `.specs/overall_req.md` | The technology already chosen: Python server, Svelte UI, browser only |
-| `.specs/spec-nx.json` | `stages`: `requirements`, `plan`, `implementation`, `review`, `pr` (for the Definition of Done) |
+| `docs/architecture.md` | How the server and the UI are organised; where new code belongs |
+| `.specs/spec-nx.json` | `stages`: requirements, plan, implementation, review, pr (for the Definition of Done) |
 
 ---
 
@@ -41,46 +47,44 @@ Paths are relative to this file (`.specs/kit/plan/`).
 
    Never change Part 1 yourself.
 
-2. **Read the code the requirements touch.** Use *Already in the repository* as the starting
-   point, and `docs/architecture.md`:
-   - server: Python 3.13 + FastAPI in `server/src/hack_star_server/`, tests in
-     `server/tests/` (`cd server; uv run pytest`);
-   - UI: Svelte 5 + TypeScript + Vite + Threlte/three in `ui/src/`, tests `*.test.ts` next to
-     the code (`cd ui; npm test`, `npm run check`, `npm run build`).
+2. **Read the code the requirements touch.** Start from *Already in the repository* and
+   `docs/architecture.md`. The server is FastAPI in `server/src/hack_star_server/` (tests in
+   `server/tests/`, run with `cd server; uv run pytest`); the UI is Svelte 5 + Vite in
+   `ui/src/` (tests `*.test.ts` next to the code, run with `cd ui; npm test`; types with
+   `npm run check`; bundle with `npm run build`).
 
 3. **Write Part 2** below the marker line `<!-- spec-nx:plan -->`, replacing the placeholder,
    in the shape of `../spec_template.md`:
    - **2 · Spec Overview:** one row per Step, status `⬜ Not started`, with an anchor link to
      the Step. Keep the template's *Step completion protocol* and *Time tracking* notes.
-   - **Decisions:** `D1`, `D2`, … — every choice another person might make differently (a new
-     Python or npm package, a graphics or animation approach, where assets come from and their
-     licence, a message or data format, where the code goes), with the reason.
+   - **Decisions:** `D1`, `D2`, … — every choice another person might make differently (server
+     or UI, a new dependency, a saved-progress or room-message format, a migration of old
+     saves, where art or music comes from and its licence), with the reason.
    - **Steps:** `Step 0` only if setup is needed, then `Step 1`, … Each Step has:
      - **Goal:** one sentence, naming the statements it covers (`(S1, S3)`);
      - **Tasks:** first task always `Record the start time in Notes below.`; then concrete
-       tasks; last task how the Step is checked — `pytest` for the server, `npm test` /
-       `npm run check` for the UI, or what to look at in the browser at desktop, iPad and
-       phone sizes;
+       tasks; last task how the Step is checked (a test, a command, or what to look at in the
+       browser);
      - **Notes:** empty, with the hint to add the `Done` line.
 
-     Every statement S… is covered by at least one Step. Each Step leaves the game running and
-     is small enough to review in one sitting. The last Step checks that what worked before
-     still works, and **always** updates the documentation: the README (how to install, run
-     and play) and `docs/architecture.md` (where the new parts are and how they fit).
-   - **Deferred Items:** what is consciously left out, with reason and target spec; empty table
-     if nothing.
+     Every statement S… is covered by at least one Step. Each Step leaves the game working
+     and is small enough to review in one sitting. New visible text is added in every
+     language of `ui/src/lib/i18n/`. The last Step checks that what worked before still
+     works (both test suites, `npm run check`, `npm run build`) and updates `README.md` and
+     `docs/architecture.md` where the change affects them.
+   - **Deferred Items:** what is consciously left out, with reason and target; empty table if
+     nothing.
    - **Review Log:** the empty table from the template.
-   - **Definition of Done:** the lines for Requirements, Plan, Implementation, Review, Spec
-     closed and Pull request. Tick *Requirements* and *Plan*.
+   - **Definition of Done:** the template's lines (the kit's stages). Tick *Requirements* and
+     *Plan*.
 
 4. **Update the header:** **Status** `⬜ Not started — plan ready`; **Last updated** today.
-   Add a **Stage log** row: today, `plan`, `PLAN:`, the exact name of the AI model you are,
-   `Part 2 written` (add the section from the template above Part 1 if the spec has none).
+   Add a **Stage log** row: today, `plan`, `PLAN:`, your model, `Part 2 written` (add the
+   section from the template above Part 1 if the spec has none).
 
 5. **Report to the user:** the Steps in one line each, the decisions, anything deferred, and
-   the next step — `IMPLEMENT: <spec file>` (implementation stage), one commit per Step
-   (`../guidelines/commits.md`), then `REVIEW:`, `CLOSE:` and `PR: <spec file>`. If the spec
-   has an issue, suggest `UPDATE ISSUE` (requirements stage) so it shows the plan.
+   the next step — implement Step 0 (or Step 1). If the spec has an issue, suggest updating it
+   so it shows the plan (`UPDATE ISSUE`, requirements stage).
 
 ## PLAN again (Part 1 changed)
 

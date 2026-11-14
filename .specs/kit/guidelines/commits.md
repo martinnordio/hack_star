@@ -1,7 +1,7 @@
 # Commits — baseline
 
-> Rules for commit messages in Hack star, for people and for an AI agent that is allowed to
-> commit. `.specs/guidelines/commits.md` (project) wins over this file.
+> Rules for commit messages, for people and for an AI agent that is allowed to commit.
+> `.specs/guidelines/commits.md` (project) wins over this file.
 
 ## One commit per Step
 
@@ -17,8 +17,8 @@ Step <n>: <Step description> (#<issue>)
 ```
 
 - **Subject:** imperative, at most ~72 characters, no period at the end.
-- **Reference to the spec's GitHub issue** (`#<n>`, from the spec header) — always, so the
-  commit appears on the issue. Use the closing word (`Closes #<n>`) only in the pull request,
+- **Reference to the spec's GitHub issue** (`#<n>` from the spec header) — always, so the
+  commit appears on the issue. Use the closing words (`Closes #<n>`) only in the pull request,
   not in each commit — the issue closes when the pull request is merged.
 - A spec without an issue: no reference; say so when you suggest the message, and offer
   `CREATE ISSUE:` (requirements stage).
@@ -26,8 +26,9 @@ Step <n>: <Step description> (#<issue>)
 ## Who commits
 
 - By default the **user** commits: the stage suggests the message, with the reference.
-- If the user lets the AI agent commit, the agent follows the same rules and shows the message
-  before it commits. Never push, merge or rewrite pushed history without the user's OK.
+- The project's agent permissions (`.vscode/settings.json`) never auto-approve `git commit`
+  or `git push`. If the user lets the agent commit, it follows the same rules and shows the
+  message first. Never push, merge or rewrite pushed history.
 
 ## Before the pull request
 

@@ -1,11 +1,11 @@
 # Stage: Review
 
-Give the reviewer what to read first, and review a Hack star change against its spec.
+Give the reviewer what to read first, and review the change against its spec.
 
-- **Semantic diff** — not the lines that changed, but the **objects** that changed (a screen, a
-  game rule, an endpoint, a room message, a saved-data format, a setting, a hack code), each
-  shown **Before | After** with the smallest example, linked to the spec's statements. It goes
-  into the pull request.
+- **Semantic diff** — not the lines that changed, but the **objects** that changed (a screen,
+  a game rule, an API endpoint, a room message, the saved progress, a setting), each shown
+  **Before | After** with the smallest example, linked to the spec's statements. It goes into
+  the pull request.
 - **Code review** — a layered review (spec, architecture, code, quick scan) whose findings go
   into the spec's Review Log.
 
@@ -27,6 +27,13 @@ Reviews the branch's changes layer by layer and logs the findings in the spec.
 
 Always: `../skills/reviewer.md` — the role you take in this stage.
 
+## Model name
+
+Wherever this prompt says *your model*, write the name of the model that runs this command
+now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
+(its `model` is the model that generated the kit), from the kit's README or from examples. If
+you cannot tell, ask the user once; otherwise write `unknown model`.
+
 ## Files this stage uses
 
 Paths are relative to this file (`.specs/kit/review/`).
@@ -39,8 +46,8 @@ Paths are relative to this file (`.specs/kit/review/`).
 | `code_review.md` | The layered checklist and the finding table |
 | `review_page.html` | Template of the HTML review page (styles, sections, tooltips, metadata) |
 | `index_page.html` | Template of the index of all review pages |
-| `../guidelines/<language>.md`, `.specs/guidelines/<language>.md` | Coding rules of the languages changed (python, typescript, svelte, powershell) |
-| `docs/architecture.md` | Where things belong: server, screens, game rules, 3D models, rooms |
+| `../guidelines/<language>.md`, `.specs/guidelines/<language>.md` | Coding rules of the languages changed |
+| `docs/architecture.md` | How the server and the UI are organised |
 
 **Output:**
 
@@ -50,20 +57,15 @@ Paths are relative to this file (`.specs/kit/review/`).
 | `.specs/review/index.html` | All review pages, newest first |
 | `.specs/changes/<name>/` | The change record, `before/`, `after/` and `semantic_diff.md` (the pull-request text); `.specs/changes/done/<name>/` once the spec is closed |
 
-`<branch-slug>` is the branch with `/` → `-` (`feature-online-rooms`); `<name>` is the branch
-without `feature/` (`online-rooms`).
-
-How to produce a side for Hack star: game rules and data with a small script or a Vitest run
-(`cd ui; npx vitest run <file>`) or the server with `uv run python -c …` / `pytest`; API
-answers with the FastAPI test client; screens with a screenshot of `npm run dev` at the same
-size on both sides (base side from a temporary worktree). Saved data: the `localStorage` JSON.
+`<branch-slug>` is the branch with `/` → `-` (`feature-created-fighter-studio`); `<name>` is the
+branch without `feature/` (`created-fighter-studio`).
 
 ---
 
 ## REVIEW
 
-1. **Range.** Default branch `main`; base = `git merge-base HEAD main`; head = `HEAD` plus
-   uncommitted changes. The current branch must be the spec's **Branch**.
+1. **Range.** The default branch is `main`; base = `git merge-base HEAD main`; head = `HEAD`
+   plus uncommitted changes. The current branch must be the spec's **Branch**.
 
 2. **Record** (`change_record.yaml`, only when `semantic_diff.md` says it is required):
    - read the spec (Context, statements, Steps, decisions) and `git diff --stat -M <base>`;
@@ -80,8 +82,11 @@ size on both sides (base side from a temporary worktree). Saved data: the `local
 3. **Before | After.** For each block and example, produce both sides as described for its kind
    in `semantic_diff.md` — from the base revision (`git show <base>:<path>`, or a temporary
    `git worktree add --detach <tmp> <base>`, removed afterwards) and from the head. Same
-   input, same settings on both sides. If a side cannot be produced, mark the block `manual`
-   with the reason — never invent output.
+   input, same settings on both sides: for the server, call the endpoint with the FastAPI test
+   client or `uv run`; for the UI, run the game rule in a Vitest case, or open the screen with
+   `npm run dev` (port 5180) and capture it at the same size on both sides; for saved
+   progress, compare the `localStorage` JSON. If a side cannot be produced, mark the block
+   `manual` with the reason — never invent output.
 
 4. **Checks.** Run the checks of `semantic_diff.md` (C1–C9): `pass`, `fail` or `n/a`. Each
    failure is a finding.
@@ -104,14 +109,14 @@ size on both sides (base side from a temporary worktree). Saved data: the `local
       side with the changed lines shaded; the author Q&A.
    5. **Previously reviewed** — see step 5.
    6. **Highlights** — at most 12 real diff hunks (≤ 40 lines each, with line numbers, never
-      reformatted or invented), most relevant first: public interfaces, non-trivial logic,
-      security, statements' acceptance; for each: what changed, why it matters, what to
-      check, and 2–5 **concept tooltips**: the concept in one sentence, then why it is used
-      on that line (≤ 40 words), correct for the versions in use (Svelte 5 runes, TypeScript,
-      Three.js / Threlte, FastAPI, Pydantic 2).
+      reformatted or invented), most relevant first: API and room-message changes, saved
+      progress, non-trivial game logic, security, statements' acceptance; for each: what
+      changed, why it matters, what to check, and 2–5 **concept tooltips**: the concept in one
+      sentence, then why it is used on that line (≤ 40 words), correct for the versions in use
+      (Python 3.13, FastAPI, Svelte 5, TypeScript 6, three.js / Threlte).
    7. **Findings** — the table of `code_review.md` (failed checks included).
-   8. **Not covered** — what was left out (lock files, generated files, renames, formatting,
-      translations beyond a sample), with the reason.
+   8. **Not covered** — what was left out (`package-lock.json`, `uv.lock`, generated files,
+      renames, formatting), with the reason.
    9. **Concepts glossary** — every concept of the tooltips once.
    10. **Reviewer checklist**, and the `review-meta` data (commits, covered hunks, findings).
 
@@ -134,13 +139,13 @@ size on both sides (base side from a temporary worktree). Saved data: the `local
    **Top findings:** <up to three, one line each, or "none">
    ```
 
-   The pr stage puts it into the pull request's `semantic-diff` block
-   (`update_pr.ps1 -SemanticDiffFile`). The page must be committed and pushed for the link to
-   work.
+   The pr stage puts it into the pull request's `semantic-diff` block. The page must be
+   committed and pushed for the link to work.
 
-8. **In the spec:** tick the *Review* line of the Definition of Done when the page exists; add
-   a Review Log row (today, the AI model, `semantic diff`, `—`, link to the page) and a
-   **Stage log** row (today, `review`, `REVIEW:`, your model, `semantic diff written`).
+8. **In the spec:** tick the *Review* line of the Definition of Done when the page exists and
+   no Blocking finding is open; add a Review Log row (today, your model, `semantic diff`, `—`,
+   link to the page) and a **Stage log** row (today, `review`, `REVIEW:`, your model,
+   `semantic diff written`).
 
 9. **Report:** the record's blocks per kind, the checks, the page, the top findings, and the
    next step (`CODE REVIEW:`, `CLOSE:`, or `PR:` to publish).
@@ -152,14 +157,15 @@ size on both sides (base side from a temporary worktree). Saved data: the `local
 2. **Review layer by layer** with `code_review.md`: spec alignment, architecture, code quality
    against the guidelines of the languages changed, quick scan.
 3. **Findings** in the table of `code_review.md`, each with a **target**:
-   - in the spec's scope and no change of behaviour → *fix now* (`IMPLEMENT:` again, or the
-     user fixes it);
-   - clean-up outside the scope → a new spec for it — never fixed in place;
+   - in the spec's scope and no change of behaviour → *fix now* (the user runs
+     `IMPLEMENT:` again or fixes it);
+   - clean-up outside the scope → *deferred* (a row in the spec's **Deferred Items**) — never
+     fixed in place;
    - a change of behaviour that the spec does not ask for → *new spec*
      (`REQUIREMENTS: <name> — …`);
-   - a missing decision → a decision in the spec's plan (Part 2).
-4. **In the spec:** under **Review Log**, add a row (today, `AI assistant (<model>)`, `diff`,
-   the outcome, the number of findings per severity) and, below the table, a
+   - a missing decision → *plan decision* (a `D<n>` added with `PLAN: <spec file>`).
+4. **In the spec:** under **Review Log**, add a row (today, `AI assistant (<your model>)`,
+   `diff`, the outcome, the number of findings per severity) and, below the table, a
    `### Code review YYYY-MM-DD` section with the finding table. Add a **Stage log** row
    (today, `review`, `CODE REVIEW:`, your model, the outcome).
 5. **Outcome:** **Approve** (no Blocking), **Request changes**, or **Blocked on a decision**.
