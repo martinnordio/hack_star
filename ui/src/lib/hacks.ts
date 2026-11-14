@@ -1,4 +1,4 @@
-import { CREATED_ID, type Progress } from './progress'
+import { isCreatedFighterId, type Progress } from './progress'
 import { SETTINGS } from './game/settings'
 
 export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge' | 'creator'
@@ -8,7 +8,10 @@ export interface Hack {
   code: string
   name: string
   description: string
+  duration_seconds: number | null
 }
+
+export type HackTimeRemaining = { kind: 'permanent' } | { kind: 'timed'; days: number; hours: number }
 
 export const NORMAL_MAX_POWER = 11
 export const HACKED_MAX_POWER = 22
@@ -54,12 +57,38 @@ export function hackLink(origin: string, code: string): string {
   return `${origin}/?hack=${encodeURIComponent(code)}`
 }
 
-export function withHack(progress: Progress, id: HackId): Progress {
-  if (progress.activeHacks.includes(id)) return progress
-  return { ...progress, activeHacks: [...progress.activeHacks, id] }
+export function withHack(progress: Progress, id: HackId, durationSeconds: number | null, now = Date.now()): Progress {
+  const activeHacks = progress.activeHacks.includes(id) ? progress.activeHacks : [...progress.activeHacks, id]
+  return {
+    ...progress,
+    activeHacks,
+    hackExpiries: {
+      ...progress.hackExpiries,
+      [id]: durationSeconds === null ? null : now + durationSeconds * 1000,
+    },
+  }
 }
 
-const has = (progress: Progress, id: HackId) => progress.activeHacks.includes(id)
+export function isHackActive(progress: Progress, id: string, now = Date.now()): boolean {
+  if (!progress.activeHacks.includes(id)) return false
+  const expiry = progress.hackExpiries[id]
+  return expiry === null || (expiry !== undefined && expiry > now)
+}
+
+export function hackTimeRemaining(progress: Progress, id: string, now = Date.now()): HackTimeRemaining | null {
+  if (!progress.activeHacks.includes(id)) return null
+  const expiry = progress.hackExpiries[id]
+  if (expiry === null) return { kind: 'permanent' }
+  if (expiry === undefined || expiry <= now) return null
+  const hours = Math.ceil((expiry - now) / (60 * 60 * 1000))
+  return { kind: 'timed', days: Math.floor(hours / 24), hours: hours % 24 }
+}
+
+export function activeHackIds(progress: Progress, now = Date.now()): string[] {
+  return progress.activeHacks.filter((id) => isHackActive(progress, id, now))
+}
+
+const has = (progress: Progress, id: HackId) => isHackActive(progress, id)
 
 /** Credits to show; `Infinity` with the unlimited-credits hack. */
 export function credits(progress: Progress): number {
@@ -67,8 +96,10 @@ export function credits(progress: Progress): number {
 }
 
 export function isUnlocked(progress: Progress, fighterId: string): boolean {
-  // Only the CREATOR code unlocks the created fighter (not credits, not OPENSESAME).
-  if (fighterId === CREATED_ID) return has(progress, 'creator') && progress.createdFighter !== null
+  if (isCreatedFighterId(fighterId)) {
+    const index = progress.createdFighters.findIndex((fighter) => fighter.id === fighterId)
+    return index === 0 || (index > 0 && has(progress, 'creator'))
+  }
   return has(progress, 'unlock_all') || progress.unlockedFighters.includes(fighterId)
 }
 

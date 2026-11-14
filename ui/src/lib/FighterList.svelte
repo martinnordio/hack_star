@@ -1,6 +1,6 @@
 <script lang="ts">
   import { RARITY_COLORS, RARITY_KEYS, type Fighter } from './fighters'
-  import { isUnlocked, maxPower } from './hacks'
+  import { currentFighter, isUnlocked, maxPower } from './hacks'
   import { powerOf, unlockPrice } from './game/economy'
   import { wornSkin } from './game/shop'
   import { fighterType } from './game/types'
@@ -8,7 +8,8 @@
   import PrestigeBadge from './PrestigeBadge.svelte'
   import { progress } from './accounts'
   import { t } from './i18n'
-  import { CREATED_ID } from './progress'
+  import { isCreatedFighterId } from './progress'
+  import { canAddCreatedFighter } from './created'
 
   let { fighters, onOpen, onCreate }: { fighters: Fighter[]; onOpen: (id: string) => void; onCreate: () => void } = $props()
 </script>
@@ -17,7 +18,7 @@
   {#each fighters as fighter (fighter.id)}
     {@const unlocked = isUnlocked($progress, fighter.id)}
     {@const trophies = $progress.trophies[fighter.id] ?? 0}
-    {@const selected = $progress.selectedFighter === fighter.id}
+    {@const selected = currentFighter($progress, fighters).id === fighter.id}
     <li>
       <button
         class="card"
@@ -39,15 +40,15 @@
           <span>🏆 {trophies}</span>
           <span class="power">⚡ {powerOf($progress, fighter.id)}/{maxPower($progress)}</span>
         </span>
-        {#if !unlocked && fighter.id === CREATED_ID}
-          <span class="price">🔒 💻</span>
+        {#if !unlocked && isCreatedFighterId(fighter.id)}
+          <span class="price" title={$t('creator.locked')}>🔒 {$t('creator.lockedShort')}</span>
         {:else if !unlocked}
           <span class="price">🔒 {$t('common.price', { credits: unlockPrice(fighter.rarity) })}</span>
         {/if}
       </button>
     </li>
   {/each}
-  {#if !$progress.createdFighter}
+  {#if canAddCreatedFighter($progress)}
     <li>
       <button class="card create" onclick={onCreate}>
         <span class="picture plus" aria-hidden="true">➕</span>

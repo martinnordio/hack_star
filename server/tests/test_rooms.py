@@ -82,6 +82,7 @@ def test_bad_member_is_refused() -> None:
 
 
 CREATED = {"fighter": "custom", "skin": "L321e8322b39d353", "power": 3, "hyper": False, "name": "Zappy"}
+CREATED_EXTRA = {"fighter": "custom-2", "skin": "L010ff8a1affd23f", "power": 5, "hyper": False, "name": "Comet"}
 
 
 def test_created_fighter_is_shown_with_its_look_and_name() -> None:
@@ -93,6 +94,22 @@ def test_created_fighter_is_shown_with_its_look_and_name() -> None:
             assert "name" not in receive(host)["members"][0]
 
 
+def test_two_created_fighters_keep_distinct_ids_looks_and_names_in_one_room() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        send(host, {"type": "create", "member": CREATED})
+        code = receive(host)["code"]
+        with client.websocket_connect("/api/rooms") as friend:
+            send(friend, {"type": "join", "code": code, "member": CREATED_EXTRA})
+            joined = receive(friend)
+            assert joined["type"] == "room"
+            receive(host)
+            assert [member["fighter"] for member in joined["members"]] == ["custom", "custom-2"]
+            assert joined["members"] == [
+                {"slot": 0, **CREATED},
+                {"slot": 1, **CREATED_EXTRA},
+            ]
+
+
 @pytest.mark.parametrize(
     "member",
     [
@@ -101,6 +118,7 @@ def test_created_fighter_is_shown_with_its_look_and_name() -> None:
         {**CREATED, "skin": "L321red000green0"},
         {**CREATED, "name": "x" * 13},
         {**CREATED, "name": "  "},
+        {**CREATED_EXTRA, "fighter": "custom-16"},
         {key: value for key, value in CREATED.items() if key != "name"},
         {**BLAZE, "name": "Blaze"},
     ],

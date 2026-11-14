@@ -17,6 +17,17 @@ def test_five_hacks() -> None:
     }
 
 
+def test_hack_durations() -> None:
+    durations = {h["id"]: h["duration_seconds"] for h in client.get("/api/hacks").json()}
+    assert durations == {
+        "infinite_credits": 72 * 60 * 60,
+        "unlock_all": 72 * 60 * 60,
+        "power22": None,
+        "hypercharge": 72 * 60 * 60,
+        "creator": 72 * 60 * 60,
+    }
+
+
 def test_redeem_creator() -> None:
     response = client.post("/api/hacks/redeem", json={"code": "creator"})
     assert response.status_code == 200

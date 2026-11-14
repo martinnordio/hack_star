@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Fighter } from '../fighters'
 import { withHack } from '../hacks'
-import { defaultProgress, type Progress } from '../progress'
+import { defaultProgress, TEMPORARY_HACK_SECONDS, type Progress } from '../progress'
 import { creditsFor, earn, powerOf, stats, unlock, unlockPrice, upgrade, upgradeCost } from './economy'
 
 const fighter = (id: string, rarity: Fighter['rarity']): Fighter => ({
@@ -66,7 +66,7 @@ describe('economy', () => {
 
   it('power 22 allows upgrades past 11, and those levels count only while the hack is on', () => {
     const p = { ...defaultProgress(), credits: 10_000, powerLevels: { blaze: 11 } }
-    const hacked = withHack(p, 'power22')
+    const hacked = withHack(p, 'power22', null)
     const after = ok(upgrade(hacked, 'blaze'))
     expect(after.powerLevels.blaze).toBe(12)
     expect(powerOf(after, 'blaze')).toBe(12)
@@ -74,7 +74,7 @@ describe('economy', () => {
   })
 
   it('with unlimited credits buying is free and the saved credits do not change', () => {
-    const p = withHack(defaultProgress(), 'infinite_credits')
+    const p = withHack(defaultProgress(), 'infinite_credits', TEMPORARY_HACK_SECONDS)
     const after = ok(unlock(p, pixel))
     expect(after.unlockedFighters).toContain('pixel')
     expect(after.credits).toBe(500)

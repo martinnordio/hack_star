@@ -2,16 +2,12 @@
   import QRCode from 'qrcode'
   import { onMount, untrack } from 'svelte'
   import type { Fighter } from './fighters'
-  import { currentFighter } from './hacks'
-  import { powerOf } from './game/economy'
-  import { wornSkin } from './game/shop'
-  import { codeFrom, createRoom, joinRoom, leaveRoom, room, roomLink, type Member, type Seat } from './net/room'
+  import { codeFrom, createRoom, joinRoom, leaveRoom, memberFor, room, roomLink, type Member, type Seat } from './net/room'
   import { portrait } from './portraits'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { options } from './options'
   import { t, tOr } from './i18n'
-  import { CREATED_ID } from './progress'
 
   let { fighters, initialCode, onStart }: { fighters: Fighter[]; initialCode?: string; onStart: () => void } = $props()
 
@@ -21,15 +17,7 @@
   let qr = $state<string>()
 
   function me(): Member {
-    const p = $progress
-    const fighter = currentFighter(p, fighters)
-    return {
-      fighter: fighter.id,
-      skin: wornSkin(p, fighter.id),
-      power: powerOf(p, fighter.id),
-      hyper: p.activeHacks.includes('hypercharge'),
-      ...(fighter.id === CREATED_ID && p.createdFighter ? { name: p.createdFighter.name } : {}),
-    }
+    return memberFor($progress, fighters)
   }
 
   function join(text: string) {

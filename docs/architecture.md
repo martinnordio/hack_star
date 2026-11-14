@@ -48,7 +48,7 @@ value (no router):
 |--------|------|-------|
 | Home | `lib/Home.svelte`, `lib/HomeScene.svelte`, `lib/AccountsPanel.svelte` | 3D fighter on a podium, entrance animation; the account chip opens the accounts panel (switch, add, rename) |
 | Fighters / Fighter | `lib/FighterList.svelte`, `lib/FighterDetail.svelte` | Pictures come from `lib/portraits.ts` (one off-screen renderer, cached); skins can be tried on and bought |
-| Create a fighter | `lib/CreatorScreen.svelte`, `lib/created.ts` | Name, type, colours, head, body with a live 3D preview; free the first time, `recreateCost` after |
+| Create a fighter | `lib/CreatorScreen.svelte`, `lib/created.ts` | Live 3D preview; first fighter is free and usable immediately, extras require `CREATOR` and cost 500 C each; edits cost 500 C (free with `INFINITY`) |
 | Shop | `lib/ShopScreen.svelte` | Skin of the day first, then every skin; buy, "NEW SKIN!", Wear it |
 | Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words used in the game |
 | Settings | `lib/SettingsScreen.svelte`, `lib/options.ts` | Language (per account), bot level and number of bots (saved under `hack-star.options`), reset of the account |
@@ -117,11 +117,13 @@ not know about accounts. The first time, the progress saved before accounts
 `startProgress()` (500 credits, 0 trophies, `START_FIGHTERS`, which must match the server's
 `unlocked_at_start`). `resetProgress()` is the Settings reset.
 
-Each progress holds: credits, trophies and power level per fighter,
-unlocked fighters, owned skins, active hacks, chosen fighter and skins, and the created
-fighter's look. The format has a
-`version` (now 4); versions 2 and 3 are migrated, and anything else that does not match falls
-back to the starting progress. Hack effects are worked out when shown
+Each progress holds: credits, trophies, power levels, unlocked fighters, owned skins, active
+hacks and their expiry timestamps, chosen fighter and skins, and a collection of created-fighter
+looks. The progress format is version 6. Formats v2 through v5 migrate forward. The v5 single
+created fighter keeps id `custom` and its trophies, power, skins and selection; v4 and earlier
+active timed hacks receive their initial 72-hour expiry. Same-origin tabs reconcile local
+changes with the latest saved state, listen for `storage` events, and refresh when visible.
+Concurrent credit changes are merged as deltas. Hack effects are worked out when shown
 (`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`, `superHack` — applied to the player's fighter when an arena starts), so resetting the hacks
 brings the normal rules back exactly.
 
@@ -140,14 +142,21 @@ The player's options (bot level, number of bots) are not progress: `lib/options.
 under their own key `hack-star.options`, each bad value falling back to its default, so the
 progress format did not change.
 
+### Hack duration (`server/src/hack_star_server/hacks.py`, `ui/src/lib/hacks.ts`)
+
+The server returns `duration_seconds` with each hack. `INFINITY`, `OPENSESAME`, `HYPERCHARGE`
+and `CREATOR` last 72 hours; `POWER22` has no expiry. Re-entering an active timed code resets
+its expiry to 72 hours from that redemption. The Hack screen derives active status from the
+saved expiry, displays days and hours or a permanent label, and refreshes hourly, when visible,
+and at the next expiry boundary.
+
 ### The created fighter (`ui/src/lib/created.ts`)
 
-Id `custom` in every account (`CREATED_ID`), added to the catalogue from the progress
-(`withCreated`). Its look travels as its **skin id** (`lookSkin()`: "L" + type + head + body +
-2 colours, 16 characters), so pictures, the 3D stage, the arena and rooms need nothing extra.
-Only the `CREATOR` hack unlocks it (not credits, not OPENSESAME); bots never use it. In a room,
-the member also sends its `name`; the server accepts `fighter: "custom"` only with a
-look-shaped skin and a name.
+The collection has up to 15 entries: the first keeps id `custom` and is always usable; extras
+use ids `custom-2` through `custom-15`, require active `CREATOR`, and become inactive when it
+expires without losing their progress. `withCreated()` adds them to the catalogue. Each look
+travels as its **skin id** (`lookSkin()`: "L" + type + head + body + 2 colours, 16 characters),
+so pictures, the 3D stage, the arena and rooms need nothing extra. Bots never use created fighters.
 
 ### Playing with friends (`server/.../rooms.py`, `ui/src/lib/net/`)
 
@@ -172,9 +181,10 @@ sequenceDiagram
 ```
 
 - **Server** (`RoomManager`): rooms with a 4-letter code (no I or O), up to 3 devices, the host
-  in slot 0. It checks each member (`{fighter, skin, power, hyper}`), refuses messages over
-  64 KB, passes `start` / `state` / `lobby` from the host to the friends and `input` from a
-  friend to the host. A friend leaving sends `left` to the host; the host leaving sends
+  in slot 0. It checks each member (`{fighter, skin, name, power, hyper}`); created fighter IDs
+  `custom` and `custom-2` through `custom-15` require an encoded look and display name. It refuses
+  messages over 64 KB, passes `start` / `state` / `lobby` from the host to the friends and `input`
+  from a friend to the host. A friend leaving sends `left` to the host; the host leaving sends
   `closed` and removes the room. At most 100 rooms.
 - **Rules**: every fighter has a `team` (people share team 0, each bot its own); shots,
   explosions and dashes never hurt the same team; `Match` gives the result for the player's
@@ -218,6 +228,6 @@ sequenceDiagram
 
 | Command | Covers |
 |---------|--------|
-| `cd server; uv run pytest` | API: fighters and skins, hacks, rooms (also the created fighter's look) |
-| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress, accounts, languages, created fighter, 3D models (detail of the new fighters, every new skin different), hacks, QR codes and password, vocabulary |
+| `cd server; uv run --no-sync pytest` | API: fighters and skins, hack durations, rooms and created-fighter member data |
+| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress, accounts and tab sync, languages, created fighters, 3D models, timed hacks, QR codes and password, vocabulary |
 | `cd ui; npm run check` | Type checks (TypeScript and Svelte) |

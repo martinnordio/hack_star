@@ -8,39 +8,64 @@
     BODIES,
     CREATED_COLORS,
     CREATED_ID,
+    MAX_CREATED_FIGHTERS,
     HEADS,
     MAX_CREATED_NAME,
     createCost,
+    createdLookFor,
     defaultLook,
     lookSkin,
     saveCreated,
   } from './created'
-  import { credits } from './hacks'
+  import { credits, isHackActive } from './hacks'
   import { FIGHTER_TYPE_IDS, fighterType } from './game/types'
   import HomeScene from './HomeScene.svelte'
   import { t, type TextKey } from './i18n'
   import type { CreatedLook } from './progress'
 
-  let { onDone }: { onDone: () => void } = $props()
+  let { fighterId, onDone }: { fighterId?: string; onDone: () => void } = $props()
 
-  let look = $state<CreatedLook>(untrack(() => ({ ...($progress.createdFighter ?? defaultLook()) })))
+  let look = $state<CreatedLook>(untrack(() => ({ ...(fighterId ? (createdLookFor($progress, fighterId) ?? defaultLook()) : defaultLook()) })))
   let problem = $state<string>()
   let celebrating = $state(false)
 
-  const editing = $derived($progress.createdFighter !== null)
-  const cost = $derived(createCost($progress))
+  const editing = $derived(fighterId !== undefined)
+  const cost = $derived(createCost($progress, fighterId))
   const wallet = $derived(credits($progress))
   const skin = $derived(lookSkin(look))
 
   function save() {
-    const result = saveCreated($progress, look)
+    const result = saveCreated($progress, look, fighterId)
     if (!result.ok) {
-      problem =
-        result.reason === 'name' ? $t('creator.nameProblem') : $t('common.needMore', { credits: result.missing })
+      problem = result.reason === 'name'
+        ? $t('creator.nameProblem')
+        : result.reason === 'credits'
+          ? $t('common.needMore', { credits: result.missing })
+          : $t(({
+              creator: 'creator.requiresCreator',
+              inactive: 'creator.locked',
+              limit: 'creator.limit',
+              missing: 'creator.missing',
+            } as const)[result.reason])
       return
     }
     problem = undefined
     $progress = result.progress
+    const saved = $progress.createdFighters.some(({ look: savedLook }) =>
+      savedLook.name === look.name.trim() && lookSkin(savedLook) === skin,
+    )
+    if (!saved) {
+      if ($progress.createdFighters.length >= MAX_CREATED_FIGHTERS) {
+        problem = $t('creator.limit')
+      } else if ($progress.createdFighters.length > 0 && !isHackActive($progress, 'creator')) {
+        problem = $t('creator.requiresCreator')
+      } else {
+        const price = createCost($progress)
+        const available = credits($progress)
+        problem = available < price ? $t('common.needMore', { credits: price - available }) : $t('creator.limit')
+      }
+      return
+    }
     celebrating = true
     setTimeout(onDone, 1600)
   }
@@ -49,7 +74,7 @@
 <div class="creator">
   <div class="stage">
     <Canvas shadows={PCFShadowMap}>
-      <HomeScene fighterId={CREATED_ID} skinId={skin} entrance={false} />
+      <HomeScene fighterId={fighterId ?? CREATED_ID} skinId={skin} entrance={false} />
     </Canvas>
   </div>
 
@@ -97,8 +122,10 @@
     {#if problem}<p class="problem" role="alert">{problem}</p>{/if}
 
     <button class="save" onclick={save}>
-      {#if !editing}
+      {#if !editing && !$progress.createdFighters.length}
         ✨ {$t('creator.create')}
+      {:else if !editing}
+        ✨ {$t('creator.createPrice', { price: wallet === Infinity ? $t('common.free') : $t('common.price', { credits: cost }) })}
       {:else}
         💾 {$t('creator.save', { price: wallet === Infinity ? $t('common.free') : $t('common.price', { credits: cost }) })}
       {/if}

@@ -55,6 +55,18 @@ describe('shared match', () => {
     expect(start.fighters.slice(2).some((f) => f.fighter === 'custom')).toBe(false)
   })
 
+  it('distinct created fighters retain their IDs and derive their types from their looks', () => {
+    const settings = { ...SETTINGS, botCount: 3 }
+    const first: Seat = { slot: 0, fighter: 'custom', skin: 'L321e8322b39d353', power: 3, hyper: false, name: 'Nova' }
+    const extra: Seat = { slot: 1, fighter: 'custom-2', skin: 'L010ff8a1affd23f', power: 5, hyper: false, name: 'Comet' }
+    const start = startInfo(settings, [first, extra], [...catalogue, { id: 'custom', type: 'spreader' }], () => 0.5)
+    expect(start.fighters.slice(0, 2)).toMatchObject([
+      { fighter: 'custom', type: 'thrower', skin: first.skin, slot: 0 },
+      { fighter: 'custom-2', type: 'tank', skin: extra.skin, slot: 1 },
+    ])
+    expect(start.fighters.slice(2).some((fighter) => fighter.fighter.startsWith('custom'))).toBe(false)
+  })
+
   it('the start message puts people first, then bots with other fighters', () => {
     const { start } = setup()
     expect(start.fighters.map((f) => [f.fighter, f.slot])).toEqual([

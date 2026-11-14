@@ -33,6 +33,7 @@
 
   let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
   let openFighterId = $state<string>()
+  let creatorFighterId = $state<string>()
   let catalogue = $state<Fighter[]>()
   // The server's fighters plus this account's created fighter.
   const fighters = $derived(catalogue ? withCreated(catalogue, $progress) : undefined)
@@ -127,16 +128,33 @@
         openFighterId = id
         screen = 'fighter'
       }}
-      onCreate={() => (screen = 'creator')}
+      onCreate={() => {
+        creatorFighterId = undefined
+        screen = 'creator'
+      }}
     />
   </Panel>
 {:else if screen === 'fighter' && openFighter}
   <Panel title={$t('panel.fighter')} onBack={() => (screen = 'fighters')}>
-    <FighterDetail fighter={openFighter} {fighters} onSelected={() => (screen = 'home')} onChange={() => (screen = 'creator')} />
+    <FighterDetail
+      fighter={openFighter}
+      {fighters}
+      onSelected={() => (screen = 'home')}
+      onChange={(id) => {
+        creatorFighterId = id
+        screen = 'creator'
+      }}
+    />
   </Panel>
 {:else if screen === 'creator'}
-  <Panel title={$t($progress.createdFighter ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
-    <CreatorScreen onDone={() => (screen = 'fighters')} />
+  <Panel title={$t(creatorFighterId ? 'creator.editTitle' : 'creator.title')} onBack={() => (screen = 'fighters')}>
+    <CreatorScreen
+      fighterId={creatorFighterId}
+      onDone={() => {
+        creatorFighterId = undefined
+        screen = 'fighters'
+      }}
+    />
   </Panel>
 {:else if screen === 'shop'}
   <Panel title={$t('panel.shop')} onBack={() => (screen = 'home')}>

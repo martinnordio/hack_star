@@ -7,7 +7,8 @@ import { SETTINGS, type BotLevel, type Settings } from '../game/settings'
 import { fighterType } from '../game/types'
 import { World, type Shot, type WorldEvent } from '../game/world'
 import type { RoomConnection, RoomMessage, Seat } from './room'
-import { CREATED_ID, parseLookSkin } from '../created'
+import { parseLookSkin } from '../created'
+import { isCreatedFighterId } from '../progress'
 
 /** Seconds between two snapshots from the host, and between two positions from a friend. */
 export const SEND_EVERY = 0.05
@@ -42,8 +43,8 @@ export function startInfo(
   const count = Math.max(settings.botCount + 1, people.length + 1)
   // A created fighter's type is in its look (skin id); every device has its own.
   const typeOf = (id: string, skin = 'default') =>
-    (id === CREATED_ID ? parseLookSkin(skin)?.type : undefined) ?? catalogue.find((f) => f.id === id)?.type ?? 'basic'
-  const fighterIds = catalogue.map((f) => f.id).filter((id) => id !== CREATED_ID)
+    (isCreatedFighterId(id) ? parseLookSkin(skin)?.type : undefined) ?? catalogue.find((f) => f.id === id)?.type ?? 'basic'
+  const fighterIds = catalogue.map((f) => f.id).filter((id) => !isCreatedFighterId(id))
   const others = fighterIds.filter((id) => !people.some((p) => p.fighter === id))
   const pool = (others.length ? others : fighterIds).slice().sort(() => random() - 0.5)
   const bots = Array.from({ length: count - people.length }, (_, i) => ({

@@ -1,4 +1,7 @@
 import { derived, writable, type Readable } from 'svelte/store'
+import { nextCreatedFighterId } from './created'
+import { SETTINGS } from './game/settings'
+import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { PROGRESS_KEY, parseProgress, startProgress, type Progress } from './progress'
 
@@ -24,6 +27,16 @@ export type NameProblem = 'empty' | 'long' | 'taken' | 'full'
 export type AccountsChange = { ok: true; state: Accounts } | { ok: false; reason: NameProblem }
 
 type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem'>
+
+interface SyncTarget {
+  addEventListener(type: 'storage', listener: (event: Event) => void): void
+  removeEventListener(type: 'storage', listener: (event: Event) => void): void
+  document: {
+    visibilityState: DocumentVisibilityState
+    addEventListener(type: 'visibilitychange', listener: () => void): void
+    removeEventListener(type: 'visibilitychange', listener: () => void): void
+  }
+}
 
 function newId(state: Accounts): string {
   let n = state.accounts.length + 1
@@ -121,10 +134,207 @@ export function saveAccounts(storage: KeyValueStorage, state: Accounts): void {
   }
 }
 
-export function createAccountsStore(storage: KeyValueStorage, language: Language) {
-  const store = writable(loadAccounts(storage, language))
-  store.subscribe((state) => saveAccounts(storage, state))
-  return store
+function same(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
+
+function mergeStringArray(base: string[], local: string[], remote: string[]): string[] {
+  const removed = new Set(base.filter((value) => !local.includes(value)))
+  const added = local.filter((value) => !base.includes(value))
+  return [...remote.filter((value) => !removed.has(value)), ...added.filter((value) => !remote.includes(value))]
+}
+
+function mergeMap<T>(
+  base: Record<string, T>,
+  local: Record<string, T>,
+  remote: Record<string, T>,
+  mergeValue: (base: T, local: T, remote: T) => T = (_base, localValue) => localValue,
+): Record<string, T> {
+  const merged = { ...remote }
+  for (const key of new Set([...Object.keys(base), ...Object.keys(local)])) {
+    const hadBase = Object.hasOwn(base, key)
+    const hasLocal = Object.hasOwn(local, key)
+    if (hadBase === hasLocal && same(base[key], local[key])) continue
+    if (!hasLocal) delete merged[key]
+    else {
+      merged[key] = hadBase && Object.hasOwn(remote, key)
+        ? mergeValue(base[key], local[key], remote[key])
+        : local[key]
+    }
+  }
+  return merged
+}
+
+function mergeCreatedFighters(
+  base: Progress['createdFighters'],
+  local: Progress['createdFighters'],
+  remote: Progress['createdFighters'],
+  creatorActive: boolean,
+  infiniteCredits: boolean,
+  availableCredits: number,
+) {
+  const merged = [...remote]
+  let acceptedLocalCost = 0
+  let remainingCredits = availableCredits
+  for (const original of base) {
+    const localFighter = local.find((fighter) => fighter.id === original.id)
+    const index = merged.findIndex((fighter) => fighter.id === original.id)
+    if (!localFighter) {
+      if (index >= 0) merged.splice(index, 1)
+    } else if (!same(original, localFighter)) {
+      const remoteFighter = index >= 0 ? merged[index] : original
+      const fighter = same(localFighter.look, original.look)
+        ? { ...remoteFighter, look: remoteFighter.look }
+        : { ...remoteFighter, look: localFighter.look }
+      if (index >= 0) merged[index] = fighter
+      else merged.push(fighter)
+    }
+  }
+  for (const fighter of local) {
+    if (!base.some((original) => original.id === fighter.id)) {
+      const index = merged.findIndex((existing) => existing.id === fighter.id)
+      const needsCreator = merged.length > 0
+      const cost = needsCreator && !infiniteCredits ? SETTINGS.recreateCost : 0
+      const id = index >= 0 ? nextCreatedFighterId({ createdFighters: merged }) : fighter.id
+      if (
+        (needsCreator && !creatorActive) ||
+        !id ||
+        (cost > 0 && cost > remainingCredits)
+      ) {
+        continue
+      }
+      merged.push({ ...fighter, id })
+      remainingCredits -= cost
+      acceptedLocalCost += cost
+    }
+  }
+  return { fighters: merged, acceptedLocalCost }
+}
+
+function mergeProgress(base: Progress, local: Progress, remote: Progress): Progress {
+  const merged: Progress = { ...remote }
+  let rejectedCreationRefund = 0
+  if (local.selectedFighter !== base.selectedFighter) merged.selectedFighter = local.selectedFighter
+  if (!same(base.trophies, local.trophies)) merged.trophies = mergeMap(base.trophies, local.trophies, remote.trophies)
+  if (!same(base.powerLevels, local.powerLevels)) merged.powerLevels = mergeMap(base.powerLevels, local.powerLevels, remote.powerLevels)
+  if (!same(base.hackExpiries, local.hackExpiries)) merged.hackExpiries = mergeMap(base.hackExpiries, local.hackExpiries, remote.hackExpiries)
+  if (!same(base.selectedSkins, local.selectedSkins)) merged.selectedSkins = mergeMap(base.selectedSkins, local.selectedSkins, remote.selectedSkins)
+  if (!same(base.ownedSkins, local.ownedSkins)) {
+    merged.ownedSkins = mergeMap(base.ownedSkins, local.ownedSkins, remote.ownedSkins, mergeStringArray)
+  }
+  if (!same(base.unlockedFighters, local.unlockedFighters)) {
+    merged.unlockedFighters = mergeStringArray(base.unlockedFighters, local.unlockedFighters, remote.unlockedFighters)
+  }
+  if (!same(base.activeHacks, local.activeHacks)) {
+    merged.activeHacks = mergeStringArray(base.activeHacks, local.activeHacks, remote.activeHacks)
+  }
+  if (!same(base.createdFighters, local.createdFighters)) {
+    const localAdds = local.createdFighters.filter((fighter) => !base.createdFighters.some((original) => original.id === fighter.id))
+    const localCreationCost = isHackActive(local, 'infinite_credits')
+      ? 0
+      : Math.max(0, localAdds.length - Number(base.createdFighters.length === 0)) * SETTINGS.recreateCost
+    const availableCredits = remote.credits + local.credits - base.credits + localCreationCost
+    const created = mergeCreatedFighters(
+      base.createdFighters,
+      local.createdFighters,
+      remote.createdFighters,
+      isHackActive(merged, 'creator'),
+      isHackActive(merged, 'infinite_credits'),
+      availableCredits,
+    )
+    merged.createdFighters = created.fighters
+    rejectedCreationRefund = localCreationCost - created.acceptedLocalCost
+  }
+  if (local.credits !== base.credits || rejectedCreationRefund !== 0) {
+    merged.credits = Math.max(0, remote.credits + local.credits - base.credits + rejectedCreationRefund)
+  }
+  return merged
+}
+
+function mergeAccount(base: Account, local: Account, remote: Account): Account {
+  return {
+    ...remote,
+    name: local.name === base.name ? remote.name : local.name,
+    language: local.language === base.language ? remote.language : local.language,
+    progress: mergeProgress(base.progress, local.progress, remote.progress),
+  }
+}
+
+function mergeAccounts(base: Accounts, local: Accounts, remote: Accounts): Accounts {
+  const merged = [...remote.accounts]
+  for (const original of base.accounts) {
+    const localAccount = local.accounts.find((account) => account.id === original.id)
+    const index = merged.findIndex((account) => account.id === original.id)
+    if (!localAccount) {
+      if (index >= 0) merged.splice(index, 1)
+    } else if (!same(original, localAccount)) {
+      const account = mergeAccount(original, localAccount, index >= 0 ? merged[index] : original)
+      if (index >= 0) merged[index] = account
+      else merged.push(account)
+    }
+  }
+  for (const account of local.accounts) {
+    if (!base.accounts.some((original) => original.id === account.id)) {
+      const index = merged.findIndex((existing) => existing.id === account.id)
+      if (index >= 0) merged[index] = account
+      else merged.push(account)
+    }
+  }
+  return {
+    version: 1,
+    current: local.current === base.current ? remote.current : local.current,
+    accounts: merged.slice(0, MAX_ACCOUNTS),
+  }
+}
+
+export function createAccountsStore(storage: KeyValueStorage, language: Language, target?: SyncTarget) {
+  const initial = loadAccounts(storage, language)
+  saveAccounts(storage, initial)
+  const store = writable(initial)
+  let base = initial
+  let syncedState: Accounts | null = null
+  const unsubscribe = store.subscribe((state) => {
+    if (syncedState && same(state, syncedState)) {
+      syncedState = null
+      return
+    }
+    const latest = loadAccounts(storage, language)
+    const merged = mergeAccounts(base, state, latest)
+    if (!same(merged, latest)) saveAccounts(storage, merged)
+    base = merged
+    if (!same(state, merged)) {
+      syncedState = merged
+      store.set(merged)
+    }
+  })
+
+  function refresh(): void {
+    const latest = loadAccounts(storage, language)
+    if (same(latest, base)) return
+    base = latest
+    store.set(latest)
+  }
+
+  const onStorage = (event: Event) => {
+    if ((event as StorageEvent).key === ACCOUNTS_KEY) refresh()
+  }
+  const onVisibilityChange = () => {
+    if (target?.document.visibilityState === 'visible') refresh()
+  }
+  target?.addEventListener('storage', onStorage)
+  target?.document.addEventListener('visibilitychange', onVisibilityChange)
+
+  return {
+    subscribe: store.subscribe,
+    set: store.set,
+    update: store.update,
+    refresh,
+    destroy() {
+      unsubscribe()
+      target?.removeEventListener('storage', onStorage)
+      target?.document.removeEventListener('visibilitychange', onVisibilityChange)
+    },
+  }
 }
 
 type AccountsStore = ReturnType<typeof createAccountsStore>
@@ -153,6 +363,7 @@ const inBrowser = typeof window !== 'undefined'
 export const accounts = createAccountsStore(
   inBrowser ? window.localStorage : memoryStorage(),
   browserLanguage(inBrowser ? navigator.languages : []),
+  inBrowser ? window : undefined,
 )
 
 export const progress = progressStore(accounts)

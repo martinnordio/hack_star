@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { codeFromScan, credits, hackLink, isQrPassword, isUnlocked, maxPower, superHack, withHack } from './hacks'
-import { defaultProgress } from './progress'
+import { activeHackIds, codeFromScan, credits, hackLink, hackTimeRemaining, isHackActive, isQrPassword, isUnlocked, maxPower, superHack, withHack } from './hacks'
+import { defaultProgress, TEMPORARY_HACK_SECONDS } from './progress'
 
 describe('QR password', () => {
   it.each([
@@ -18,7 +18,7 @@ describe('hacks', () => {
   it('HYPERCHARGE makes the Super charge 3 times faster and always a Hypercharge, until reset', () => {
     const p = defaultProgress()
     expect(superHack(p)).toEqual({ superGain: 1, alwaysHyper: false })
-    const hacked = withHack(p, 'hypercharge')
+    const hacked = withHack(p, 'hypercharge', TEMPORARY_HACK_SECONDS)
     expect(superHack(hacked)).toEqual({ superGain: 3, alwaysHyper: true })
     expect(superHack({ ...hacked, activeHacks: [] })).toEqual({ superGain: 1, alwaysHyper: false })
   })
@@ -39,15 +39,45 @@ describe('hacks', () => {
   })
 
   it('applies each hack', () => {
-    const p = withHack(withHack(withHack(defaultProgress(), 'infinite_credits'), 'unlock_all'), 'power22')
+    const p = withHack(
+      withHack(withHack(defaultProgress(), 'infinite_credits', TEMPORARY_HACK_SECONDS), 'unlock_all', TEMPORARY_HACK_SECONDS),
+      'power22',
+      null,
+    )
     expect(credits(p)).toBe(Infinity)
     expect(isUnlocked(p, 'pixel')).toBe(true)
     expect(maxPower(p)).toBe(22)
   })
 
   it('adds a hack only once and keeps saved progress unchanged', () => {
-    const p = withHack(withHack(defaultProgress(), 'unlock_all'), 'unlock_all')
+    const p = withHack(withHack(defaultProgress(), 'unlock_all', TEMPORARY_HACK_SECONDS), 'unlock_all', TEMPORARY_HACK_SECONDS)
     expect(p.activeHacks).toEqual(['unlock_all'])
     expect(p.unlockedFighters).toEqual(['blaze', 'rocko', 'turbo'])
+  })
+
+  it('expires timed hacks at the boundary, refreshes them on re-entry and keeps permanent hacks', () => {
+    const now = Date.now()
+    const first = withHack(defaultProgress(), 'infinite_credits', TEMPORARY_HACK_SECONDS, now)
+    expect(isHackActive(first, 'infinite_credits', now + TEMPORARY_HACK_SECONDS * 1000 - 1)).toBe(true)
+    expect(credits(first)).toBe(Infinity)
+    expect(isHackActive(first, 'infinite_credits', now + TEMPORARY_HACK_SECONDS * 1000)).toBe(false)
+    expect(credits({ ...first, hackExpiries: { ...first.hackExpiries, infinite_credits: now } })).toBe(500)
+
+    const refreshed = withHack(first, 'infinite_credits', TEMPORARY_HACK_SECONDS, now + 5000)
+    expect(refreshed.hackExpiries.infinite_credits).toBe(now + 5000 + TEMPORARY_HACK_SECONDS * 1000)
+    const permanent = withHack(defaultProgress(), 'power22', null, now)
+    expect(isHackActive(permanent, 'power22', now + 100_000_000_000)).toBe(true)
+    expect(activeHackIds(permanent, now + 100_000_000_000)).toEqual(['power22'])
+  })
+
+  it('reports timed days and hours, permanent status, and no status after expiry', () => {
+    const now = 1_000_000
+    const timed = withHack(defaultProgress(), 'infinite_credits', 72 * 60 * 60, now)
+    const permanent = withHack(defaultProgress(), 'power22', null, now)
+
+    expect(hackTimeRemaining(timed, 'infinite_credits', now)).toEqual({ kind: 'timed', days: 3, hours: 0 })
+    expect(hackTimeRemaining(timed, 'infinite_credits', now + 47 * 60 * 60 * 1000)).toEqual({ kind: 'timed', days: 1, hours: 1 })
+    expect(hackTimeRemaining(timed, 'infinite_credits', now + 72 * 60 * 60 * 1000)).toBeNull()
+    expect(hackTimeRemaining(permanent, 'power22', now + 100_000_000_000)).toEqual({ kind: 'permanent' })
   })
 })
