@@ -1,7 +1,7 @@
 # Fighter Studio, Saves and Music Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Requirements in progress
+> **Status:** ⬜ Not started — plan ready
 > **Created:** 2026-11-14
 > **Last updated:** 2026-11-14
 > **Branch:** `feature/fighter-studio-saves-and-music`
@@ -14,6 +14,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | GitHub Copilot | Part 1 drafted from the creator expansion notes; product choices remain open |
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
+| 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
 
 ---
 
@@ -208,4 +209,359 @@ free tool, and free-music libraries under CC0 or CC BY._
 
 # Part 2 · Plan
 
-_Written by the plan stage once Part 1 is agreed._
+## 2 · Spec Overview
+
+| Step | Description | Status | Detail |
+|------|-------------|--------|--------|
+| **1** | Account name on the home screen | ⬜ Not started | [→ Step 1](#step-1--account-name-on-the-home-screen) |
+| **2** | Saving that lasts, and a notice when it cannot | ⬜ Not started | [→ Step 2](#step-2--saving-that-lasts-and-a-notice-when-it-cannot) |
+| **3** | Look format with hands, legs and skins | ⬜ Not started | [→ Step 3](#step-3--look-format-with-hands-legs-and-skins) |
+| **4** | New 3D parts | ⬜ Not started | [→ Step 4](#step-4--new-3d-parts) |
+| **5** | Creator controls for every part | ⬜ Not started | [→ Step 5](#step-5--creator-controls-for-every-part) |
+| **6** | Skins of created fighters: rules and saving | ⬜ Not started | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
+| **7** | Skins of created fighters: screens | ⬜ Not started | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
+| **8** | Developer mode and the developer page | ⬜ Not started | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
+| **9** | Music section of the developer page | ⬜ Not started | [→ Step 9](#step-9--music-section-of-the-developer-page) |
+| **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
+| **11** | Music in matches and its Settings | ⬜ Not started | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
+| **12** | About panel | ⬜ Not started | [→ Step 12](#step-12--about-panel) |
+| **13** | Documentation and final check | ⬜ Not started | [→ Step 13](#step-13--documentation-and-final-check) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration> · <model>)**`** line to that Step's
+>    **Notes**: date, time it took, the AI model that did the work, a one-line summary and
+>    the verifying test/command result.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | The look's skin id grows from 16 to 18 characters: `L`, type, head (0–4), body (0–4), hands (0–2), legs (0–2), two colours. 16-character ids still parse, with hands and legs 0. The server's `CREATED_LOOK` accepts both. | Rooms, 3D models and pictures keep working without knowing about created fighters (as today); 18 characters fit the room's 20-character limit. |
+| D2 | Hands and legs option 0 is "the body's own" — exactly what each body draws today; options 1 and 2 are new. | Old created fighters keep their look with no migration of their parts (S12). |
+| D3 | Progress version 7: every created look gets `hands: 0, legs: 0`, every created fighter gets `skins: []`; versions 2–6 still migrate. | One migration for all new saved fields (S12); the same pattern as versions 4–6. |
+| D4 | A created skin is `{ id: 's1'…'s5', main, second, head, body, hands, legs }` stored on its created fighter; it is chosen through the existing `selectedSkins[fighterId]`, and `wornSkin()` returns the skin id of the chosen look. Skins are free and need no `ownedSkins` entry. | Reuses how skins are chosen and sent to rooms (S6, S17); the type and name stay the fighter's (S7). |
+| D5 | Across tabs, created skins merge by skin id with the same rule as created fighters: a local change wins over an unchanged remote; deletions are kept. | Same behaviour as the rest of the progress (S13, bug fixes spec). |
+| D6 | On start the game calls `navigator.storage.persist()` when the browser has it; saving reports success, and a failed save shows a notice once per visit. No new dependency. | Asks the browser not to delete the data (S14); the player learns when nothing is saved (S15). |
+| D7 | Developer mode is saved per browser in `hack-star.options` (`developer: true`); the code is the existing QR code `M6D2` (`isQrPassword`). | Same per-device place as the bot and music settings (S24); a lock for kids, not security — the code is in the public source. |
+| D8 | The developer page is `ui/src/lib/dev/DevPage.svelte`, chosen in `ui/src/main.ts` for `/?dev` like `/?qr`; English only; one component per section (`MusicSection.svelte` now, `GraphicsSection.svelte` in spec 2). | Matches the existing hidden pages; spec 2 adds a section without touching the page frame (S25). |
+| D9 | Music files: candidates live in `ui/dev/music/` — the list `candidates.json` (title, author, source, licence, file, chosen) is committed, the audio files are git-ignored. The five chosen tracks are copied to `ui/public/assets/music/` and listed in `ui/src/lib/music/tracks.json`, which the game and the About panel read. | Both developers share the list and choices; large candidate files stay out of git and out of the players' download (S20, S26). |
+| D10 | A small Vite plugin, active only for `npm run dev` (`apply: 'serve'`), serves the candidate files and handles "choose", "unchoose" and "delete" for the developer page. No new dependency; nothing of it is in `npm run build`. | A browser page cannot write or delete project files; a dev-server-only endpoint can, and players never get it (S20, S27). |
+| D11 | Tracks are MP3, at most about 3 MB each. | MP3 plays in every browser the game supports, including Safari on iPad and iPhone. |
+| D12 | Music settings are saved per device in `hack-star.options`: `music: boolean` (default `true`) and `track: string` (default the first chosen track); an unknown track falls back to the default. | S18; like the bot settings. |
+| D13 | One music player module (`ui/src/lib/music/player.ts`) with a single looping audio element; the match starts and stops it, and it pauses while the tab is hidden. | Starting from the PLAY tap satisfies the browsers' autoplay rule; one element means one track at a time (S19). |
+| D14 | The About panel reads the version from `ui/package.json` and the licence text from the repository's `LICENSE` (Vite `?raw` import), so they never drift. | S23 shows the real version and the exact licence. |
+| D15 | Step 1 finds the cause of the stale account name before fixing it; the fix stays in `Home.svelte` / `accounts.ts`, with a regression test at store level and a recorded browser check — no component-test library is added. | A check on 2026-11-14 showed the store itself passes the new name; adding a DOM test library would be a new dependency for one test. |
+
+---
+
+## Step 1 — Account name on the home screen
+
+### Goal
+The home screen shows the current account's name, trophies, credits and fighter right after a
+rename, an account switch or a new account (S8, S9).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Reproduce in the browser (`npm run dev`): rename the current account, close the panel;
+      switch account; add an account. Write down what the home screen shows each time.
+- [ ] Find the cause (how `Home.svelte` reads `$accounts`, the panel's writes, the accounts
+      store's merge) and write it in Notes.
+- [ ] Fix it with the smallest change; add a regression test in `accounts.test.ts` for the
+      part that can be tested without a screen.
+- [ ] Check: `cd ui; npm test; npm run check`, and the three browser checks above now show the
+      right account at once.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 2 — Saving that lasts, and a notice when it cannot
+
+### Goal
+Saved data is kept for long, every change is saved at once, and the player is told when the
+browser blocks saving (S10, S11, S14, S15, S16).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Ask the browser to keep the data on start (D6).
+- [ ] Make `saveAccounts` and `saveOptions` report whether saving worked; show a short
+      notice once per visit when it did not, in all five languages (S15, S29).
+- [ ] Tests: a storage that throws makes the notice appear once; a normal storage saves each
+      change right away (S11); options and accounts reload as saved (S10).
+- [ ] Check that leaving a match early still gives no reward (S16) and record it.
+- [ ] Check: `cd ui; npm test; npm run check`; in a private window the notice appears once.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Look format with hands, legs and skins
+
+### Goal
+Saves, skin ids and rooms carry hands, legs, more heads and bodies and created skins, while
+old saves and old skin ids still work (S1, S12, S17).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `CreatedLook` gets `hands` and `legs`; heads and bodies 0–4, hands and legs 0–2
+      (`progress.ts`, `created.ts`).
+- [ ] Skin id with 18 characters; `parseLookSkin` reads 16 and 18 (D1).
+- [ ] Progress version 7 with the migration of D3; `CreatedFighter` gets `skins`.
+- [ ] Server: `CREATED_LOOK` accepts both lengths; `test_rooms.py` covers both.
+- [ ] Tests: old saves of versions 2–6 load with the same look; old and new skin ids round-trip.
+- [ ] Check: `cd server; uv run pytest`; `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 4 — New 3D parts
+
+### Goal
+Two new heads, two new bodies, and two new hands and legs each, all original and combinable;
+option 0 of hands and legs keeps today's look (S1, S2, S3, D2).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Split hands and legs out of the bodies in `models/custom3d.ts`, so option 0 draws exactly
+      what each body draws today.
+- [ ] Add the new heads, bodies, hands and legs from simple shapes (`models/parts.ts`), in the
+      game's style; no shape copies a known character.
+- [ ] Test (`fighters3d.test.ts`): every combination builds; an old 16-character look builds
+      the same parts as before.
+- [ ] Check: `cd ui; npm test; npm run check`; look at all combinations in `/?gallery`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 5 — Creator controls for every part
+
+### Goal
+The creator lets the player pick head, body, hands and legs independently, with a turning live
+preview, on every device and in every language (S1, S2, S4, S29, S30).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `CreatorScreen.svelte`: pickers for hands and legs, and the extra heads and bodies;
+      changing one part or colour keeps the others.
+- [ ] The preview turns while the player changes parts.
+- [ ] Labels for the new parts in all five languages (`i18n/`).
+- [ ] Check: `cd ui; npm test; npm run check`; in the browser at phone, tablet and desktop size,
+      with mouse and touch: create and edit a fighter, reload, the parts are kept.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 6 — Skins of created fighters: rules and saving
+
+### Goal
+A created fighter can have up to five free skins with their own colours and parts, chosen and
+worn like other skins, kept across reloads and tabs (S5, S6, S7, S13, S17).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Rules in `created.ts`: add, change and delete a skin (at most five, free); deleting the
+      worn skin puts the default look back on (D4).
+- [ ] `wornSkin()` and the room member send the chosen skin's look (D4).
+- [ ] Cross-tab merge of skins (D5) in `accounts.ts`.
+- [ ] Tests: the limit of five, free, delete of the worn skin, type and stats unchanged (S7),
+      merge of two tabs adding and deleting skins.
+- [ ] Check: `cd ui; npm test; npm run check`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 7 — Skins of created fighters: screens
+
+### Goal
+The player can create, change, delete and choose a created fighter's skins on screen, and the
+chosen skin shows on the home screen, in matches and in rooms (S5, S6, S17, S29, S30).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Screens: a skins area for created fighters (the creator or the fighter detail —
+      following the existing skin screens), with a preview and the five-skin limit shown.
+- [ ] Texts in all five languages.
+- [ ] Check: `cd ui; npm test; npm run check`; in the browser: make two skins, wear one, see it
+      on the home screen, in a match and in a friend's room on a second device or tab.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 8 — Developer mode and the developer page
+
+### Goal
+Developer mode can be turned on in Settings with the code, and the hidden developer page
+`/?dev` opens with its code check and an empty Music section (S24, S25, S29, S30).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `options.ts`: `developer` (D7); Settings control to turn it on (asks the code, wrong code
+      message) and off; texts in all five languages.
+- [ ] In developer mode, Settings shows a button to the developer page.
+- [ ] `/?dev` in `main.ts` and `dev/DevPage.svelte` (D8): asks the code when developer mode is
+      off and turns it on; English only.
+- [ ] Tests: options load and save `developer`; a wrong code does not turn it on.
+- [ ] Check: `cd ui; npm test; npm run check; npm run build`; no player screen links to `/?dev`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 9 — Music section of the developer page
+
+### Goal
+The Music section lists the candidate tracks with their details, plays and stops them, marks
+the five, deletes tracks and shows the request to find more (S20, S22, S26, S27, S28).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `ui/dev/music/candidates.json` (empty list) and the `.gitignore` line for the audio
+      files (D9).
+- [ ] The dev-only Vite plugin (D10): list, serve files, choose / unchoose (copies to or
+      removes from `public/assets/music/` and updates `src/lib/music/tracks.json`), delete
+      (refused for a chosen track).
+- [ ] `dev/MusicSection.svelte`: the list, play / stop, choose, delete, and the ready-to-copy
+      request (moods of S21, licences of S22, at most 15, the details of S26).
+- [ ] Tests for the plugin's list rules (at most five chosen, no delete of a chosen track,
+      only CC0 / CC BY / own licences accepted).
+- [ ] Check: `cd ui; npm test; npm run check; npm run build` — the build contains neither the
+      plugin nor any candidate file.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 10 — Find, try and choose the five tracks
+
+### Goal
+Up to 15 candidate tracks are found or made, checked and listened to, and the team chooses the
+five that ship (S20, S21, S22). This Step needs Martin and Mattia.
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] With the section's request, find or make up to 15 candidates covering the moods of S21;
+      for each, check the licence on the source's own page (CC0, CC BY, or made by us — never
+      NC or ND) and record title, author, source and licence.
+- [ ] Download them into `ui/dev/music/` (D9, D11).
+- [ ] Martin and Mattia listen on the developer page and choose five; delete the rest or keep
+      them as candidates.
+- [ ] Check: `src/lib/music/tracks.json` lists five tracks, each with its licence and credit;
+      the five files are in `public/assets/music/`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 11 — Music in matches and its Settings
+
+### Goal
+With music on, the chosen track plays in every match and stops when it ends; Settings turns it
+on or off and chooses the track (S18, S19, S29, S30).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `options.ts`: `music` and `track` (D12).
+- [ ] `music/player.ts` (D13); the match (bots, Training, friends) starts it at the start and
+      stops it at the end or when the player leaves; pause while the tab is hidden.
+- [ ] Settings: music on/off and the five tracks; texts in all five languages.
+- [ ] Tests: options defaults and fallback of an unknown track; the player's start / stop /
+      hidden / shown rules with a fake audio element.
+- [ ] Check: `cd ui; npm test; npm run check`; in the browser: music plays in a match on a
+      desktop and an iPad or phone, stops at the end, stays silent when off.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 12 — About panel
+
+### Goal
+Settings opens an About panel with the game's name, version, music credits and the MIT licence
+(S23, S29, S30).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `AboutPanel.svelte` opened from Settings: name, version and licence text (D14), the
+      credit of every track in `music/tracks.json` (title, author, licence, link), and the
+      copyright line.
+- [ ] Texts in all five languages (the licence text stays in English, as written).
+- [ ] Check: `cd ui; npm test; npm run check; npm run build`; the panel shows on phone and
+      desktop and lists all five tracks.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 13 — Documentation and final check
+
+### Goal
+The documents describe everything new, and everything that worked before still works
+(S10, S22, S31).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `README.md`: parts, skins, saving, music, About, developer mode and page; one sentence
+      on music in **Art** (S31).
+- [ ] `docs/architecture.md`: progress version 7, skin id, created skins, music player and
+      files, options, developer page and the dev-only plugin.
+- [ ] `ui/public/assets/LICENSES.md`: music section with the five tracks and how a new track
+      is checked (S22).
+- [ ] Full check: `cd server; uv run pytest`; `cd ui; npm test; npm run check; npm run build`;
+      in the browser, one pass over S1–S31 on desktop and phone, including a reload and a
+      second tab (S10, S13).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+Tasks set aside for a future spec, so nothing is forgotten.
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| Music on the home screen and in menus | S19 asks for matches only | a later music spec, if wanted |
+| Graphics section of the developer page | Spec 2 | [Graphics review](2026_11_14_2_graphics_review_spec.md) |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..S31 testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [ ] Review · review page written; no Blocking finding open
+- [ ] Spec closed · moved to `.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
