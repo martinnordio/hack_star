@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+# Candidate music files (developer page); their list dev/music/candidates.json is committed.
+dev/music/files/
 
 # Editor directories and files
 .vscode/*

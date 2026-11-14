@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–8 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9 done |
 
 ---
 
@@ -222,7 +222,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **6** | Skins of created fighters: rules and saving | ✅ Done | [→ Step 6](#step-6--skins-of-created-fighters-rules-and-saving) |
 | **7** | Skins of created fighters: screens | ✅ Done | [→ Step 7](#step-7--skins-of-created-fighters-screens) |
 | **8** | Developer mode and the developer page | ✅ Done | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
-| **9** | Music section of the developer page | ⬜ Not started | [→ Step 9](#step-9--music-section-of-the-developer-page) |
+| **9** | Music section of the developer page | ✅ Done | [→ Step 9](#step-9--music-section-of-the-developer-page) |
 | **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
 | **11** | Music in matches and its Settings | ⬜ Not started | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
 | **12** | About panel | ⬜ Not started | [→ Step 12](#step-12--about-panel) |
@@ -554,21 +554,41 @@ The Music section lists the candidate tracks with their details, plays and stops
 the five, deletes tracks and shows the request to find more (S20, S22, S26, S27, S28).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `ui/dev/music/candidates.json` (empty list) and the `.gitignore` line for the audio
+- [x] Record the start time in Notes below.
+- [x] `ui/dev/music/candidates.json` (empty list) and the `.gitignore` line for the audio
       files (D9).
-- [ ] The dev-only Vite plugin (D10): list, serve files, choose / unchoose (copies to or
+- [x] The dev-only Vite plugin (D10): list, serve files, choose / unchoose (copies to or
       removes from `public/assets/music/` and updates `src/lib/music/tracks.json`), delete
       (refused for a chosen track).
-- [ ] `dev/MusicSection.svelte`: the list, play / stop, choose, delete, and the ready-to-copy
+- [x] `dev/MusicSection.svelte`: the list, play / stop, choose, delete, and the ready-to-copy
       request (moods of S21, licences of S22, at most 15, the details of S26).
-- [ ] Tests for the plugin's list rules (at most five chosen, no delete of a chosen track,
+- [x] Tests for the plugin's list rules (at most five chosen, no delete of a chosen track,
       only CC0 / CC BY / own licences accepted).
-- [ ] Check: `cd ui; npm test; npm run check; npm run build` — the build contains neither the
+- [x] Check: `cd ui; npm test; npm run check; npm run build` — the build contains neither the
       plugin nor any candidate file.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:30
+
+- The rules are in `src/lib/music/candidates.ts` (no imports, so both the game and the dev
+  server use them): allowed licences (`CC0`, `CC BY` any version, `Made for Hack star`), at
+  most 5 chosen / 15 candidates, a chosen track cannot be deleted, `shipped()` writes
+  `tracks.json`. File names must match `[\w-]+.mp3`, so no path can leave the music folders.
+- `ui/dev/musicPlugin.ts` (`apply: 'serve'`, type-checked through `tsconfig.node.json`):
+  `GET /__dev/music/list`, `GET /__dev/music/file/<name>`, `POST /__dev/music/{choose,unchoose,delete}`.
+  Changes are accepted only from this computer (the dev server also listens on the Wi-Fi
+  for phones). A byte-order mark in `candidates.json` (saved by Windows tools) is accepted.
+- Check against `npm run dev` with two placeholder candidates (then removed): list and file
+  serving work, `..%2F..` paths get 404, an NC licence is refused, choose copies the file to
+  `public/assets/music/` and writes `tracks.json`, delete of a chosen track is refused,
+  unchoose removes the public copy, delete removes the candidate file. The developer page
+  showed the list, the licence warning and the request. `dist/` has no plugin code, no MP3
+  and no `dev/` folder.
+
+**Done (2026-11-14 · ~15m · Claude Opus 5.5)** — the developer page lists, plays, chooses and
+deletes candidate tracks and shows the request to find more; nothing of it ships.
+`npm test` 262 passed; `npm run check` 0 errors; `npm run build` built; endpoint and browser
+checks as above.
 
 ---
 
