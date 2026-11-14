@@ -6,6 +6,10 @@
   import { language, setLanguage, t, type TextKey } from './i18n'
   import { LANGUAGES, LANGUAGE_NAMES } from './i18n/languages'
   import { turnOnDeveloper } from './dev/developer'
+  import { TRACKS } from './music/tracks'
+  import { musicTrack } from './music/player'
+
+  const currentTrack = $derived(musicTrack({ ...$options, music: true }, TRACKS)?.id)
 
   let confirming = $state(false)
   let resetDone = $state(false)
@@ -82,6 +86,28 @@
 
 <p class="note">{$t('settings.note')}</p>
 
+<section>
+  <h3>{$t('settings.music')}</h3>
+  {#if TRACKS.length === 0}
+    <p class="note">{$t('settings.musicNone')}</p>
+  {:else}
+    <div class="music" role="radiogroup" aria-label={$t('settings.music')}>
+      <button class="plain" role="radio" aria-checked={$options.music} onclick={() => ($options.music = true)}>🎵 {$t('settings.musicOn')}</button>
+      <button class="plain" role="radio" aria-checked={!$options.music} onclick={() => ($options.music = false)}>🔇 {$t('settings.musicOff')}</button>
+    </div>
+    {#if $options.music}
+      <div class="music tracks" role="radiogroup" aria-label={$t('settings.musicTrack')}>
+        {#each TRACKS as track (track.id)}
+          <button class="plain" role="radio" aria-checked={currentTrack === track.id} onclick={() => ($options.track = track.id)}>
+            {track.title}
+          </button>
+        {/each}
+      </div>
+    {/if}
+    <p class="note">{$t('settings.musicNote')}</p>
+  {/if}
+</section>
+
 <section class="reset">
   <h3>{$t('settings.startAgain')}</h3>
   {#if confirming}
@@ -127,6 +153,22 @@
 </section>
 
 <style>
+  .music {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .music button {
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.8rem;
+    font-weight: 800;
+  }
+
+  .tracks {
+    margin-top: 0.5rem;
+  }
+
   .developer input {
     padding: 0.45rem 0.7rem;
     border-radius: 0.8rem;

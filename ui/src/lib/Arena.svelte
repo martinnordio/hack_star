@@ -15,6 +15,8 @@
   import { superHack } from './hacks'
   import { fighterType } from './game/types'
   import { options } from './options'
+  import { music, musicTrack } from './music/player'
+  import { TRACKS } from './music/tracks'
   import { applyReward, nextPrestigeAt, rewardFor, type Reward } from './game/trophies'
   import type { MatchResult } from './game/match'
   import { Tween } from 'svelte/motion'
@@ -66,6 +68,12 @@
   const actions = match instanceof GuestMatch ? match : undefined
   // Leaving early: the host gives friends a draw; a friend hands its fighter to a bot.
   $effect(() => () => match?.stop?.())
+  // Music plays for the whole match (and Training) and stops when it ends or the player leaves.
+  $effect(() => {
+    const track = musicTrack(get(options), TRACKS)
+    if (track) music.start(track)
+    return () => music.stop()
+  })
   const controls = newControls()
   const touchDevice = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
 
@@ -94,6 +102,7 @@
       setTimeout(() => (showOvertime = false), 1600)
     }
     if (hud?.phase !== 'over' && next.phase === 'over') {
+      music.stop()
       if (match && next.result) saveReward(match, next.result)
       setTimeout(() => (showResult = true), 1200)
     }

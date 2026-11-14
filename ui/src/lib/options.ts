@@ -11,10 +11,14 @@ export interface Options {
   botCount: number
   /** Developer mode on this device (the code is checked when it is turned on). */
   developer: boolean
+  /** Music in matches. */
+  music: boolean
+  /** Id of the chosen track; empty or unknown means the first track. */
+  track: string
 }
 
 export function defaultOptions(): Options {
-  return { botLevel: 'easy', botCount: 3, developer: false }
+  return { botLevel: 'easy', botCount: 3, developer: false, music: true, track: '' }
 }
 
 type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem'>
@@ -31,6 +35,8 @@ export function loadOptions(storage: KeyValueStorage): Options {
     if (typeof o.botLevel === 'string' && LEVELS.includes(o.botLevel)) options.botLevel = o.botLevel as BotLevel
     if ((BOT_COUNTS as readonly unknown[]).includes(o.botCount)) options.botCount = o.botCount as number
     if (typeof o.developer === 'boolean') options.developer = o.developer
+    if (typeof o.music === 'boolean') options.music = o.music
+    if (typeof o.track === 'string' && o.track.length <= 40) options.track = o.track
   } catch {
     // Unreadable: keep the defaults.
   }

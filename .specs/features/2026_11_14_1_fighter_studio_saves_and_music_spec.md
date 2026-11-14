@@ -15,7 +15,7 @@
 | 2026-11-14 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | Part 1 revised: renamed (spec 1 of 4), account-name refresh bug added, saving widened, music references made mood-only; open questions answered; credits panel, developer mode and developer page (music section) added |
 | 2026-11-14 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | issue #19 created |
 | 2026-11-14 | plan | `PLAN:` | Claude Opus 5.5 | Part 2 written |
-| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9 done |
+| 2026-11-14 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | Steps 1–9 and 11 done; Step 10 waits for Martin and Mattia |
 
 ---
 
@@ -224,7 +224,7 @@ free tool, and free-music libraries under CC0 or CC BY._
 | **8** | Developer mode and the developer page | ✅ Done | [→ Step 8](#step-8--developer-mode-and-the-developer-page) |
 | **9** | Music section of the developer page | ✅ Done | [→ Step 9](#step-9--music-section-of-the-developer-page) |
 | **10** | Find, try and choose the five tracks | ⬜ Not started | [→ Step 10](#step-10--find-try-and-choose-the-five-tracks) |
-| **11** | Music in matches and its Settings | ⬜ Not started | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
+| **11** | Music in matches and its Settings | ✅ Done | [→ Step 11](#step-11--music-in-matches-and-its-settings) |
 | **12** | About panel | ⬜ Not started | [→ Step 12](#step-12--about-panel) |
 | **13** | Documentation and final check | ⬜ Not started | [→ Step 13](#step-13--documentation-and-final-check) |
 
@@ -621,18 +621,35 @@ With music on, the chosen track plays in every match and stops when it ends; Set
 on or off and chooses the track (S18, S19, S29, S30).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `options.ts`: `music` and `track` (D12).
-- [ ] `music/player.ts` (D13); the match (bots, Training, friends) starts it at the start and
+- [x] Record the start time in Notes below.
+- [x] `options.ts`: `music` and `track` (D12).
+- [x] `music/player.ts` (D13); the match (bots, Training, friends) starts it at the start and
       stops it at the end or when the player leaves; pause while the tab is hidden.
-- [ ] Settings: music on/off and the five tracks; texts in all five languages.
-- [ ] Tests: options defaults and fallback of an unknown track; the player's start / stop /
+- [x] Settings: music on/off and the five tracks; texts in all five languages.
+- [x] Tests: options defaults and fallback of an unknown track; the player's start / stop /
       hidden / shown rules with a fake audio element.
-- [ ] Check: `cd ui; npm test; npm run check`; in the browser: music plays in a match on a
+- [x] Check: `cd ui; npm test; npm run check`; in the browser: music plays in a match on a
       desktop and an iPad or phone, stops at the end, stays silent when off.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-14 15:37
+
+- Done before Step 10 (which needs Martin and Mattia): everything works with any number of
+  shipped tracks. With none (today), Settings shows "Music is coming soon." and matches stay
+  silent; once `tracks.json` lists tracks, the switch and the track list appear.
+- `music/tracks.ts` gives the shipped list a type (`tracks.json` is written by the developer
+  page). `Arena.svelte` starts the music when it mounts (every match, Training and matches with
+  friends) and stops it when the match ends and when it unmounts (the player leaves).
+- Browser check with a temporary 2-second test tone as the only track (removed afterwards):
+  Settings shows On / Off and the track; a 5-second match plays it looping from the start and
+  pauses at the end; with music off nothing plays and the track list is hidden; Training
+  plays it and leaving stops it; a hidden tab pauses it and showing the tab plays it again.
+  Headless desktop only — an iPad or phone check is left for when real tracks are chosen
+  (Step 10 / Step 13).
+
+**Done (2026-11-14 · ~10m · Claude Opus 5.5)** — music in every match with an on/off switch
+and track choice saved per device. `npm test` 265 passed; `npm run check` 0 errors;
+`npm run build` built; browser checks as above.
 
 ---
 
