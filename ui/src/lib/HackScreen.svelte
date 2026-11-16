@@ -1,9 +1,9 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { codeFromScan, hackTimeRemaining, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, hackTimeRemaining, isHackActive, isWorldCode, redeem, UnknownCodeError, useWorldCode, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
-  import { t, tOr } from './i18n'
+  import { language, t, tOr } from './i18n'
 
   /** `initialCode` comes from a scanned link that opened the game (`?hack=`). */
   let { hacks, initialCode }: { hacks: Hack[]; initialCode?: string } = $props()
@@ -12,6 +12,8 @@
   let now = $state(Date.now())
   let busy = $state(false)
   let error = $state<'hackScreen.unknownCode' | 'common.serverDown'>()
+  /** A world-coin code used too recently: when it works again. */
+  let refusedUntil = $state<number>()
   let shake = $state(false)
   let celebrating = $state<Hack>()
   let confirmReset = $state(false)
@@ -20,6 +22,20 @@
   let handledInitialCode: string | undefined
 
   const active = $derived(hacks.filter((h) => isHackActive($progress, h.id, now)))
+  const usedCodes = $derived(
+    hacks.filter(isWorldCode).flatMap((hack) => {
+      const until = $progress.worldCodes[hack.id]
+      return until !== undefined && until > now ? [{ hack, until }] : []
+    }),
+  )
+  // Browsers have no Swiss German dates: use Swiss Standard German ones.
+  const date = (time: number) => new Date(time).toLocaleDateString($language === 'gsw' ? 'de-CH' : $language)
+  const hackName = (hack: Hack) =>
+    isWorldCode(hack) ? $t('hack.worldCoins.name', { coins: hack.world_coins }) : $tOr(`hack.${hack.id}.name`, hack.name)
+  const hackDescription = (hack: Hack) =>
+    isWorldCode(hack)
+      ? $t('hack.worldCoins.description', { coins: hack.world_coins, days: hack.reuse_days })
+      : $tOr(`hack.${hack.id}.description`, hack.description)
 
   $effect(() => {
     const updateTime = () => (now = Date.now())
@@ -47,10 +63,25 @@
     if (!text.trim() || busy) return
     busy = true
     error = undefined
+    refusedUntil = undefined
     try {
       const hack = await redeem(text)
-      progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
       now = Date.now()
+      if (isWorldCode(hack)) {
+        const used = useWorldCode($progress, hack, now)
+        if (!used.ok) {
+          refusedUntil = used.until
+          shake = false
+          requestAnimationFrame(() => (shake = true))
+          return
+        }
+        progress.update((p) => {
+          const again = useWorldCode(p, hack, now)
+          return again.ok ? again.progress : p
+        })
+      } else {
+        progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      }
       code = ''
       celebrating = hack
       clearTimeout(celebrationTimer)
@@ -96,12 +127,17 @@
         spellcheck="false"
         maxlength="100"
         placeholder="●●●●●●"
-        oninput={() => (error = undefined)}
+        oninput={() => {
+          error = undefined
+          refusedUntil = undefined
+        }}
       />
       <button class="go" disabled={busy || !code.trim()}>{$t('hackScreen.go')}</button>
     </div>
     {#if error}
       <p class="error" role="alert">{$t(error)}</p>
+    {:else if refusedUntil}
+      <p class="error" role="alert">{$t('hackScreen.worldCodeUsed', { date: date(refusedUntil) })}</p>
     {/if}
   </form>
 
@@ -152,13 +188,27 @@
       {/if}
     {/if}
   </section>
+
+  {#if usedCodes.length}
+    <section>
+      <h3>{$t('hackScreen.usedCodes')}</h3>
+      <ul class="active">
+        {#each usedCodes as { hack, until } (hack.id)}
+          <li>
+            <span class="on used">🌍</span>
+            <span class="details">
+              <strong>{hackName(hack)}</strong>
+              <small class="duration">{$t('hackScreen.usableAgain', { date: date(until) })}</small>
+            </span>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 </div>
 
 {#if celebrating}
-  <Celebration
-    title={$tOr(`hack.${celebrating.id}.name`, celebrating.name)}
-    subtitle={$tOr(`hack.${celebrating.id}.description`, celebrating.description)}
-  />
+  <Celebration title={hackName(celebrating)} subtitle={hackDescription(celebrating)} />
 {/if}
 
 <style>

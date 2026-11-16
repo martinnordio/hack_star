@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from hack_star_server.world_codes import WORLD_CODE_REUSE_DAYS, WORLD_CODES
+
 
 class Hack(BaseModel):
     id: str
@@ -7,6 +9,9 @@ class Hack(BaseModel):
     name: str
     description: str
     duration_seconds: int | None
+    # Only world-coin codes: what they give and when the same account may use them again.
+    world_coins: int | None = None
+    reuse_days: int | None = None
 
 
 HACKS: list[Hack] = [
@@ -44,6 +49,18 @@ HACKS: list[Hack] = [
         name="Creator",
         description="Unlocks the fighter you created.",
         duration_seconds=72 * 60 * 60,
+    ),
+    *(
+        Hack(
+            id=w.id,
+            code=w.code,
+            name=f"{w.amount} world coins",
+            description=f"Adds {w.amount} world coins. Each account can use it once every {WORLD_CODE_REUSE_DAYS} days.",
+            duration_seconds=None,
+            world_coins=w.amount,
+            reuse_days=WORLD_CODE_REUSE_DAYS,
+        )
+        for w in WORLD_CODES
     ),
 ]
 

@@ -409,6 +409,11 @@ export const en = {
   'room.error.update': 'This room plays in a new world: update Hack star to join it.',
   'friends.olderGame': '{names}: older game, can only play in Canyon Small. In another world they have to leave the room.',
   'friends.removed': '{names} had to leave: their game is older. After an update they can play in every world.',
+  'hack.worldCoins.name': '{coins} world coins',
+  'hack.worldCoins.description': 'Adds {coins} world coins. Each account can use this code once every {days} days.',
+  'hackScreen.worldCodeUsed': 'Already used: this code works again for you on {date}.',
+  'hackScreen.usedCodes': 'Used world-coin codes',
+  'hackScreen.usableAgain': 'Works again on {date}',
 } as const satisfies Record<string, string>
 
 export type TextKey = keyof typeof en

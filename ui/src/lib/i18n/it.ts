@@ -411,4 +411,9 @@ export const it: Record<TextKey, string> = {
   'room.error.update': 'Questa stanza gioca in un mondo nuovo: aggiorna Hack star per entrare.',
   'friends.olderGame': '{names}: gioco vecchio, può giocare solo nel Canyon Piccolo. In un altro mondo dovrà lasciare la stanza.',
   'friends.removed': '{names} ha dovuto uscire: il suo gioco è vecchio. Dopo un aggiornamento può giocare in ogni mondo.',
+  'hack.worldCoins.name': '{coins} monete mondo',
+  'hack.worldCoins.description': 'Dà {coins} monete mondo. Ogni account può usare questo codice una volta ogni {days} giorni.',
+  'hackScreen.worldCodeUsed': 'Già usato: questo codice funziona di nuovo per te il {date}.',
+  'hackScreen.usedCodes': 'Codici monete mondo usati',
+  'hackScreen.usableAgain': 'Funziona di nuovo il {date}',
 }

@@ -411,4 +411,9 @@ export const gsw: Record<TextKey, string> = {
   'room.error.update': 'De Ruum spilt iäre neue Wält: Mach es Update vo Hack star, zum mitspile.',
   'friends.olderGame': '{names}: älters Spiel, nur im Canyon Chli spilbar. Iäre andere Wält müend si de Ruum verlah.',
   'friends.removed': '{names} hed müese gah: S Spiel isch älter. Nach emene Update gaht jedi Wält.',
+  'hack.worldCoins.name': '{coins} Wältmünze',
+  'hack.worldCoins.description': 'Git {coins} Wältmünze. Jedes Konto chan dä Code all {days} Täg eimal bruche.',
+  'hackScreen.worldCodeUsed': 'Scho brucht: De Code gaht für dich wieder am {date}.',
+  'hackScreen.usedCodes': 'Bruchti Wältmünze-Codes',
+  'hackScreen.usableAgain': 'Gaht wieder am {date}',
 }

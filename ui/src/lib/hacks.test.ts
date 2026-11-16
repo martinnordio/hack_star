@@ -1,6 +1,50 @@
 import { describe, expect, it } from 'vitest'
-import { activeHackIds, codeFromScan, credits, hackLink, hackTimeRemaining, isHackActive, isQrPassword, isUnlocked, maxPower, superHack, withHack } from './hacks'
-import { defaultProgress, TEMPORARY_HACK_SECONDS } from './progress'
+import { addAccount, currentAccount, loadAccounts, switchAccount, updateAccount } from './accounts'
+import { activeHackIds, codeFromScan, credits, hackLink, hackTimeRemaining, isHackActive, isQrPassword, isUnlocked, isWorldCode, maxPower, superHack, useWorldCode, withHack, type Hack } from './hacks'
+import { defaultProgress, memoryStorage, resetProgress, startProgress, TEMPORARY_HACK_SECONDS, type Progress } from './progress'
+
+const DAY = 24 * 60 * 60 * 1000
+const CODE = { id: 'world-coins-6', code: 'WC1-Q8L4Z', name: '1000 world coins', description: '', duration_seconds: null, world_coins: 1000, reuse_days: 30 }
+
+function use(progress: Progress, now: number) {
+  if (!isWorldCode(CODE)) throw new Error('not a world code')
+  return useWorldCode(progress, CODE, now)
+}
+
+describe('world-coin codes', () => {
+  it('only codes with coins and days are world-coin codes', () => {
+    expect(isWorldCode(CODE)).toBe(true)
+    const power: Hack = { id: 'power22', code: 'POWER22', name: '', description: '', duration_seconds: null, world_coins: null, reuse_days: null }
+    expect(isWorldCode(power)).toBe(false)
+  })
+
+  it('adds the coins once, refuses with the date before 30 days, works again after', () => {
+    const now = 1_000_000
+    const first = use(startProgress(), now)
+    expect(first).toMatchObject({ ok: true, coins: 1000, progress: { worldCoins: 1000, worldCodes: { 'world-coins-6': now + 30 * DAY } } })
+    if (!first.ok) return
+    expect(use(first.progress, now + 29 * DAY)).toEqual({ ok: false, until: now + 30 * DAY })
+    const again = use(first.progress, now + 30 * DAY + 1)
+    expect(again).toMatchObject({ ok: true, progress: { worldCoins: 2000 } })
+  })
+
+  it('another account on the device has its own 30 days', () => {
+    let state = loadAccounts(memoryStorage(), 'en')
+    const used = use(currentAccount(state).progress, 0)
+    if (!used.ok) throw new Error('refused')
+    state = updateAccount(state, state.current, (a) => ({ ...a, progress: used.progress }))
+    const added = addAccount(state, 'Mia', 'en')
+    if (!added.ok) throw new Error(added.reason)
+    expect(use(currentAccount(added.state).progress, 1).ok).toBe(true)
+    expect(use(currentAccount(switchAccount(added.state, 'a1')).progress, 1).ok).toBe(false)
+  })
+
+  it('a reset makes every world-coin code usable again at once', () => {
+    const used = use(startProgress(), 0)
+    if (!used.ok) throw new Error('refused')
+    expect(use(resetProgress(used.progress), 1).ok).toBe(true)
+  })
+})
 
 describe('QR password', () => {
   it.each([
