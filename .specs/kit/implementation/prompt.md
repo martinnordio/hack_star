@@ -9,7 +9,8 @@ Do the Steps of a planned spec **one at a time**, keeping the spec true while yo
 IMPLEMENT: <spec file> [Step <n>]
 ```
 Does one Step: the one named, or the first Step that is not ✅ Done. Run it again for the next
-Step.
+Step. With per-Step models (`../models.md`) it can run the remaining Steps one after the
+other, each on its own model, after one confirmation (*Per-Step run* below).
 
 ```
 CLOSE: <spec file>
@@ -22,6 +23,13 @@ Checks that the work is complete, writes what was built, and moves the spec to
 Always: `../skills/developer.md` — the role you take in this stage.
 
 ## Model name
+
+**Check the model first** (`../models.md`): with `models` set in the settings, run on the
+configured model, as a sub-agent or after asking; with no `models`, use the tool's model.
+
+**Tokens and cost** (`../COSTS.md`): only with the `cost` block on. Note the start time; at
+the end run `../tools/usage.ps1` with it and your model, and copy its
+Tokens and Cost into your Stage log row — never compute them yourself.
 
 Wherever this prompt says *your model*, write the name of the model that runs this command
 now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
@@ -84,6 +92,11 @@ Paths are relative to this file (`.specs/kit/implementation/`).
    - all tasks ticked; the Step's row `✅ Done`;
    - a Done line in its Notes: `**Done (YYYY-MM-DD · ~<duration> · <model>)** — <summary>.
      <check and its result>`, where `<model>` is your model;
+   - a **Model (suggested)** line: `suggested: <tier> (<model>) · ran: <your model>` at the
+     end of the Done line, when `models` is set (`../models.md`);
+   - with cost tracking on (`../COSTS.md`): run `usage` from the `Started:` time and end the
+     Done line with `· ~<tokens> · ~<currency> <amount>`; the Stage log row gets the same
+     numbers in its Tokens and Cost columns;
    - **Last updated** today; a **Stage log** row: today, `implementation`, `IMPLEMENT:`, your
      model, `Step <n> done`.
 
@@ -98,6 +111,28 @@ Paths are relative to this file (`.specs/kit/implementation/`).
    `CREATE ISSUE:` (requirements stage) before the first commit. The user commits. Then the
    next step: `IMPLEMENT: <spec file>` for the next Step, or, when all Steps are done,
    `REVIEW: <spec file>` and then `CLOSE: <spec file>`.
+
+## Per-Step run
+
+Only with per-Step models (`models` has tiers). Fixed or no `models`: one Step per
+`IMPLEMENT:` as above.
+
+1. **Ask once**, before any work: *"Run Steps <n>–<m> with their models (<n>: <model>, …,
+   <m>: <model>), committing each Step with its suggested message? — yes / only Step <n> /
+   no"*. Nothing is pushed in any case.
+2. **Yes:** for each Step in order, run *IMPLEMENT* steps 3–7 as a **sub-agent on the Step's
+   model** (`../models.md`), give it the spec file, the Step number and this prompt; when it
+   returns, check its Done line and commit with the suggested message. Stop at the first
+   failing check, an open question, or a missing model, and report. Ask nothing else in
+   between.
+   - If the agent's permissions deny `git commit` (`.claude/settings.json`, the user's
+     answer), or the tool has no sub-agents with a model choice, do **only Step <n>** and say
+     why.
+3. **Only Step <n>:** that Step on its model (as a sub-agent where possible), then stop; the
+   user commits.
+4. **No:** stop.
+5. **Tools without sub-agents:** at the end of each Step, name the next Step's model:
+   *"Step <m> is set to <model> — switch before `IMPLEMENT:`."*
 
 ## CLOSE
 
@@ -119,6 +154,45 @@ Paths are relative to this file (`.specs/kit/implementation/`).
 3. **Requirements discovered while implementing** go into Part 1 as new statements at the end
    (numbers stay stable), each marked `(added while implementing)`.
 
+   **Cost summary** (only with cost tracking on, `../COSTS.md`): first add this command's own
+   Stage log row with its `usage` numbers, then write, directly above `# Part 1 ·
+   Requirements`:
+
+   ```
+   ## Cost summary
+
+   This feature used ~<tokens> tokens, ~<currency> <amount> — estimate, see [COSTS.md](<link>).
+
+   | Stage | Models | Tokens | Cost (<currency>) | Share of <plan> |
+   |-------|--------|--------|-------------------|-----------------|
+   | requirements | <model> | … | … | … % |
+   | plan | <model> | … | … | … % |
+   | implementation | <model>, <model> | … | … | … % |
+   | review | <model> | … | … | … % |
+   | pr | <model> | … | … | … % |
+   | **Total** | | **…** | **…** | **… %** |
+
+   **Implementation by Step**
+
+   | Step | Model | Tokens | Cost (<currency>) | Share of <plan> |
+   |------|-------|--------|-------------------|-----------------|
+   | Step 1 | <model> | … | … | … % |
+   | … | | | | |
+   | CLOSE | <model> | … | … | … % |
+   | **Total implementation** | | **…** | **…** | **… %** |
+   ```
+
+   The numbers are the sums of the Stage log rows per stage (`CREATE ISSUE:` / `UPDATE
+   ISSUE:` under requirements, `CLOSE:` under implementation, `CODE REVIEW:` under review;
+   leave out the rows of stages that have no Stage log row yet — such as `pr`, which runs after
+   `CLOSE:` — and put any other stage, such as documentation, in its own row). Cost cells are
+   written as in the Stage log: `~<currency> <amount> (<credits> credits)`. **Models** lists the
+   models of the stage's Stage log rows (each once, in order); a Step's **Model** is the model
+   in its Stage log row — the model that ran it. The second table splits implementation into its Steps and
+   `CLOSE:`; its total equals the implementation row. The share is credits ÷
+   `monthly_credits`. A row without numbers reads `N/A`. Then rebuild the list of all specs:
+   `../tools/costs_ledger.ps1` (writes `.specs/costs.md`).
+
 4. **Definition of Done.** Tick the lines that are true; leave the pull-request line for the
    pr stage. Never tick a line that is not true — report it instead.
 
@@ -137,12 +211,15 @@ Paths are relative to this file (`.specs/kit/implementation/`).
      where they are).
 
 7. **Report** and suggest the commit `Close the spec (#<issue>)`. The next step is
-   `PR: <spec file>` — the closed spec ships in the same pull request.
+   `PR: <spec file>` — the closed spec ships in the same pull request, and the pull request
+   and the issue get the **Cost summary**.
 
 ## Never
 
-- Work on more than one Step per `IMPLEMENT:`, or start the next Step on your own.
+- Work on more than one Step per `IMPLEMENT:`, or start the next Step on your own — except a
+  **Per-Step run** the user said yes to.
 - Change Part 1 while implementing (only `CLOSE` adds discovered statements); if Part 1 is
   wrong, stop and suggest `REQUIREMENTS: <spec file> — …`.
 - Tick a task whose check fails, or write a Done line for a Step that is not done.
-- Commit, push or merge — the user does that.
+- Commit, push or merge — the user does that; the only exception is the per-Step commit of a
+  confirmed **Per-Step run**. Never push.

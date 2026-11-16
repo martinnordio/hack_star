@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "spec_nx_version": "ec52844",
-  "generated": "2026-11-14",
+  "spec_nx_version": "1d72273",
+  "generated": "2026-11-16",
   "layer": null,
   "project": "existing",
   "languages": ["python", "typescript", "svelte", "powershell"],
@@ -13,5 +13,7 @@
   "kit": "shared",
   "kit_dir": ".specs/kit",
   "agent": ["copilot"],
+  "models": { "fixed": "Claude Opus 5.5" },
+  "cost": { "enabled": true, "plan": "Copilot Business", "monthly_price_usd": 19, "monthly_credits": 1900, "currency": "CHF", "rate": 0.8384, "rate_date": "2026-11-13" },
   "model": "Claude Opus 5.5"
 }

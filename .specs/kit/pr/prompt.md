@@ -19,6 +19,13 @@ None — this stage is mechanical: it summarises the spec and runs the GitHub sc
 
 ## Model name
 
+**Check the model first** (`../models.md`): with `models` set in the settings, run on the
+configured model, as a sub-agent or after asking; with no `models`, use the tool's model.
+
+**Tokens and cost** (`../COSTS.md`): only with the `cost` block on. Note the start time; at
+the end run `../tools/usage.ps1` with it and your model, and copy its
+Tokens and Cost into your Stage log row — never compute them yourself.
+
 Wherever this prompt says *your model*, write the name of the model that runs this command
 now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
 (its `model` is the model that generated the kit), from the kit's README or from examples. If
@@ -57,6 +64,10 @@ Paths are relative to this file (`.specs/kit/pr/`).
    `…/blob/main/.specs/features/done/<file>` once it is closed), status, the statements (one
    line each) and — if Part 2 has Steps — the Plan table with each Step's status. Write it to a
    temporary file outside the repository.
+
+   **Cost:** if the spec has a **Cost summary** (closed with cost tracking on, `../COSTS.md`),
+   add the section `## Cost summary` — its sentence and both tables, links as full URLs — before
+   the **Plan** part, as `../tools/README.md` shows; the issue gets the same section.
 
    **Semantic diff:** if the review stage wrote `semantic_diff.md` for this branch
    (`.specs/changes/<name>/` or `.specs/changes/done/<name>/`), pass it with

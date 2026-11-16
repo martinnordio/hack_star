@@ -35,6 +35,13 @@ Always: `../skills/requirements_engineer.md` — the role you take in this stage
 
 ## Model name
 
+**Check the model first** (`../models.md`): with `models` set in the settings, run on the
+configured model, as a sub-agent or after asking; with no `models`, use the tool's model.
+
+**Tokens and cost** (`../COSTS.md`): only with the `cost` block on. Note the start time; at
+the end run `../tools/usage.ps1` with it and your model, and copy its
+Tokens and Cost into your Stage log row — never compute them yourself.
+
 Wherever this prompt says *your model*, write the name of the model that runs this command
 now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
 (its `model` is the model that generated the kit), from the kit's README or from examples. If
@@ -106,7 +113,8 @@ Paths are relative to this file (`.specs/kit/requirements/`).
        game language, mouse and touch on desktop, tablet and phone, and what must keep
        working as before.
      - If an existing spec already covers part of it, refer to it instead of repeating it.
-   - **Open questions:** what you could not decide; one line each.
+   - **Open questions:** what you could not decide; one line each, ending with your
+     suggestion (`Suggestion: …`).
    - Delete the template's example block and placeholder rows.
 
 6. **Leave Part 2 for the plan stage.** Keep the marker line `<!-- spec-nx:plan -->` and
@@ -121,8 +129,8 @@ Paths are relative to this file (`.specs/kit/requirements/`).
    ```
 
 7. **Report to the user:** the file name, the statements in one line each, the open questions,
-   and the next step: *answer the open questions (`REQUIREMENTS: <spec file> — <answers>`),
-   then run the plan stage.* If the spec has an issue, offer `UPDATE ISSUE`.
+   and the next step: *answer the open questions (`REQUIREMENTS: <spec file> — <answers>`, or
+   `— take your suggestions`), then run the plan stage.* If the spec has an issue, offer `UPDATE ISSUE`.
 
    **When the requirements are finished** (no open questions left), ask: *"Create the GitHub
    issue for this spec now? If it belongs under a parent issue, give its number."* — and run
@@ -173,7 +181,9 @@ Paths are relative to this file (`.specs/kit/requirements/`).
 2. The project is on GitHub (`git_host` in `.specs/spec-nx.json`) and the kit's scripts are
    PowerShell; they need `gh`, logged in.
 3. Build the **summary** in the format of `../tools/README.md`. While Part 2 has no Steps,
-   leave the **Plan** part out. Write it to a temporary file outside the repository.
+   leave the **Plan** part out. If the spec has a **Cost summary** (closed with cost tracking
+   on), add it as `## Cost summary` (its sentence and both tables) before the **Plan** part,
+   links as full URLs. Write it to a temporary file outside the repository.
 4. Run the script **with the dry run** and show the result:
 
    ```

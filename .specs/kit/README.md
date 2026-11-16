@@ -28,6 +28,17 @@ commit message carries the spec's issue reference (`#<n>`) — `guidelines/commi
 | 5 | implementation | `CLOSE: <spec file>` | Spec moved to `.specs/features/done/` |
 | 6 | pr | `PR: <spec file>` | Pull request and issue updated with the spec summary |
 
+## Models and cost
+
+- **Models** (`models.md`): fixed — Claude Opus 5.5 for every stage and Step. Each stage
+  checks its model first and runs as a sub-agent on it where the tool allows. Change it in
+  `.specs/spec-nx.json` (`models`), or only for you in `.specs/spec-nx.local.json` (`null` =
+  always your tool's model).
+- **Tokens and cost** (`COSTS.md`): every Stage log row and Done line gets its tokens and cost
+  in CHF (Copilot Business); `CLOSE:` adds a cost summary and rebuilds `.specs/costs.md`.
+  **All costs are estimates and may be wrong.** Turn it off with `"enabled": false` in the
+  `cost` block.
+
 ## Now and then
 
 | Command | Stage | Does |
@@ -39,6 +50,6 @@ commit message carries the spec's issue reference (`#<n>`) — `guidelines/commi
 ## Settings
 
 - `.specs/spec-nx.json` — the team's answers (committed).
-- `.specs/spec-nx.local.json` — your answers, e.g. your shell (not committed).
+- `.specs/spec-nx.local.json` — your settings, e.g. your shell (not committed).
 - Update the kit: `git submodule update --remote .spec-nx`, then load
   `.spec-nx/generator/prompt.md` and run `GENERATE KIT --update`.

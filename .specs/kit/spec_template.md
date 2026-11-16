@@ -24,11 +24,14 @@
      model did it — the model that ran that command, as the assistant's runtime reports it,
      never copied from earlier rows, the settings or the kit's README ("unknown model" if it
      cannot tell); write "person" for edits made by hand. If the last row has the same date,
-     stage and model, update it instead of adding a new one. Rows are never removed. -->
+     stage and model, update it instead of adding a new one. Rows are never removed.
+     The Tokens and Cost columns are only there with cost tracking on (the `cost` block,
+     COSTS.md of the kit): copied from the `usage` script, never computed by hand; `N/A` if it
+     could not run. Without cost tracking, drop both columns. -->
 
-| Date | Stage | Command | Model | Note |
-|------|-------|---------|-------|------|
-| YYYY-MM-DD | requirements | `REQUIREMENTS:` | [model] | Part 1 written |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](COSTS.md)) | Cost (CHF) | Note |
+|------|-------|---------|-------|--------|------|------|
+| YYYY-MM-DD | requirements | `REQUIREMENTS:` | [model] | ~111 k (38 k in · 70 k cached · 3 k out) | ~CHF 0.22 (26 credits) | Part 1 written |
 
 ---
 
@@ -80,16 +83,21 @@ Clear, testable statements: each describes WHAT the game does, not HOW.
 
 ## 2 · Spec Overview
 
-| Step | Description | Status | Detail |
-|------|-------------|--------|--------|
-| **0** | [Setup / scaffolding] | ⬜ Not started | [→ Step 0](#step-0--setup--scaffolding) |
-| **1** | [Core implementation] | ⬜ Not started | [→ Step 1](#step-1--core-implementation) |
+<!-- The Model (suggested) column is only there with per-Step models (`models` in the settings,
+     models.md): `<tier> (<model>) — <why>`, chosen by the plan stage. Without it, drop the column. -->
+
+| Step | Description | Model (suggested) | Status | Detail |
+|------|-------------|-------------------|--------|--------|
+| **0** | [Setup / scaffolding] | [light (<model>) — why] | ⬜ Not started | [→ Step 0](#step-0--setup--scaffolding) |
+| **1** | [Core implementation] | [standard (<model>) — why] | ⬜ Not started | [→ Step 1](#step-1--core-implementation) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
 > 2. Append a **`**Done (YYYY-MM-DD · ~<duration> · <model>)**`** line to that Step's
 >    **Notes**: date, time it took, the AI model that did the work, a one-line summary and
->    the verifying test/command result.
+>    the verifying test/command result. With per-Step models, end it with
+>    `suggested: <tier> (<model>) · ran: <model>`; with cost tracking on, with
+>    `· ~<tokens> · ~<currency> <amount>` from the `usage` script.
 >
 > The table and the Step sections must **always agree**.
 

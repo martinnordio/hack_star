@@ -12,6 +12,8 @@
     "gh auth status": true,
     "/^gh (issue|pr) view\\b/": true,
     "/^\\.specs[\\\\/]kit[\\\\/]tools[\\\\/]github[\\\\/]\\w+\\.ps1\\b.*-DryRun\\b/": true,
+    "/^\\.specs[\\\\/]kit[\\\\/]tools[\\\\/]usage\\.ps1\\b/": true,
+    "/^\\.specs[\\\\/]kit[\\\\/]tools[\\\\/]costs_ledger\\.ps1\\b.*-DryRun\\b/": true,
 
     "/^\\.specs[\\\\/]kit[\\\\/]tools[\\\\/]github[\\\\/]\\w+\\.ps1\\b(?!.*-DryRun)/": false,
     "/^Remove-Item\\b/i": false,

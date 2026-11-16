@@ -19,6 +19,13 @@ kept; the rest is re-planned.
 
 ## Model name
 
+**Check the model first** (`../models.md`): with `models` set in the settings, run on the
+configured model, as a sub-agent or after asking; with no `models`, use the tool's model.
+
+**Tokens and cost** (`../COSTS.md`): only with the `cost` block on. Note the start time; at
+the end run `../tools/usage.ps1` with it and your model, and copy its
+Tokens and Cost into your Stage log row — never compute them yourself.
+
 Wherever this prompt says *your model*, write the name of the model that runs this command
 now, as your runtime reports it. Never copy it from earlier rows, from `.specs/spec-nx.json`
 (its `model` is the model that generated the kit), from the kit's README or from examples. If
@@ -57,6 +64,13 @@ Paths are relative to this file (`.specs/kit/plan/`).
    in the shape of `../spec_template.md`:
    - **2 · Spec Overview:** one row per Step, status `⬜ Not started`, with an anchor link to
      the Step. Keep the template's *Step completion protocol* and *Time tracking* notes.
+     **With per-Step models** (`models` has tiers, `../models.md`): fill the **Model
+     (suggested)** column — `<tier> (<model>) — <a few words why>`. Start from the tier's
+     `guide`, then judge the Step itself: pick the **cheapest tier that does it well** —
+     reasoning for design, refactorings, security, tricky logic, open decisions or complex
+     work such as graphics-heavy Steps; standard for work a clear plan describes; light for
+     mechanical edits and docs. With `fixed` or no `models` (this project uses `fixed`),
+     leave the column out.
    - **Decisions:** `D1`, `D2`, … — every choice another person might make differently (server
      or UI, a new dependency, a saved-progress or room-message format, a migration of old
      saves, where art or music comes from and its licence), with the reason.
@@ -80,7 +94,8 @@ Paths are relative to this file (`.specs/kit/plan/`).
 
 4. **Update the header:** **Status** `⬜ Not started — plan ready`; **Last updated** today.
    Add a **Stage log** row: today, `plan`, `PLAN:`, your model, `Part 2 written` (add the
-   section from the template above Part 1 if the spec has none).
+   section from the template above Part 1 if the spec has none). With per-Step models, the
+   report lists each Step's tier so the user can change one before implementing.
 
 5. **Report to the user:** the Steps in one line each, the decisions, anything deferred, and
    the next step — implement Step 0 (or Step 1). If the spec has an issue, suggest updating it
