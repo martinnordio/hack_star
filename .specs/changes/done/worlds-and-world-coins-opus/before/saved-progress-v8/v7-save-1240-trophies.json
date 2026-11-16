@@ -1,0 +1,9 @@
+{
+  "version": 7,
+  "credits": 500,
+  "trophies": {
+    "blaze": 1000,
+    "rocko": 240
+  },
+  "selectedFighter": "blaze"
+}

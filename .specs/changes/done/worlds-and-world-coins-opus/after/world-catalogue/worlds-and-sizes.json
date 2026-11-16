@@ -1,0 +1,48 @@
+{
+  "worlds": [
+    "canyon (free)",
+    "jungle-ruins (free)",
+    "neon-docks (free)",
+    "lava-forge",
+    "sky-islands",
+    "crystal-caves",
+    "mini-city",
+    "kata-jungle",
+    "candy-factory",
+    "robot-workshop",
+    "pirate-cove",
+    "moon-base",
+    "desert-oasis"
+  ],
+  "sizes": {
+    "small": {
+      "width": 30,
+      "depth": 24
+    },
+    "medium": {
+      "width": 36,
+      "depth": 30
+    },
+    "large": {
+      "width": 42,
+      "depth": 34
+    }
+  },
+  "moonBase": {
+    "small": {
+      "walls": 6,
+      "bushes": 6,
+      "spawns": 10
+    },
+    "medium": {
+      "walls": 10,
+      "bushes": 8,
+      "spawns": 10
+    },
+    "large": {
+      "walls": 12,
+      "bushes": 12,
+      "spawns": 10
+    }
+  }
+}

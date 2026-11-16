@@ -1,0 +1,7 @@
+{
+  "matchSeconds": 120,
+  "overtimeSeconds": 60,
+  "botCount": 3,
+  "countdownSeconds": 3,
+  "botLevel": "easy"
+}

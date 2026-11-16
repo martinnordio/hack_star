@@ -1,0 +1,15 @@
+{
+  "older friend receives": {
+    "type": "start",
+    "settings": {
+      "world": {
+        "id": "moon-base",
+        "size": "large"
+      }
+    }
+  },
+  "seats after the start": [
+    0,
+    1
+  ]
+}

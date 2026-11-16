@@ -1,0 +1,29 @@
+{
+  "buyWorld(1000 coins, moon-base, medium)": {
+    "ok": true,
+    "cost": 750,
+    "worldCoins": 250,
+    "worlds": {
+      "canyon": "small",
+      "jungle-ruins": "small",
+      "neon-docks": "small",
+      "moon-base": "medium"
+    }
+  },
+  "buyWorld(400 coins, lava-forge, small)": {
+    "ok": false,
+    "reason": "world-coins",
+    "missing": 100
+  },
+  "growWorld(1000 coins, canyon)": {
+    "ok": true,
+    "cost": 250,
+    "worldCoins": 750,
+    "worlds": {
+      "canyon": "medium",
+      "jungle-ruins": "small",
+      "neon-docks": "small"
+    }
+  },
+  "earnWorldCoins(499 -> 509 trophies)": 250
+}

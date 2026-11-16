@@ -3,7 +3,7 @@
 > Estimate — see [COSTS.md](kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-16; do not edit by hand.
 
-**All specs: ~2.40 M · ~CHF 0.75 (90 credits)**
+**All specs: ~39.59 M · ~CHF 11.66 (1394 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -28,5 +28,21 @@
 | [Originality Review](features/2026_11_14_4_originality_review_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Device and End-to-End Testing](features/2026_11_14_5_device_and_end_to_end_testing_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Bug Fixes](features/done/2026_11_14_bug_fixes_spec.md) | ✅ Complete | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Model Comparison Experiment](features/2026_11_16_model_experiment_spec.md) | 🔄 In progress | ~789 k · ~CHF 0.22 | — | — | — | — | — | ~789 k · ~CHF 0.22 |
 | [spec-nx Kit Update](features/done/2026_11_16_spec_nx_kit_update_spec.md) | ✅ Complete | — | — | — | — | — | ~2.40 M · ~CHF 0.75 | ~2.40 M · ~CHF 0.75 |
-| **All specs** | | | | | | | | **~2.40 M · ~CHF 0.75** |
+| [Worlds and World Coins](features/done/2026_11_16_worlds_and_world_coins_opus_spec.md) | ✅ Complete | ~2.46 M · ~CHF 0.74 | ~3.09 M · ~CHF 0.91 | ~22.10 M · ~CHF 6.23 | ~3.20 M · ~CHF 1.16 | — | — | ~30.85 M · ~CHF 9.04 |
+| [Worlds and World Coins](features/2026_11_16_worlds_and_world_coins_spec.md) | ⬜ Not started | ~2.46 M · ~CHF 0.74 | ~3.09 M · ~CHF 0.91 | — | — | — | — | ~5.55 M · ~CHF 1.65 |
+| **All specs** | | | | | | | | **~39.59 M · ~CHF 11.66** |
+
+## Implementation by Step
+
+| Spec | Step | Model | Tokens | Cost |
+|------|------|-------|--------|------|
+| Worlds and World Coins | 1 | Claude Opus 5.5 | ~864 k | ~CHF 0.38 (45 credits) |
+| Worlds and World Coins | 2 | Claude Opus 5.5 | ~1.23 M | ~CHF 0.48 (57 credits) |
+| Worlds and World Coins | 3 | Claude Opus 5.5 | ~2.15 M | ~CHF 0.70 (84 credits) |
+| Worlds and World Coins | 4 | Claude Opus 5.5 | ~3.84 M | ~CHF 0.89 (107 credits) |
+| Worlds and World Coins | 5 | Claude Opus 5.5 | ~3.72 M | ~CHF 0.95 (114 credits) |
+| Worlds and World Coins | 6 | Claude Opus 5.5 | ~3.24 M | ~CHF 0.85 (101 credits) |
+| Worlds and World Coins | 7 | Claude Opus 5.5 | ~3.41 M | ~CHF 0.84 (101 credits) |
+| Worlds and World Coins | 8 | Claude Opus 5.5 | ~2.16 M | ~CHF 0.73 (87 credits) |

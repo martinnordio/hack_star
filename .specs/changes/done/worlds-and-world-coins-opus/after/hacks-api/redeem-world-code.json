@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "body": {
+    "id": "world-coins-1",
+    "code": "WC5-7K2QX",
+    "name": "500 world coins",
+    "description": "Adds 500 world coins. Each account can use it once every 30 days.",
+    "duration_seconds": null,
+    "world_coins": 500,
+    "reuse_days": 30
+  }
+}

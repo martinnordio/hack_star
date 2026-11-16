@@ -1,0 +1,11 @@
+{
+  "first use (day 0)": {
+    "coins": 500,
+    "worksAgainOnDay": 30
+  },
+  "again on day 29": {
+    "ok": false,
+    "until": 2592000000
+  },
+  "again on day 31": "accepted"
+}

@@ -1,0 +1,26 @@
+{
+  "fighter": "string",
+  "skin": "string",
+  "power": "integer",
+  "hyper": "boolean",
+  "name": [
+    {
+      "maxLength": 12,
+      "minLength": 1,
+      "type": "string"
+    },
+    {
+      "type": "null"
+    }
+  ],
+  "version": [
+    {
+      "maximum": 99,
+      "minimum": 1,
+      "type": "integer"
+    },
+    {
+      "type": "null"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
+version: 1
+branch: feature/worlds-and-world-coins-opus
+base: 2cf090e
+why: |
+  Every match and Training session was played in the same arena, the same size. Players asked
+  for several worlds in a small, medium and large size, so matches feel different. Free worlds
+  come in Small; other worlds and bigger sizes are unlocked with a new currency, world coins,
+  earned per 500 trophies or from hack codes each account can use once every 30 days.
+spec:
+  path: .specs/features/done/2026_11_16_worlds_and_world_coins_opus_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24]
+changes:
+  - id: saved-progress-v8
+    kind: data-format
+    change: modified
+    object: hack-star.accounts progress (version 8)
+    note: Five new fields; a v7 save gets the free worlds, Canyon Small and 250 world coins per 500 trophies already reached.
+    statements: [S19, S20, S21]
+    examples:
+      - name: v7-save-1240-trophies
+        input: |
+          parseProgress({ version: 7, credits: 500, trophies: { blaze: 1000, rocko: 240 }, ... })
+  - id: world-catalogue
+    kind: output
+    change: added
+    object: WORLDS, SIZE_DIMENSIONS and arenaFor(id, size)
+    note: 13 worlds (3 free), three sizes; more cover on more ground; Canyon Small is the old CANYON.
+    statements: [S2, S3, S4, S5]
+    examples:
+      - name: worlds-and-sizes
+        input: |
+          WORLDS; SIZE_DIMENSIONS; arenaFor('moon-base', 'small' | 'medium' | 'large')
+  - id: world-shop
+    kind: output
+    change: added
+    object: buyWorld, growWorld and earnWorldCoins
+    note: Prices 500 / 750 / 1000, +250 per size, refusal with the missing amount, 250 per new 500-step.
+    statements: [S9, S10, S11, S12, S13]
+    examples:
+      - name: buy-grow-earn
+        input: |
+          buyWorld({ worldCoins: 1000 }, 'moon-base', 'medium')
+          buyWorld({ worldCoins: 400 }, 'lava-forge', 'small')
+          growWorld({ worldCoins: 1000 }, 'canyon')
+          earnWorldCoins({ trophies: { blaze: 509 }, worldSteps: 0 })
+  - id: world-settings
+    kind: config
+    change: modified
+    object: SETTINGS world-coin keys (ui/src/lib/game/settings.ts)
+    note: Earnings and prices in one place.
+    statements: [S9, S11, S12, S17]
+    examples:
+      - name: world-keys
+        input: |
+          SETTINGS.worldCoinsPerStep, trophiesPerWorldStep, worldPrices, worldSizeStep
+  - id: bots-hunt
+    kind: output
+    change: modified
+    object: a bot that sees nobody (Bots.think)
+    note: After 6 s without a target the bot walks to the nearest opponent instead of only wandering.
+    statements: [S6]
+    examples:
+      - name: lone-bot-and-still-player
+        input: |
+          42 x 34 empty arena, player still at (-18, -14), one Easy bot at (18, 14);
+          distance every 3 s for 15 s (fixed random seed)
+  - id: room-start-world
+    kind: message
+    change: modified
+    object: room start message settings (startInfo)
+    note: The host's world travels with the start; a missing world means Canyon Small.
+    statements: [S7]
+    examples:
+      - name: host-start
+        input: |
+          startInfo(SETTINGS, [host seat], catalogue).settings
+  - id: room-member
+    kind: schema
+    change: modified
+    object: room Member (server rooms.py)
+    note: Optional version (1-99); members without it are the previous version.
+    statements: [S7]
+    examples:
+      - name: member-fields
+        input: |
+          Member.model_json_schema()["properties"]
+  - id: room-start-removal
+    kind: message
+    change: modified
+    object: start outside Canyon Small with a friend of the previous version
+    note: The older friend gets update-the-game and leaves the seats; the host gets removed + left.
+    statements: [S7]
+    examples:
+      - name: older-friend-moon-base-large
+        input: |
+          host creates; friend joins without version;
+          host sends {"type": "start", "settings": {"world": {"id": "moon-base", "size": "large"}}}
+  - id: hacks-api
+    kind: api
+    change: modified
+    object: GET /api/hacks and POST /api/hacks/redeem
+    note: Ten world-coin codes with world_coins and reuse_days; normal hacks unchanged.
+    statements: [S14, S17, S18]
+    examples:
+      - name: redeem-world-code
+        input: |
+          POST /api/hacks/redeem {"code": "WC5-7K2QX"}
+      - name: list
+        input: |
+          GET /api/hacks
+  - id: world-code-use
+    kind: output
+    change: added
+    object: useWorldCode(progress, hack, now)
+    note: Adds the coins once; refused with the date before 30 days; accepted after.
+    statements: [S15, S16, S21]
+    examples:
+      - name: use-then-again
+        input: |
+          useWorldCode(startProgress(), WC5 code, day 0), then on day 29 and day 31
+  - id: home
+    kind: ui
+    change: modified
+    object: Home (new account)
+    note: World-coin chip under the credits.
+    statements: [S8]
+    examples:
+      - name: new-account
+        input: |
+          route=/ with an empty browser profile (headless Chromium)
+        views: [desktop, phone]
+  - id: world-themes
+    kind: ui
+    change: added
+    object: /?gallery=worlds
+    note: The 13 worlds in Small, each with its own ground, edge, walls and cover.
+    statements: [S4, S5, S23]
+    examples:
+      - name: gallery-small
+        input: |
+          route=/?gallery=worlds (headless Chromium, SwiftShader)
+        views: [desktop]
+  - id: world-screen
+    kind: ui
+    change: added
+    object: world screen (WorldScreen.svelte)
+    note: Opened by Play, Training and a room's start; choose, buy and grow worlds.
+    statements: [S1, S3, S8, S11, S13, S22, S23]
+    extraction: manual
+    manual_reason: The screen opens only after a tap on Play, which the headless screenshot cannot do, and the integrated browser crops screenshots to its small window. Checked by eye at four sizes in Step 5 (see its Notes).
+    examples:
+      - name: start
+        input: |
+          route=/ then Play
+        views: [desktop, phone]
+breaking: |
+  Saves move to version 8 (older game versions cannot read them). In rooms, friends on the
+  previous version can only play in Canyon Small; in another world they are removed and told to update.
+review:
+  - question: Why generated maps instead of hand-made ones?
+    answer: |
+      39 maps would be slow to write and review (D3). Each world and size has a fixed seed; a seed
+      whose map shuts a spawn, the start or a dummy away from the centre is skipped, and the tests
+      check every map.
+  - question: Can a world-coin code be used early?
+    answer: |
+      Only by clearing the browser's data: the dates live in the account on the device (D10).
+      Server-side tracking is a deferred item.
+  - question: Why does a reset in one tab not come back from the other tab's larger values?
+    answer: |
+      The "larger value" merge (sizes, steps, code dates) applies only when both tabs changed the
+      field; when only this tab changed it, its value wins.

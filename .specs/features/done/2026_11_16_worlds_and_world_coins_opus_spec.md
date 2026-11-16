@@ -1,7 +1,7 @@
 # Worlds and World Coins Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on `feature/worlds-and-world-coins-opus`
 > **Created:** 2026-11-16
 > **Last updated:** 2026-11-16
 > **Branch:** `feature/worlds-and-world-coins-opus`
@@ -9,7 +9,7 @@
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~1.98 M | ~CHF 0.60 (72 credits) | Part 1 written (from ideas.md, "From Mi and Ma") |
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~480 k | ~CHF 0.14 (17 credits) | Part 1 revised: open questions answered — ten worlds to buy with their names, sizes 1.5× / 2×, world coins for existing trophies, UNLOCK_ALL not for worlds, reset clears used codes, older friends only in Canyon Small, five codes of each amount |
@@ -23,6 +23,37 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.24 M (23 k in · 3.21 M cached · 13 k out) | ~CHF 0.85 (101 credits) | Step 6 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.41 M (21 k in · 3.38 M cached · 11 k out) | ~CHF 0.84 (101 credits) | Step 7 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~2.16 M (50 k in · 2.10 M cached · 10 k out) | ~CHF 0.73 (87 credits) | Step 8 done |
+| 2026-11-16 | review | `REVIEW:` | Claude Opus 5.5 | ~3.20 M (47 k in · 3.13 M cached · 26 k out) | ~CHF 1.16 (138 credits) | semantic diff written |
+| 2026-11-16 | implementation | `CLOSE:` | Claude Opus 5.5 | ~1.49 M (11 k in · 1.47 M cached · 7 k out) | ~CHF 0.41 (48 credits) | spec closed |
+
+---
+
+## Cost summary
+
+This feature used ~30.85 M tokens, ~CHF 9.04 — estimate, see [COSTS.md](../../kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|-------------------|-----------------|
+| requirements | Claude Opus 5.5 | ~2.46 M | ~CHF 0.74 (89 credits) | 4.7 % |
+| plan | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | 5.7 % |
+| implementation | Claude Opus 5.5 | ~22.10 M | ~CHF 6.23 (744 credits) | 39.2 % |
+| review | Claude Opus 5.5 | ~3.20 M | ~CHF 1.16 (138 credits) | 7.3 % |
+| **Total** | | **~30.85 M** | **~CHF 9.04 (1080 credits)** | **56.8 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|-------------------|-----------------|
+| Step 1 | Claude Opus 5.5 | ~864 k | ~CHF 0.38 (45 credits) | 2.4 % |
+| Step 2 | Claude Opus 5.5 | ~1.23 M | ~CHF 0.48 (57 credits) | 3.0 % |
+| Step 3 | Claude Opus 5.5 | ~2.15 M | ~CHF 0.70 (84 credits) | 4.4 % |
+| Step 4 | Claude Opus 5.5 | ~3.84 M | ~CHF 0.89 (107 credits) | 5.6 % |
+| Step 5 | Claude Opus 5.5 | ~3.72 M | ~CHF 0.95 (114 credits) | 6.0 % |
+| Step 6 | Claude Opus 5.5 | ~3.24 M | ~CHF 0.85 (101 credits) | 5.3 % |
+| Step 7 | Claude Opus 5.5 | ~3.41 M | ~CHF 0.84 (101 credits) | 5.3 % |
+| Step 8 | Claude Opus 5.5 | ~2.16 M | ~CHF 0.73 (87 credits) | 4.6 % |
+| CLOSE | Claude Opus 5.5 | ~1.49 M | ~CHF 0.41 (48 credits) | 2.5 % |
+| **Total implementation** | | **~22.10 M** | **~CHF 6.23 (744 credits)** | **39.2 %** |
 
 ---
 
@@ -48,7 +79,7 @@ collecting trophies or get from special hack codes that can be used again after 
 - `ui/src/lib/progress.ts` — per-account progress (version 7): trophies per fighter,
   `totalTrophies()`, credits, unlocked fighters, active hacks with expiry dates;
   `ui/src/lib/accounts.ts` keeps accounts in sync across tabs; the
-  [Fighter studio, saves and music spec](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md)
+  [Fighter studio, saves and music spec](2026_11_14_1_fighter_studio_saves_and_music_spec.md)
   made sure every choice is kept.
 - `ui/src/lib/game/trophies.ts`, `ui/src/lib/fighters.ts` — trophies per match (+10 for a
   win, never below the last Prestige level); Prestige every 1000 total trophies.
@@ -68,10 +99,10 @@ collecting trophies or get from special hack codes that can be used again after 
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and product questions |
-| [ideas.md](ideas.md) | Where this request came from |
-| [architecture.md](../../docs/architecture.md) | How the server and the UI are organised |
-| [README](../../README.md) | How to install, run, test and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and product questions |
+| [ideas.md](../ideas.md) | Where this request came from |
+| [architecture.md](../../../docs/architecture.md) | How the server and the UI are organised |
+| [README](../../../README.md) | How to install, run, test and play |
 
 ## 1 · Specs
 
@@ -157,6 +188,9 @@ collecting trophies or get from special hack codes that can be used again after 
   on an iPad.
 - **S24 — Documentation:** The README and `docs/architecture.md` describe worlds, sizes,
   world coins, prices and the world-coin codes.
+- **S25 — Older friends named before the start** _(added while implementing)_: in a room, the
+  host's lobby names the friends with an older game (they can only play in Canyon Small), and
+  after a start in another world it names who had to leave and why.
 
 ### Open questions
 
@@ -167,6 +201,33 @@ _None — answered on 2026-11-16._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** Before Play, Training or a room's start, players choose one of 13 worlds (Canyon,
+Jungle Ruins and Neon Docks free in Small; ten more to buy) in Small (30 × 24), Medium
+(36 × 30) or Large (42 × 34). Each world has its own theme drawn from simple shapes and a
+fixed, seeded map; Canyon Small is the old arena. World coins are earned at 250 per new
+500-trophy step and buy worlds (500 / 750 / 1000) and bigger sizes (+250); ten server-checked
+codes give 500 or 1000 world coins once per 30 days per account. Progress v8 keeps it all per
+account, migrates older saves with coins for trophies already reached, merges across tabs and
+is cleared by a reset. Rooms send the host's world; older friends play only in Canyon Small.
+Bots go looking for the others after 6 s alone.
+
+**Differs from the plan:** maps are generated from a fixed number of mirrored cover pairs
+(ground ÷ 120) and checked with a walkable-path search instead of a straight line (Canyon's own
+spawn has a wall ahead); `worldCoinsFor(total, paidSteps)` needs no "total before"; the merge's
+"larger value" applies only when both tabs changed a field, so a reset is not undone; `app.py`
+needed no change (world codes are part of `HACKS`); dates show as `de-CH` for Swiss German; the
+host's lobby also names older friends before the start (S25).
+
+**Files:** `ui/src/lib/game/worlds.ts`, `worldShop.ts`, `bots.ts`, `settings.ts`;
+`ui/src/lib/progress.ts`, `accounts.ts`, `hacks.ts`; `ui/src/lib/models/arena3d.ts`;
+`ui/src/lib/WorldScreen.svelte`, `Arena.svelte`, `ArenaScene.svelte`, `Home.svelte`,
+`HackScreen.svelte`, `QrPage.svelte`, `FriendsScreen.svelte`, `Gallery.svelte`, `App.svelte`;
+`ui/src/lib/net/room.ts`, `shared.ts`; `ui/src/lib/i18n/*`;
+`server/src/hack_star_server/world_codes.py`, `hacks.py`, `rooms.py`; tests next to each;
+`README.md`, `docs/architecture.md`.
 
 ## 2 · Spec Overview
 
@@ -467,7 +528,11 @@ Tasks set aside for a future spec, so nothing is forgotten.
 |------|--------|------------------|
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
-| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| A v8 save with a world id this version does not know is refused whole; drop unknown ids instead (review finding 1) | Only matters when a world is renamed or removed; no world is | a later worlds spec, if wanted |
+| Bots hunting after 6 s also walk to fighters hiding in bushes; decide whether the hunt should skip them (review finding 2) | D5 says "the nearest fighter"; a change of D5 needs `PLAN:` | `PLAN:` decision for a later spec |
+| Unit test for the room store's `removed` list and the lobby notes (review finding 3) | The server side is tested; the UI was checked in the browser | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Upper bound for `arenaFor`'s seed retries (review finding 4) | The 39 maps are covered by tests; only a new world with a bad seed would loop | a later worlds spec, if wanted |
 
 ---
 
@@ -475,6 +540,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-16 | Claude Opus 5.5 | semantic diff | Approve with follow-ups | — ([review page](../../review/2026-11-16_feature-worlds-and-world-coins-opus.html): 0 blocking, 2 should-fix, 2 nits; all in Deferred Items) |
 
 ---
 
@@ -482,7 +548,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [x] Requirements · Part 1 agreed (S1..S24 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
-- [ ] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [x] Review · review page written; no Blocking finding open
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
