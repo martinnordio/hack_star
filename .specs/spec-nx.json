@@ -13,7 +13,7 @@
   "kit": "shared",
   "kit_dir": ".specs/kit",
   "agent": ["copilot"],
-  "models": { "fixed": "Claude Opus 5.5" },
+  "models": { "fixed": "Claude Haiku 5.5" },
   "cost": { "enabled": true, "plan": "Copilot Business", "monthly_price_usd": 19, "monthly_credits": 1900, "currency": "CHF", "rate": 0.8384, "rate_date": "2026-11-13" },
   "model": "Claude Opus 5.5"
 }
