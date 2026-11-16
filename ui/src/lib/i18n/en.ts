@@ -379,6 +379,23 @@ export const en = {
   'vocabulary.hyperchargeCode.word': 'HYPERCHARGE (code)',
   'vocabulary.hyperchargeCode.meaning':
     'Hack star hack code: your Super charges 3 times faster and every Super is a Hypercharge.',
+
+  'world.canyon': 'Canyon',
+  'world.jungle-ruins': 'Jungle Ruins',
+  'world.neon-docks': 'Neon Docks',
+  'world.lava-forge': 'Lava Forge',
+  'world.sky-islands': 'Sky Islands',
+  'world.crystal-caves': 'Crystal Caves',
+  'world.mini-city': 'Mini City',
+  'world.kata-jungle': 'Kata Jungle',
+  'world.candy-factory': 'Candy Factory',
+  'world.robot-workshop': 'Robot Workshop',
+  'world.pirate-cove': 'Pirate Cove',
+  'world.moon-base': 'Moon Base',
+  'world.desert-oasis': 'Desert Oasis',
+  'worldSize.small': 'Small',
+  'worldSize.medium': 'Medium',
+  'worldSize.large': 'Large',
 } as const satisfies Record<string, string>
 
 export type TextKey = keyof typeof en
