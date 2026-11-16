@@ -396,6 +396,16 @@ export const en = {
   'worldSize.small': 'Small',
   'worldSize.medium': 'Medium',
   'worldSize.large': 'Large',
+  'panel.worlds': 'Choose a world',
+  'home.worldCoins': 'World coins',
+  'worlds.balance': 'Your world coins',
+  'worlds.howToEarn': '+{coins} for every {trophies} trophies',
+  'worlds.start': 'START',
+  'worlds.buyQuestion': 'Unlock {world} up to {size} for {coins} world coins?',
+  'worlds.growQuestion': 'Unlock {world} in {size} for {coins} world coins?',
+  'worlds.needMore': '{coins} more world coins needed',
+  'worlds.unlock': 'Unlock',
+  'arena.worldCoins': '+{coins} world coins',
 } as const satisfies Record<string, string>
 
 export type TextKey = keyof typeof en

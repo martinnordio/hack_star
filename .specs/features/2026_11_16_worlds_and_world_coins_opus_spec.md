@@ -19,6 +19,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~1.23 M (21 k in · 1.20 M cached · 11 k out) | ~CHF 0.48 (57 credits) | Step 2 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~2.15 M (28 k in · 2.11 M cached · 14 k out) | ~CHF 0.70 (84 credits) | Step 3 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.84 M (18 k in · 3.82 M cached · 11 k out) | ~CHF 0.89 (107 credits) | Step 4 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.72 M (25 k in · 3.68 M cached · 14 k out) | ~CHF 0.95 (114 credits) | Step 5 done |
 
 ---
 
@@ -172,7 +173,7 @@ _None — answered on 2026-11-16._
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
-| **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
+| **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
@@ -337,22 +338,29 @@ worlds and bigger sizes; the result screen shows world coins earned (S1, S3, S8,
 S22, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home: world-coin balance next to the credits.
-- [ ] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
+- [x] Record the start time in Notes below.
+- [x] Home: world-coin balance next to the credits.
+- [x] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
       locked ones with their prices (500 / 750 / 1000, +250 per size); buy and grow with
       confirmation; "N more world coins needed" when too few; the choice is saved.
-- [ ] Play and Training open the world screen first, preselected on the last choice, with
+- [x] Play and Training open the world screen first, preselected on the last choice, with
       **Start**.
-- [ ] Result screen: "+250 world coins" when a step was reached.
-- [ ] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
+- [x] Result screen: "+250 world coins" when a step was reached.
+- [x] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
       landscape.
-- [ ] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
+- [x] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
       enough and with too few coins, grow a free world to Medium, choose it, start a match,
       reload — all kept; screenshots.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 19:37
+
+- Each world card shows a small picture in the theme's colours and three size buttons: chosen (yellow), unlocked (blue), to buy (price), next size (+250) or not yet (🔒). A tap on a price opens a confirmation; with too few world coins it says how many are missing and only offers Close. A purchase also chooses the world.
+- On Home the world-coin chip sits under the credits; in portrait the fighter plate moved down to make room.
+- Browser (desktop 1280 × 800): with 1000 world coins, Moon Base Small bought (500), Lava Forge Large refused ("500 more needed"), Canyon grown to Medium (250) and chosen; the match started in Canyon Medium (player at z = 12); after a reload the worlds, the choice and 250 world coins were kept. No horizontal overflow at 820 × 1180, 1180 × 820, 390 × 844 and 844 × 390. The test account was put back to its start worlds afterwards.
+
+**Done (2026-11-16 · ~4m · Claude Opus 5.5)** — `WorldScreen.svelte` before Play and Training, world coins on Home and on the result screen, texts in five languages. `npm test` 481 passed; `npm run check` 0 errors; browser checks above · ~3.72 M · ~CHF 0.95
 
 ---
 

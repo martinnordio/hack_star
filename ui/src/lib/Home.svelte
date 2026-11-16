@@ -57,8 +57,13 @@
       <span class="icon">🏆</span>{totalTrophies($progress).toLocaleString()}
     </div>
     <h1 class="title">Hack<span>star</span></h1>
-    <div class="chip" aria-label={$t('home.credits')}>
-      <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
+    <div class="wallets">
+      <div class="chip" aria-label={$t('home.credits')}>
+        <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
+      </div>
+      <div class="chip" aria-label={$t('home.worldCoins')}>
+        <span class="icon">🌍</span>{$progress.worldCoins.toLocaleString()}
+      </div>
     </div>
   </header>
 
@@ -155,6 +160,13 @@
 
   .icon {
     font-size: 1.2em;
+  }
+
+  .wallets {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
   }
 
   .account {
@@ -336,7 +348,7 @@
     }
 
     .plate {
-      top: calc(var(--pad-top) + 4rem);
+      top: calc(var(--pad-top) + 6rem);
       bottom: auto;
       left: auto;
       right: var(--pad-right);
