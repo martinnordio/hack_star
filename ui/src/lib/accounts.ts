@@ -1,6 +1,7 @@
 import { derived, writable, type Readable } from 'svelte/store'
 import { nextCreatedFighterId, nextCreatedSkinId } from './created'
 import { SETTINGS } from './game/settings'
+import { WORLD_SIZES, type WorldSize } from './game/worlds'
 import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { MAX_CREATED_SKINS, PROGRESS_KEY, parseProgress, startProgress, type CreatedSkin, type Progress } from './progress'
@@ -275,7 +276,22 @@ function mergeProgress(base: Progress, local: Progress, remote: Progress): Progr
   if (local.credits !== base.credits || rejectedCreationRefund !== 0) {
     merged.credits = Math.max(0, remote.credits + local.credits - base.credits + rejectedCreationRefund)
   }
+  if (local.worldCoins !== base.worldCoins) merged.worldCoins = Math.max(0, remote.worldCoins + local.worldCoins - base.worldCoins)
+  if (local.worldSteps !== base.worldSteps) merged.worldSteps = localOrLarger(base.worldSteps, local.worldSteps, remote.worldSteps)
+  if (!same(base.worlds, local.worlds)) {
+    const bigger = (b: WorldSize, l: WorldSize, r: WorldSize) =>
+      WORLD_SIZES[localOrLarger(WORLD_SIZES.indexOf(b), WORLD_SIZES.indexOf(l), WORLD_SIZES.indexOf(r))]
+    const asMap = (worlds: Progress['worlds']) => worlds as Record<string, WorldSize>
+    merged.worlds = mergeMap(asMap(base.worlds), asMap(local.worlds), asMap(remote.worlds), bigger)
+  }
+  if (!same(base.worldCodes, local.worldCodes)) merged.worldCodes = mergeMap(base.worldCodes, local.worldCodes, remote.worldCodes, localOrLarger)
+  if (!same(base.selectedWorld, local.selectedWorld)) merged.selectedWorld = local.selectedWorld
   return merged
+}
+
+/** A local change wins when the other tab did not change it; otherwise the larger value (a bigger size, a later date). */
+function localOrLarger(base: number, local: number, remote: number): number {
+  return remote === base ? local : Math.max(local, remote)
 }
 
 function mergeAccount(base: Account, local: Account, remote: Account): Account {

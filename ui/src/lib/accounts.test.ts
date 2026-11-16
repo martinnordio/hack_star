@@ -14,7 +14,8 @@ import {
 import { addCreatedSkin, deleteCreatedSkin, saveCreated } from './created'
 import { browserLanguage } from './i18n/languages'
 import { MAX_CREATED_FIGHTERS } from './created'
-import { PROGRESS_KEY, defaultProgress, memoryStorage, startProgress } from './progress'
+import { PROGRESS_KEY, defaultProgress, memoryStorage, resetProgress, startProgress } from './progress'
+import { buyWorld, earnWorldCoins, growWorld } from './game/worldShop'
 
 function added(state: Accounts, name: string): Accounts {
   const result = addAccount(state, name, 'en')
@@ -220,6 +221,57 @@ describe('accounts', () => {
     expect(get(secondProgress).createdFighters[0].skins).toEqual(skins)
     first.destroy()
     second.destroy()
+  })
+
+  it('merges worlds of two tabs: a purchase and a match, sizes, codes and the choice', () => {
+    const storage = memoryStorage()
+    const seed = createAccountsStore(storage, 'en')
+    progressStore(seed).update((p) => ({ ...p, worldCoins: 1000, worldCodes: { wc1: 100, wc2: 500 } }))
+    seed.destroy()
+
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    firstProgress.update((p) => {
+      const bought = buyWorld(p, 'moon-base', 'small')
+      if (!bought.ok) throw new Error(bought.reason)
+      const grown = growWorld(bought.progress, 'canyon')
+      if (!grown.ok) throw new Error(grown.reason)
+      return { ...grown.progress, selectedWorld: { id: 'moon-base', size: 'small' }, worldCodes: { wc1: 900, wc2: 500 } }
+    })
+    secondProgress.update((p) => {
+      const won = earnWorldCoins({ ...p, trophies: { blaze: 500 } })
+      return { ...won.progress, worlds: { ...won.progress.worlds, 'moon-base': 'medium' }, worldCodes: { wc1: 100, wc2: 800, wc3: 50 } }
+    })
+    first.refresh()
+
+    const merged = get(firstProgress)
+    expect(merged).toMatchObject({
+      worldCoins: 1000 - 500 - 250 + 250,
+      worldSteps: 1,
+      worlds: { canyon: 'medium', 'moon-base': 'medium' },
+      selectedWorld: { id: 'moon-base', size: 'small' },
+      worldCodes: { wc1: 900, wc2: 800, wc3: 50 },
+    })
+    expect(get(secondProgress)).toEqual(merged)
+    first.destroy()
+    second.destroy()
+  })
+
+  it('a reset in one tab is kept: world coins, worlds and codes back to the start', () => {
+    const storage = memoryStorage()
+    const store = createAccountsStore(storage, 'en')
+    const progress = progressStore(store)
+    progress.update((p) => ({ ...p, worldCoins: 700, worldSteps: 3, worlds: { ...p.worlds, canyon: 'large' }, worldCodes: { wc1: 9 } }))
+    progress.update(resetProgress)
+    expect(currentAccount(loadAccounts(storage, 'en')).progress).toMatchObject({
+      worldCoins: 0,
+      worldSteps: 0,
+      worlds: startProgress().worlds,
+      worldCodes: {},
+    })
+    store.destroy()
   })
 
   it('keeps both fighters when stale tabs create the same next fighter ID', () => {

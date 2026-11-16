@@ -23,6 +23,7 @@
   import { cubicOut } from 'svelte/easing'
   import { get } from 'svelte/store'
   import { creditsFor, earn, powerOf, stats } from './game/economy'
+  import { earnWorldCoins } from './game/worldShop'
   import type { RoomConnection } from './net/room'
   import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
@@ -112,13 +113,18 @@
   // Saved as soon as the match ends, so leaving before the result screen still keeps it.
   let reward = $state<Reward>()
   let earned = $state(0)
+  let earnedWorldCoins = $state(0)
   const shownTrophies = new Tween(0, { duration: 900, easing: cubicOut })
 
   function saveReward(m: MatchLike, result: MatchResult) {
     const current = get(progress).trophies[player.fighterId] ?? 0
     const r = rewardFor(current, result, m.settings)
     earned = creditsFor(result, m.settings)
-    progress.update((p) => earn(applyReward(p, player.fighterId, r), earned))
+    progress.update((p) => {
+      const paid = earnWorldCoins(earn(applyReward(p, player.fighterId, r), earned))
+      earnedWorldCoins = paid.earned
+      return paid.progress
+    })
     reward = r
     shownTrophies.set(r.before, { duration: 0 })
   }

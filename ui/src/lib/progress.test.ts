@@ -61,7 +61,7 @@ describe('progress', () => {
     const { hackExpiries: _hackExpiries, createdFighters: _createdFighters, ...progress } = defaultProgress()
     const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'], createdFighter: null }
     const migrated = parseProgress(legacy, 1000)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.hackExpiries).toEqual({
       infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
       power22: null,
@@ -87,7 +87,7 @@ describe('progress', () => {
     }
     const migrated = parseProgress(v5, 1000)
     expect(migrated).toMatchObject({
-      version: 7,
+      version: 8,
       credits: 321,
       selectedFighter: 'custom',
       trophies: { custom: 42 },
@@ -108,7 +108,7 @@ describe('progress', () => {
       createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Two' } }],
     }
     const migrated = parseProgress(v6)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.trophies).toEqual({ 'custom-2': 9 })
     expect(migrated?.createdFighters).toEqual([
       { id: 'custom', look: { ...look, hands: 0, legs: 0 }, skins: [] },
@@ -123,6 +123,57 @@ describe('progress', () => {
     expect(totalTrophies(p)).toBe(0)
     expect(p.unlockedFighters).toContain('blaze')
     expect(p.createdFighters).toEqual([])
+  })
+
+  it('a new account has 0 world coins, the three free worlds in Small and Canyon Small chosen', () => {
+    expect(startProgress()).toMatchObject({
+      worldCoins: 0,
+      worldSteps: 0,
+      worlds: { canyon: 'small', 'jungle-ruins': 'small', 'neon-docks': 'small' },
+      selectedWorld: { id: 'canyon', size: 'small' },
+      worldCodes: {},
+    })
+  })
+
+  it('migrates version 7: free worlds, Canyon Small, 250 world coins per 500-step already reached', () => {
+    const { worldCoins: _c, worldSteps: _s, worlds: _w, selectedWorld: _sw, worldCodes: _wc, ...rest } = defaultProgress()
+    const v7 = { ...rest, version: 7, trophies: { blaze: 1000, rocko: 240 } }
+    expect(parseProgress(v7)).toEqual({
+      ...rest,
+      version: 8,
+      trophies: { blaze: 1000, rocko: 240 },
+      worldCoins: 500,
+      worldSteps: 2,
+      worlds: { canyon: 'small', 'jungle-ruins': 'small', 'neon-docks': 'small' },
+      selectedWorld: { id: 'canyon', size: 'small' },
+      worldCodes: {},
+    })
+    expect(parseProgress({ ...v7, trophies: { blaze: 499 } })?.worldCoins).toBe(0)
+  })
+
+  it.each([2, 3, 4, 5, 6, 7])('loads a version %i save with world coins for its trophies', (version) => {
+    const { worldCoins: _c, worldSteps: _s, worlds: _w, selectedWorld: _sw, worldCodes: _wc, ...v7 } = defaultProgress()
+    const { hackExpiries: _h, createdFighters: _f, ...v4 } = v7
+    const old =
+      version === 7 ? { ...v7, version }
+      : version === 6 ? { ...v7, version, createdFighters: [] }
+      : version === 5 ? { ...v4, version, hackExpiries: {}, createdFighter: null }
+      : version === 4 ? { ...v4, version, createdFighter: null }
+      : { ...v4, version }
+    const p = parseProgress(old)
+    expect(p).toMatchObject({ version: 8, credits: 500, worldCoins: 750, worldSteps: 3, selectedWorld: { id: 'canyon', size: 'small' } })
+    expect(p?.trophies).toEqual(v7.trophies)
+  })
+
+  it('refuses broken world fields', () => {
+    const p = defaultProgress()
+    expect(parseProgress({ ...p, worldCoins: -1 })).toBeNull()
+    expect(parseProgress({ ...p, worlds: { atlantis: 'small' } })).toBeNull()
+    expect(parseProgress({ ...p, worlds: { canyon: 'huge' } })).toBeNull()
+    expect(parseProgress({ ...p, selectedWorld: { id: 'canyon' } })).toBeNull()
+    expect(parseProgress({ ...p, worldCodes: { wc1: 'soon' } })).toBeNull()
+    const saved = { ...p, worlds: { ...p.worlds, 'moon-base': 'large' }, worldCodes: { wc1: 123 } }
+    expect(parseProgress(saved)).toEqual(saved)
   })
 
   it('reset: 0 credits and trophies, start fighters, power 1, default skins; hacks and created fighter kept', () => {
@@ -150,6 +201,24 @@ describe('progress', () => {
     expect(p.selectedFighter).toBe('blaze')
     expect(p.activeHacks).toEqual(['power22'])
     expect(p.createdFighters).toEqual([{ id: 'custom', look, skins }])
+  })
+
+  it('reset: world coins, paid steps, worlds, choice and used world-coin codes back to the start', () => {
+    const before = {
+      ...defaultProgress(),
+      worldCoins: 900,
+      worldSteps: 4,
+      worlds: { canyon: 'large', 'moon-base': 'medium' } as const,
+      selectedWorld: { id: 'moon-base', size: 'medium' } as const,
+      worldCodes: { wc1: Date.now() + 1000 },
+    }
+    const p = resetProgress(before)
+    const start = startProgress()
+    expect(p.worldCoins).toBe(0)
+    expect(p.worldSteps).toBe(0)
+    expect(p.worlds).toEqual(start.worlds)
+    expect(p.selectedWorld).toEqual(start.selectedWorld)
+    expect(p.worldCodes).toEqual({})
   })
 
   it('refuses a created fighter with a bad look or bad skins', () => {
