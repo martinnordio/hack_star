@@ -6,6 +6,7 @@ import { Match, teamArena, type MatchLike, type MatchPhase, type MatchResult } f
 import { SETTINGS, type BotLevel, type Settings } from '../game/settings'
 import { fighterType } from '../game/types'
 import { World, type Shot, type WorldEvent } from '../game/world'
+import { isWorldId, isWorldSize, type WorldId, type WorldSize } from '../game/worlds'
 import type { RoomConnection, RoomMessage, Seat } from './room'
 import { parseLookSkin } from '../created'
 import { isCreatedFighterId } from '../progress'
@@ -27,9 +28,21 @@ export interface SharedFighter {
 
 export interface StartInfo {
   type: 'start'
-  settings: Pick<Settings, 'matchSeconds' | 'overtimeSeconds' | 'botCount' | 'countdownSeconds'> & { botLevel: BotLevel }
+  settings: Pick<Settings, 'matchSeconds' | 'overtimeSeconds' | 'botCount' | 'countdownSeconds'> & {
+    botLevel: BotLevel
+    /** The host's world; hosts of the previous version send none (Canyon Small). */
+    world?: { id: WorldId; size: WorldSize }
+  }
   /** People first (fighter ids 0..), then bots. */
   fighters: SharedFighter[]
+}
+
+const CANYON_SMALL = { id: 'canyon', size: 'small' } as const
+
+/** The world of a shared match, checked: an unknown one falls back to Canyon Small. */
+export function sharedWorld(start: StartInfo): { id: WorldId; size: WorldSize } {
+  const world = start.settings.world
+  return world && isWorldId(world.id) && isWorldSize(world.size) ? { id: world.id, size: world.size } : CANYON_SMALL
 }
 
 /** The start message the host sends: people in slot order, then bots with random fighters. */
@@ -38,6 +51,7 @@ export function startInfo(
   members: Seat[],
   catalogue: { id: string; type: string }[],
   random = Math.random,
+  world: { id: WorldId; size: WorldSize } = CANYON_SMALL,
 ): StartInfo {
   const people = [...members].sort((a, b) => a.slot - b.slot)
   const count = Math.max(settings.botCount + 1, people.length + 1)
@@ -62,6 +76,7 @@ export function startInfo(
       botCount: settings.botCount,
       countdownSeconds: settings.countdownSeconds,
       botLevel: settings.botLevel,
+      world: { id: world.id, size: world.size },
     },
     fighters: [
       ...people.map((p) => ({ fighter: p.fighter, type: typeOf(p.fighter, p.skin), skin: p.skin, power: p.power, hyper: p.hyper, slot: p.slot })),

@@ -33,6 +33,8 @@
   const host = $derived(info?.you === 0)
   const name = (seat: Seat) => seat.name ?? fighters.find((f) => f.id === seat.fighter)?.name ?? seat.fighter
   const bots = $derived(info ? Math.max(1, $options.botCount + 1 - info.members.length) : 0)
+  const names = (seats: Seat[]) => seats.map(name).join(', ')
+  const older = $derived(info ? info.members.filter((m) => m.slot !== info.you && m.version === undefined) : [])
 
   $effect(() => {
     if (!info) return
@@ -106,6 +108,12 @@
     {#if $room?.error}
       <p class="error" role="alert">{$tOr($room.error, $room.error)}</p>
     {/if}
+    {#if host && $room?.removed.length}
+      <p class="error" role="alert">{$t('friends.removed', { names: names($room.removed) })}</p>
+    {/if}
+    {#if host && older.length}
+      <p class="note">{$t('friends.olderGame', { names: names(older) })}</p>
+    {/if}
 
     {#if host}
       <button class="big start-match" onclick={onStart}>
@@ -149,6 +157,14 @@
     margin: 0;
     text-align: center;
     opacity: 0.85;
+  }
+
+  .note {
+    margin: 0;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.8rem;
+    background: #5a4a10;
+    border: 2px solid #000;
   }
 
   button {

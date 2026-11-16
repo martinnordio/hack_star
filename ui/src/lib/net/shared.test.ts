@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { CANYON } from '../game/arena'
 import { SETTINGS } from '../game/settings'
+import { arenaFor } from '../game/worlds'
 import { RoomConnection, type Seat, type Socket } from './room'
-import { GuestMatch, HostMatch, SEND_EVERY, startInfo } from './shared'
+import { GuestMatch, HostMatch, SEND_EVERY, sharedWorld, startInfo, type StartInfo } from './shared'
 
 const tick = 1 / 60
 const catalogue = [
@@ -47,6 +48,30 @@ function setup() {
 }
 
 describe('shared match', () => {
+  it('the start message carries the host\'s world; a friend builds the same arena', () => {
+    const settings = { ...SETTINGS, botCount: 3, countdownSeconds: 0.2 }
+    const world = { id: 'moon-base', size: 'large' } as const
+    const start = startInfo(settings, seats, catalogue, () => 0.5, world)
+    expect(start.settings.world).toEqual(world)
+    // The message goes over the network as JSON.
+    const received = JSON.parse(JSON.stringify(start)) as StartInfo
+    expect(sharedWorld(received)).toEqual(world)
+    const net = hub()
+    const host = new HostMatch(arenaFor(world.id, world.size), start, net.host)
+    const guest = new GuestMatch(arenaFor(sharedWorld(received).id, sharedWorld(received).size), received, 1, net.friend)
+    expect(guest.world.arena).toEqual(host.world.arena)
+    expect(guest.world.arena.width).toBe(42)
+    expect(guest.world.fighters.map((f) => [f.x, f.z])).toEqual(host.world.fighters.map((f) => [f.x, f.z]))
+  })
+
+  it('a start without a world (previous version) or with an unknown one is Canyon Small', () => {
+    const start = startInfo(SETTINGS, seats, catalogue)
+    expect(sharedWorld(start)).toEqual({ id: 'canyon', size: 'small' })
+    const { world: _world, ...old } = start.settings
+    expect(sharedWorld({ ...start, settings: old })).toEqual({ id: 'canyon', size: 'small' })
+    const odd = { ...start, settings: { ...old, world: { id: 'atlantis', size: 'huge' } } } as unknown as StartInfo
+    expect(sharedWorld(odd)).toEqual({ id: 'canyon', size: 'small' })
+  })
   it('a created fighter plays with the type in its look; bots never take it', () => {
     const settings = { ...SETTINGS, botCount: 5 }
     const created: Seat = { slot: 1, fighter: 'custom', skin: 'L321e8322b39d353', power: 3, hyper: false, name: 'Zappy' }

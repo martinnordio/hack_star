@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { codeFrom, memberFor, RoomConnection, roomLink, type RoomMessage, type Socket } from './room'
+import { codeFrom, ERRORS, memberFor, ROOM_VERSION, RoomConnection, roomLink, type RoomMessage, type Socket } from './room'
 import { createdFighter } from '../created'
 import { defaultProgress } from '../progress'
 
@@ -34,7 +34,13 @@ describe('room', () => {
       fighter: 'custom-2',
       skin: 'L010ff8a1affd23f',
       name: 'Comet',
+      version: ROOM_VERSION,
     })
+    expect(ROOM_VERSION).toBe(2)
+  })
+
+  it('names the update error', () => {
+    expect(ERRORS['update-the-game']).toBe('room.error.update')
   })
 
   it('sends JSON and passes on messages; a closed socket tells its listeners', () => {

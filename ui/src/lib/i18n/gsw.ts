@@ -408,4 +408,7 @@ export const gsw: Record<TextKey, string> = {
   'worlds.needMore': 'Es fehled no {coins} Wältmünze',
   'worlds.unlock': 'Freischalte',
   'arena.worldCoins': '+{coins} Wältmünze',
+  'room.error.update': 'De Ruum spilt iäre neue Wält: Mach es Update vo Hack star, zum mitspile.',
+  'friends.olderGame': '{names}: älters Spiel, nur im Canyon Chli spilbar. Iäre andere Wält müend si de Ruum verlah.',
+  'friends.removed': '{names} hed müese gah: S Spiel isch älter. Nach emene Update gaht jedi Wält.',
 }

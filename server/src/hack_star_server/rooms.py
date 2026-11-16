@@ -26,6 +26,9 @@ FIGHTER_IDS = {f.id for f in FIGHTERS}
 # The look of a created fighter: "L", type 0-4, head and body (0-2), two colours; or with
 # head and body 0-4 followed by hands and legs 0-2.
 CREATED_LOOK = re.compile(r"^L[0-4](?:[0-2][0-2]|[0-4][0-4][0-2][0-2])[0-9a-fA-F]{12}$")
+# Devices from before worlds send no version and can only play in today's arena.
+DEFAULT_WORLD = {"id": "canyon", "size": "small"}
+UPDATE_REASON = "update-the-game"
 
 
 class Member(BaseModel):
@@ -36,6 +39,8 @@ class Member(BaseModel):
     power: int = Field(ge=1, le=22)
     hyper: bool = False
     name: str | None = Field(default=None, min_length=1, max_length=12)
+    # 2: the game knows worlds; missing on devices of the previous version.
+    version: int | None = Field(default=None, ge=1, le=99)
 
     @field_validator("fighter")
     @classmethod
@@ -161,6 +166,8 @@ class RoomManager:
     async def from_host(self, room: Room, kind: Any, message: dict[str, Any], text: str) -> None:
         if kind == "start":
             room.started = True
+            if world_of(message) != DEFAULT_WORLD:
+                await self.remove_old_friends(room)
             await self.to_friends(room, text)
         elif kind == "state":
             await self.to_friends(room, text)
@@ -171,8 +178,21 @@ class RoomManager:
             await self.announce(room)
 
     async def from_friend(self, room: Room, seat: Seat, kind: Any, message: dict[str, Any]) -> None:
-        if kind == "input" and room.started:
+        if kind == "input" and room.started and seat in room.seats:
             await self.send(room.host.socket, json.dumps({**message, "slot": seat.slot}))
+
+    async def remove_old_friends(self, room: Room) -> None:
+        """Friends on the previous version cannot build another world: they leave the room."""
+        old = [s for s in room.seats[1:] if s.member.version is None]
+        if not old:
+            return
+        for seat in old:
+            room.seats.remove(seat)
+            await self.error(seat.socket, UPDATE_REASON)
+        slots = [s.slot for s in old]
+        await self.send(room.host.socket, json.dumps({"type": "removed", "slots": slots, "reason": UPDATE_REASON}))
+        for slot in slots:
+            await self.send(room.host.socket, json.dumps({"type": "left", "slot": slot}))
 
     async def leave(self, room: Room, seat: Seat) -> None:
         if seat not in room.seats:
@@ -205,3 +225,9 @@ class RoomManager:
 
     async def error(self, socket: WebSocket, reason: str) -> None:
         await self.send(socket, json.dumps({"type": "error", "reason": reason}))
+
+
+def world_of(message: dict[str, Any]) -> Any:
+    """The world of a start message; hosts of the previous version send none (Canyon Small)."""
+    settings = message.get("settings")
+    return settings.get("world", DEFAULT_WORLD) if isinstance(settings, dict) else DEFAULT_WORLD

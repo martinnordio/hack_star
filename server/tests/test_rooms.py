@@ -200,3 +200,61 @@ def test_too_big_or_broken_messages_are_refused() -> None:
         assert receive(socket) == {"type": "error", "reason": "too-big"}
         socket.send_text("not json")
         assert receive(socket) == {"type": "error", "reason": "bad-message"}
+
+
+NEW_ROCKO = {**ROCKO, "version": 2}
+MOON_LARGE = {"type": "start", "settings": {"world": {"id": "moon-base", "size": "large"}}}
+
+
+def test_members_join_with_and_without_a_version() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        send(host, {"type": "create", "member": {**BLAZE, "version": 2}})
+        code = receive(host)["code"]
+        with client.websocket_connect("/api/rooms") as friend:
+            send(friend, {"type": "join", "code": code, "member": ROCKO})
+            members = receive(friend)["members"]
+            receive(host)
+            assert members[0]["version"] == 2
+            assert "version" not in members[1]
+    with client.websocket_connect("/api/rooms") as socket:
+        send(socket, {"type": "create", "member": {**BLAZE, "version": 0}})
+        assert receive(socket) == {"type": "error", "reason": "bad-member"}
+
+
+def test_start_outside_canyon_small_removes_friends_of_the_previous_version() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old, client.websocket_connect("/api/rooms") as new:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            send(new, {"type": "join", "code": code, "member": NEW_ROCKO})
+            receive(new), receive(old), receive(host)
+            send(host, MOON_LARGE)
+            assert receive(old) == {"type": "error", "reason": "update-the-game"}
+            assert receive(host) == {"type": "removed", "slots": [1], "reason": "update-the-game"}
+            assert receive(host) == {"type": "left", "slot": 1}
+            assert receive(new) == MOON_LARGE
+            # The removed friend's input no longer reaches the host.
+            send(old, {"type": "input", "x": 1})
+            send(new, {"type": "input", "x": 2})
+            assert receive(host) == {"type": "input", "x": 2, "slot": 2}
+            assert [s.slot for s in rooms.rooms[code].seats] == [0, 2]
+
+
+@pytest.mark.parametrize(
+    "start",
+    [
+        {"type": "start", "settings": {"world": {"id": "canyon", "size": "small"}}},
+        {"type": "start", "settings": {"matchSeconds": 120}},
+        {"type": "start"},
+    ],
+)
+def test_start_in_canyon_small_keeps_every_friend(start: dict[str, Any]) -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            send(host, start)
+            assert receive(old) == start
+            assert len(rooms.rooms[code].seats) == 2

@@ -408,4 +408,7 @@ export const es: Record<TextKey, string> = {
   'worlds.needMore': 'Faltan {coins} monedas de mundo',
   'worlds.unlock': 'Desbloquear',
   'arena.worldCoins': '+{coins} monedas de mundo',
+  'room.error.update': 'Esta sala juega en un mundo nuevo: actualiza Hack star para unirte.',
+  'friends.olderGame': '{names}: juego antiguo, solo puede jugar en Cañón Pequeño. En otro mundo tendrá que salir de la sala.',
+  'friends.removed': '{names} tuvo que salir: su juego es antiguo. Tras actualizar puede jugar en todos los mundos.',
 }

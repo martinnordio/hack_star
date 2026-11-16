@@ -20,6 +20,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~2.15 M (28 k in · 2.11 M cached · 14 k out) | ~CHF 0.70 (84 credits) | Step 3 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.84 M (18 k in · 3.82 M cached · 11 k out) | ~CHF 0.89 (107 credits) | Step 4 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.72 M (25 k in · 3.68 M cached · 14 k out) | ~CHF 0.95 (114 credits) | Step 5 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.24 M (23 k in · 3.21 M cached · 13 k out) | ~CHF 0.85 (101 credits) | Step 6 done |
 
 ---
 
@@ -174,7 +175,7 @@ _None — answered on 2026-11-16._
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
-| **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
+| **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
@@ -371,20 +372,27 @@ Friends play in the host's world and size; friends on the previous version only 
 Small (S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
-- [ ] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
+- [x] Record the start time in Notes below.
+- [x] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
+- [x] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
       Small, members without it are removed with the room-error message; the host sees who and
       why.
-- [ ] The host chooses the world on the world screen before **START**.
-- [ ] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
+- [x] The host chooses the world on the world screen before **START**.
+- [x] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
       none in Canyon Small (`server/tests/test_rooms.py`); UI — start info with the world;
       a guest builds the same arena as the host.
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
       browser tabs: host in a Large world, friend joins and plays in it.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 19:42
+
+- Server: an older friend gets `{"type": "error", "reason": "update-the-game"}` (older games show the reason as it is, so it is readable), leaves the room's seats (its input is ignored), and the host gets `{"type": "removed", "slots": […]}` and a `left` per slot so a bot plays the empty fighter. A start without `settings.world` (a host of the previous version) counts as Canyon Small.
+- Host: in the lobby a note names friends with an older game before the start; after a removal, a message names who had to leave and why. New guests show `room.error.update`.
+- `sharedWorld(start)` checks the received world; an unknown one is Canyon Small.
+
+**Done (2026-11-16 · ~4m · Claude Opus 5.5)** — rooms carry the host's world; member `version: 2`; older friends removed outside Canyon Small; the host picks the world on the world screen before the start. `uv run --no-sync pytest` 50 passed; `npm test` 484 passed; `npm run check` 0 errors; two tabs: host started in Moon Base Large, the friend's match ran in Moon Base Large (start at z = 14) · ~3.24 M · ~CHF 0.85
 
 ---
 

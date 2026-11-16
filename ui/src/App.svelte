@@ -19,6 +19,7 @@
   import { untrack } from 'svelte'
   import { progress } from './lib/accounts'
   import { wornSkin } from './lib/game/shop'
+  import { chosenWorld } from './lib/game/worldShop'
   import { t } from './lib/i18n'
   import CreatorScreen from './lib/CreatorScreen.svelte'
   import { withCreated } from './lib/created'
@@ -48,7 +49,7 @@
   // Changing it mounts a fresh arena (Play again).
   let matchNumber = $state(0)
   /** What the world screen's START begins. */
-  let worldsFor = $state<'match' | 'training'>('match')
+  let worldsFor = $state<'match' | 'training' | 'room'>('match')
 
   function load() {
     error = false
@@ -73,9 +74,13 @@
   }
 
   function startShared() {
-    if (!$room?.info || !fighters) return
+    if (!$room?.info || !fighters) {
+      screen = 'friends'
+      return
+    }
     const settings = settingsFrom(location.search, SETTINGS, $options)
-    const start = startInfo(settings, $room.info.members, fighters)
+    const start = startInfo(settings, $room.info.members, fighters, Math.random, chosenWorld($progress))
+    room.update((s) => s && { ...s, removed: [] })
     $room.connection.send(start)
     playShared(start)
   }
@@ -119,8 +124,8 @@
     }}
   />
 {:else if screen === 'worlds'}
-  <Panel title={$t('panel.worlds')} onBack={() => (screen = 'home')}>
-    <WorldScreen onStart={() => (screen = worldsFor)} />
+  <Panel title={$t('panel.worlds')} onBack={() => (screen = worldsFor === 'room' ? 'friends' : 'home')}>
+    <WorldScreen onStart={() => (worldsFor === 'room' ? startShared() : (screen = worldsFor))} />
   </Panel>
 {:else if screen === 'match' || screen === 'training'}
   {@const fighter = currentFighter($progress, fighters)}
@@ -202,7 +207,14 @@
       screen = 'home'
     }}
   >
-    <FriendsScreen {fighters} initialCode={roomInLink} onStart={startShared} />
+    <FriendsScreen
+      {fighters}
+      initialCode={roomInLink}
+      onStart={() => {
+        worldsFor = 'room'
+        screen = 'worlds'
+      }}
+    />
   </Panel>
 {:else if screen === 'hack'}
   <Panel

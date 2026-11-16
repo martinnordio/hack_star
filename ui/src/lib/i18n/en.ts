@@ -406,6 +406,9 @@ export const en = {
   'worlds.needMore': '{coins} more world coins needed',
   'worlds.unlock': 'Unlock',
   'arena.worldCoins': '+{coins} world coins',
+  'room.error.update': 'This room plays in a new world: update Hack star to join it.',
+  'friends.olderGame': '{names}: older game, can only play in Canyon Small. In another world they have to leave the room.',
+  'friends.removed': '{names} had to leave: their game is older. After an update they can play in every world.',
 } as const satisfies Record<string, string>
 
 export type TextKey = keyof typeof en
