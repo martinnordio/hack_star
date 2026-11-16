@@ -16,7 +16,12 @@ export interface Member {
   hyper: boolean
   /** The name of a created fighter (its look is in `skin`). */
   name?: string
+  /** Devices that know about worlds tell 2; the previous version told nothing. */
+  version?: number
 }
+
+/** Lets a room outside Canyon Small know this device can play there. */
+export const MEMBER_VERSION = 2
 
 export function memberFor(progress: Progress, fighters: Fighter[]): Member {
   const fighter = currentFighter(progress, fighters)
@@ -26,6 +31,7 @@ export function memberFor(progress: Progress, fighters: Fighter[]): Member {
     skin: wornSkin(progress, fighter.id),
     power: powerOf(progress, fighter.id),
     hyper: isHackActive(progress, 'hypercharge'),
+    version: MEMBER_VERSION,
     ...(look ? { name: look.name } : {}),
   }
 }
@@ -61,6 +67,7 @@ export const ERRORS: Record<string, TextKey> = {
   started: 'room.error.started',
   'bad-member': 'room.error.badMember',
   'too-many-rooms': 'room.error.tooManyRooms',
+  update: 'room.error.update',
   disconnected: 'room.error.disconnected',
   closed: 'room.error.closed',
 }
@@ -131,6 +138,8 @@ export interface RoomState {
   info: RoomInfo | null
   /** A text key, or the server's reason when it is unknown. */
   error: string | null
+  /** Friends the server removed at the last start because they play the previous version. */
+  removed: Seat[]
 }
 
 /** The room this device is in (one at a time). */
@@ -147,7 +156,7 @@ async function enter(message: RoomMessage): Promise<void> {
   try {
     connection = await openSocket()
   } catch {
-    if (mine === attempt) room.set({ connection: new RoomConnection(closedSocket()), info: null, error: ERRORS.disconnected })
+    if (mine === attempt) room.set({ connection: new RoomConnection(closedSocket()), info: null, error: ERRORS.disconnected, removed: [] })
     return
   }
   if (mine !== attempt) {
@@ -158,10 +167,11 @@ async function enter(message: RoomMessage): Promise<void> {
   connection.on((m) => {
     if (m.type === 'room') room.update((s) => s && { ...s, info: m as unknown as RoomInfo, error: null })
     else if (m.type === 'error') room.update((s) => s && { ...s, error: ERRORS[String(m.reason)] ?? String(m.reason) })
+    else if (m.type === 'removed') room.update((s) => s && { ...s, removed: Array.isArray(m.members) ? (m.members as Seat[]) : [] })
     else if (m.type === 'closed' || m.type === 'disconnected')
       room.update((s) => s && { ...s, info: null, error: ERRORS[m.type] })
   })
-  room.set({ connection, info: null, error: null })
+  room.set({ connection, info: null, error: null, removed: [] })
   connection.send(message)
 }
 

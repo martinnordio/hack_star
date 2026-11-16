@@ -181,6 +181,9 @@ export const es: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'El servidor tiene demasiadas salas. Vuelve a intentarlo más tarde.',
   'room.error.disconnected': 'Se ha perdido la conexión con el servidor del juego.',
   'room.error.closed': 'El Jugador 1 se ha ido, así que la sala se ha cerrado.',
+  'room.error.update': 'Esta sala juega en un mundo que necesita la última versión del juego. Actualiza el juego y vuelve a entrar.',
+  'room.removed': '{names} juegan con una versión anterior del juego y salieron de la sala.',
+  'worlds.outdated': '{names} juegan con una versión anterior y saldrán de la sala, salvo que elijas Cañón · Pequeño.',
 
   'arena.fightersLeft': 'Luchadores en pie',
   'arena.fight': '¡A LUCHAR!',

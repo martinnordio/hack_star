@@ -179,6 +179,9 @@ export const en = {
   'room.error.tooManyRooms': 'The server has too many rooms. Try again later.',
   'room.error.disconnected': 'Lost the connection to the game server.',
   'room.error.closed': 'The host left, so the room is closed.',
+  'room.error.update': 'This room plays in a world that needs the newest version of the game. Update the game and join again.',
+  'room.removed': '{names} play an older version of the game and were removed from the room.',
+  'worlds.outdated': '{names} play an older version and are removed from the room unless you choose Canyon · Small.',
 
   'arena.fightersLeft': 'Fighters left',
   'arena.fight': 'FIGHT!',

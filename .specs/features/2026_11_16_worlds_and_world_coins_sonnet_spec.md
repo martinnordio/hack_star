@@ -20,6 +20,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.28 M (25 k in · 2.24 M cached · 13 k out) | ~CHF 0.35 (41 credits) | Step 3 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (12 k in · 2.60 M cached · 6 k out) | ~CHF 0.30 (35 credits) | Step 4 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.96 M (22 k in · 2.93 M cached · 13 k out) | ~CHF 0.40 (47 credits) | Step 5 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~6.04 M (26 k in · 6.00 M cached · 14 k out) | ~CHF 0.68 (81 credits) | Step 6 done |
 
 ---
 
@@ -174,7 +175,7 @@ _None — answered on 2026-11-16._
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
-| **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
+| **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
@@ -360,20 +361,24 @@ Friends play in the host's world and size; friends on the previous version only 
 Small (S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
-- [ ] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
+- [x] Record the start time in Notes below.
+- [x] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
+- [x] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
       Small, members without it are removed with the room-error message; the host sees who and
       why.
-- [ ] The host chooses the world on the world screen before **START**.
-- [ ] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
+- [x] The host chooses the world on the world screen before **START**.
+- [x] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
       none in Canyon Small (`server/tests/test_rooms.py`); UI — start info with the world;
       a guest builds the same arena as the host.
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
       browser tabs: host in a Large world, friend joins and plays in it.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 20:38
+
+The world is a field of the start message (`world`), next to `settings`, rather than inside them; a start without it is from the previous version and means Canyon Small. The server removes outdated friends (`left` to the host, error `update` to the friend, whose socket it closes) and tells the host with a new `removed` message; the host sees them on the world screen before starting (a warning that names them unless Canyon Small is chosen) and in the lobby afterwards. The browser check used two tabs of the same account, so it showed host and friend in the same world (Lava Forge Small, a world the account had just bought) but not a friend without the world; the unit test covers a friend that has not unlocked it. A Large world in a room was not played in the browser.
+
+**Done (2026-11-16 · ~5m · Claude Sonnet 5.5)** — world in the start message, member `version`, server removal of previous-version friends outside Canyon Small, the host's world screen before a room's match, texts in five languages. `uv run --no-sync pytest` 50 passed, `npm test` 496 passed, `npm run check` 0 errors, two-tab browser check · ~6.04 M · ~CHF 0.68
 
 ---
 

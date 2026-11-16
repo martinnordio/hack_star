@@ -181,6 +181,9 @@ export const it: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Il server ha troppe stanze. Riprova più tardi.',
   'room.error.disconnected': 'Connessione al server di gioco persa.',
   'room.error.closed': 'Il Giocatore 1 è uscito, quindi la stanza è chiusa.',
+  'room.error.update': 'Questa stanza gioca in un mondo che richiede l\'ultima versione del gioco. Aggiorna il gioco e rientra.',
+  'room.removed': '{names} giocano con una versione precedente del gioco e sono stati rimossi dalla stanza.',
+  'worlds.outdated': '{names} giocano con una versione precedente e verranno rimossi dalla stanza, a meno che tu non scelga Canyon · Piccolo.',
 
   'arena.fightersLeft': 'Combattenti rimasti',
   'arena.fight': 'COMBATTI!',

@@ -48,7 +48,7 @@
   // Changing it mounts a fresh arena (Play again).
   let matchNumber = $state(0)
   // Play and Training first show the world screen, then start this.
-  let afterWorlds = $state<'match' | 'training'>('match')
+  let afterWorlds = $state<'match' | 'training' | 'room'>('match')
 
   function load() {
     error = false
@@ -73,12 +73,23 @@
   }
 
   function startShared() {
-    if (!$room?.info || !fighters) return
+    if (!$room?.info || !fighters) {
+      screen = 'friends'
+      return
+    }
     const settings = settingsFrom(location.search, SETTINGS, $options)
-    const start = startInfo(settings, $room.info.members, fighters)
+    const start = startInfo(settings, $room.info.members, fighters, Math.random, $progress.selectedWorld)
+    room.update((s) => s && { ...s, removed: [] })
     $room.connection.send(start)
     playShared(start)
   }
+
+  /** Friends on the previous version: the server removes them when the world is not Canyon Small. */
+  const outdatedFriends = $derived(
+    ($room?.info?.members ?? [])
+      .filter((m) => m.slot !== 0 && m.version === undefined)
+      .map((m) => m.name ?? fighters?.find((f) => f.id === m.fighter)?.name ?? m.fighter),
+  )
 
   // Friends follow the host into the match.
   $effect(() => {
@@ -117,8 +128,11 @@
     }}
   />
 {:else if screen === 'worlds'}
-  <Panel title={$t('panel.worlds')} onBack={() => (screen = 'home')}>
-    <WorldScreen onStart={() => (screen = afterWorlds)} />
+  <Panel title={$t('panel.worlds')} onBack={() => (screen = afterWorlds === 'room' ? 'friends' : 'home')}>
+    <WorldScreen
+      outdated={afterWorlds === 'room' ? outdatedFriends : []}
+      onStart={() => (afterWorlds === 'room' ? startShared() : (screen = afterWorlds))}
+    />
   </Panel>
 {:else if screen === 'match' || screen === 'training'}
   {@const fighter = currentFighter($progress, fighters)}
@@ -200,7 +214,14 @@
       screen = 'home'
     }}
   >
-    <FriendsScreen {fighters} initialCode={roomInLink} onStart={startShared} />
+    <FriendsScreen
+      {fighters}
+      initialCode={roomInLink}
+      onStart={() => {
+        afterWorlds = 'room'
+        screen = 'worlds'
+      }}
+    />
   </Panel>
 {:else if screen === 'hack'}
   <Panel

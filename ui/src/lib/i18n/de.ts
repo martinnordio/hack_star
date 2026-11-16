@@ -181,6 +181,9 @@ export const de: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Der Server hat zu viele Räume. Versuch es später nochmal.',
   'room.error.disconnected': 'Die Verbindung zum Spiel-Server ist weg.',
   'room.error.closed': 'Spieler 1 ist gegangen, darum ist der Raum zu.',
+  'room.error.update': 'Dieser Raum spielt in einer Welt, die die neueste Version des Spiels braucht. Aktualisiere das Spiel und tritt erneut bei.',
+  'room.removed': '{names} spielen eine ältere Version des Spiels und wurden aus dem Raum entfernt.',
+  'worlds.outdated': '{names} spielen eine ältere Version und werden aus dem Raum entfernt, ausser du wählst Canyon · Klein.',
 
   'arena.fightersLeft': 'Kämpfer übrig',
   'arena.fight': 'KAMPF!',

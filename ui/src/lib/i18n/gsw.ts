@@ -181,6 +181,9 @@ export const gsw: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Dä Server hät z vill Rüüm. Probier spöter nomal.',
   'room.error.disconnected': 'D Verbindig zum Spiel-Server isch wäg.',
   'room.error.closed': 'Spieler 1 isch gange, drum isch dä Raum zue.',
+  'room.error.update': 'Dr Raum spielt i ere Wält, wo di neuschti Version vom Spiel bruucht. Aktualisier s Spiel und chum nomal.',
+  'room.removed': '{names} spiled e älteri Version vom Spiel und sind us em Raum useto worde.',
+  'worlds.outdated': '{names} spiled e älteri Version und werded us em Raum useto, usser du wählsch Canyon · Chlii.',
 
   'arena.fightersLeft': 'Kämpfer übrig',
   'arena.fight': 'KAMPF!',

@@ -6,6 +6,7 @@ import { Match, teamArena, type MatchLike, type MatchPhase, type MatchResult } f
 import { SETTINGS, type BotLevel, type Settings } from '../game/settings'
 import { fighterType } from '../game/types'
 import { World, type Shot, type WorldEvent } from '../game/world'
+import { DEFAULT_WORLD, isWorldId, isWorldSize, type WorldId, type WorldSize } from '../game/worlds'
 import type { RoomConnection, RoomMessage, Seat } from './room'
 import { parseLookSkin } from '../created'
 import { isCreatedFighterId } from '../progress'
@@ -30,6 +31,14 @@ export interface StartInfo {
   settings: Pick<Settings, 'matchSeconds' | 'overtimeSeconds' | 'botCount' | 'countdownSeconds'> & { botLevel: BotLevel }
   /** People first (fighter ids 0..), then bots. */
   fighters: SharedFighter[]
+  /** The host's world; a host on the previous version sends none (Canyon Small). */
+  world?: { id: WorldId; size: WorldSize }
+}
+
+/** The world of a start message, whatever it unlocked; Canyon Small when it is missing or broken. */
+export function worldOf(start: { world?: unknown }): { id: WorldId; size: WorldSize } {
+  const world = start.world as { id?: unknown; size?: unknown } | undefined
+  return world && isWorldId(world.id) && isWorldSize(world.size) ? { id: world.id, size: world.size } : { ...DEFAULT_WORLD }
 }
 
 /** The start message the host sends: people in slot order, then bots with random fighters. */
@@ -38,6 +47,7 @@ export function startInfo(
   members: Seat[],
   catalogue: { id: string; type: string }[],
   random = Math.random,
+  world: { id: WorldId; size: WorldSize } = DEFAULT_WORLD,
 ): StartInfo {
   const people = [...members].sort((a, b) => a.slot - b.slot)
   const count = Math.max(settings.botCount + 1, people.length + 1)
@@ -56,6 +66,7 @@ export function startInfo(
   }))
   return {
     type: 'start',
+    world: { ...world },
     settings: {
       matchSeconds: settings.matchSeconds,
       overtimeSeconds: settings.overtimeSeconds,

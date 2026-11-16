@@ -106,6 +106,9 @@
     {#if $room?.error}
       <p class="error" role="alert">{$tOr($room.error, $room.error)}</p>
     {/if}
+    {#if host && $room && $room.removed.length > 0}
+      <p class="error" role="alert">{$t('room.removed', { names: $room.removed.map(name).join(', ') })}</p>
+    {/if}
 
     {#if host}
       <button class="big start-match" onclick={onStart}>

@@ -200,3 +200,64 @@ def test_too_big_or_broken_messages_are_refused() -> None:
         assert receive(socket) == {"type": "error", "reason": "too-big"}
         socket.send_text("not json")
         assert receive(socket) == {"type": "error", "reason": "bad-message"}
+
+
+ROCKO_NEW = {**ROCKO, "version": 2}
+LAVA_FORGE = {"id": "lava-forge", "size": "large"}
+CANYON_SMALL = {"id": "canyon", "size": "small"}
+
+
+def test_member_version_is_shown_and_checked() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        send(host, {"type": "create", "member": {**BLAZE, "version": 2}})
+        assert receive(host)["members"] == [{"slot": 0, **BLAZE, "hyper": False, "version": 2}]
+    for version in (0, 100):
+        with client.websocket_connect("/api/rooms") as socket:
+            send(socket, {"type": "create", "member": {**BLAZE, "version": version}})
+            assert receive(socket) == {"type": "error", "reason": "bad-member"}
+
+
+@pytest.mark.parametrize("world", [None, CANYON_SMALL])
+def test_start_in_canyon_small_keeps_friends_on_the_previous_version(world: dict[str, str] | None) -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            start = {"type": "start", **({"world": world} if world else {})}
+            send(host, start)
+            assert receive(old) == start
+            assert len(rooms.rooms[code].seats) == 2
+
+
+def test_start_in_another_world_removes_friends_on_the_previous_version() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old, client.websocket_connect("/api/rooms") as new:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            send(new, {"type": "join", "code": code, "member": ROCKO_NEW})
+            receive(new), receive(host), receive(old)
+
+            start = {"type": "start", "world": LAVA_FORGE}
+            send(host, start)
+            assert receive(old) == {"type": "error", "reason": "update"}
+            assert receive(host) == {"type": "left", "slot": 1}
+            removed = receive(host)
+            assert removed["type"] == "removed" and removed["reason"] == "update"
+            assert [(m["slot"], m["fighter"]) for m in removed["members"]] == [(1, "rocko")]
+            assert [m["slot"] for m in receive(host)["members"]] == [0, 2]
+            # The friend on the new version stays and gets the start, whatever it unlocked.
+            assert [m["slot"] for m in receive(new)["members"]] == [0, 2]
+            assert receive(new) == start
+            assert [s.slot for s in rooms.rooms[code].seats] == [0, 2]
+
+
+def test_a_start_with_a_broken_world_counts_as_another_world() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            send(host, {"type": "start", "world": "canyon"})
+            assert receive(old) == {"type": "error", "reason": "update"}

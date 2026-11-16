@@ -26,6 +26,8 @@ FIGHTER_IDS = {f.id for f in FIGHTERS}
 # The look of a created fighter: "L", type 0-4, head and body (0-2), two colours; or with
 # head and body 0-4 followed by hands and legs 0-2.
 CREATED_LOOK = re.compile(r"^L[0-4](?:[0-2][0-2]|[0-4][0-4][0-2][0-2])[0-9a-fA-F]{12}$")
+# Devices on the previous version tell no version and can only play in Canyon Small.
+OLDEST_WORLD_VERSION = 2
 
 
 class Member(BaseModel):
@@ -36,6 +38,7 @@ class Member(BaseModel):
     power: int = Field(ge=1, le=22)
     hyper: bool = False
     name: str | None = Field(default=None, min_length=1, max_length=12)
+    version: int | None = Field(default=None, ge=1, le=99)
 
     @field_validator("fighter")
     @classmethod
@@ -80,6 +83,13 @@ class Room:
             "started": self.started,
             "members": [{"slot": s.slot, **s.member.model_dump(exclude_none=True)} for s in self.seats],
         }
+
+
+def is_canyon_small(world: Any) -> bool:
+    """Whether a start message plays in Canyon Small: a start without a world is from the previous version."""
+    if world is None:
+        return True
+    return isinstance(world, dict) and world.get("id") == "canyon" and world.get("size") == "small"
 
 
 class RoomManager:
@@ -160,6 +170,8 @@ class RoomManager:
 
     async def from_host(self, room: Room, kind: Any, message: dict[str, Any], text: str) -> None:
         if kind == "start":
+            if not is_canyon_small(message.get("world")):
+                await self.remove_outdated(room)
             room.started = True
             await self.to_friends(room, text)
         elif kind == "state":
@@ -169,6 +181,24 @@ class RoomManager:
             room.started = False
             await self.to_friends(room, text)
             await self.announce(room)
+
+    async def remove_outdated(self, room: Room) -> None:
+        """Friends on the previous version cannot play outside Canyon Small: tell them, and the host."""
+        outdated = [s for s in room.seats[1:] if (s.member.version or 0) < OLDEST_WORLD_VERSION]
+        if not outdated:
+            return
+        for seat in outdated:
+            room.seats.remove(seat)
+            await self.error(seat.socket, "update")
+            try:
+                await seat.socket.close()
+            except RuntimeError:
+                # Already closed by the friend.
+                pass
+            await self.send(room.host.socket, json.dumps({"type": "left", "slot": seat.slot}))
+        removed = [{"slot": s.slot, **s.member.model_dump(exclude_none=True)} for s in outdated]
+        await self.send(room.host.socket, json.dumps({"type": "removed", "members": removed, "reason": "update"}))
+        await self.announce(room)
 
     async def from_friend(self, room: Room, seat: Seat, kind: Any, message: dict[str, Any]) -> None:
         if kind == "input" and room.started:

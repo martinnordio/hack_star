@@ -8,9 +8,11 @@
 
   interface Props {
     onStart: () => void
+    /** Friends in the room on the previous version: they can only play in Canyon Small. */
+    outdated?: string[]
   }
 
-  let { onStart }: Props = $props()
+  let { onStart, outdated = [] }: Props = $props()
 
   type Pending = { kind: 'buy' | 'grow'; id: WorldId; size: WorldSize }
 
@@ -105,6 +107,9 @@
   </ul>
 
   {#if message}<p class="message" role="status">{message}</p>{/if}
+  {#if outdated.length > 0 && !(chosen.id === 'canyon' && chosen.size === 'small')}
+    <p class="warning" role="alert">{$t('worlds.outdated', { names: outdated.join(', ') })}</p>
+  {/if}
 
   <div class="bar">
     <span class="playing">{$t('worlds.playingIn', { world: nameOf(chosen.id), size: sizeName(chosen.size) })}</span>
@@ -275,6 +280,15 @@
     margin: 0.8rem 0 0;
     font-weight: 900;
     color: #39ff88;
+  }
+
+  .warning {
+    margin: 0.8rem 0 0;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.8rem;
+    border: 2px solid #000;
+    background: #8a1030;
+    font-weight: 800;
   }
 
   .bar {

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { CANYON } from '../game/arena'
 import { SETTINGS } from '../game/settings'
+import { arenaFor } from '../game/worlds'
 import { RoomConnection, type Seat, type Socket } from './room'
-import { GuestMatch, HostMatch, SEND_EVERY, startInfo } from './shared'
+import { GuestMatch, HostMatch, SEND_EVERY, startInfo, worldOf } from './shared'
 
 const tick = 1 / 60
 const catalogue = [
@@ -149,5 +150,35 @@ describe('shared match', () => {
     run(0.3)
     host.stop()
     expect(guest.result).toEqual({ kind: 'timeup' })
+  })
+})
+
+describe('worlds in a shared match', () => {
+  const settings = { ...SETTINGS, botCount: 3, countdownSeconds: 0.2 }
+
+  it('the start message carries the host\'s world, Canyon Small by default', () => {
+    expect(startInfo(settings, seats, catalogue, () => 0.5).world).toEqual({ id: 'canyon', size: 'small' })
+    const start = startInfo(settings, seats, catalogue, () => 0.5, { id: 'lava-forge', size: 'large' })
+    expect(start.world).toEqual({ id: 'lava-forge', size: 'large' })
+    expect(JSON.parse(JSON.stringify(start)).world).toEqual({ id: 'lava-forge', size: 'large' })
+  })
+
+  it.each([undefined, null, 'canyon', { id: 'nowhere', size: 'small' }, { id: 'canyon', size: 'huge' }, { id: 'canyon' }])(
+    'a start without a usable world (%j) is played in Canyon Small',
+    (world) => {
+      expect(worldOf({ world })).toEqual({ id: 'canyon', size: 'small' })
+    },
+  )
+
+  it('host and friend play in the same world, even one the friend has not unlocked', () => {
+    const start = startInfo(settings, seats, catalogue, () => 0.5, { id: 'moon-base', size: 'large' })
+    const arena = arenaFor(worldOf(start).id, worldOf(start).size)
+    const net = hub()
+    const host = new HostMatch(arena, start, net.host)
+    const guest = new GuestMatch(arena, start, 1, net.friend)
+    expect(host.world.arena).toEqual(guest.world.arena)
+    expect(host.world.arena).toMatchObject({ width: 42, depth: 34 })
+    host.update(tick)
+    expect(guest.world.walls).toHaveLength(host.world.walls.length)
   })
 })

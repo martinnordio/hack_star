@@ -26,7 +26,7 @@
   import { creditsFor, earn, powerOf, stats } from './game/economy'
   import { earnWorldCoins } from './game/worldShop'
   import type { RoomConnection } from './net/room'
-  import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
+  import { GuestMatch, HostMatch, worldOf, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
   import { isCreatedFighterId } from './progress'
 
@@ -46,14 +46,13 @@
   const TAP_MS = 250
 
   function sharedMatch(s: NonNullable<Props['shared']>) {
-    const arena = arenaFor('canyon', 'small')
     const match = s.you === 0 ? new HostMatch(arena, s.start, s.connection) : new GuestMatch(arena, s.start, s.you, s.connection)
     const looks: Look[] = s.start.fighters.map((f) => ({ fighterId: f.fighter, skinId: f.skin }))
     return { match, world: match.world, looks, player: looks[match.world.playerId] }
   }
 
-  // The world chosen on this account; made once per match like the rest.
-  const chosenWorld = untrack(() => (shared ? { id: 'canyon' as const, size: 'small' as const } : get(progress).selectedWorld))
+  // The world of this match: the host's in a room (even if not unlocked here), else the chosen one.
+  const chosenWorld = untrack(() => (shared ? worldOf(shared.start) : get(progress).selectedWorld))
   const arena = arenaFor(chosenWorld.id, chosenWorld.size)
   const theme = worldInfo(chosenWorld.id).theme
 
