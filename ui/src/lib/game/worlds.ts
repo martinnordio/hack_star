@@ -188,6 +188,11 @@ function generate(world: WorldInfo, size: WorldSize): Arena {
     return rand() < 0.5 ? { x: 0, z: 0, w: long, d: thin } : { x: 0, z: 0, w: thin, d: long }
   }
 
+  // Bushes first: fighters hide in them, so every world must keep some.
+  for (let i = 0; i < Math.round(2 * scale); i++) {
+    const r = between(1.3, 1.9)
+    place((x, z) => ({ x, z, r }), true)
+  }
   for (let i = 0; i < Math.round(3 * scale); i++) {
     const shape = wallShape()
     place((x, z) => ({ ...shape, x, z }), true)
@@ -195,10 +200,6 @@ function generate(world: WorldInfo, size: WorldSize): Arena {
   for (let i = 0; i < Math.round(scale); i++) {
     const shape = wallShape()
     place((x, z) => ({ ...shape, x, z }), false)
-  }
-  for (let i = 0; i < Math.round(2 * scale); i++) {
-    const r = between(1.3, 1.9)
-    place((x, z) => ({ x, z, r }), true)
   }
 
   const decorations: Decoration[] = []

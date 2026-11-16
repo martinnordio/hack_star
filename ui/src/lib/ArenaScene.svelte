@@ -27,11 +27,12 @@
   import { T, useTask, useThrelte } from '@threlte/core'
   import { untrack } from 'svelte'
   import * as THREE from 'three'
-  import { CANYON } from './game/arena'
   import { keyboardDirection, type Controls, type Vec2 } from './game/controls'
   import type { MatchLike } from './game/match'
   import { BUSH_SIGHT, DUMMY_HEALTH, SHOT_RADIUS, SHOT_RANGE, type World, type WorldEvent } from './game/world'
   import { buildArena } from './models/arena3d'
+  import { ARENA_THEMES } from './models/themes'
+  import type { ThemeId } from './game/worlds'
   import { buildDummy, setHealth } from './models/dummy3d'
   import { animateFighter, buildFighter, disposeRig, setRigOpacity } from './models/fighters3d'
   import { parseLookSkin } from './created'
@@ -52,11 +53,17 @@
     overlay?: HTMLElement
     onHud?: (hud: Hud) => void
     onPower?: (power: Power) => void
+    /** The look of the world; Canyon when not given. */
+    theme?: ThemeId
   }
 
-  let { world, match, actions, controls, looks, overlay, onHud, onPower }: Props = $props()
+  let { world, match, actions, controls, looks, overlay, onHud, onPower, theme = 'canyon' }: Props = $props()
   /** The fighter this device controls. */
   const me = untrack(() => world.playerId)
+  const arena = untrack(() => world.arena)
+  const themeLook = ARENA_THEMES[untrack(() => theme)]
+  // The light's shadow area covers the whole ground, also in a Large world.
+  const shadowReach = Math.max(20, Math.max(arena.width, arena.depth) / 2 + 5)
 
   const SHOT_COLORS: Record<string, string> = {
     blaze: '#ff7a1a',
@@ -76,7 +83,7 @@
     zeus: '#fff35c',
   }
 
-  const scenery = buildArena(CANYON)
+  const scenery = buildArena(arena, untrack(() => theme))
   const HYPER_COLOR = '#b64dff'
   const haloGeometry = new THREE.SphereGeometry(1.3, 24, 16)
   const haloMaterial = new THREE.MeshBasicMaterial({
@@ -92,16 +99,16 @@
   /** Overtime: walls and cacti burst into pieces, then sink away. */
   function breakCover() {
     coverGoneAt = time
-    for (const w of CANYON.walls) {
+    for (const w of arena.walls) {
       for (let i = 0; i < Math.ceil(w.w * w.d); i++) {
         const x = w.x + (Math.random() - 0.5) * w.w
         const z = w.z + (Math.random() - 0.5) * w.d
-        particles.burst({ color: '#b5653a', at: at(x, 1, z), count: 4, speed: 4, up: 6, gravity: 14, life: 1.2, size: 0.16, endSize: 0.08, chunky: true })
+        particles.burst({ color: themeLook.wallSide, at: at(x, 1, z), count: 4, speed: 4, up: 6, gravity: 14, life: 1.2, size: 0.16, endSize: 0.08, chunky: true })
       }
       particles.burst({ color: '#e8d2a8', at: at(w.x, 0.5, w.z), count: 8, speed: 2.5, up: 1, life: 0.9, size: 0.5, endSize: 1.2 })
     }
-    for (const b of CANYON.bushes) {
-      particles.burst({ color: '#4cbf4f', at: at(b.x, 0.8, b.z), count: 14, speed: 4, up: 5, gravity: 12, life: 1, size: 0.14, endSize: 0.06, chunky: true })
+    for (const b of arena.bushes) {
+      particles.burst({ color: themeLook.plantColors[0], at: at(b.x, 0.8, b.z), count: 14, speed: 4, up: 5, gravity: 12, life: 1, size: 0.14, endSize: 0.06, chunky: true })
     }
   }
 
@@ -569,10 +576,10 @@
   color="#fff1d6"
   castShadow
   shadow.mapSize={[2048, 2048]}
-  shadow.camera.left={-20}
-  shadow.camera.right={20}
-  shadow.camera.top={20}
-  shadow.camera.bottom={-20}
+  shadow.camera.left={-shadowReach}
+  shadow.camera.right={shadowReach}
+  shadow.camera.top={shadowReach}
+  shadow.camera.bottom={-shadowReach}
   shadow.camera.far={60}
   shadow.bias={-0.0005}
 />

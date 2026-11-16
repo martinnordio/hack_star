@@ -72,6 +72,8 @@ describe('worlds', () => {
     expect(Math.abs(ratio - [1, 1.5, 2][sizeIndex(size)])).toBeLessThan(0.05)
     expect(arena.spawns.length).toBeGreaterThanOrEqual(9)
     expect(arena.dummies).toHaveLength(3)
+    expect(arena.bushes.length).toBeGreaterThanOrEqual(4)
+    expect(arena.walls.length).toBeGreaterThanOrEqual(4)
     for (const p of [...arena.spawns, arena.start, ...arena.dummies]) {
       expect(inWall(p, arena.walls, PLAYER_RADIUS), `${p.x},${p.z}`).toBe(false)
       expect(Math.abs(p.x)).toBeLessThanOrEqual(arena.width / 2)

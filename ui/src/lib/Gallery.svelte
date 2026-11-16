@@ -2,6 +2,7 @@
   import { Canvas, T } from '@threlte/core'
   import { lookSkin } from './created'
   import FighterStage from './FighterStage.svelte'
+  import WorldGallery from './WorldGallery.svelte'
   import { VARIANTS } from './models/skins3d'
 
   // Created fighters: every head and body, and each body with new hands and legs.
@@ -26,11 +27,15 @@
     ...created,
   ]
   const only = new URLSearchParams(location.search).get('gallery')
-  const combos = only ? all.filter(([f]) => f === only) : all
-  const columns = only ? combos.length : 8
+  const worlds = only === 'worlds'
+  const combos = only && !worlds ? all.filter(([f]) => f === only) : all
+  const columns = only && !worlds ? combos.length : 8
   const rows = Math.ceil(combos.length / columns)
 </script>
 
+{#if worlds}
+  <WorldGallery />
+{:else}
 <div style="position:fixed;inset:0;background:#3a2a8c">
   <Canvas>
     <T.PerspectiveCamera makeDefault position={[0, 3, only ? 7 : 19]} fov={50} oncreate={(c) => c.lookAt(0, 1, 0)} />
@@ -45,3 +50,4 @@
     {/each}
   </Canvas>
 </div>
+{/if}
