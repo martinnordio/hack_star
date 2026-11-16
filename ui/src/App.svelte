@@ -20,10 +20,11 @@
   import { wornSkin } from './lib/game/shop'
   import { t } from './lib/i18n'
   import CreatorScreen from './lib/CreatorScreen.svelte'
+  import WorldScreen from './lib/WorldScreen.svelte'
   import { withCreated } from './lib/created'
   import { dismissSaveNotice, saveNotice } from './lib/saving'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'worlds' | 'match' | 'training'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>` or `?room=<CODE>`.
   const params = new URLSearchParams(location.search)
@@ -46,6 +47,8 @@
   let entrance = $state(true)
   // Changing it mounts a fresh arena (Play again).
   let matchNumber = $state(0)
+  // Play and Training first show the world screen, then start this.
+  let afterWorlds = $state<'match' | 'training'>('match')
 
   function load() {
     error = false
@@ -107,9 +110,16 @@
     onEntranceEnd={() => (entrance = false)}
     onNavigate={(next) => {
       entrance = false
-      screen = next
+      if (next === 'match' || next === 'training') {
+        afterWorlds = next
+        screen = 'worlds'
+      } else screen = next
     }}
   />
+{:else if screen === 'worlds'}
+  <Panel title={$t('panel.worlds')} onBack={() => (screen = 'home')}>
+    <WorldScreen onStart={() => (screen = afterWorlds)} />
+  </Panel>
 {:else if screen === 'match' || screen === 'training'}
   {@const fighter = currentFighter($progress, fighters)}
   {#key `${screen}-${matchNumber}`}

@@ -57,8 +57,13 @@
       <span class="icon">🏆</span>{totalTrophies($progress).toLocaleString()}
     </div>
     <h1 class="title">Hack<span>star</span></h1>
-    <div class="chip" aria-label={$t('home.credits')}>
-      <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
+    <div class="wallets">
+      <div class="chip" aria-label={$t('home.credits')}>
+        <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
+      </div>
+      <div class="chip" aria-label={$t('home.worldCoins')}>
+        <span class="icon worldcoin">W</span>{$progress.worldCoins.toLocaleString()}
+      </div>
     </div>
   </header>
 
@@ -185,6 +190,26 @@
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #fff3a0, #ffb000);
     color: #7a4a00;
+    font-size: 0.85em;
+    border: 2px solid #000;
+    text-shadow: none;
+  }
+
+  .wallets {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+
+  .worldcoin {
+    display: grid;
+    place-items: center;
+    width: 1.3em;
+    height: 1.3em;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #d9ffff, #2fb5ff);
+    color: #06324a;
     font-size: 0.85em;
     border: 2px solid #000;
     text-shadow: none;

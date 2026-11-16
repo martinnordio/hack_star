@@ -19,6 +19,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~1.37 M (24 k in · 1.33 M cached · 15 k out) | ~CHF 0.29 (34 credits) | Step 2 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.28 M (25 k in · 2.24 M cached · 13 k out) | ~CHF 0.35 (41 credits) | Step 3 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (12 k in · 2.60 M cached · 6 k out) | ~CHF 0.30 (35 credits) | Step 4 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.96 M (22 k in · 2.93 M cached · 13 k out) | ~CHF 0.40 (47 credits) | Step 5 done |
 
 ---
 
@@ -172,7 +173,7 @@ _None — answered on 2026-11-16._
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
-| **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
+| **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
@@ -329,22 +330,26 @@ worlds and bigger sizes; the result screen shows world coins earned (S1, S3, S8,
 S22, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home: world-coin balance next to the credits.
-- [ ] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
+- [x] Record the start time in Notes below.
+- [x] Home: world-coin balance next to the credits.
+- [x] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
       locked ones with their prices (500 / 750 / 1000, +250 per size); buy and grow with
       confirmation; "N more world coins needed" when too few; the choice is saved.
-- [ ] Play and Training open the world screen first, preselected on the last choice, with
+- [x] Play and Training open the world screen first, preselected on the last choice, with
       **Start**.
-- [ ] Result screen: "+250 world coins" when a step was reached.
-- [ ] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
+- [x] Result screen: "+250 world coins" when a step was reached.
+- [x] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
       landscape.
-- [ ] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
+- [x] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
       enough and with too few coins, grow a free world to Medium, choose it, start a match,
       reload — all kept; screenshots.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 20:34
+
+A world or size that was just unlocked is chosen at once. Checked in the browser on the dev account (saves edited and restored from a backup kept in localStorage): grow Canyon to Medium and buy Lava Forge Small with confirmation, refusals with "Need N more WC" when the coins ran out, start, reload — kept; no horizontal overflow at 390 × 844, 844 × 390 and 820 × 1180. The "+250 world coins" line on the result screen is covered by the unit tests of the earning rule, not played to the end in the browser (winning a match by hand was not practical).
+
+**Done (2026-11-16 · ~4m · Claude Sonnet 5.5)** — `WorldScreen.svelte` before Play and Training, world-coin chip on Home, world-coin line on the result screen, texts in five languages. `npm test` 488 passed, `npm run check` 0 errors, browser check at three sizes · ~2.96 M · ~CHF 0.40
 
 ---
 
