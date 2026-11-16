@@ -61,7 +61,7 @@ describe('progress', () => {
     const { hackExpiries: _hackExpiries, createdFighters: _createdFighters, ...progress } = defaultProgress()
     const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'], createdFighter: null }
     const migrated = parseProgress(legacy, 1000)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.hackExpiries).toEqual({
       infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
       power22: null,
@@ -87,7 +87,7 @@ describe('progress', () => {
     }
     const migrated = parseProgress(v5, 1000)
     expect(migrated).toMatchObject({
-      version: 7,
+      version: 8,
       credits: 321,
       selectedFighter: 'custom',
       trophies: { custom: 42 },
@@ -108,7 +108,7 @@ describe('progress', () => {
       createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Two' } }],
     }
     const migrated = parseProgress(v6)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.trophies).toEqual({ 'custom-2': 9 })
     expect(migrated?.createdFighters).toEqual([
       { id: 'custom', look: { ...look, hands: 0, legs: 0 }, skins: [] },
@@ -125,6 +125,45 @@ describe('progress', () => {
     expect(p.createdFighters).toEqual([])
   })
 
+  it('a new account starts with 0 world coins, the three free worlds in Small and Canyon Small chosen', () => {
+    expect(startProgress()).toMatchObject({
+      worldCoins: 0,
+      worldSteps: 0,
+      worlds: { canyon: 'small', 'jungle-ruins': 'small', 'neon-docks': 'small' },
+      selectedWorld: { id: 'canyon', size: 'small' },
+      worldCodes: {},
+    })
+    expect(Object.keys(startProgress().worlds)).toHaveLength(3)
+  })
+
+  it('migrates version 7: 250 world coins for each 500 trophies already reached, nothing else lost', () => {
+    const { worldCoins: _c, worldSteps: _s, worlds: _w, selectedWorld: _sw, worldCodes: _wc, ...rest } = defaultProgress()
+    const v7 = { ...rest, version: 7, credits: 77, trophies: { blaze: 1240 } }
+    const migrated = parseProgress(v7)
+    expect(migrated).toMatchObject({
+      version: 8,
+      credits: 77,
+      trophies: { blaze: 1240 },
+      worldCoins: 500,
+      worldSteps: 2,
+      worlds: startProgress().worlds,
+      selectedWorld: { id: 'canyon', size: 'small' },
+      worldCodes: {},
+    })
+    expect(parseProgress({ ...v7, trophies: { blaze: 499 } })).toMatchObject({ worldCoins: 0, worldSteps: 0 })
+    expect(parseProgress({ ...v7, trophies: { blaze: 400, rocko: 100 } })).toMatchObject({ worldCoins: 250, worldSteps: 1 })
+  })
+
+  it('refuses saved worlds that are broken', () => {
+    const base = defaultProgress()
+    expect(parseProgress({ ...base, worldCoins: -1 })).toBeNull()
+    expect(parseProgress({ ...base, worlds: { nowhere: 'small' } })).toBeNull()
+    expect(parseProgress({ ...base, worlds: { canyon: 'huge' } })).toBeNull()
+    expect(parseProgress({ ...base, selectedWorld: { id: 'canyon', size: 'huge' } })).toBeNull()
+    expect(parseProgress({ ...base, worldCodes: { WC1: 'soon' } })).toBeNull()
+    expect(parseProgress({ ...base, worlds: { canyon: 'large' }, worldCodes: { WC1: 1000 } })).not.toBeNull()
+  })
+
   it('reset: 0 credits and trophies, start fighters, power 1, default skins; hacks and created fighter kept', () => {
     const look = { name: 'Zap', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 1, body: 2, hands: 1, legs: 2 }
     const skins = [{ id: 's1', main: '#123456', second: '#654321', head: 4, body: 0, hands: 2, legs: 0 }]
@@ -139,9 +178,19 @@ describe('progress', () => {
       ownedSkins: { blaze: ['phoenix'] },
       activeHacks: ['power22'],
       createdFighters: [{ id: 'custom', look, skins }],
+      worldCoins: 900,
+      worldSteps: 4,
+      worlds: { canyon: 'large' as const, 'lava-forge': 'small' as const },
+      selectedWorld: { id: 'lava-forge' as const, size: 'small' as const },
+      worldCodes: { WC1: 123456 },
     }
     const p = resetProgress(before)
     expect(p.credits).toBe(0)
+    expect(p.worldCoins).toBe(0)
+    expect(p.worldSteps).toBe(0)
+    expect(p.worlds).toEqual(startProgress().worlds)
+    expect(p.selectedWorld).toEqual({ id: 'canyon', size: 'small' })
+    expect(p.worldCodes).toEqual({})
     expect(totalTrophies(p)).toBe(0)
     expect(p.unlockedFighters).toEqual(startProgress().unlockedFighters)
     expect(p.powerLevels).toEqual({})

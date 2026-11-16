@@ -222,6 +222,49 @@ describe('accounts', () => {
     second.destroy()
   })
 
+  it('merges world coins, sizes and codes of two tabs: a purchase and a match, the bigger size, the later date', () => {
+    const storage = memoryStorage()
+    const seed = createAccountsStore(storage, 'en')
+    progressStore(seed).update((p) => ({ ...p, worldCoins: 1000, worldSteps: 2 }))
+    seed.destroy()
+
+    const first = createAccountsStore(storage, 'en')
+    const second = createAccountsStore(storage, 'en')
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+    firstProgress.update((p) => ({
+      ...p,
+      worldCoins: p.worldCoins - 750,
+      worlds: { ...p.worlds, 'lava-forge': 'medium', canyon: 'large' },
+      selectedWorld: { id: 'lava-forge', size: 'medium' },
+      worldCodes: { WC1: 2000 },
+    }))
+    secondProgress.update((p) => ({
+      ...p,
+      worldCoins: p.worldCoins + 250,
+      worldSteps: 3,
+      worlds: { ...p.worlds, canyon: 'medium', 'sky-islands': 'small' },
+      worldCodes: { WC1: 3000, WC2: 1000 },
+    }))
+    first.refresh()
+
+    expect(get(firstProgress)).toMatchObject({
+      worldCoins: 500,
+      worldSteps: 3,
+      worlds: { canyon: 'large', 'lava-forge': 'medium', 'sky-islands': 'small', 'jungle-ruins': 'small' },
+      selectedWorld: { id: 'lava-forge', size: 'medium' },
+      worldCodes: { WC1: 3000, WC2: 1000 },
+    })
+    expect(get(secondProgress)).toEqual(get(firstProgress))
+
+    // A reset in one tab wins over the sizes and codes of the other.
+    firstProgress.update((p) => ({ ...p, worlds: startProgress().worlds, worldCodes: {}, worldSteps: 0, worldCoins: 0 }))
+    second.refresh()
+    expect(get(secondProgress)).toMatchObject({ worldCoins: 0, worldSteps: 0, worlds: startProgress().worlds, worldCodes: {} })
+    first.destroy()
+    second.destroy()
+  })
+
   it('keeps both fighters when stale tabs create the same next fighter ID', () => {
     const values = new Map<string, string>()
     const storage = {

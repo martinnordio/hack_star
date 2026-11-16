@@ -1,6 +1,7 @@
 import { derived, writable, type Readable } from 'svelte/store'
 import { nextCreatedFighterId, nextCreatedSkinId } from './created'
 import { SETTINGS } from './game/settings'
+import { sizeIndex } from './game/worlds'
 import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { MAX_CREATED_SKINS, PROGRESS_KEY, parseProgress, startProgress, type CreatedSkin, type Progress } from './progress'
@@ -169,6 +170,25 @@ function mergeMap<T>(
   return merged
 }
 
+/** Per key, the better value of both tabs; a local value that went down (a reset) wins. */
+function mergeBest<T>(
+  base: Record<string, T>,
+  local: Record<string, T>,
+  remote: Record<string, T>,
+  best: (local: T, remote: T) => T,
+  lower: (a: T, b: T) => boolean,
+): Record<string, T> {
+  const merged = { ...remote }
+  for (const key of new Set([...Object.keys(base), ...Object.keys(local)])) {
+    const [b, l, r] = [base[key], local[key], remote[key]]
+    if (same(b, l)) continue
+    if (l === undefined) delete merged[key]
+    else if (r === undefined || (b !== undefined && lower(l, b))) merged[key] = l
+    else merged[key] = best(l, r)
+  }
+  return merged
+}
+
 /** Same rules as created fighters: a local change wins; a skin id taken in both tabs gets the next free id. */
 function mergeCreatedSkins(base: CreatedSkin[], local: CreatedSkin[], remote: CreatedSkin[]): CreatedSkin[] {
   const merged = [...remote]
@@ -245,6 +265,19 @@ function mergeProgress(base: Progress, local: Progress, remote: Progress): Progr
   if (!same(base.trophies, local.trophies)) merged.trophies = mergeMap(base.trophies, local.trophies, remote.trophies)
   if (!same(base.powerLevels, local.powerLevels)) merged.powerLevels = mergeMap(base.powerLevels, local.powerLevels, remote.powerLevels)
   if (!same(base.hackExpiries, local.hackExpiries)) merged.hackExpiries = mergeMap(base.hackExpiries, local.hackExpiries, remote.hackExpiries)
+  if (!same(base.worlds, local.worlds)) {
+    merged.worlds = mergeBest(base.worlds, local.worlds, remote.worlds, (l, r) => (sizeIndex(l) >= sizeIndex(r) ? l : r), (a, b) => sizeIndex(a) < sizeIndex(b))
+  }
+  if (!same(base.worldCodes, local.worldCodes)) {
+    merged.worldCodes = mergeBest(base.worldCodes, local.worldCodes, remote.worldCodes, Math.max, () => false)
+  }
+  if (local.worldSteps !== base.worldSteps) {
+    merged.worldSteps = local.worldSteps < base.worldSteps ? local.worldSteps : Math.max(local.worldSteps, remote.worldSteps)
+  }
+  if (local.worldCoins !== base.worldCoins) {
+    merged.worldCoins = Math.max(0, remote.worldCoins + local.worldCoins - base.worldCoins)
+  }
+  if (!same(base.selectedWorld, local.selectedWorld)) merged.selectedWorld = local.selectedWorld
   if (!same(base.selectedSkins, local.selectedSkins)) merged.selectedSkins = mergeMap(base.selectedSkins, local.selectedSkins, remote.selectedSkins)
   if (!same(base.ownedSkins, local.ownedSkins)) {
     merged.ownedSkins = mergeMap(base.ownedSkins, local.ownedSkins, remote.ownedSkins, mergeStringArray)
