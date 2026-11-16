@@ -133,6 +133,12 @@ export const de: Record<TextKey, string> = {
   'hackScreen.timeRemaining': '{days}T {hours}Std übrig',
   'hackScreen.confirmReset': 'Alle Hacks ausschalten?',
   'hackScreen.reset': 'Alle Hacks zurücksetzen',
+  'hackScreen.worldCodes': 'Benutzte Weltmünzen-Codes',
+  'hackScreen.worldCodeAgain': 'Wieder ab {date}',
+  'hackScreen.worldCodeReady': 'Kann wieder benutzt werden',
+  'hackScreen.worldCodeWait': 'Diesen Code hast du schon benutzt. Wieder möglich ab {date}.',
+  'hack.worldCoins.name': '{coins} Weltmünzen',
+  'hack.worldCoins.description': 'Jedes Konto kann diesen Code nach {days} Tagen wieder benutzen.',
 
   'celebration.hacked': 'GEHACKT!',
 

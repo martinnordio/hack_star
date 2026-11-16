@@ -21,6 +21,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (12 k in · 2.60 M cached · 6 k out) | ~CHF 0.30 (35 credits) | Step 4 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.96 M (22 k in · 2.93 M cached · 13 k out) | ~CHF 0.40 (47 credits) | Step 5 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~6.04 M (26 k in · 6.00 M cached · 14 k out) | ~CHF 0.68 (81 credits) | Step 6 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (18 k in · 2.60 M cached · 9 k out) | ~CHF 0.34 (40 credits) | Step 7 done |
 
 ---
 
@@ -176,7 +177,7 @@ _None — answered on 2026-11-16._
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
-| **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
+| **7** | World-coin hack codes | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -389,23 +390,27 @@ Ten world-coin codes give 500 or 1000 world coins, once per 30 days per account,
 hack screen and printed on the QR page (S14–S18, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `server/.../world_codes.py` (D9): `WORLD_CODE_REUSE_DAYS`, five codes of 500 and five of
+- [x] Record the start time in Notes below.
+- [x] `server/.../world_codes.py` (D9): `WORLD_CODE_REUSE_DAYS`, five codes of 500 and five of
       1000; `hacks.py` / `app.py`: redeem and list include them with `world_coins` and
       `reuse_days`.
-- [ ] `hacks.ts` and `HackScreen.svelte`: a world-coin code adds its coins and stores its next
+- [x] `hacks.ts` and `HackScreen.svelte`: a world-coin code adds its coins and stores its next
       date; before that date it is refused with the date; a list of used codes with the dates
       they work again.
-- [ ] `QrPage.svelte`: the world-coin codes with their amounts.
-- [ ] Texts in all five languages.
-- [ ] Tests: server — every code unique, amounts 500 / 1000, reuse days 30, redeem answers;
+- [x] `QrPage.svelte`: the world-coin codes with their amounts.
+- [x] Texts in all five languages.
+- [x] Tests: server — every code unique, amounts 500 / 1000, reuse days 30, redeem answers;
       UI — use, refuse before 30 days with the date, accept after, other account independent,
       reset clears the dates (S21).
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; in the
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; in the
       browser: redeem a code, try again (refused with date), switch account (works), QR page.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 20:43
+
+The world-coin codes are `Hack` entries of the same list, with the optional fields `world_coins` and `reuse_days`, so the hack screen, the scanner and the QR page needed no second path; the tests of the five normal hacks now look only at the entries without `world_coins`. The list on the hack screen shows each used code masked (`WC5-••••X`) with the date it works again. Checked in the browser: redeem, refusal with the date, a second account ("Tester", added for the check) gets its own 500, the QR page lists all 10 codes.
+
+**Done (2026-11-16 · ~3m · Claude Sonnet 5.5)** — `world_codes.py`, `Hack` with `world_coins` / `reuse_days`, `useWorldCode`, hack screen refusal and list, QR page, texts in five languages. `uv run --no-sync pytest` 63 passed, `npm test` 501 passed, `npm run check` 0 errors, browser check · ~2.62 M · ~CHF 0.34
 
 ---
 

@@ -4,11 +4,40 @@ import { SETTINGS } from './game/settings'
 export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge' | 'creator'
 
 export interface Hack {
-  id: HackId
+  id: string
   code: string
   name: string
   description: string
   duration_seconds: number | null
+  /** Only world-coin codes: the coins they give and the days before an account can use them again. */
+  world_coins?: number | null
+  reuse_days?: number | null
+}
+
+export type WorldCoinHack = Hack & { world_coins: number; reuse_days: number }
+
+export const isWorldCoinHack = (hack: Hack): hack is WorldCoinHack =>
+  typeof hack.world_coins === 'number' && typeof hack.reuse_days === 'number'
+
+export type WorldCodeUse =
+  | { ok: true; progress: Progress; coins: number }
+  | { ok: false; reason: 'wait'; availableAt: number }
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/** Gives the world coins of a code and remembers when this account can use it again; refused before that. */
+export function useWorldCode(progress: Progress, hack: WorldCoinHack, now = Date.now()): WorldCodeUse {
+  const availableAt = progress.worldCodes[hack.id]
+  if (availableAt !== undefined && availableAt > now) return { ok: false, reason: 'wait', availableAt }
+  return {
+    ok: true,
+    coins: hack.world_coins,
+    progress: {
+      ...progress,
+      worldCoins: progress.worldCoins + hack.world_coins,
+      worldCodes: { ...progress.worldCodes, [hack.id]: now + hack.reuse_days * DAY_MS },
+    },
+  }
 }
 
 export type HackTimeRemaining = { kind: 'permanent' } | { kind: 'timed'; days: number; hours: number }

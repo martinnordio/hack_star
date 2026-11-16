@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, WebSocket
 from pydantic import BaseModel, Field
 
 from hack_star_server.fighters import FIGHTERS, Fighter
-from hack_star_server.hacks import HACKS, Hack, find_hack
+from hack_star_server.hacks import HACKS, WORLD_COIN_HACKS, Hack, find_hack
 from hack_star_server.rooms import RoomManager
 
 app = FastAPI(title="Hack star")
@@ -25,7 +25,7 @@ def fighters() -> list[Fighter]:
 
 @app.get("/api/hacks")
 def hacks() -> list[Hack]:
-    return HACKS
+    return [*HACKS, *WORLD_COIN_HACKS]
 
 
 @app.post("/api/hacks/redeem")

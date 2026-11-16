@@ -133,6 +133,12 @@ export const gsw: Record<TextKey, string> = {
   'hackScreen.timeRemaining': '{days}T {hours}Std no übrig',
   'hackScreen.confirmReset': 'Alli Hacks abstelle?',
   'hackScreen.reset': 'Alli Hacks zruggsetze',
+  'hackScreen.worldCodes': 'Bruuchti Wältmünze-Codes',
+  'hackScreen.worldCodeAgain': 'Wider ab {date}',
+  'hackScreen.worldCodeReady': 'Cha wider bruucht werde',
+  'hackScreen.worldCodeWait': 'Dä Code hesch scho bruucht. Wider möglich ab {date}.',
+  'hack.worldCoins.name': '{coins} Wältmünze',
+  'hack.worldCoins.description': 'Jedes Konto cha dä Code nach {days} Tag wider bruuche.',
 
   'celebration.hacked': 'GHACKT!',
 

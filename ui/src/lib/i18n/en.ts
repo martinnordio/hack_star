@@ -131,6 +131,12 @@ export const en = {
   'hackScreen.timeRemaining': '{days}d {hours}h left',
   'hackScreen.confirmReset': 'Turn all hacks off?',
   'hackScreen.reset': 'Reset all hacks',
+  'hackScreen.worldCodes': 'World-coin codes used',
+  'hackScreen.worldCodeAgain': 'Again from {date}',
+  'hackScreen.worldCodeReady': 'Can be used again',
+  'hackScreen.worldCodeWait': 'You already used this code. You can use it again from {date}.',
+  'hack.worldCoins.name': '{coins} world coins',
+  'hack.worldCoins.description': 'Every account can use this code again after {days} days.',
 
   'celebration.hacked': 'HACKED!',
 

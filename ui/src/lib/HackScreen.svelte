@@ -1,6 +1,6 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { codeFromScan, hackTimeRemaining, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, hackTimeRemaining, isHackActive, isWorldCoinHack, redeem, UnknownCodeError, useWorldCode, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
   import { t, tOr } from './i18n'
@@ -11,7 +11,9 @@
   let code = $state('')
   let now = $state(Date.now())
   let busy = $state(false)
-  let error = $state<'hackScreen.unknownCode' | 'common.serverDown'>()
+  let error = $state<'hackScreen.unknownCode' | 'common.serverDown' | 'hackScreen.worldCodeWait'>()
+  /** When the world-coin code that was just refused can be used again. */
+  let waitUntil = $state(0)
   let shake = $state(false)
   let celebrating = $state<Hack>()
   let confirmReset = $state(false)
@@ -20,6 +22,11 @@
   let handledInitialCode: string | undefined
 
   const active = $derived(hacks.filter((h) => isHackActive($progress, h.id, now)))
+  const usedWorldCodes = $derived(hacks.filter(isWorldCoinHack).filter((h) => $progress.worldCodes[h.id] !== undefined))
+
+  const dateText = (ms: number) => new Date(ms).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+  // Shows enough of a code to tell the used ones apart, not the code.
+  const masked = (code: string) => `${code.slice(0, 4)}${'•'.repeat(Math.max(0, code.length - 5))}${code.slice(-1)}`
 
   $effect(() => {
     const updateTime = () => (now = Date.now())
@@ -49,7 +56,19 @@
     error = undefined
     try {
       const hack = await redeem(text)
-      progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      if (isWorldCoinHack(hack)) {
+        const used = useWorldCode($progress, hack)
+        if (!used.ok) {
+          waitUntil = used.availableAt
+          error = 'hackScreen.worldCodeWait'
+          shake = false
+          requestAnimationFrame(() => (shake = true))
+          return
+        }
+        progress.set(used.progress)
+      } else {
+        progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      }
       now = Date.now()
       code = ''
       celebrating = hack
@@ -101,7 +120,7 @@
       <button class="go" disabled={busy || !code.trim()}>{$t('hackScreen.go')}</button>
     </div>
     {#if error}
-      <p class="error" role="alert">{$t(error)}</p>
+      <p class="error" role="alert">{$t(error, { date: dateText(waitUntil) })}</p>
     {/if}
   </form>
 
@@ -152,13 +171,37 @@
       {/if}
     {/if}
   </section>
+
+  {#if usedWorldCodes.length > 0}
+    <section>
+      <h3>{$t('hackScreen.worldCodes')}</h3>
+      <ul class="active used">
+        {#each usedWorldCodes as hack (hack.id)}
+          {@const again = $progress.worldCodes[hack.id]}
+          <li>
+            <span class="details">
+              <strong>{$t('hack.worldCoins.name', { coins: hack.world_coins })}</strong> <code>{masked(hack.code)}</code><br />
+              <small class="duration">{again > now ? $t('hackScreen.worldCodeAgain', { date: dateText(again) }) : $t('hackScreen.worldCodeReady')}</small>
+            </span>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 </div>
 
 {#if celebrating}
-  <Celebration
-    title={$tOr(`hack.${celebrating.id}.name`, celebrating.name)}
-    subtitle={$tOr(`hack.${celebrating.id}.description`, celebrating.description)}
-  />
+  {#if isWorldCoinHack(celebrating)}
+    <Celebration
+      title={$t('hack.worldCoins.name', { coins: celebrating.world_coins })}
+      subtitle={$t('hack.worldCoins.description', { days: celebrating.reuse_days })}
+    />
+  {:else}
+    <Celebration
+      title={$tOr(`hack.${celebrating.id}.name`, celebrating.name)}
+      subtitle={$tOr(`hack.${celebrating.id}.description`, celebrating.description)}
+    />
+  {/if}
 {/if}
 
 <style>
