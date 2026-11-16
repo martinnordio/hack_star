@@ -162,16 +162,16 @@ _None — answered on 2026-11-16._
 
 ## 2 · Spec Overview
 
-| Step | Description | Status | Detail |
-|------|-------------|--------|--------|
-| **1** | World catalogue and sizes | ⬜ Not started | [→ Step 1](#step-1--world-catalogue-and-sizes) |
-| **2** | World coins, worlds and saved progress v8 | ⬜ Not started | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
-| **3** | A look for every world | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
-| **4** | Matches and Training in the chosen world | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
-| **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
-| **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
-| **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
-| **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
+| Step | Description | Model (suggested) | Status | Detail |
+|------|-------------|-------------------|--------|--------|
+| **1** | World catalogue and sizes | reasoning (Claude Opus 5.5) — seeded layout generator and its checks | ⬜ Not started | [→ Step 1](#step-1--world-catalogue-and-sizes) |
+| **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ⬜ Not started | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
+| **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
+| **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
+| **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
+| **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
+| **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
+| **8** | Documentation and final check | light (Claude Haiku 5.5) — docs and running checks | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.

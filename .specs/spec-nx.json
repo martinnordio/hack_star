@@ -13,7 +13,16 @@
   "kit": "shared",
   "kit_dir": ".specs/kit",
   "agent": ["copilot"],
-  "models": { "fixed": "Claude Opus 5.5" },
+  "models": {
+    "reasoning": "Claude Opus 5.5",
+    "standard": "Claude Sonnet 5.5",
+    "light": "Claude Haiku 5.5",
+    "guide": {
+      "reasoning": "Requirements, plans, architecture, refactorings, security, tricky logic, open decisions, complex work such as graphics-heavy Steps",
+      "standard": "Implementation that follows a clear plan, with tests",
+      "light": "Mechanical edits, renames, copies, docs"
+    }
+  },
   "cost": { "enabled": true, "plan": "Copilot Business", "monthly_price_usd": 19, "monthly_credits": 1900, "currency": "CHF", "rate": 0.8384, "rate_date": "2026-11-13" },
   "model": "Claude Opus 5.5"
 }
