@@ -25,6 +25,12 @@ export function isWorldUnlocked(progress: Progress, id: WorldId, size: WorldSize
   return biggest !== undefined && WORLD_SIZES.indexOf(size) <= WORLD_SIZES.indexOf(biggest)
 }
 
+/** The world and size to play in: the saved choice while it is unlocked, otherwise Canyon Small. */
+export function chosenWorld(progress: Progress): { id: WorldId; size: WorldSize } {
+  const { id, size } = progress.selectedWorld
+  return isWorldUnlocked(progress, id, size) ? { id, size } : { id: 'canyon', size: 'small' }
+}
+
 function payWorldCoins(progress: Progress, cost: number, worlds: Progress['worlds']): WorldPurchase {
   if (progress.worldCoins < cost) return { ok: false, reason: 'world-coins', missing: cost - progress.worldCoins }
   return { ok: true, cost, progress: { ...progress, worldCoins: progress.worldCoins - cost, worlds } }

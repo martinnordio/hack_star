@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { CANYON, type Arena } from './arena'
-import { Bots } from './bots'
+import { Bots, HUNT_AFTER } from './bots'
+import { stats } from './economy'
 import { Match } from './match'
 import { BOT_LEVELS, SETTINGS } from './settings'
 import { World } from './world'
+import { arenaFor, WORLD_SIZES, WORLDS } from './worlds'
 
 const easy = BOT_LEVELS.easy
 
@@ -88,5 +90,55 @@ describe('Bots', () => {
     run(SETTINGS.countdownSeconds + SETTINGS.matchSeconds + SETTINGS.overtimeSeconds + 1, (dt) => match.update(dt))
     expect(match.phase).toBe('over')
     expect(match.result).not.toBeNull()
+  })
+
+  it(`walk towards the nearest fighter after ${HUNT_AFTER} seconds without seeing anyone`, () => {
+    const world = new World({ ...arenaFor('moon-base', 'large'), walls: [], bushes: [], spawns: [{ x: 0, z: 14 }, { x: 0, z: -14 }] }, { fighters: 2 })
+    const bots = new Bots(world, easy, true, seeded(3))
+    play(world, bots, HUNT_AFTER - 0.5)
+    expect(bots.states[0].huntFrom).toBeNull()
+    play(world, bots, 6)
+    expect(bots.states[0].targetId).toBe(0)
+  })
+})
+
+/** A fixed random sequence, so a whole match plays the same way every time. */
+function seeded(seed: number): () => number {
+  let s = seed
+  return () => ((s = (s * 16807) % 2147483647) / 2147483647)
+}
+
+describe('worlds', () => {
+  it.each(WORLDS.map((w) => w.id))('bots alone find each other in %s Large: one is left within the match time', (id) => {
+    const world = new World(arenaFor(id, 'large'), {
+      fighters: SETTINGS.botCount + 1,
+      stats: Array.from({ length: SETTINGS.botCount + 1 }, () => stats(SETTINGS.botPower)),
+    })
+    const bots = new Bots(world, easy, true, seeded(11), [])
+    let time = 0
+    for (; time < SETTINGS.matchSeconds && world.alive().length > 1; time += tick) {
+      bots.think(tick)
+      world.step(tick)
+    }
+    expect(world.alive()).toHaveLength(1)
+  })
+
+  it.each(WORLDS.map((w) => w.id))('Training in %s: the player starts at the start point with 3 dummies', (id) => {
+    for (const size of WORLD_SIZES) {
+      const arena = arenaFor(id, size)
+      const world = new World(arena)
+      expect([world.player.x, world.player.z]).toEqual([arena.start.x, arena.start.z])
+      expect(world.dummies).toHaveLength(3)
+    }
+  })
+
+  it('overtime takes away every wall and bush of a Large world', () => {
+    const arena = arenaFor('crystal-caves', 'large')
+    const match = new Match(arena, { ...SETTINGS, matchSeconds: 1 }, { bots: false })
+    run(SETTINGS.countdownSeconds + 1.5, (dt) => match.update(dt))
+    expect(match.overtime).toBe(true)
+    expect(arena.walls.length).toBeGreaterThan(0)
+    expect(match.world.walls).toEqual([])
+    expect(match.world.bushes).toEqual([])
   })
 })

@@ -18,6 +18,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~864 k (17 k in · 837 k cached · 10 k out) | ~CHF 0.38 (45 credits) | Step 1 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~1.23 M (21 k in · 1.20 M cached · 11 k out) | ~CHF 0.48 (57 credits) | Step 2 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~2.15 M (28 k in · 2.11 M cached · 14 k out) | ~CHF 0.70 (84 credits) | Step 3 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.84 M (18 k in · 3.82 M cached · 11 k out) | ~CHF 0.89 (107 credits) | Step 4 done |
 
 ---
 
@@ -170,7 +171,7 @@ _None — answered on 2026-11-16._
 | **1** | World catalogue and sizes | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
-| **4** | Matches and Training in the chosen world | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
+| **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
@@ -306,18 +307,25 @@ Matches and Training are played in the account's chosen world and size, with the
 as today (S1, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
+- [x] Record the start time in Notes below.
+- [x] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
       `CANYON`; overtime removes the cover of any world.
-- [ ] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
-- [ ] Tests: a bots-only match ends with a winner in every Large world within the match time
+- [x] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
+- [x] Tests: a bots-only match ends with a winner in every Large world within the match time
       (fixed random seed); Training dummies and start in every world; overtime empties walls
       and bushes of a Large world.
-- [ ] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
+- [x] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
       in a Large world and Training in a Medium world.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 19:21
+
+- `chosenWorld(progress)` (in `worldShop.ts`) plays the saved choice while it is unlocked, otherwise Canyon Small. Shared matches stay in Canyon until Step 6.
+- Bots: after `HUNT_AFTER` (6 s) without a target they walk to the nearest opponent's position (refreshed every 3 s); a hunt that moved less than 1 unit (a wall in the way) is followed by one random walk. With hunting switched off, the Large-world test fails for one world.
+- The world was chosen in the browser by editing the saved account (the world screen comes in Step 5); the test account was put back afterwards.
+
+**Done (2026-11-16 · ~16m · Claude Opus 5.5)** — matches and Training use the chosen world and its theme; bots hunt after 6 s; tests for bots-only Large matches (13 worlds), Training start and dummies, overtime in Large. `npm test` 481 passed; `npm run check` 0 errors; browser at 820 × 1180: Lava Forge Large match (`?seconds=20&bots=3`) at 60 fps, Jungle Ruins Medium Training with 3 dummies · ~3.84 M · ~CHF 0.89
 
 ---
 

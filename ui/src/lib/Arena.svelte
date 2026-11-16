@@ -5,6 +5,7 @@
   import ArenaScene, { type Hud, type Look, type Power } from './ArenaScene.svelte'
   import type { Fighter } from './fighters'
   import { CANYON } from './game/arena'
+  import { arenaFor, worldInfo } from './game/worlds'
   import { newControls, stickVector } from './game/controls'
   import { Match, type MatchLike } from './game/match'
   import { SETTINGS, settingsFrom } from './game/settings'
@@ -23,7 +24,7 @@
   import { cubicOut } from 'svelte/easing'
   import { get } from 'svelte/store'
   import { creditsFor, earn, powerOf, stats } from './game/economy'
-  import { earnWorldCoins } from './game/worldShop'
+  import { chosenWorld, earnWorldCoins } from './game/worldShop'
   import type { RoomConnection } from './net/room'
   import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
@@ -51,6 +52,9 @@
   }
 
   // A new Arena component is mounted for every match, so these are made once per match.
+  const place = untrack(() => chosenWorld(get(progress)))
+  const arena = arenaFor(place.id, place.size)
+  const theme = untrack(() => (shared ? 'canyon' : worldInfo(place.id).theme))
   const { match, world, looks, player } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look } => {
     if (shared) return sharedMatch(shared)
     const player = chosen
@@ -60,8 +64,8 @@
     const count = mode === 'match' ? settings.botCount + 1 : 1
     const ids = Array.from({ length: count }, (_, i) => (i === 0 ? player.fighterId : others[(i - 1) % others.length].id))
     const types = ids.map((id) => fighterType(fighters.find((f) => f.id === id)?.type))
-    const match = mode === 'match' ? new Match(CANYON, settings, { playerPower, types }) : undefined
-    const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower, SETTINGS, types[0])], types })
+    const match = mode === 'match' ? new Match(arena, settings, { playerPower, types }) : undefined
+    const world = match?.world ?? new World(arena, { stats: [stats(playerPower, SETTINGS, types[0])], types })
     Object.assign(world.player, superHack(get(progress)))
     const looks: Look[] = ids.map((id, i) => (i === 0 ? player : { fighterId: id, skinId: 'default' }))
     return { match, world, looks, player }
@@ -255,7 +259,7 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} />
+      <ArenaScene {world} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} {theme} />
     </Canvas>
   </div>
   <div class="floaters" bind:this={overlay} aria-hidden="true"></div>
