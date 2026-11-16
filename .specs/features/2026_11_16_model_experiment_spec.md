@@ -69,7 +69,7 @@ _None._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | Set up the three branches | ✅ Done | [→ Step 1](#step-1--set-up-the-three-branches) |
-| **2** | Run the Opus branch | ⬜ Not started | [→ Step 2](#step-2--run-the-opus-branch) |
+| **2** | Run the Opus branch | ✅ Done | [→ Step 2](#step-2--run-the-opus-branch) |
 | **3** | Run the Haiku branch | ⬜ Not started | [→ Step 3](#step-3--run-the-haiku-branch) |
 | **4** | Run the per-Step branch | ⬜ Not started | [→ Step 4](#step-4--run-the-per-step-branch) |
 | **5** | Compare, choose and keep the specs | ⬜ Not started | [→ Step 5](#step-5--compare-choose-and-keep-the-specs) |
@@ -101,12 +101,14 @@ Started: 2026-11-16 18:26
 ## Step 2 — Run the Opus branch
 
 ### Tasks
-- [ ] `git switch feature/worlds-and-world-coins-opus`; new chat; model Claude Opus 5.5.
-- [ ] `Load .specs/kit/implementation/prompt.md` → `IMPLEMENT: .specs/features/2026_11_16_worlds_and_world_coins_spec.md`
+- [x] `git switch feature/worlds-and-world-coins-opus`; new chat; model Claude Opus 5.5.
+- [x] `Load .specs/kit/implementation/prompt.md` → `IMPLEMENT: .specs/features/2026_11_16_worlds_and_world_coins_spec.md`
       Step by Step until Step 8; then `REVIEW:` and `CLOSE:`.
-- [ ] Record the branch's totals in the Results table below.
+- [x] Record the branch's totals in the Results table below.
 
 ### Notes
+
+**Done (2026-11-16 · ~1h 35m · Claude Opus 5.5)** — run on its own copy, [2026_11_16_worlds_and_world_coins_opus_spec.md](2026_11_16_worlds_and_world_coins_opus_spec.md) (copied here from the branch, where it is closed in `done/`); eight Step commits plus "Review and close the spec" on `feature/worlds-and-world-coins-opus`, not pushed.
 
 ---
 
@@ -145,7 +147,7 @@ Started: 2026-11-16 18:26
 
 | Branch | Models | Tokens | Cost (CHF) | Time | Fixes / retries | Tests | Review findings | In the browser |
 |--------|--------|--------|------------|------|-----------------|-------|-----------------|----------------|
-| `…-opus` | fixed Opus 5.5 | | | | | | | |
+| `…-opus` | fixed Opus 5.5 | ~25.30 M (Steps, review, close) | ~CHF 7.39 (882 credits) | ~1h 35m | 3 (Step 1 map generator reworked, Step 5 world screen rewritten after an encoding slip, Step 7 Swiss German dates) | pytest 64, npm test 488, check 0, build ok | 0 blocking, 2 should-fix, 2 nits | every Step checked; Large world 60 fps at 820 × 1180 |
 | `…-haiku` | fixed Haiku 5.5 | | | | | | | |
 | `feature/worlds-and-world-coins` | per Step | | | | | | | |
 
