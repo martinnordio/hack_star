@@ -1,11 +1,16 @@
 import type { Fighter, World } from './world'
 import type { BotSkill } from './settings'
 
+/** Seconds without seeing anyone before a bot goes looking for the nearest fighter (big worlds). */
+export const SEEK_AFTER_SECONDS = 6
+
 export interface BotState {
   id: number
   targetId: number | null
   /** When the current target was first seen; the bot reacts after `skill.reaction`. */
   seenAt: number
+  /** The last time this bot saw an opponent. */
+  lastSawAt: number
   wander: { x: number; z: number } | null
   wanderUntil: number
 }
@@ -32,7 +37,7 @@ export class Bots {
     f.speedFactor = this.skill.speed
     f.cooldownFactor = this.skill.cooldown
     f.canHyper = this.skill.hyper
-    this.states.push({ id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0 })
+    this.states.push({ id, targetId: null, seenAt: 0, lastSawAt: this.world.time, wander: null, wanderUntil: 0 })
   }
 
   think(dt: number) {
@@ -58,9 +63,25 @@ export class Bots {
     return best
   }
 
+  private nearestOpponent(bot: Fighter): Fighter | undefined {
+    let best: Fighter | undefined
+    let bestDist = Infinity
+    for (const o of this.world.fighters) {
+      const otherBot = this.states.some((s) => s.id === o.id)
+      if (o === bot || o.out || o.team === bot.team || (!this.fightEachOther && otherBot)) continue
+      const d = Math.hypot(o.x - bot.x, o.z - bot.z)
+      if (d < bestDist) {
+        best = o
+        bestDist = d
+      }
+    }
+    return best
+  }
+
   private thinkOne(s: BotState, bot: Fighter, dt: number) {
     const world = this.world
     const target = this.pickTarget(bot)
+    if (target) s.lastSawAt = world.time
     if ((target?.id ?? null) !== s.targetId) {
       s.targetId = target?.id ?? null
       s.seenAt = world.time
@@ -91,6 +112,21 @@ export class Bots {
       if (dist <= bot.type.superReach && world.useSuper(bot, aimX, aimZ)) return
       if (dist <= range * 0.9) world.fireFrom(bot, aimX, aimZ)
       return
+    }
+
+    // Nobody in sight for a while: head for the nearest opponent, so a big world does not keep bots apart.
+    if (world.time - s.lastSawAt > SEEK_AFTER_SECONDS) {
+      const goal = this.nearestOpponent(bot)
+      if (goal) {
+        s.wander = null
+        // A little sideways drift so a wall in the way does not hold the bot for ever.
+        const drift = Math.sin(world.time * 0.9 + s.id * 2) * 0.8
+        const dx = goal.x - bot.x
+        const dz = goal.z - bot.z
+        const length = Math.hypot(dx, dz) || 1
+        world.moveFighter(bot, dx / length - (dz / length) * drift, dz / length + (dx / length) * drift, dt * 0.7)
+        return
+      }
     }
 
     // Nobody to fight: walk to random points, picking a new one now and then (or when stuck).

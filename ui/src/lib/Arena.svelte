@@ -4,7 +4,8 @@
   import { PCFShadowMap } from 'three'
   import ArenaScene, { type Hud, type Look, type Power } from './ArenaScene.svelte'
   import type { Fighter } from './fighters'
-  import { CANYON } from './game/arena'
+  import { arenaFor, worldInfo } from './game/worlds'
+  import { ARENA_THEMES } from './models/themes'
   import { newControls, stickVector } from './game/controls'
   import { Match, type MatchLike } from './game/match'
   import { SETTINGS, settingsFrom } from './game/settings'
@@ -45,10 +46,16 @@
   const TAP_MS = 250
 
   function sharedMatch(s: NonNullable<Props['shared']>) {
-    const match = s.you === 0 ? new HostMatch(CANYON, s.start, s.connection) : new GuestMatch(CANYON, s.start, s.you, s.connection)
+    const arena = arenaFor('canyon', 'small')
+    const match = s.you === 0 ? new HostMatch(arena, s.start, s.connection) : new GuestMatch(arena, s.start, s.you, s.connection)
     const looks: Look[] = s.start.fighters.map((f) => ({ fighterId: f.fighter, skinId: f.skin }))
     return { match, world: match.world, looks, player: looks[match.world.playerId] }
   }
+
+  // The world chosen on this account; made once per match like the rest.
+  const chosenWorld = untrack(() => (shared ? { id: 'canyon' as const, size: 'small' as const } : get(progress).selectedWorld))
+  const arena = arenaFor(chosenWorld.id, chosenWorld.size)
+  const theme = worldInfo(chosenWorld.id).theme
 
   // A new Arena component is mounted for every match, so these are made once per match.
   const { match, world, looks, player } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look } => {
@@ -60,8 +67,8 @@
     const count = mode === 'match' ? settings.botCount + 1 : 1
     const ids = Array.from({ length: count }, (_, i) => (i === 0 ? player.fighterId : others[(i - 1) % others.length].id))
     const types = ids.map((id) => fighterType(fighters.find((f) => f.id === id)?.type))
-    const match = mode === 'match' ? new Match(CANYON, settings, { playerPower, types }) : undefined
-    const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower, SETTINGS, types[0])], types })
+    const match = mode === 'match' ? new Match(arena, settings, { playerPower, types }) : undefined
+    const world = match?.world ?? new World(arena, { stats: [stats(playerPower, SETTINGS, types[0])], types })
     Object.assign(world.player, superHack(get(progress)))
     const looks: Look[] = ids.map((id, i) => (i === 0 ? player : { fighterId: id, skinId: 'default' }))
     return { match, world, looks, player }
@@ -246,6 +253,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="arena"
+  style:background="linear-gradient({ARENA_THEMES[theme].sky[0]}, {ARENA_THEMES[theme].sky[1]})"
   bind:this={root}
   onpointerdown={down}
   onpointermove={move}
@@ -256,7 +264,7 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} />
+      <ArenaScene {world} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} {theme} />
     </Canvas>
   </div>
   <div class="floaters" bind:this={overlay} aria-hidden="true"></div>

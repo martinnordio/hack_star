@@ -18,6 +18,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~1.00 M (53 k in · 942 k cached · 10 k out) | ~CHF 0.28 (33 credits) | Step 1 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~1.37 M (24 k in · 1.33 M cached · 15 k out) | ~CHF 0.29 (34 credits) | Step 2 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.28 M (25 k in · 2.24 M cached · 13 k out) | ~CHF 0.35 (41 credits) | Step 3 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (12 k in · 2.60 M cached · 6 k out) | ~CHF 0.30 (35 credits) | Step 4 done |
 
 ---
 
@@ -170,7 +171,7 @@ _None — answered on 2026-11-16._
 | **1** | World catalogue and sizes | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
-| **4** | Matches and Training in the chosen world | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
+| **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
@@ -301,18 +302,22 @@ Matches and Training are played in the account's chosen world and size, with the
 as today (S1, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
+- [x] Record the start time in Notes below.
+- [x] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
       `CANYON`; overtime removes the cover of any world.
-- [ ] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
-- [ ] Tests: a bots-only match ends with a winner in every Large world within the match time
+- [x] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
+- [x] Tests: a bots-only match ends with a winner in every Large world within the match time
       (fixed random seed); Training dummies and start in every world; overtime empties walls
       and bushes of a Large world.
-- [ ] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
+- [x] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
       in a Large world and Training in a Medium world.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 20:32
+
+The arena's sky gradient follows the world's theme. Matches with friends still use Canyon Small until Step 6. In the "bots-only" test fighter 0 is a bot too, so the match ends when it is knocked out or when one is left; the test requires that it does not end by time up. Checked in the browser (account Player 1, saves edited for the check): Lava Forge Large match and Neon Docks Medium Training both start and draw correctly. The frame rate of a Large world on an iPad was not measured (the shared browser page is hidden and pauses animation); it stays in the Deferred real-device check.
+
+**Done (2026-11-16 · ~3m · Claude Sonnet 5.5)** — matches and Training use `selectedWorld`; themed sky; bots seek after 6 s; `worldPlay.test.ts` (66 tests). `npm test` 488 passed, `npm run check` 0 errors, browser check of a Large match and a Medium Training · ~2.62 M · ~CHF 0.30
 
 ---
 
