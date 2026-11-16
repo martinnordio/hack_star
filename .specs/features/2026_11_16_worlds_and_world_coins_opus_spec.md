@@ -22,6 +22,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.72 M (25 k in · 3.68 M cached · 14 k out) | ~CHF 0.95 (114 credits) | Step 5 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.24 M (23 k in · 3.21 M cached · 13 k out) | ~CHF 0.85 (101 credits) | Step 6 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~3.41 M (21 k in · 3.38 M cached · 11 k out) | ~CHF 0.84 (101 credits) | Step 7 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | ~2.16 M (50 k in · 2.10 M cached · 10 k out) | ~CHF 0.73 (87 credits) | Step 8 done |
 
 ---
 
@@ -178,7 +179,7 @@ _None — answered on 2026-11-16._
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
-| **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
+| **8** | Documentation and final check | ✅ Done | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -438,17 +439,23 @@ The documents describe worlds and world coins, and everything that worked before
 (S19, S22, S23, S24).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
+- [x] Record the start time in Notes below.
+- [x] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
       work, not the codes themselves), the world screen.
-- [ ] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
+- [x] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
       room `world` and member `version`, `world_codes.py`.
-- [ ] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
+- [x] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
       npm run build`; in the browser, one pass over S1–S24 on desktop and phone, including a
       reload, a second tab and an old save.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 19:50
+
+- Browser pass (Steps 3–7 covered S1–S18 and S22–S23 at desktop, iPad and phone sizes); here on a phone (390 × 844): an account turned into a version 7 save with 1240 trophies loaded as version 8 with 500 world coins, the free worlds in Small and Canyon Small chosen; a purchase in a second tab (Jungle Ruins Medium, 500 → 250) showed in the first tab at once. The test accounts were put back afterwards (Player 1's trophies set to the sample values 1240 / 420 / 85, which match its 750 world coins; the exact earlier values were not kept).
+- `npm run build` still warns that one chunk is over 500 kB, as before this spec.
+
+**Done (2026-11-16 · ~3m · Claude Opus 5.5)** — README (worlds, sizes, world coins and prices, world screen, world-coin codes, reset, gallery) and `docs/architecture.md` (worlds, world shop, themes, progress v8 and merge rules, rooms with `world` and `version`, world codes, how-tos, tests). `uv run --no-sync pytest` 64 passed; `npm test` 488 passed; `npm run check` 0 errors; `npm run build` built; browser pass above · ~2.16 M · ~CHF 0.73
 
 ---
 

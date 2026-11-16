@@ -30,8 +30,8 @@ address (also from an iPad or phone on the Wi-Fi).
 |----------|---------|
 | `GET /api/health` | `{"status": "ok"}` |
 | `GET /api/fighters` | The 15 fighters with rarity, type and skins (`server/src/hack_star_server/fighters.py`; the 3 extra skins per fighter are in `MORE_SKINS`) |
-| `GET /api/hacks` | The hack codes (`hacks.py`), for the printable QR page |
-| `POST /api/hacks/redeem` `{"code"}` | The hack for a code (any case, spaces trimmed), or 404 "Unknown code" |
+| `GET /api/hacks` | The hack codes (`hacks.py`) and the world-coin codes (`world_codes.py`, with `world_coins` and `reuse_days`), for the printable QR page |
+| `POST /api/hacks/redeem` `{"code"}` | The hack for a code (any case, spaces trimmed), or 404 "Unknown code"; a world-coin code answers with its `id`, `world_coins` and `reuse_days` |
 | `WS /api/rooms` | Rooms for playing with friends (`rooms.py`, see below) |
 
 Single-player matches do **not** use the server: they run in the browser so Wi-Fi delays never
@@ -53,12 +53,13 @@ value (no router):
 | Info | `lib/InfoPage.svelte`, `lib/vocabulary.ts` | The words used in the game |
 | Settings | `lib/SettingsScreen.svelte`, `lib/options.ts`, `lib/AboutPanel.svelte` | Language (per account); bot level, number of bots, music on/off and track, developer mode (saved under `hack-star.options`); reset of the account; the About panel (version from `ui/package.json`, music credits, the repository's `LICENSE`) |
 | Hack | `lib/HackScreen.svelte`, `lib/QrScanner.svelte` | Codes typed or scanned; `/?qr` shows `lib/QrPage.svelte` |
-| Friends | `lib/FriendsScreen.svelte`, `lib/net/room.ts` | Create / join a room (code, QR, `?room=CODE` link), lobby, Start |
-| Match / Training | `lib/Arena.svelte` (HTML: joysticks, HUD, result), `lib/ArenaScene.svelte` (3D) | A new `Arena` is mounted per match |
+| Friends | `lib/FriendsScreen.svelte`, `lib/net/room.ts` | Create / join a room (code, QR, `?room=CODE` link), lobby, Start (opens the world screen for the host); notes about friends with an older game |
+| Worlds | `lib/WorldScreen.svelte` | Before Play, Training and a room's start: every world with its size buttons (choose, buy with confirmation, grow by one size), the world-coin balance, **START** |
+| Match / Training | `lib/Arena.svelte` (HTML: joysticks, HUD, result), `lib/ArenaScene.svelte` (3D) | A new `Arena` is mounted per match, in `chosenWorld(progress)` (or the host's world in a room) |
 
 Extra pages by address: `/?qr` (printable QR codes, after the password `M6D2` — checked in the
 browser, a lock for kids, not security), `/?gallery` (all fighters and skins; `?gallery=custom`
-for created-fighter parts), `/?dev` (`lib/dev/DevPage.svelte`, the developer page: asks the
+for created-fighter parts; `?gallery=worlds[&size=large][&world=<id>]` for the world themes), `/?dev` (`lib/dev/DevPage.svelte`, the developer page: asks the
 same code once, then turns developer mode on in this browser; English only; one component per
 section — `MusicSection.svelte`).
 
@@ -81,17 +82,19 @@ Plain TypeScript, no drawing, all tested with `vitest`:
 
 | File | What |
 |------|------|
-| `arena.ts` | The canyon layout: walls, bushes (cacti), decorations, dummies, start points |
+| `arena.ts` | The `Arena` shape and `CANYON`, the first arena (Canyon Small): walls, bushes (cacti), decorations, dummies, start points |
+| `worlds.ts` | The 13 worlds (`WORLDS`: stable id, `free`, theme id, layout seed; names are the i18n keys `world.<id>`), the sizes (`SIZE_DIMENSIONS`: Small 30 × 24, Medium 36 × 30, Large 42 × 34) and `arenaFor(id, size)`: Canyon Small is `CANYON`; every other world and size comes from a seeded generator (mirror-symmetric pairs of walls and bushes, ground ÷ 120 pairs, spawns around the edge, Training start and dummies as in the canyon). A seed whose map shuts a spawn, the start or a dummy away from the centre (`reachable()`, a grid search with the player's radius) is skipped, so each world and size has one fixed, playable map |
+| `worldShop.ts` | World coins and worlds: `worldCoinsFor(total, paidSteps)` / `earnWorldCoins()` (250 per new 500-step, each step paid once), `buyWorld()` (Small / up to Medium / up to Large), `growWorld()` (+1 size), `isWorldUnlocked()`, `chosenWorld()` (the saved choice while unlocked, else Canyon Small); refusals `owned`, `locked` or `world-coins` with `missing` |
 | `world.ts` | `World`: fighters (fighter 0 is the player) with health and damage from their power level and type, shots with owners (each shot carries its range, speed, size and damage, worked out when fired; lobbed shots fly over everything and explode; piercing shots go on after a hit), collisions (circles against rectangles), healing, knock-outs, dummies; its own `walls` / `bushes` lists, emptied by `removeCover()` (overtime); Super and Hypercharge: per-fighter `superCharge` / `hyperCharge` meters filled by damage dealt, `useSuper()` does the type's Super (blast, shockwave, beam, dash, bomb), `isHyper()` boosts speed and damage; emits events for effects |
 | `types.ts` | `FIGHTER_TYPES` (Tank, Sharpshooter, Speedy, Thrower, Spreader) and `BASIC`: health, damage, speed and reload multipliers, the attack (range, shot speed, size, count, spread, lob, blast) and the Super; `fighterType(id)` |
 | `tournament.ts` | Bot-only matches with one fighter per type, used by the fairness test |
 | `match.ts` | `Match`: countdown, timer, overtime (when time runs out with the player and a bot in: `overtimeSeconds` more and `removeCover()`), result (victory, defeat with place, time's up) around a `World` |
-| `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error (and uses its Super when full; `BotSkill.hyper` is off on Easy); wanders when it sees nobody |
+| `bots.ts` | `Bots`: each bot picks the nearest fighter it can see, reacts after a delay, closes in, circles, shoots with an aim error (and uses its Super when full; `BotSkill.hyper` is off on Easy); wanders when it sees nobody, and after `HUNT_AFTER` (6 s) without a target walks towards the nearest opponent (one random walk when a wall stops it), so bots meet in Large worlds |
 | `controls.ts` | Input shared between the HTML layer and the frame loop (keys, mouse, joysticks, Super button / E / right click) |
 | `trophies.ts` | `rewardFor(trophies, result, settings)`: trophies after a match with the Prestige floor; `applyReward()` saves them into the progress |
 | `economy.ts` | Credits and power: `unlockPrice`, `upgradeCost`, `stats(level, settings, type)` (health and damage), `creditsFor(result)`, and the purchases `unlock()` / `upgrade()` (progress in, new progress or the reason out — not enough credits, max power, owned…); `powerOf()` caps a level at the current maximum |
 | `shop.ts` | Skins: `ownsSkin` (default skins and the OPENSESAME hack count as owned), `wornSkin` (the chosen skin if owned, else Default), `skinOfTheDay(date)` (picked from the local day number, same for everyone that day), `skinPrice`, and the purchase `buySkin()` |
-| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power…) and `BOT_LEVELS`; `settingsFrom(search, defaults, chosen)` applies the Settings screen choices, then `?seconds=&bots=&level=&overtime=` |
+| `settings.ts` | `SETTINGS` (match length, bots, level, healing, trophies, credits, prices, power, world coins: `worldCoinsPerStep`, `trophiesPerWorldStep`, `worldPrices`, `worldSizeStep`…) and `BOT_LEVELS`; `settingsFrom(search, defaults, chosen)` applies the Settings screen choices, then `?seconds=&bots=&level=&overtime=` |
 
 Every frame (`ArenaScene.svelte`, `useTask`): input → `match.update(dt)` (bots think, world
 steps) → events turned into effects → 3D objects moved to match the world. Per-frame data stays
@@ -109,7 +112,7 @@ Everything is built in code from simple shapes, so there is no art to download o
 | `heroes3d.ts` | The five newest, more detailed fighters (Marina, Drako, Spectra, Mecha Max, Zeus Jr.) |
 | `skins3d.ts` | The 3 extra skins of every fighter: the default look recoloured plus one extra part (crown, halo, horns, shades, scarf, backpack, cape) |
 | `custom3d.ts` | The created fighter, built from its look: 5 heads × 5 bodies × 3 hands × 3 legs × 2 colours. Each body is a torso with its own arms and legs; hands and legs 0 use them, 1–2 replace them (claws, big gloves; springs, big boots), so looks saved before hands and legs existed draw exactly as before (`custom3d.test.ts` pins them) |
-| `arena3d.ts` | Tiles, cliffs, rock walls, cacti, crates, barrels, skulls |
+| `arena3d.ts` | `buildArena(arena, theme)`: tiles, the edge, walls, bushes and decorations (crates, barrels, skulls, rocks). `THEMES` gives each world's theme its colours and shapes — edge (rocks, blocks, crystals, clouds, dunes), walls (stone, pillars, crates, houses, machines) and cover (cacti, ferns, neon posts, crystals, puffs, lollipops, palms); the groups `ground`, `walls` and `bushes` are named so overtime can sink the cover. `ArenaScene.svelte` draws `world.arena` with the theme it gets and sizes the sun's shadow area to the arena |
 | `dummy3d.ts`, `healthBar.ts` | Training dummy; health bars |
 | `particles.ts` | One pool of reused meshes for dust, flashes, sparks and pieces |
 
@@ -125,18 +128,27 @@ not know about accounts. The first time, the progress saved before accounts
 
 Each progress holds: credits, trophies, power levels, unlocked fighters, owned skins, active
 hacks and their expiry timestamps, chosen fighter and skins, and a collection of created
-fighters (look and up to 5 created skins). The progress format is version 7. Formats v2 through
-v6 migrate forward: v6 looks get hands and legs 0 (the body's own) and no skins. The v5 single
+fighters (look and up to 5 created skins), world coins (`worldCoins`), the 500-trophy steps
+already paid (`worldSteps`), the biggest unlocked size per world (`worlds`), the chosen world
+and size (`selectedWorld`) and when each used world-coin code works again (`worldCodes`, code
+id → timestamp). The progress format is version 8. Formats v2 through
+v7 migrate forward: v7 and older get the three free worlds in Small, Canyon Small chosen, no
+used codes and 250 world coins for each 500-step their total trophies already reached
+(`worldSteps = floor(total / 500)`); v6 looks get hands and legs 0 (the body's own) and no skins. The v5 single
 created fighter keeps id `custom` and its trophies, power, skins and selection; v4 and earlier
 active timed hacks receive their initial 72-hour expiry. Same-origin tabs reconcile local
 changes with the latest saved state, listen for `storage` events, and refresh when visible.
 Concurrent credit changes are merged as deltas; created skins merge by id like created
-fighters (a skin id added in two tabs gets the next free id). Hack effects are worked out when shown
+fighters (a skin id added in two tabs gets the next free id). World coins merge as deltas like
+credits; `worlds` (size per world), `worldSteps` and `worldCodes` (date per code) take this
+tab's value when only this tab changed it and the larger one when both did (so a reset is not
+undone); `selectedWorld` follows the tab that changed it. Hack effects are worked out when shown
 (`lib/hacks.ts`: `credits`, `isUnlocked`, `maxPower`, `currentFighter`, `superHack` — applied to the player's fighter when an arena starts), so resetting the hacks
 brings the normal rules back exactly.
 
 Trophies change in one place: when a match ends, `Arena.svelte` works out the reward
-(`game/trophies.ts`) and the credits (`game/economy.ts`) for the fighter that played and saves
+(`game/trophies.ts`) and the credits (`game/economy.ts`) for the fighter that played, adds the
+world coins for any new 500-step of the total (`game/worldShop.ts`) and saves
 them at once, before the result screen opens, so leaving then still keeps them; leaving during
 a match or playing Training saves nothing. Prestige is not stored: it is
 `prestigeLevel(trophies)` (every 1000).
@@ -163,6 +175,14 @@ and `CREATOR` last 72 hours; `POWER22` has no expiry. Re-entering an active time
 its expiry to 72 hours from that redemption. The Hack screen derives active status from the
 saved expiry, displays days and hours or a permanent label, and refreshes hourly, when visible,
 and at the next expiry boundary.
+
+**World-coin codes** (`server/src/hack_star_server/world_codes.py`): `WORLD_CODES` (id, code,
+amount: five of 500, five of 1000) and `WORLD_CODE_REUSE_DAYS = 30` are the only place to
+change them; `hacks.py` adds them to `HACKS` with `world_coins` and `reuse_days`. The server
+only checks the code; the UI (`useWorldCode()` in `lib/hacks.ts`) adds the coins and stores
+`worldCodes[id] = now + reuse_days` in the account's progress, and refuses the code before
+that time with the date. The dates live on the device, per account (worlds spec D10); a reset
+clears them. Their names and descriptions use the texts `hack.worldCoins.*` with `{coins}`.
 
 ### The created fighter (`ui/src/lib/created.ts`)
 
@@ -212,11 +232,19 @@ sequenceDiagram
 ```
 
 - **Server** (`RoomManager`): rooms with a 4-letter code (no I or O), up to 3 devices, the host
-  in slot 0. It checks each member (`{fighter, skin, name, power, hyper}`); created fighter IDs
+  in slot 0. It checks each member (`{fighter, skin, name, power, hyper, version}`); created fighter IDs
   `custom` and `custom-2` through `custom-15` require an encoded look and display name. It refuses
   messages over 64 KB, passes `start` / `state` / `lobby` from the host to the friends and `input`
   from a friend to the host. A friend leaving sends `left` to the host; the host leaving sends
   `closed` and removes the room. At most 100 rooms.
+- **Worlds**: the start message's `settings.world` is the host's `{id, size}`; friends build
+  the same arena with `sharedWorld(start)` (a missing or unknown world is Canyon Small), even
+  a world they have not unlocked. Members of this version send `version: 2`; the previous
+  version sends none. When a start is outside Canyon Small, the server takes members without
+  `version` out of the room (`{"type": "error", "reason": "update-the-game"}` to them, readable
+  on the old game too), tells the host `{"type": "removed", "slots"}` and a `left` per slot (a
+  bot plays their fighter), and ignores their input. The host's lobby names friends with an
+  older game before the start and who had to leave after it.
 - **Rules**: every fighter has a `team` (people share team 0, each bot its own); shots,
   explosions and dashes never hurt the same team; `Match` gives the result for the player's
   team; `World.playerId` is the fighter this device controls; `teamArena()` starts the people
@@ -251,6 +279,14 @@ sequenceDiagram
   bot-only matches.
 - **Add a hack code:** add it to `HACKS` in `server/src/hack_star_server/hacks.py`, add its id
   to `HackId` and its effect in `ui/src/lib/hacks.ts`.
+- **Change the world-coin codes:** edit `WORLD_CODES` (codes, amounts) or
+  `WORLD_CODE_REUSE_DAYS` in `server/src/hack_star_server/world_codes.py`; nothing else changes.
+- **Change world prices or earnings:** `worldCoinsPerStep`, `trophiesPerWorldStep`,
+  `worldPrices` and `worldSizeStep` in `SETTINGS` (`ui/src/lib/game/settings.ts`).
+- **Add a world:** add its id to `WORLD_IDS` and an entry to `WORLDS` (theme, seed) in
+  `ui/src/lib/game/worlds.ts`, a look to `THEMES` in `ui/src/lib/models/arena3d.ts` (new theme
+  id in `ThemeId`), and `world.<id>` in the five dictionaries; check it with
+  `/?gallery=worlds` and `npm test` (`worlds.test.ts` checks every map).
 - **Add a music track (on your computer only):** add it to
   `ui/dev/music/candidates.local.json` (title, author, licence, source page, file) and its MP3
   to `ui/dev/music/files/`; listen and **Choose** it on `/?dev` (with `npm run dev`). Nothing
@@ -267,7 +303,7 @@ sequenceDiagram
 
 | Command | Covers |
 |---------|--------|
-| `cd server; uv run --no-sync pytest` | API: fighters and skins, hack durations, rooms and created-fighter member data |
-| `cd ui; npm test` | Game rules, bots, match, trophies, credits and power, settings, progress (v2–v7 migration), accounts and tab sync (created fighters and skins), saving and the notice, languages, created fighters and skins, 3D models (created parts), timed hacks, QR codes and password, developer mode, music rules and player, vocabulary |
+| `cd server; uv run --no-sync pytest` | API: fighters and skins, hack durations, world-coin codes, rooms (created-fighter member data, member version, older friends removed outside Canyon Small) |
+| `cd ui; npm test` | Game rules, bots (Large worlds), match, trophies, credits and power, worlds and their maps, world coins and world purchases, settings, progress (v2–v8 migration), accounts and tab sync (created fighters and skins, worlds and world coins), saving and the notice, languages, created fighters and skins, 3D models (created parts, world themes), timed hacks and world-coin codes, shared matches in the host's world, QR codes and password, developer mode, music rules and player, vocabulary |
 | `cd ui; npm run check` | Type checks (TypeScript and Svelte, including `vite.config.ts` and `ui/dev/`) |
 | `cd ui; npm run build` | The production build (it must not contain the dev-only music tools) |
