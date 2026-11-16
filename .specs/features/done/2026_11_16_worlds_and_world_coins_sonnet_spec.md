@@ -1,7 +1,7 @@
 # Worlds and World Coins Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress — all Steps done, REVIEW and CLOSE pending
+> **Status:** ✅ Done
 > **Created:** 2026-11-16
 > **Last updated:** 2026-11-16
 > **Branch:** `feature/worlds-and-world-coins-sonnet`
@@ -9,7 +9,7 @@
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~1.98 M | ~CHF 0.60 (72 credits) | Part 1 written (from ideas.md, "From Mi and Ma") |
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~480 k | ~CHF 0.14 (17 credits) | Part 1 revised: open questions answered — ten worlds to buy with their names, sizes 1.5× / 2×, world coins for existing trophies, UNLOCK_ALL not for worlds, reset clears used codes, older friends only in Canyon Small, five codes of each amount |
@@ -23,6 +23,38 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~6.04 M (26 k in · 6.00 M cached · 14 k out) | ~CHF 0.68 (81 credits) | Step 6 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (18 k in · 2.60 M cached · 9 k out) | ~CHF 0.34 (40 credits) | Step 7 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~1.89 M (19 k in · 1.86 M cached · 9 k out) | ~CHF 0.27 (33 credits) | Step 8 done |
+| 2026-11-16 | review | `REVIEW:` / `CODE REVIEW:` | Claude Sonnet 5.5 | ~871 k (30 k in · 823 k cached · 17 k out) | ~CHF 0.28 (33 credits) | semantic diff written; code review: approve with follow-ups (0 blocking, 3 should-fix, 3 nit) |
+| 2026-11-16 | implementation | `CLOSE:` | Claude Sonnet 5.5 | ~273 k (13 k in · 257 k cached · 3 k out) | ~CHF 0.07 (9 credits) | spec closed |
+
+---
+
+## Cost summary
+
+This feature used ~27.5 M tokens, ~CHF 4.91 (584 credits) — estimate, see [COSTS.md](../../kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | ~2.46 M | ~CHF 0.74 (89 credits) | 4.7 % |
+| plan | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | 5.7 % |
+| implementation | Claude Sonnet 5.5 | ~21.05 M | ~CHF 2.98 (353 credits) | 18.6 % |
+| review | Claude Sonnet 5.5 | ~871 k | ~CHF 0.28 (33 credits) | 1.7 % |
+| pr | — | N/A | N/A | N/A |
+| **Total** | | **~27.5 M** | **~CHF 4.91 (584 credits)** | **30.7 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | ~1.00 M | ~CHF 0.28 (33 credits) | 1.7 % |
+| Step 2 | Claude Sonnet 5.5 | ~1.37 M | ~CHF 0.29 (34 credits) | 1.8 % |
+| Step 3 | Claude Sonnet 5.5 | ~2.28 M | ~CHF 0.35 (41 credits) | 2.2 % |
+| Step 4 | Claude Sonnet 5.5 | ~2.62 M | ~CHF 0.30 (35 credits) | 1.8 % |
+| Step 5 | Claude Sonnet 5.5 | ~2.96 M | ~CHF 0.40 (47 credits) | 2.5 % |
+| Step 6 | Claude Sonnet 5.5 | ~6.04 M | ~CHF 0.68 (81 credits) | 4.3 % |
+| Step 7 | Claude Sonnet 5.5 | ~2.62 M | ~CHF 0.34 (40 credits) | 2.1 % |
+| Step 8 | Claude Sonnet 5.5 | ~1.89 M | ~CHF 0.27 (33 credits) | 1.7 % |
+| CLOSE | Claude Sonnet 5.5 | ~273 k | ~CHF 0.07 (9 credits) | 0.5 % |
+| **Total implementation** | | **~21.05 M** | **~CHF 2.98 (353 credits)** | **18.6 %** |
 
 ---
 
@@ -48,7 +80,7 @@ collecting trophies or get from special hack codes that can be used again after 
 - `ui/src/lib/progress.ts` — per-account progress (version 7): trophies per fighter,
   `totalTrophies()`, credits, unlocked fighters, active hacks with expiry dates;
   `ui/src/lib/accounts.ts` keeps accounts in sync across tabs; the
-  [Fighter studio, saves and music spec](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md)
+  [Fighter studio, saves and music spec](2026_11_14_1_fighter_studio_saves_and_music_spec.md)
   made sure every choice is kept.
 - `ui/src/lib/game/trophies.ts`, `ui/src/lib/fighters.ts` — trophies per match (+10 for a
   win, never below the last Prestige level); Prestige every 1000 total trophies.
@@ -68,10 +100,10 @@ collecting trophies or get from special hack codes that can be used again after 
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and product questions |
-| [ideas.md](ideas.md) | Where this request came from |
-| [architecture.md](../../docs/architecture.md) | How the server and the UI are organised |
-| [README](../../README.md) | How to install, run, test and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and product questions |
+| [ideas.md](../ideas.md) | Where this request came from |
+| [architecture.md](../../../docs/architecture.md) | How the server and the UI are organised |
+| [README](../../../README.md) | How to install, run, test and play |
 
 ## 1 · Specs
 
@@ -167,6 +199,12 @@ _None — answered on 2026-11-16._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** The game has 13 worlds (Canyon, Jungle Ruins and Neon Docks free in Small; ten more to buy), each in Small, Medium and Large, and a world screen before Play, Training and a room's START to choose, buy and grow them. World coins are a second currency: 250 for each new 500 trophies and ten hack codes (500 or 1000) that an account can use once every 30 days. Friends play in the host's world; friends on the previous version only in Canyon Small. Saved progress is version 8 and older saves migrate.
+**Differs from the plan:** The "clear line from every spawn" test became a walk-ability test on a fighter-sized grid; `worldCoinsFor` takes the paid steps instead of the total before the match; the world is a field of the start message beside `settings`; the world-coin codes are `Hack` entries of the same list; bushes are placed before walls so every world keeps hiding places. Frame rate on a real iPad and the result-screen line were not checked in the browser (Deferred Items).
+**Files:** `ui/src/lib/game/worlds.ts`, `worldShop.ts`, `settings.ts`, `progress.ts` (v8), `accounts.ts`, `hacks.ts`, `models/arena3d.ts` and `themes.ts`, `WorldScreen.svelte`, `WorldGallery.svelte`, `Arena.svelte`, `ArenaScene.svelte`, `HackScreen.svelte`, `QrPage.svelte`, `net/room.ts`, `net/shared.ts`, `server/src/hack_star_server/rooms.py`, `hacks.py`, `world_codes.py`, the five dictionaries, `README.md`, `docs/architecture.md`.
 
 ## 2 · Spec Overview
 
@@ -448,9 +486,12 @@ Tasks set aside for a future spec, so nothing is forgotten.
 |------|--------|------------------|
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
-| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
 | Play a match to the end across a 500-trophy step in the browser (the "+250 world coins" line) | Winning by hand was not practical; the earning rule is unit-tested | the same device and end-to-end spec |
 | A friend on the new version in a Large world in a room, played in the browser | Only Lava Forge Small was checked with two tabs; sizes are covered by tests | the same device and end-to-end spec |
+| Two tabs that reach the same 500-trophy step both add 250 world coins (review finding 1) | World coins merge as a delta; a rare race, no data is lost | a later bug-fix spec, if wanted |
+| Check that the chosen world is still unlocked when a match starts (review finding 2) | Only possible after a reset or merge in another tab; the choice can only be made from unlocked worlds | a later bug-fix spec, if wanted |
+| Component tests for `WorldScreen.svelte` and `HackScreen.svelte` (review finding 5) | Their rules are in tested modules; the screens were checked in the browser | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
 
 ---
 
@@ -458,6 +499,21 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-16 | AI assistant (Claude Sonnet 5.5) | semantic diff | [review page](../../review/2026-11-16_feature-worlds-and-world-coins-sonnet.html) | — |
+| 2026-11-16 | AI assistant (Claude Sonnet 5.5) | diff | Approve with follow-ups | 6: 0 Blocking, 3 Should-fix, 3 Nit |
+
+### Code review 2026-11-16
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | If two tabs both reach the same 500-trophy step before syncing, each adds 250 and the merge adds both | code | test | Should-fix | deferred |
+| 2 | `Arena.svelte` plays `selectedWorld` without checking it is still unlocked | code | test | Should-fix | deferred |
+| 3 | S23: a Large world on a real iPad or phone was not measured | spec | test | Should-fix | deferred (spec 5) |
+| 4 | The "+250 world coins" result line and a Large world in a room were not played in the browser | spec | test | Nit | deferred (spec 5) |
+| 5 | No component tests for `WorldScreen.svelte` and `HackScreen.svelte` | code | test | Nit | deferred |
+| 6 | Two unused texts (`worlds.selected`, `worlds.locked`) removed during the review | scan | dead-code | Nit | fixed now |
+
+Good: every world and size is tested for reachability and cover; old saves migrate and the merge rules have a two-tab test; prices, amounts and codes each live in one file; every text exists in five languages.
 
 ---
 
@@ -465,7 +521,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [x] Requirements · Part 1 agreed (S1..S24 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
-- [ ] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [x] Review · review page written; no Blocking finding open
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
