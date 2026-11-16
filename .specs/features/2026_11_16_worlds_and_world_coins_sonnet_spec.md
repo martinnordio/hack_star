@@ -1,7 +1,7 @@
 # Worlds and World Coins Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** 🔄 In progress — all Steps done, REVIEW and CLOSE pending
 > **Created:** 2026-11-16
 > **Last updated:** 2026-11-16
 > **Branch:** `feature/worlds-and-world-coins-sonnet`
@@ -22,6 +22,7 @@
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.96 M (22 k in · 2.93 M cached · 13 k out) | ~CHF 0.40 (47 credits) | Step 5 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~6.04 M (26 k in · 6.00 M cached · 14 k out) | ~CHF 0.68 (81 credits) | Step 6 done |
 | 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~2.62 M (18 k in · 2.60 M cached · 9 k out) | ~CHF 0.34 (40 credits) | Step 7 done |
+| 2026-11-16 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | ~1.89 M (19 k in · 1.86 M cached · 9 k out) | ~CHF 0.27 (33 credits) | Step 8 done |
 
 ---
 
@@ -178,7 +179,7 @@ _None — answered on 2026-11-16._
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
-| **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
+| **8** | Documentation and final check | ✅ Done | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -421,17 +422,21 @@ The documents describe worlds and world coins, and everything that worked before
 (S19, S22, S23, S24).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
+- [x] Record the start time in Notes below.
+- [x] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
       work, not the codes themselves), the world screen.
-- [ ] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
+- [x] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
       room `world` and member `version`, `world_codes.py`.
-- [ ] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
+- [x] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
       npm run build`; in the browser, one pass over S1–S24 on desktop and phone, including a
       reload, a second tab and an old save.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-16 20:45
+
+The README describes the world-coin codes in a paragraph, without listing them. The browser passes were done step by step (world screen at 390 × 844, 844 × 390 and 820 × 1180; reload; two tabs in a room; a second account; the QR page) and the dev account's real version 7 save was loaded as the old-save check: it became version 8 with 750 world coins for its 1745 trophies, the three free worlds and Canyon Small chosen, credits and fighters unchanged; the original save was put back afterwards. Not checked on a real iPad or phone, and not played to the end of a match that crosses a 500-step (see the Deferred Items).
+
+**Done (2026-11-16 · ~3m · Claude Sonnet 5.5)** — README and `docs/architecture.md` describe worlds, sizes, world coins, prices, world-coin codes, progress v8 and rooms. `uv run --no-sync pytest` 63 passed, `npm test` 501 passed, `npm run check` 0 errors, `npm run build` built · ~1.89 M · ~CHF 0.27
 
 ---
 
@@ -444,6 +449,8 @@ Tasks set aside for a future spec, so nothing is forgotten.
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
 | Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Play a match to the end across a 500-trophy step in the browser (the "+250 world coins" line) | Winning by hand was not practical; the earning rule is unit-tested | the same device and end-to-end spec |
+| A friend on the new version in a Large world in a room, played in the browser | Only Lava Forge Small was checked with two tabs; sizes are covered by tests | the same device and end-to-end spec |
 
 ---
 
