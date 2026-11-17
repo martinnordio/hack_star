@@ -18,6 +18,7 @@
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~2.08 M | ~CHF 0.03 (3 credits) | Step 1 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.90 M | ~CHF 0.07 (8 credits) | Step 2 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~6.15 M | ~CHF 0.08 (9 credits) | Step 3 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~3.47 M | ~CHF 0.04 (5 credits) | Step 4 done |
 
 ---
 
@@ -170,7 +171,7 @@ _None — answered on 2026-11-16._
 | **1** | World catalogue and sizes | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
-| **4** | Matches and Training in the chosen world | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
+| **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
@@ -299,18 +300,24 @@ Matches and Training are played in the account's chosen world and size, with the
 as today (S1, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
+- [x] Record the start time in Notes below.
+- [x] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
       `CANYON`; overtime removes the cover of any world.
-- [ ] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
-- [ ] Tests: a bots-only match ends with a winner in every Large world within the match time
+- [x] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
+- [x] Tests: a bots-only match ends with a winner in every Large world within the match time
       (fixed random seed); Training dummies and start in every world; overtime empties walls
       and bushes of a Large world.
-- [ ] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
+- [x] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
       in a Large world and Training in a Medium world.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-17 09:57
+
+**Done (2026-11-17 · ~10 min · Claude Haiku 5.5)** — `Arena.svelte` plays local matches and Training in the chosen world and size (`arenaFor`), with the sky colours from the world's theme. Bots walk towards the nearest fighter after 6 seconds without seeing anyone (`SEEK_AFTER_SECONDS`). New `worldPlay.test.ts` covers bots-only Large matches in every world, overtime cover removal in every Large world, Training starts in every world, and the seek. `npm test` 370 tests pass (32 files) · `npm run check` 0 errors, 0 warnings · browser: a Lava Forge Large match (`?seconds=20&bots=3`) runs with the lava sky and ends with a result; Training with Lava Forge Medium chosen shows the lava sky · ~3.47 M · ~CHF 0.04
+
+Deviations: `worldInfo(id)` was added to `worlds.ts`, because the brief named it and it did not exist. Shared rooms stay on Canyon (`theme: 'canyon'`). The Canyon sky colour now comes from the theme, so it changes slightly.
+
+Browser notes: `hack-star.accounts` was backed up to `zz.backup.accounts`, changed for the check, then restored and the backup removed. Checked in the desktop viewport only; no screenshots saved. Not done: the iPad 820 × 1180 check and the frame-rate note. The Medium size was set in the saved choice but not measured on screen.
 
 ---
 

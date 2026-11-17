@@ -1,11 +1,16 @@
 import type { Fighter, World } from './world'
 import type { BotSkill } from './settings'
 
+/** Seconds without seeing an opponent before a bot goes looking for one. */
+export const SEEK_AFTER_SECONDS = 6
+
 export interface BotState {
   id: number
   targetId: number | null
   /** When the current target was first seen; the bot reacts after `skill.reaction`. */
   seenAt: number
+  /** When the bot last saw an opponent; long enough without one and it goes looking. */
+  lastSawAt: number
   wander: { x: number; z: number } | null
   wanderUntil: number
 }
@@ -32,7 +37,7 @@ export class Bots {
     f.speedFactor = this.skill.speed
     f.cooldownFactor = this.skill.cooldown
     f.canHyper = this.skill.hyper
-    this.states.push({ id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0 })
+    this.states.push({ id, targetId: null, seenAt: 0, lastSawAt: this.world.time, wander: null, wanderUntil: 0 })
   }
 
   think(dt: number) {
@@ -42,13 +47,19 @@ export class Bots {
     }
   }
 
-  private pickTarget(bot: Fighter): Fighter | undefined {
+  /** Whether `bot` fights `o` (other bots only when they fight each other). */
+  private isOpponent(bot: Fighter, o: Fighter): boolean {
+    const otherBot = this.states.some((s) => s.id === o.id)
+    return o !== bot && !o.out && o.team !== bot.team && (this.fightEachOther || !otherBot)
+  }
+
+  /** The closest opponent; with `sight`, only one the bot can see. */
+  private nearestOpponent(bot: Fighter, sight?: number): Fighter | undefined {
     let best: Fighter | undefined
     let bestDist = Infinity
     for (const o of this.world.fighters) {
-      const otherBot = this.states.some((s) => s.id === o.id)
-      if (o === bot || o.team === bot.team || (!this.fightEachOther && otherBot)) continue
-      if (!this.world.canSee(bot, o, this.skill.sight)) continue
+      if (!this.isOpponent(bot, o)) continue
+      if (sight !== undefined && !this.world.canSee(bot, o, sight)) continue
       const d = Math.hypot(o.x - bot.x, o.z - bot.z)
       if (d < bestDist) {
         best = o
@@ -60,7 +71,8 @@ export class Bots {
 
   private thinkOne(s: BotState, bot: Fighter, dt: number) {
     const world = this.world
-    const target = this.pickTarget(bot)
+    const target = this.nearestOpponent(bot, this.skill.sight)
+    if (target) s.lastSawAt = world.time
     if ((target?.id ?? null) !== s.targetId) {
       s.targetId = target?.id ?? null
       s.seenAt = world.time
@@ -90,6 +102,19 @@ export class Bots {
       const aimZ = Math.cos(angle) * dist
       if (dist <= bot.type.superReach && world.useSuper(bot, aimX, aimZ)) return
       if (dist <= range * 0.9) world.fireFrom(bot, aimX, aimZ)
+      return
+    }
+
+    // Long without anyone in sight: head for the nearest opponent, drifting sideways so walls do not hold the bot.
+    const seek = world.time - s.lastSawAt >= SEEK_AFTER_SECONDS ? this.nearestOpponent(bot) : undefined
+    if (seek) {
+      const dx = seek.x - bot.x
+      const dz = seek.z - bot.z
+      const dist = Math.hypot(dx, dz) || 1
+      const ux = dx / dist
+      const uz = dz / dist
+      const side = Math.sin(world.time * 0.9 + s.id * 2) * 0.5
+      world.moveFighter(bot, ux - uz * side, uz + ux * side, dt)
       return
     }
 

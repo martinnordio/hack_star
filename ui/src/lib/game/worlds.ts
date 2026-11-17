@@ -52,6 +52,13 @@ export const WORLD_IDS: readonly WorldId[] = WORLDS.map((w) => w.id)
 /** The world every account starts with (Canyon, Small). */
 export const DEFAULT_WORLD: WorldId = 'canyon'
 
+/** The info of a world: its theme, whether it is free, its seed. */
+export function worldInfo(id: WorldId): WorldInfo {
+  const world = WORLDS.find((w) => w.id === id)
+  if (!world) throw new Error(`Unknown world: ${id}`)
+  return world
+}
+
 export function isWorldId(value: unknown): value is WorldId {
   return typeof value === 'string' && (WORLD_IDS as readonly string[]).includes(value)
 }
@@ -203,7 +210,5 @@ function generate(world: WorldInfo, size: WorldSize): Arena {
 /** The arena of a world at a size; Canyon Small is the original `CANYON`. */
 export function arenaFor(worldId: WorldId, size: WorldSize): Arena {
   if (worldId === 'canyon' && size === 'small') return CANYON
-  const world = WORLDS.find((w) => w.id === worldId)
-  if (!world) throw new Error(`Unknown world: ${worldId}`)
-  return generate(world, size)
+  return generate(worldInfo(worldId), size)
 }
