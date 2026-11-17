@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
+version: 1
+branch: feature/worlds-and-world-coins-sonnet
+base: a6a0f643e4bca2ba61ed1dfb8adf51d08ebdc981
+why: |
+  Every match was played in the same canyon. The change adds 13 worlds in three sizes, a new
+  currency (world coins) earned per 500 trophies and by ten special hack codes, and a world
+  screen to choose, buy and grow worlds, in rooms too.
+spec:
+  path: .specs/features/done/2026_11_16_worlds_and_world_coins_sonnet_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24]
+changes:
+  - id: progress-v8
+    kind: data-format
+    change: modified
+    object: "Saved progress (hack-star.accounts): version 7 to 8"
+    note: Five new fields; a version 7 save gets 250 world coins per 500 trophies it already reached.
+    statements: [S8, S19, S20, S21]
+    examples:
+      - name: v7-save
+        input: |
+          parseProgress(<a version 7 save with 1240 trophies>)
+  - id: hacks-api
+    kind: api
+    change: modified
+    object: "GET /api/hacks and POST /api/hacks/redeem"
+    note: Ten world-coin codes join the five hacks; they carry world_coins and reuse_days.
+    statements: [S14, S15, S17, S18]
+    examples:
+      - name: get-and-redeem
+        input: |
+          GET /api/hacks
+          POST /api/hacks/redeem {"code": "wc5-7k2qx"}
+  - id: start-message
+    kind: message
+    change: modified
+    object: "Room message start, and member version"
+    note: The start message carries the host's world; members tell version 2; the server removes older members outside Canyon Small.
+    statements: [S7]
+    extraction: manual
+    manual_reason: The Before side is the same message without the world field (the base code cannot run in this checkout without its own node_modules); the removal on the server is shown by test_rooms.py.
+    examples:
+      - name: start
+        input: |
+          startInfo(settings, members, catalogue, random, { id: 'lava-forge', size: 'large' })
+  - id: world-settings
+    kind: config
+    change: added
+    object: "SETTINGS: world coin numbers"
+    note: Prices and amounts live in settings.ts, the codes and the 30 days in world_codes.py.
+    statements: [S9, S11, S12, S17]
+    examples:
+      - name: world-settings
+        input: |
+          SETTINGS.trophiesPerWorldStep, worldCoinsPerStep, worldPrices, worldSizeStep
+  - id: world-screen
+    kind: ui
+    change: added
+    object: "World screen, Home world-coin chip, result line"
+    note: New screen before Play, Training and a room's START; Home gets a second chip next to the credits.
+    statements: [S1, S3, S8, S9, S11, S12, S13, S22, S23]
+    extraction: manual
+    manual_reason: The Before side does not exist for the new screen; Home before and after needs the base revision running on port 5180 at the same size, which was not set up. Screenshots were checked while implementing (Step 5).
+    examples:
+      - name: world-screen
+        input: |
+          route=Home > PLAY
+        views: [desktop, phone]
+  - id: world-catalogue
+    kind: output
+    change: added
+    object: "arenaFor(worldId, size)"
+    note: Canyon Small is today's arena unchanged; every other layout is generated from a fixed seed.
+    statements: [S2, S4, S5, S6]
+    extraction: manual
+    manual_reason: New function, no Before side; its layouts are checked by worlds.test.ts for every world and size.
+    examples:
+      - name: large-ground
+        input: |
+          arenaFor('lava-forge', 'large') -> 42 x 34
+breaking: |
+  Saved progress moves from version 7 to 8 (older versions of the game cannot read a version 8
+  save). Friends on the previous version can only play in Canyon Small.
+review:
+  - question: Are old saves safe?
+    answer: |
+      Yes. Versions 2 to 7 migrate forward; the dev account's real version 7 save loaded with its
+      credits, trophies and fighters unchanged and 750 world coins for 1745 trophies.
+  - question: Can a world-coin code be used again early?
+    answer: |
+      Yes, by clearing the browser's data: the dates are kept in each account's progress on the
+      device because the game has no server accounts (decision D10).
+  - question: What happens to a friend on the previous version?
+    answer: |
+      In Canyon Small nothing changes. In any other world the server sends them an update
+      message, closes their connection and tells the host who was removed.
