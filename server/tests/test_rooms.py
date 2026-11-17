@@ -200,3 +200,52 @@ def test_too_big_or_broken_messages_are_refused() -> None:
         assert receive(socket) == {"type": "error", "reason": "too-big"}
         socket.send_text("not json")
         assert receive(socket) == {"type": "error", "reason": "bad-message"}
+
+
+def test_member_version_is_shown_and_a_bad_version_is_refused() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        send(host, {"type": "create", "member": {**BLAZE, "version": 2}})
+        assert receive(host)["members"] == [{"slot": 0, **BLAZE, "hyper": False, "version": 2}]
+    with client.websocket_connect("/api/rooms") as socket:
+        for version in (0, 100):
+            send(socket, {"type": "create", "member": {**BLAZE, "version": version}})
+            assert receive(socket) == {"type": "error", "reason": "bad-member"}
+
+
+@pytest.mark.parametrize("start", [{"type": "start"}, {"type": "start", "world": {"id": "canyon", "size": "small"}}])
+def test_start_in_canyon_small_or_without_a_world_keeps_every_friend(start: dict[str, Any]) -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as friend:
+            send(friend, {"type": "join", "code": code, "member": ROCKO})
+            receive(friend), receive(host)
+            send(host, start)
+            assert receive(friend) == start
+
+
+def removal_on_start(start: dict[str, Any]) -> None:
+    """A friend without a version is in the room; the host starts; it leaves and the others go on."""
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            with client.websocket_connect("/api/rooms") as current:
+                send(current, {"type": "join", "code": code, "member": {**ROCKO, "version": 2}})
+                receive(old), receive(host), receive(current)
+                send(host, start)
+                assert receive(old) == {"type": "error", "reason": "update"}
+                assert receive(host) == {"type": "left", "slot": 1}
+                assert receive(host) == {"type": "removed", "members": [{"slot": 1, **ROCKO}], "reason": "update"}
+                assert [m["slot"] for m in receive(host)["members"]] == [0, 2]
+                assert [m["slot"] for m in receive(current)["members"]] == [0, 2]
+                assert receive(current) == start
+
+
+def test_start_in_another_world_removes_the_friend_without_a_version() -> None:
+    removal_on_start({"type": "start", "world": {"id": "lava-forge", "size": "small"}})
+
+
+@pytest.mark.parametrize("world", ["canyon", None, {"id": "canyon", "size": "small", "extra": 1}])
+def test_a_broken_world_value_counts_as_another_world(world: Any) -> None:
+    removal_on_start({"type": "start", "world": world})

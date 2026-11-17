@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { CANYON } from '../game/arena'
 import { SETTINGS } from '../game/settings'
 import { RoomConnection, type Seat, type Socket } from './room'
-import { GuestMatch, HostMatch, SEND_EVERY, startInfo } from './shared'
+import { GuestMatch, HostMatch, SEND_EVERY, startInfo, worldOf, type StartInfo } from './shared'
+import { arenaFor } from '../game/worlds'
 
 const tick = 1 / 60
 const catalogue = [
@@ -149,5 +150,32 @@ describe('shared match', () => {
     run(0.3)
     host.stop()
     expect(guest.result).toEqual({ kind: 'timeup' })
+  })
+
+  it('the start names the chosen world; without one, or a broken one, it is Canyon Small', () => {
+    const settings = { ...SETTINGS, botCount: 3 }
+    const start = startInfo(settings, seats, catalogue, () => 0.5, { id: 'lava-forge', size: 'large' })
+    expect(start.world).toEqual({ id: 'lava-forge', size: 'large' })
+    expect(worldOf(start)).toEqual({ id: 'lava-forge', size: 'large' })
+    expect(worldOf(startInfo(settings, seats, catalogue, () => 0.5))).toEqual({ id: 'canyon', size: 'small' })
+    const broken = (world: unknown) => worldOf({ ...start, world } as unknown as StartInfo)
+    expect(broken(undefined)).toEqual({ id: 'canyon', size: 'small' })
+    expect(broken(null)).toEqual({ id: 'canyon', size: 'small' })
+    expect(broken('lava-forge')).toEqual({ id: 'canyon', size: 'small' })
+    expect(broken({ id: 'nope', size: 'small' })).toEqual({ id: 'canyon', size: 'small' })
+    expect(broken({ id: 'lava-forge', size: 'huge' })).toEqual({ id: 'canyon', size: 'small' })
+  })
+
+  it('a friend and the host build the same arena for the chosen world', () => {
+    const settings = { ...SETTINGS, botCount: 3 }
+    const start = startInfo(settings, seats, catalogue, () => 0.5, { id: 'lava-forge', size: 'large' })
+    const { id, size } = worldOf(start)
+    const net = hub()
+    const host = new HostMatch(arenaFor(id, size), start, net.host)
+    const guest = new GuestMatch(arenaFor(id, size), start, 1, net.friend)
+    expect(host.world.walls).toEqual(arenaFor(id, size).walls)
+    expect(guest.world.walls).toEqual(host.world.walls)
+    expect(guest.world.bushes).toEqual(host.world.bushes)
+    expect(guest.world.fighters.map((f) => [f.x, f.z])).toEqual(host.world.fighters.map((f) => [f.x, f.z]))
   })
 })

@@ -2,7 +2,7 @@
   import QRCode from 'qrcode'
   import { onMount, untrack } from 'svelte'
   import type { Fighter } from './fighters'
-  import { codeFrom, createRoom, joinRoom, leaveRoom, memberFor, room, roomLink, type Member, type Seat } from './net/room'
+  import { codeFrom, createRoom, displayName, joinRoom, leaveRoom, memberFor, room, roomLink, type Member, type Seat } from './net/room'
   import { portrait } from './portraits'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
@@ -31,7 +31,7 @@
 
   const info = $derived($room?.info ?? null)
   const host = $derived(info?.you === 0)
-  const name = (seat: Seat) => seat.name ?? fighters.find((f) => f.id === seat.fighter)?.name ?? seat.fighter
+  const name = (seat: Seat) => displayName(seat, fighters)
   const bots = $derived(info ? Math.max(1, $options.botCount + 1 - info.members.length) : 0)
 
   $effect(() => {
@@ -107,6 +107,10 @@
       <p class="error" role="alert">{$tOr($room.error, $room.error)}</p>
     {/if}
 
+    {#if $room && $room.removed.length > 0}
+      <p class="notice" role="status">{$t('room.removed', { names: $room.removed.map(name).join(', ') })}</p>
+    {/if}
+
     {#if host}
       <button class="big start-match" onclick={onStart}>
         ▶ {$t('friends.start', {
@@ -143,6 +147,16 @@
     border-radius: 0.8rem;
     background: #8a1030;
     border: 2px solid #000;
+  }
+
+  .notice {
+    margin: 0;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.8rem;
+    background: #160f33cc;
+    border: 2px solid #ffd23f;
+    font-weight: 900;
+    text-align: center;
   }
 
   .wait {

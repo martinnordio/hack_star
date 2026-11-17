@@ -20,6 +20,7 @@
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~6.15 M | ~CHF 0.08 (9 credits) | Step 3 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~3.47 M | ~CHF 0.04 (5 credits) | Step 4 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.75 M (37 k in · 5.69 M cached · 25 k out) | ~CHF 0.06 (7 credits) | Step 5 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~11.92 M (97 k in · 11.79 M cached · 39 k out) | ~CHF 0.13 (15 credits) | Step 6 done |
 
 ---
 
@@ -174,7 +175,7 @@ _None — answered on 2026-11-16._
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
-| **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
+| **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
@@ -357,20 +358,21 @@ Friends play in the host's world and size; friends on the previous version only 
 Small (S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
-- [ ] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
+- [x] Record the start time in Notes below.
+- [x] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
+- [x] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
       Small, members without it are removed with the room-error message; the host sees who and
       why.
-- [ ] The host chooses the world on the world screen before **START**.
-- [ ] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
+- [x] The host chooses the world on the world screen before **START**.
+- [x] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
       none in Canyon Small (`server/tests/test_rooms.py`); UI — start info with the world;
       a guest builds the same arena as the host.
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
       browser tabs: host in a Large world, friend joins and plays in it.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-17 10:11
+**Done (2026-11-17 · ~10 min · Claude Haiku 5.5)** — `shared.ts`: the start settings carry the chosen `world` (`worldOf` falls back to Canyon Small); guests build the host's arena. `room.ts`: members send `version` 2 (D11); `removed` list and `update` error handled. `rooms.py`: on a start outside Canyon Small, members without `version` or below 2 are removed (`update` error, socket closed); the host gets `left` per slot, then `removed`. `App.svelte`: room mode opens the world screen before START; the world screen shows the outdated warning, Friends shows the removed notice; texts in all five languages. Added room store tests in `room.test.ts` (removed list kept until forgotten; update reason kept after close). Verified: pytest 52 pass; `npm test` 32 files, 374 tests pass; `npm run check` 0 errors, 0 warnings. Browser (two tabs, localhost:5180): host created room, friend joined as Player 2 with the code, host chose Jungle Ruins Small and pressed START; both arenas show the same world (same sky `--sky-top #8fd3ff` / `--sky-bottom #e6f7d0`, same rocks and ground, 2:00 timer, 4 fighters). Deviations: (1) the check asked for a Large world; none was unlocked, so Jungle Ruins Small was used. (2) Server removes on `world: null` or a broken world value (treated as another world), while UI `worldOf` treats these as Canyon Small; left unchanged, reachable only with a hand-made client. (3) No component tests for the WorldScreen outdated warning or the FriendsScreen removed notice; covered by browser only plus the room store and server tests. Not checked in browser: removal on start with an old-version friend and the on-screen removed notice and outdated warning (server tests cover removal). Cost: ~11.92 M tokens, ~CHF 0.13 (15 credits), measured with `usage.ps1`.
 
 ---
 

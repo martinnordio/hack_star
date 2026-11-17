@@ -16,7 +16,12 @@ export interface Member {
   hyper: boolean
   /** The name of a created fighter (its look is in `skin`). */
   name?: string
+  /** The game version of the device; missing for older versions. */
+  version?: number
 }
+
+/** The version this build sends; a friend without a newer one cannot play in other worlds. */
+export const MEMBER_VERSION = 2
 
 export function memberFor(progress: Progress, fighters: Fighter[]): Member {
   const fighter = currentFighter(progress, fighters)
@@ -26,8 +31,14 @@ export function memberFor(progress: Progress, fighters: Fighter[]): Member {
     skin: wornSkin(progress, fighter.id),
     power: powerOf(progress, fighter.id),
     hyper: isHackActive(progress, 'hypercharge'),
+    version: MEMBER_VERSION,
     ...(look ? { name: look.name } : {}),
   }
+}
+
+/** A player's name: a created fighter's own name, else the fighter's name. */
+export function displayName(member: Member, fighters: Fighter[]): string {
+  return member.name ?? fighters.find((f) => f.id === member.fighter)?.name ?? member.fighter
 }
 
 export interface Seat extends Member {
@@ -63,6 +74,7 @@ export const ERRORS: Record<string, TextKey> = {
   'too-many-rooms': 'room.error.tooManyRooms',
   disconnected: 'room.error.disconnected',
   closed: 'room.error.closed',
+  update: 'room.error.update',
 }
 
 /** One device's connection to a room on the game server. */
@@ -131,6 +143,8 @@ export interface RoomState {
   info: RoomInfo | null
   /** A text key, or the server's reason when it is unknown. */
   error: string | null
+  /** Friends the host lost at its last start because they are on an older version. */
+  removed: Seat[]
 }
 
 /** The room this device is in (one at a time). */
@@ -147,7 +161,7 @@ async function enter(message: RoomMessage): Promise<void> {
   try {
     connection = await openSocket()
   } catch {
-    if (mine === attempt) room.set({ connection: new RoomConnection(closedSocket()), info: null, error: ERRORS.disconnected })
+    if (mine === attempt) room.set({ connection: new RoomConnection(closedSocket()), info: null, error: ERRORS.disconnected, removed: [] })
     return
   }
   if (mine !== attempt) {
@@ -158,10 +172,12 @@ async function enter(message: RoomMessage): Promise<void> {
   connection.on((m) => {
     if (m.type === 'room') room.update((s) => s && { ...s, info: m as unknown as RoomInfo, error: null })
     else if (m.type === 'error') room.update((s) => s && { ...s, error: ERRORS[String(m.reason)] ?? String(m.reason) })
+    else if (m.type === 'removed') room.update((s) => s && { ...s, removed: m.members as unknown as Seat[] })
     else if (m.type === 'closed' || m.type === 'disconnected')
-      room.update((s) => s && { ...s, info: null, error: ERRORS[m.type] })
+      // The server closes a removed friend's socket right after its reason: keep that reason.
+      room.update((s) => s && { ...s, info: null, error: m.type === 'disconnected' && s.error ? s.error : ERRORS[m.type] })
   })
-  room.set({ connection, info: null, error: null })
+  room.set({ connection, info: null, error: null, removed: [] })
   connection.send(message)
 }
 
@@ -172,6 +188,11 @@ export function leaveRoom() {
   attempt++
   current?.connection.close()
   room.set(null)
+}
+
+/** Clears the friends removed at the last start, once the host has seen them. */
+export function forgetRemoved() {
+  room.update((s) => s && { ...s, removed: [] })
 }
 
 function closedSocket(): Socket {

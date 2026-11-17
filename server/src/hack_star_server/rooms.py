@@ -26,6 +26,9 @@ FIGHTER_IDS = {f.id for f in FIGHTERS}
 # The look of a created fighter: "L", type 0-4, head and body (0-2), two colours; or with
 # head and body 0-4 followed by hands and legs 0-2.
 CREATED_LOOK = re.compile(r"^L[0-4](?:[0-2][0-2]|[0-4][0-4][0-2][0-2])[0-9a-fA-F]{12}$")
+# The world every device starts with; a shared match in any other world needs WORLDS_VERSION.
+CANYON_SMALL = {"id": "canyon", "size": "small"}
+WORLDS_VERSION = 2
 
 
 class Member(BaseModel):
@@ -36,6 +39,8 @@ class Member(BaseModel):
     power: int = Field(ge=1, le=22)
     hyper: bool = False
     name: str | None = Field(default=None, min_length=1, max_length=12)
+    # The game version of the device; None for devices that do not send one (older versions).
+    version: int | None = Field(default=None, ge=1, le=99)
 
     @field_validator("fighter")
     @classmethod
@@ -161,6 +166,8 @@ class RoomManager:
     async def from_host(self, room: Room, kind: Any, message: dict[str, Any], text: str) -> None:
         if kind == "start":
             room.started = True
+            if message.get("world", CANYON_SMALL) != CANYON_SMALL:
+                await self.remove_outdated(room)
             await self.to_friends(room, text)
         elif kind == "state":
             await self.to_friends(room, text)
@@ -188,6 +195,21 @@ class RoomManager:
         await self.send(room.host.socket, json.dumps({"type": "left", "slot": seat.slot}))
         await self.announce(room)
 
+    async def remove_outdated(self, room: Room) -> None:
+        """Friends on an older version cannot play in other worlds: they leave the room."""
+        outdated = [s for s in room.seats[1:] if (s.member.version or 0) < WORLDS_VERSION]
+        if not outdated:
+            return
+        for seat in outdated:
+            room.seats.remove(seat)
+            await self.error(seat.socket, "update")
+            await self.close(seat.socket)
+        for seat in outdated:
+            await self.send(room.host.socket, json.dumps({"type": "left", "slot": seat.slot}))
+        members = [{"slot": s.slot, **s.member.model_dump(exclude_none=True)} for s in outdated]
+        await self.send(room.host.socket, json.dumps({"type": "removed", "members": members, "reason": "update"}))
+        await self.announce(room)
+
     async def announce(self, room: Room) -> None:
         for s in room.seats:
             await self.send(s.socket, json.dumps(room.info(s.slot)))
@@ -205,3 +227,10 @@ class RoomManager:
 
     async def error(self, socket: WebSocket, reason: str) -> None:
         await self.send(socket, json.dumps({"type": "error", "reason": reason}))
+
+    async def close(self, socket: WebSocket) -> None:
+        try:
+            await socket.close()
+        except (RuntimeError, WebSocketDisconnect):
+            # Already gone: its own handler cleans up.
+            pass

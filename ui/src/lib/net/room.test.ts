@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { codeFrom, memberFor, RoomConnection, roomLink, type RoomMessage, type Socket } from './room'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { get } from 'svelte/store'
+import { codeFrom, createRoom, forgetRemoved, leaveRoom, memberFor, room, RoomConnection, roomLink, type Member, type RoomMessage, type Socket } from './room'
 import { createdFighter } from '../created'
 import { defaultProgress } from '../progress'
 
@@ -33,6 +34,7 @@ describe('room', () => {
     expect(memberFor(progress, [fighter])).toMatchObject({
       fighter: 'custom-2',
       skin: 'L010ff8a1affd23f',
+      version: 2,
       name: 'Comet',
     })
   })
@@ -48,5 +50,69 @@ describe('room', () => {
     socket.onmessage!({ data: 'not json' })
     socket.onclose!()
     expect(got).toEqual([{ type: 'state', t: 2 }, { type: 'disconnected' }])
+  })
+})
+
+class FakeWebSocket {
+  static opened: FakeWebSocket[] = []
+  readyState = 0
+  onopen: (() => void) | null = null
+  onerror: (() => void) | null = null
+  onmessage: ((event: { data: unknown }) => void) | null = null
+  onclose: (() => void) | null = null
+
+  constructor() {
+    FakeWebSocket.opened.push(this)
+    queueMicrotask(() => {
+      this.readyState = 1
+      this.onopen?.()
+    })
+  }
+
+  send() {}
+
+  close() {
+    this.readyState = 3
+  }
+
+  receive(message: object) {
+    this.onmessage?.({ data: JSON.stringify(message) })
+  }
+}
+
+describe('room store', () => {
+  const host: Member = { fighter: 'blaze', skin: 'base', power: 1, hyper: false, version: 2 }
+
+  beforeEach(() => {
+    FakeWebSocket.opened = []
+    vi.stubGlobal('WebSocket', FakeWebSocket)
+    vi.stubGlobal('location', { protocol: 'http:', host: 'localhost:5180' })
+  })
+
+  afterEach(() => {
+    leaveRoom()
+    vi.unstubAllGlobals()
+  })
+
+  it('keeps the friends a start removed until the host forgets them', async () => {
+    await createRoom(host)
+    const socket = FakeWebSocket.opened[0]
+    socket.receive({ type: 'room', code: 'ABCD', you: 0, started: false, members: [] })
+    socket.receive({
+      type: 'removed',
+      reason: 'update',
+      members: [{ slot: 1, fighter: 'blaze', skin: 'base', power: 1, hyper: false }],
+    })
+    expect(get(room)?.removed.map((s) => s.slot)).toEqual([1])
+    forgetRemoved()
+    expect(get(room)?.removed).toEqual([])
+  })
+
+  it('keeps the update reason when the server closes the socket after it', async () => {
+    await createRoom(host)
+    const socket = FakeWebSocket.opened[0]
+    socket.receive({ type: 'error', reason: 'update' })
+    socket.onclose!()
+    expect(get(room)?.error).toBe('room.error.update')
   })
 })

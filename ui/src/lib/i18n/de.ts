@@ -183,6 +183,8 @@ export const de: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Der Server hat zu viele Räume. Versuch es später nochmal.',
   'room.error.disconnected': 'Die Verbindung zum Spiel-Server ist weg.',
   'room.error.closed': 'Spieler 1 ist gegangen, darum ist der Raum zu.',
+  'room.error.update': 'Dein Spiel ist veraltet, darum hast du den Raum verlassen.',
+  'room.removed': 'Veraltet, darum haben den Raum verlassen: {names}',
 
   'arena.fightersLeft': 'Kämpfer übrig',
   'arena.fight': 'KAMPF!',
@@ -407,6 +409,7 @@ export const de: Record<TextKey, string> = {
   'worlds.free': 'Gratis',
   'worlds.locked': 'Gesperrt',
   'worlds.needMore': 'Dir fehlen {coins} WM',
+  'worlds.outdated': 'Freunde mit alter Version verlassen den Raum: {names}',
   'worlds.lockedSize': '🔒 {size} · {coins} WM',
   'worlds.buy': 'Kaufen: {sizes} · {coins} WM',
   'worlds.confirmBuy': '{world} in {size} für {coins} Weltmünzen freischalten?',

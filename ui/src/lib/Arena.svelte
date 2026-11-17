@@ -4,7 +4,6 @@
   import { PCFShadowMap } from 'three'
   import ArenaScene, { type Hud, type Look, type Power } from './ArenaScene.svelte'
   import type { Fighter } from './fighters'
-  import { CANYON } from './game/arena'
   import { newControls, stickVector } from './game/controls'
   import { Match, type MatchLike } from './game/match'
   import { SETTINGS, settingsFrom } from './game/settings'
@@ -27,7 +26,7 @@
   import { creditsFor, earn, powerOf, stats } from './game/economy'
   import { earnWorldCoins } from './game/worldShop'
   import type { RoomConnection } from './net/room'
-  import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
+  import { GuestMatch, HostMatch, worldOf, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
   import { isCreatedFighterId } from './progress'
 
@@ -47,14 +46,17 @@
   const TAP_MS = 250
 
   function sharedMatch(s: NonNullable<Props['shared']>) {
-    const match = s.you === 0 ? new HostMatch(CANYON, s.start, s.connection) : new GuestMatch(CANYON, s.start, s.you, s.connection)
+    // Host and friends build the same arena: the world the host chose.
+    const { id, size } = worldOf(s.start)
+    const arena = arenaFor(id, size)
+    const match = s.you === 0 ? new HostMatch(arena, s.start, s.connection) : new GuestMatch(arena, s.start, s.you, s.connection)
     const looks: Look[] = s.start.fighters.map((f) => ({ fighterId: f.fighter, skinId: f.skin }))
-    return { match, world: match.world, looks, player: looks[match.world.playerId] }
+    return { match, world: match.world, looks, player: looks[match.world.playerId], theme: worldInfo(id).theme }
   }
 
   // A new Arena component is mounted for every match, so these are made once per match.
   const { match, world, looks, player, theme } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look; theme: ThemeId } => {
-    if (shared) return { ...sharedMatch(shared), theme: 'canyon' }
+    if (shared) return sharedMatch(shared)
     const player = chosen
     const playerPower = powerOf(get(progress), player.fighterId)
     const settings = settingsFrom(location.search, SETTINGS, get(options))

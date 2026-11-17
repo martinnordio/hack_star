@@ -183,6 +183,8 @@ export const gsw: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Dä Server hät z vill Rüüm. Probier spöter nomal.',
   'room.error.disconnected': 'D Verbindig zum Spiel-Server isch wäg.',
   'room.error.closed': 'Spieler 1 isch gange, drum isch dä Raum zue.',
+  'room.error.update': 'Dis Spiel isch veraltet, drum bisch us em Raum usegange.',
+  'room.removed': 'Veraltet, drum sind usegange: {names}',
 
   'arena.fightersLeft': 'Kämpfer übrig',
   'arena.fight': 'KAMPF!',
@@ -407,6 +409,7 @@ export const gsw: Record<TextKey, string> = {
   'worlds.free': 'Gratis',
   'worlds.locked': 'Gsperrt',
   'worlds.needMore': 'Dir fehled {coins} WM',
+  'worlds.outdated': 'Fründ mit alter Version gänd us em Raum: {names}',
   'worlds.lockedSize': '🔒 {size} · {coins} WM',
   'worlds.buy': 'Chaufe: {sizes} · {coins} WM',
   'worlds.confirmBuy': '{world} i {size} für {coins} Weltmünzen freischalte?',

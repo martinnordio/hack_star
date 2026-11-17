@@ -5,6 +5,7 @@ import { stats } from '../game/economy'
 import { Match, teamArena, type MatchLike, type MatchPhase, type MatchResult } from '../game/match'
 import { SETTINGS, type BotLevel, type Settings } from '../game/settings'
 import { fighterType } from '../game/types'
+import { DEFAULT_WORLD, isWorldId, isWorldSize, type WorldId, type WorldSize } from '../game/worlds'
 import { World, type Shot, type WorldEvent } from '../game/world'
 import type { RoomConnection, RoomMessage, Seat } from './room'
 import { parseLookSkin } from '../created'
@@ -30,14 +31,30 @@ export interface StartInfo {
   settings: Pick<Settings, 'matchSeconds' | 'overtimeSeconds' | 'botCount' | 'countdownSeconds'> & { botLevel: BotLevel }
   /** People first (fighter ids 0..), then bots. */
   fighters: SharedFighter[]
+  /** The world and its size; missing in a start from an older version. */
+  world?: WorldChoice
 }
 
-/** The start message the host sends: people in slot order, then bots with random fighters. */
+/** A world and its size, as chosen on the world screen. */
+export interface WorldChoice {
+  id: WorldId
+  size: WorldSize
+}
+
+/** The world a start is played in: Canyon Small when the message has none or a broken one. */
+export function worldOf(start: StartInfo): WorldChoice {
+  const id: unknown = start.world?.id
+  const size: unknown = start.world?.size
+  return isWorldId(id) && isWorldSize(size) ? { id, size } : { id: DEFAULT_WORLD, size: 'small' }
+}
+
+/** The start message the host sends: people in slot order, then bots with random fighters, in the chosen world. */
 export function startInfo(
   settings: Settings,
   members: Seat[],
   catalogue: { id: string; type: string }[],
   random = Math.random,
+  world: WorldChoice = { id: DEFAULT_WORLD, size: 'small' },
 ): StartInfo {
   const people = [...members].sort((a, b) => a.slot - b.slot)
   const count = Math.max(settings.botCount + 1, people.length + 1)
@@ -56,6 +73,7 @@ export function startInfo(
   }))
   return {
     type: 'start',
+    world: { id: world.id, size: world.size },
     settings: {
       matchSeconds: settings.matchSeconds,
       overtimeSeconds: settings.overtimeSeconds,

@@ -3,14 +3,16 @@
   import { progress } from './accounts'
   import { SETTINGS } from './game/settings'
   import { buyWorld, chooseWorld, growWorld, worldPrice, type WorldPurchase } from './game/worldShop'
-  import { WORLDS, WORLD_SIZES, sizeIndex, type WorldId, type WorldSize } from './game/worlds'
+  import { DEFAULT_WORLD, WORLDS, WORLD_SIZES, sizeIndex, type WorldId, type WorldSize } from './game/worlds'
   import { THEMES } from './models/themes'
 
   interface Props {
     onStart: () => void
+    /** Names of the friends on an older version; they leave the room when the match is in another world. */
+    outdated?: string[]
   }
 
-  let { onStart }: Props = $props()
+  let { onStart, outdated = [] }: Props = $props()
 
   /** A purchase waiting for a yes or no; `size` is the size it unlocks. */
   interface Pending {
@@ -21,6 +23,7 @@
 
   let pending = $state<Pending | null>(null)
   let notice = $state('')
+  const atCanyonSmall = $derived($progress.selectedWorld.id === DEFAULT_WORLD && $progress.selectedWorld.size === 'small')
 
   // The notice clears by itself after 4 seconds; a new notice restarts the timer.
   $effect(() => {
@@ -105,6 +108,9 @@
   <p class="hint">{$t('worlds.hint', { trophies: SETTINGS.trophiesPerWorldStep, coins: SETTINGS.worldCoinsPerStep })}</p>
   {#if notice}
     <p class="notice" role="status">{notice}</p>
+  {/if}
+  {#if outdated.length > 0 && !atCanyonSmall}
+    <p class="notice" role="status">{$t('worlds.outdated', { names: outdated.join(', ') })}</p>
   {/if}
 
   <div class="grid">

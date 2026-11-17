@@ -181,6 +181,8 @@ export const en = {
   'room.error.tooManyRooms': 'The server has too many rooms. Try again later.',
   'room.error.disconnected': 'Lost the connection to the game server.',
   'room.error.closed': 'The host left, so the room is closed.',
+  'room.error.update': 'Your game is out of date, so you left the room.',
+  'room.removed': 'Out of date, so they left the room: {names}',
 
   'arena.fightersLeft': 'Fighters left',
   'arena.fight': 'FIGHT!',
@@ -405,6 +407,7 @@ export const en = {
   'worlds.free': 'Free',
   'worlds.locked': 'Locked',
   'worlds.needMore': 'Need {coins} more WC',
+  'worlds.outdated': 'Friends on an old version leave the room: {names}',
   'worlds.lockedSize': '🔒 {size} · {coins} WC',
   'worlds.buy': 'Buy {sizes} · {coins} WC',
   'worlds.confirmBuy': 'Unlock {world} in {size} for {coins} world coins?',

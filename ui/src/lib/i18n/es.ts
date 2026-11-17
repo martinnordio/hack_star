@@ -183,6 +183,8 @@ export const es: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'El servidor tiene demasiadas salas. Vuelve a intentarlo más tarde.',
   'room.error.disconnected': 'Se ha perdido la conexión con el servidor del juego.',
   'room.error.closed': 'El Jugador 1 se ha ido, así que la sala se ha cerrado.',
+  'room.error.update': 'Tu juego está desactualizado, así que has salido de la sala.',
+  'room.removed': 'Desactualizados, así que han salido de la sala: {names}',
 
   'arena.fightersLeft': 'Luchadores en pie',
   'arena.fight': '¡A LUCHAR!',
@@ -407,6 +409,7 @@ export const es: Record<TextKey, string> = {
   'worlds.free': 'Gratis',
   'worlds.locked': 'Bloqueado',
   'worlds.needMore': 'Te faltan {coins} MM',
+  'worlds.outdated': 'Los amigos con una versión antigua salen de la sala: {names}',
   'worlds.lockedSize': '🔒 {size} · {coins} MM',
   'worlds.buy': 'Comprar {sizes} · {coins} MM',
   'worlds.confirmBuy': '¿Desbloquear {world} en {size} por {coins} monedas del mundo?',

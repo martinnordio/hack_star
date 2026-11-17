@@ -12,7 +12,7 @@
   import SettingsScreen from './lib/SettingsScreen.svelte'
   import FriendsScreen from './lib/FriendsScreen.svelte'
   import WorldScreen from './lib/WorldScreen.svelte'
-  import { leaveRoom, room, type RoomConnection } from './lib/net/room'
+  import { displayName, forgetRemoved, leaveRoom, MEMBER_VERSION, room, type RoomConnection } from './lib/net/room'
   import { startInfo, type StartInfo } from './lib/net/shared'
   import { options } from './lib/options'
   import { SETTINGS, settingsFrom } from './lib/game/settings'
@@ -34,8 +34,8 @@
   let linkedCode = $state(codeInLink)
 
   let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
-  // The mode the world screen starts when START is pressed.
-  let worldMode = $state<'match' | 'training'>('match')
+  // The mode the world screen starts when START is pressed; room: the match with friends.
+  let worldMode = $state<'match' | 'training' | 'room'>('match')
   let openFighterId = $state<string>()
   let creatorFighterId = $state<string>()
   let creatorSkinId = $state<string>()
@@ -75,10 +75,30 @@
   function startShared() {
     if (!$room?.info || !fighters) return
     const settings = settingsFrom(location.search, SETTINGS, $options)
-    const start = startInfo(settings, $room.info.members, fighters)
+    const start = startInfo(settings, $room.info.members, fighters, Math.random, $progress.selectedWorld)
+    forgetRemoved()
     $room.connection.send(start)
     playShared(start)
   }
+
+  /** Friends' START: the host picks the world first. */
+  function openRoomWorlds() {
+    worldMode = 'room'
+    screen = 'worlds'
+  }
+
+  /** START on the world screen in room mode: the match starts in the chosen world. */
+  function startRoomMatch() {
+    if ($room?.info) startShared()
+    else screen = 'friends'
+  }
+
+  /** Friends on an older version: they leave the room when the match is in another world. */
+  const outdated = $derived(
+    ($room?.info?.members ?? [])
+      .filter((m) => m.slot !== 0 && (m.version ?? 0) < MEMBER_VERSION)
+      .map((m) => displayName(m, fighters ?? [])),
+  )
 
   // Friends follow the host into the match.
   $effect(() => {
@@ -131,8 +151,11 @@
     />
   {/key}
 {:else if screen === 'worlds'}
-  <Panel title={$t('worlds.title')} onBack={() => (screen = 'home')}>
-    <WorldScreen onStart={() => (screen = worldMode)} />
+  <Panel title={$t('worlds.title')} onBack={() => (screen = worldMode === 'room' ? 'friends' : 'home')}>
+    <WorldScreen
+      onStart={() => (worldMode === 'room' ? startRoomMatch() : (screen = worldMode))}
+      outdated={worldMode === 'room' ? outdated : undefined}
+    />
   </Panel>
 {:else if screen === 'fighters'}
   <Panel title={$t('panel.fighters')} onBack={() => (screen = 'home')}>
@@ -202,7 +225,7 @@
       screen = 'home'
     }}
   >
-    <FriendsScreen {fighters} initialCode={roomInLink} onStart={startShared} />
+    <FriendsScreen {fighters} initialCode={roomInLink} onStart={openRoomWorlds} />
   </Panel>
 {:else if screen === 'hack'}
   <Panel
