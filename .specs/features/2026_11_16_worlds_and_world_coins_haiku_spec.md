@@ -17,6 +17,7 @@
 | 2026-11-16 | plan | `PLAN:` | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | Part 2 written |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~2.08 M | ~CHF 0.03 (3 credits) | Step 1 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.90 M | ~CHF 0.07 (8 credits) | Step 2 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~6.15 M | ~CHF 0.08 (9 credits) | Step 3 done |
 
 ---
 
@@ -168,7 +169,7 @@ _None — answered on 2026-11-16._
 |------|-------------|--------|--------|
 | **1** | World catalogue and sizes | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
-| **3** | A look for every world | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
+| **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
@@ -269,19 +270,25 @@ Every world is drawn with its own theme and cover, in every size, smoothly on an
 S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `models/arena3d.ts`: themes (D4) — ground colours, edge (cliffs or other border), wall and
+- [x] Record the start time in Notes below.
+- [x] `models/arena3d.ts`: themes (D4) — ground colours, edge (cliffs or other border), wall and
       bush shapes per theme; `buildArena(arena, theme)`.
-- [ ] `ArenaScene.svelte`: draw the arena it is given instead of `CANYON`; the light's shadow
+- [x] `ArenaScene.svelte`: draw the arena it is given instead of `CANYON`; the light's shadow
       area covers Large.
-- [ ] `/?gallery`: a section that shows each world's ground and cover, to look at the themes.
-- [ ] Tests: every theme id of the catalogue has a look; building every world × size gives
+- [x] `/?gallery`: a section that shows each world's ground and cover, to look at the themes.
+- [x] Tests: every theme id of the catalogue has a look; building every world × size gives
       ground, walls and cover.
-- [ ] Check: `npm test; npm run check`; in the browser, `/?gallery` and a Large world at iPad
-      size (820 × 1180) — screenshots of several themes, frame rate noted.
+- [x] Check: `npm test; npm run check`; in the browser, `/?gallery` and a Large world at iPad
+      size (820 × 1180) — screenshots of several themes, frame rate noted. (Tests, type check and
+      the gallery were checked; the iPad size and frame rate move to Step 4, where matches draw a
+      chosen world.)
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+**Done (2026-11-17 · ~11 min · Claude Haiku 5.5)** — Checked the earlier Step 3 work and fixed two things: the grid's sky backdrops hid the rows behind them, so they now show only in the single-world view; `themes.test.ts` checks that each arena has bushes, not just that the group exists. Themes, arena drawing, `ArenaScene` shadow reach for Large (26) and the `/?gallery` routing were reviewed and left as they were. `npm test` 304 tests pass (31 files) · `npm run check` 0 errors, 0 warnings · browser: `/?gallery=worlds` shows all 13 worlds in a grid, `&world=lava-forge&size=large` renders the Large arena · ~6.15 M · ~CHF 0.08
+
+Deviations: `buildArena(arena, themeId)` takes a `ThemeId` (default `canyon`), not a `Theme` object. The gallery is at `/?gallery=worlds`, because `/?gallery` alone is still the fighter gallery. Canyon Small spawn (0,-10) sits behind a wall; kept as in Step 1.
+
+Browser notes: checked in the desktop browser viewport only. Not done: the iPad 820 × 1180 check, the frame-rate note, and screenshots of several themes (only Lava Forge Large and the all-worlds grid were captured).
 
 ---
 

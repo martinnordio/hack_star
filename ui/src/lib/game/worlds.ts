@@ -19,25 +19,14 @@ export type WorldId =
   | 'moon-base'
   | 'desert-oasis'
 
-export type WorldTheme =
-  | 'canyon'
-  | 'jungle'
-  | 'neon'
-  | 'lava'
-  | 'sky'
-  | 'crystal'
-  | 'city'
-  | 'kata'
-  | 'candy'
-  | 'robot'
-  | 'pirate'
-  | 'moon'
-  | 'oasis'
+/** Looks of the worlds (models/themes.ts has one look per id). */
+export const THEME_IDS = ['canyon', 'jungle', 'neon', 'lava', 'sky', 'crystal', 'city', 'kata', 'candy', 'robot', 'pirate', 'moon', 'oasis'] as const
+export type ThemeId = (typeof THEME_IDS)[number]
 
 export interface WorldInfo {
   id: WorldId
   free: boolean
-  theme: WorldTheme
+  theme: ThemeId
   /** Seed of the layout generator: the same seed always gives the same layout. */
   seed: number
 }
