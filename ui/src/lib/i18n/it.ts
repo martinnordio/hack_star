@@ -135,6 +135,12 @@ export const it: Record<TextKey, string> = {
   'hackScreen.timeRemaining': '{days} g {hours} h rimanenti',
   'hackScreen.confirmReset': 'Spegnere tutti gli hack?',
   'hackScreen.reset': 'Azzera tutti gli hack',
+  'hackScreen.worldCoinsAmount': '{coins} monete del mondo',
+  'hackScreen.worldCoinsSubtitle': 'Spendile per nuovi mondi.',
+  'hackScreen.worldCodeWait': 'Hai già usato questo codice. Puoi riutilizzarlo dal {date}.',
+  'hackScreen.worldCodesUsed': 'Codici monete del mondo usati',
+  'hackScreen.worldCodeFrom': 'Di nuovo dal {date}',
+  'hackScreen.worldCodeReady': 'Può essere riutilizzato',
 
   'celebration.hacked': 'HACKERATO!',
 
@@ -156,6 +162,7 @@ export const it: Record<TextKey, string> = {
     "Questa pagina è stata aperta con {host}, che funziona solo su questo computer. Aprila con l'indirizzo {network} che mostra {command} (per esempio {example}), così i codici QR funzionano su iPad e telefoni.",
   'qr.print': 'Stampa',
   'qr.imageAlt': 'Codice QR per {name}',
+  'qr.worldCoinsDescription': 'Aggiunge monete del mondo. Può essere riutilizzato dopo {days} giorni.',
 
   'friends.intro':
     'Ognuno sul proprio iPad, telefono o computer, sulla stessa rete Wi-Fi: tu e fino a 2 amici in una squadra contro i bot.',

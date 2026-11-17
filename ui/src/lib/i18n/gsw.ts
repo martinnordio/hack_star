@@ -135,6 +135,12 @@ export const gsw: Record<TextKey, string> = {
   'hackScreen.timeRemaining': '{days}T {hours}Std no übrig',
   'hackScreen.confirmReset': 'Alli Hacks abstelle?',
   'hackScreen.reset': 'Alli Hacks zruggsetze',
+  'hackScreen.worldCoinsAmount': '{coins} Wält-Münze',
+  'hackScreen.worldCoinsSubtitle': 'Gib si für neui Wälte uus.',
+  'hackScreen.worldCodeWait': 'Du hesch dä Code scho bruucht. Du chasch en ab {date} wider bruuche.',
+  'hackScreen.worldCodesUsed': 'Benutzti Wält-Münze-Code',
+  'hackScreen.worldCodeFrom': 'Wider ab {date}',
+  'hackScreen.worldCodeReady': 'Cha wider bruucht werde',
 
   'celebration.hacked': 'GHACKT!',
 
@@ -156,6 +162,7 @@ export const gsw: Record<TextKey, string> = {
     'Die Siite isch mit {host} uftaa worde, das gaht nur uf däm Computer. Mach sie mit de {network}-Adrässe uf, wo {command} aazeigt (zum Biispiel {example}), dass d QR-Codes uf iPads und Handys gönd.',
   'qr.print': 'Drucke',
   'qr.imageAlt': 'QR-Code für {name}',
+  'qr.worldCoinsDescription': 'Bringt Wält-Münze. Cha nach {days} Taage wider bruucht werde.',
 
   'friends.intro':
     'Spieled uf eune eigete iPads, Handys oder Computer im gliiche WLAN: du und bis zu 2 Fründe imene Team gäge d Bots.',

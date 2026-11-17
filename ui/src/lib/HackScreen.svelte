@@ -1,25 +1,33 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { codeFromScan, hackTimeRemaining, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, hackTimeRemaining, isHackActive, isWorldCoinHack, maskCode, redeem, UnknownCodeError, useWorldCode, withHack, type Hack } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
-  import { t, tOr } from './i18n'
+  import { language, t, tOr } from './i18n'
+  import type { Language } from './i18n/languages'
 
   /** `initialCode` comes from a scanned link that opened the game (`?hack=`). */
   let { hacks, initialCode }: { hacks: Hack[]; initialCode?: string } = $props()
+
+  const DATE_LOCALE: Record<Language, string> = { en: 'en-GB', de: 'de-DE', gsw: 'de-CH', es: 'es-ES', it: 'it-IT' }
+  const dayText = (ms: number, lang: Language) =>
+    new Date(ms).toLocaleDateString(DATE_LOCALE[lang], { day: 'numeric', month: 'long', year: 'numeric' })
 
   let code = $state('')
   let now = $state(Date.now())
   let busy = $state(false)
   let error = $state<'hackScreen.unknownCode' | 'common.serverDown'>()
+  /** Set when a world-coin code was used before its reuse date: the date it works again. */
+  let waitingUntil = $state<number>()
   let shake = $state(false)
-  let celebrating = $state<Hack>()
+  let celebrating = $state<{ title: string; subtitle: string }>()
   let confirmReset = $state(false)
   let scanning = $state(false)
   let celebrationTimer: ReturnType<typeof setTimeout> | undefined
   let handledInitialCode: string | undefined
 
   const active = $derived(hacks.filter((h) => isHackActive($progress, h.id, now)))
+  const usedWorldCodes = $derived(hacks.filter(isWorldCoinHack).filter((h) => $progress.worldCodes[h.id] !== undefined))
 
   $effect(() => {
     const updateTime = () => (now = Date.now())
@@ -43,22 +51,46 @@
     return () => window.clearTimeout(timeout)
   })
 
+  function clearError() {
+    error = undefined
+    waitingUntil = undefined
+  }
+
+  function refuse() {
+    shake = false
+    requestAnimationFrame(() => (shake = true))
+  }
+
+  function celebrate(title: string, subtitle: string) {
+    celebrating = { title, subtitle }
+    clearTimeout(celebrationTimer)
+    celebrationTimer = setTimeout(() => (celebrating = undefined), 2600)
+  }
+
   async function apply(text: string) {
     if (!text.trim() || busy) return
     busy = true
-    error = undefined
+    clearError()
     try {
       const hack = await redeem(text)
-      progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      if (isWorldCoinHack(hack)) {
+        const result = useWorldCode($progress, hack)
+        if (!result.ok) {
+          waitingUntil = result.availableAt
+          refuse()
+          return
+        }
+        progress.update(() => result.progress)
+        celebrate($t('hackScreen.worldCoinsAmount', { coins: hack.world_coins }), $t('hackScreen.worldCoinsSubtitle'))
+      } else {
+        progress.update((p) => withHack(p, hack.id, hack.duration_seconds))
+        celebrate($tOr(`hack.${hack.id}.name`, hack.name), $tOr(`hack.${hack.id}.description`, hack.description))
+      }
       now = Date.now()
       code = ''
-      celebrating = hack
-      clearTimeout(celebrationTimer)
-      celebrationTimer = setTimeout(() => (celebrating = undefined), 2600)
     } catch (e) {
       error = e instanceof UnknownCodeError ? 'hackScreen.unknownCode' : 'common.serverDown'
-      shake = false
-      requestAnimationFrame(() => (shake = true))
+      refuse()
     } finally {
       busy = false
     }
@@ -96,11 +128,13 @@
         spellcheck="false"
         maxlength="100"
         placeholder="●●●●●●"
-        oninput={() => (error = undefined)}
+        oninput={clearError}
       />
       <button class="go" disabled={busy || !code.trim()}>{$t('hackScreen.go')}</button>
     </div>
-    {#if error}
+    {#if waitingUntil !== undefined}
+      <p class="error" role="alert">{$t('hackScreen.worldCodeWait', { date: dayText(waitingUntil, $language) })}</p>
+    {:else if error}
       <p class="error" role="alert">{$t(error)}</p>
     {/if}
   </form>
@@ -152,13 +186,30 @@
       {/if}
     {/if}
   </section>
+
+  {#if usedWorldCodes.length > 0}
+    <section>
+      <h3>{$t('hackScreen.worldCodesUsed')}</h3>
+      <ul class="used">
+        {#each usedWorldCodes as hack (hack.id)}
+          {@const availableAt = $progress.worldCodes[hack.id] ?? 0}
+          <li>
+            <code>{maskCode(hack.code)}</code>
+            <span>{$t('hackScreen.worldCoinsAmount', { coins: hack.world_coins })}</span>
+            <small>
+              {availableAt > now
+                ? $t('hackScreen.worldCodeFrom', { date: dayText(availableAt, $language) })
+                : $t('hackScreen.worldCodeReady')}
+            </small>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 </div>
 
 {#if celebrating}
-  <Celebration
-    title={$tOr(`hack.${celebrating.id}.name`, celebrating.name)}
-    subtitle={$tOr(`hack.${celebrating.id}.description`, celebrating.description)}
-  />
+  <Celebration title={celebrating.title} subtitle={celebrating.subtitle} />
 {/if}
 
 <style>
@@ -281,6 +332,25 @@
   .none {
     margin: 0;
     opacity: 0.8;
+  }
+
+  .used {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .used li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0.8rem;
+  }
+
+  .used code {
+    letter-spacing: 0.1em;
   }
 
   .active {

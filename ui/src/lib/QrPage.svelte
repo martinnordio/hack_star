@@ -1,6 +1,6 @@
 <script lang="ts">
   import QRCode from 'qrcode'
-  import { hackLink, isQrPassword, listHacks, type Hack } from './hacks'
+  import { hackLink, isQrPassword, isWorldCoinHack, listHacks, type Hack } from './hacks'
   import { t, tOr } from './i18n'
 
   let cards = $state<{ hack: Hack; link: string; image: string }[]>()
@@ -65,12 +65,13 @@
   {:else}
     <div class="cards">
       {#each cards as { hack, image } (hack.id)}
-        {@const name = $tOr(`hack.${hack.id}.name`, hack.name)}
+        {@const name = isWorldCoinHack(hack) ? $t('hackScreen.worldCoinsAmount', { coins: hack.world_coins }) : $tOr(`hack.${hack.id}.name`, hack.name)}
+        {@const description = isWorldCoinHack(hack) ? $t('qr.worldCoinsDescription', { days: hack.reuse_days }) : $tOr(`hack.${hack.id}.description`, hack.description)}
         <figure>
           <img src={image} alt={$t('qr.imageAlt', { name })} />
           <figcaption>
             <strong>{name}</strong>
-            <span>{$tOr(`hack.${hack.id}.description`, hack.description)}</span>
+            <span>{description}</span>
             <code>{hack.code}</code>
           </figcaption>
         </figure>

@@ -6,8 +6,12 @@ from hack_star_server.app import app
 client = TestClient(app)
 
 
+def normal_hacks() -> list[dict]:
+    return [h for h in client.get("/api/hacks").json() if h["world_coins"] is None]
+
+
 def test_five_hacks() -> None:
-    codes = {h["code"]: h["id"] for h in client.get("/api/hacks").json()}
+    codes = {h["code"]: h["id"] for h in normal_hacks()}
     assert codes == {
         "INFINITY": "infinite_credits",
         "OPENSESAME": "unlock_all",
@@ -18,7 +22,7 @@ def test_five_hacks() -> None:
 
 
 def test_hack_durations() -> None:
-    durations = {h["id"]: h["duration_seconds"] for h in client.get("/api/hacks").json()}
+    durations = {h["id"]: h["duration_seconds"] for h in normal_hacks()}
     assert durations == {
         "infinite_credits": 72 * 60 * 60,
         "unlock_all": 72 * 60 * 60,

@@ -4,12 +4,23 @@ import { SETTINGS } from './game/settings'
 export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge' | 'creator'
 
 export interface Hack {
-  id: HackId
+  id: string
   code: string
   name: string
   description: string
   duration_seconds: number | null
+  /** Only world-coin codes: the coins they add. */
+  world_coins?: number | null
+  /** Only world-coin codes: the days until the same account can use the code again. */
+  reuse_days?: number | null
 }
+
+export interface WorldCoinHack extends Hack {
+  world_coins: number
+  reuse_days: number
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
 
 export type HackTimeRemaining = { kind: 'permanent' } | { kind: 'timed'; days: number; hours: number }
 
@@ -57,7 +68,7 @@ export function hackLink(origin: string, code: string): string {
   return `${origin}/?hack=${encodeURIComponent(code)}`
 }
 
-export function withHack(progress: Progress, id: HackId, durationSeconds: number | null, now = Date.now()): Progress {
+export function withHack(progress: Progress, id: string, durationSeconds: number | null, now = Date.now()): Progress {
   const activeHacks = progress.activeHacks.includes(id) ? progress.activeHacks : [...progress.activeHacks, id]
   return {
     ...progress,
@@ -67,6 +78,31 @@ export function withHack(progress: Progress, id: HackId, durationSeconds: number
       [id]: durationSeconds === null ? null : now + durationSeconds * 1000,
     },
   }
+}
+
+export function isWorldCoinHack(hack: Hack): hack is WorldCoinHack {
+  return typeof hack.world_coins === 'number' && typeof hack.reuse_days === 'number'
+}
+
+export type WorldCodeResult = { ok: true; progress: Progress } | { ok: false; availableAt: number }
+
+/** A world-coin code adds its coins; the same account can use it again only after `reuse_days`. */
+export function useWorldCode(progress: Progress, hack: WorldCoinHack, now = Date.now()): WorldCodeResult {
+  const availableAt = progress.worldCodes[hack.id]
+  if (availableAt !== undefined && availableAt > now) return { ok: false, availableAt }
+  return {
+    ok: true,
+    progress: {
+      ...progress,
+      worldCoins: progress.worldCoins + hack.world_coins,
+      worldCodes: { ...progress.worldCodes, [hack.id]: now + hack.reuse_days * DAY_MS },
+    },
+  }
+}
+
+/** A used code on screen: the first four and the last character only. */
+export function maskCode(code: string): string {
+  return `${code.slice(0, 4)}••••${code.slice(-1)}`
 }
 
 export function isHackActive(progress: Progress, id: string, now = Date.now()): boolean {

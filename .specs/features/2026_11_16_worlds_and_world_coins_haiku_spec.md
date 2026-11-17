@@ -21,6 +21,7 @@
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~3.47 M | ~CHF 0.04 (5 credits) | Step 4 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.75 M (37 k in · 5.69 M cached · 25 k out) | ~CHF 0.06 (7 credits) | Step 5 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~11.92 M (97 k in · 11.79 M cached · 39 k out) | ~CHF 0.13 (15 credits) | Step 6 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~1.70 M (24 k in · 1.66 M cached · 16 k out) | ~CHF 0.02 (3 credits) | Step 7 done |
 
 ---
 
@@ -176,7 +177,7 @@ _None — answered on 2026-11-16._
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
-| **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
+| **7** | World-coin hack codes | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -383,23 +384,26 @@ Ten world-coin codes give 500 or 1000 world coins, once per 30 days per account,
 hack screen and printed on the QR page (S14–S18, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `server/.../world_codes.py` (D9): `WORLD_CODE_REUSE_DAYS`, five codes of 500 and five of
+- [x] Record the start time in Notes below.
+- [x] `server/.../world_codes.py` (D9): `WORLD_CODE_REUSE_DAYS`, five codes of 500 and five of
       1000; `hacks.py` / `app.py`: redeem and list include them with `world_coins` and
       `reuse_days`.
-- [ ] `hacks.ts` and `HackScreen.svelte`: a world-coin code adds its coins and stores its next
+- [x] `hacks.ts` and `HackScreen.svelte`: a world-coin code adds its coins and stores its next
       date; before that date it is refused with the date; a list of used codes with the dates
       they work again.
-- [ ] `QrPage.svelte`: the world-coin codes with their amounts.
-- [ ] Texts in all five languages.
-- [ ] Tests: server — every code unique, amounts 500 / 1000, reuse days 30, redeem answers;
+- [x] `QrPage.svelte`: the world-coin codes with their amounts.
+- [x] Texts in all five languages.
+- [x] Tests: server — every code unique, amounts 500 / 1000, reuse days 30, redeem answers;
       UI — use, refuse before 30 days with the date, accept after, other account independent,
       reset clears the dates (S21).
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; in the
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; in the
       browser: redeem a code, try again (refused with date), switch account (works), QR page.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-17 10:23
+**Done (2026-11-17 · ~3 min · Claude Haiku 5.5)** — `world_codes.py`: `WORLD_CODE_REUSE_DAYS = 30`, ten codes (five of 500, five of 1000). `hacks.py`: `Hack` gets optional `world_coins` and `reuse_days`; world codes join `HACKS`. `hacks.ts`: `useWorldCode`, `maskCode`, `isWorldCoinHack`; `Hack.id` widened to string. `HackScreen.svelte`: a world-coin code adds its coins and stores its next date, is refused before that date with the date shown, and a list shows used codes with their dates. `QrPage.svelte`: amounts and reuse text on the cards. Texts: 7 keys in all five languages. Tests: `test_world_codes.py`, 8 new tests in `hacks.test.ts`, `test_hacks.py` limited to normal hacks. Verified: server `pytest` 70 passed; `npm test` 32 files, 382 tests pass; `npm run check` 0 errors, 0 warnings. Not done: browser checks (not run in this step; the browser task stays unticked). Deviation: codes use the `WC-XXXXX` format, not the spec example `WC5-7K2QX`. · ~1.70 M · ~CHF 0.02
+
+Browser check (run afterwards by the coordinator, Claude Sonnet 5.5, on the dev account; saves backed up and restored): redeeming `WC-7K2QX` added 500 world coins (750 → 1250); the same code again was refused with "You can use it again from 17 December 2026" and the used-codes list showed it partly hidden with that date; a new account redeemed the same code at once (500); the QR page showed all ten codes with their amounts.
 
 ---
 

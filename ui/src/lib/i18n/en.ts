@@ -133,6 +133,12 @@ export const en = {
   'hackScreen.timeRemaining': '{days}d {hours}h left',
   'hackScreen.confirmReset': 'Turn all hacks off?',
   'hackScreen.reset': 'Reset all hacks',
+  'hackScreen.worldCoinsAmount': '{coins} world coins',
+  'hackScreen.worldCoinsSubtitle': 'Spend them on new worlds.',
+  'hackScreen.worldCodeWait': 'You already used this code. You can use it again from {date}.',
+  'hackScreen.worldCodesUsed': 'World-coin codes used',
+  'hackScreen.worldCodeFrom': 'Again from {date}',
+  'hackScreen.worldCodeReady': 'Can be used again',
 
   'celebration.hacked': 'HACKED!',
 
@@ -154,6 +160,7 @@ export const en = {
     'This page was opened with {host}, which only works on this computer. Open it with the {network} address that {command} prints (for example {example}) so the QR codes work on iPads and phones.',
   'qr.print': 'Print',
   'qr.imageAlt': 'QR code for {name}',
+  'qr.worldCoinsDescription': 'Adds world coins. Can be used again after {days} days.',
 
   'friends.intro':
     'Play on your own iPads, phones or computers on the same Wi-Fi: you and up to 2 friends on one team against the bots.',
