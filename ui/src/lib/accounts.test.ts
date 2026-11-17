@@ -184,6 +184,55 @@ describe('accounts', () => {
     second.destroy()
   })
 
+  it('two tabs: a world bought in one and a match reward in the other both count', () => {
+    const storage = memoryStorage()
+    const firstEvents = syncTarget()
+    const secondEvents = syncTarget()
+    const first = createAccountsStore(storage, 'en', firstEvents.target)
+    const second = createAccountsStore(storage, 'en', secondEvents.target)
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+
+    firstProgress.update((p) => ({ ...p, worldCoins: 1000 }))
+    secondEvents.storageChanged()
+    firstProgress.update((p) => ({ ...p, worldCoins: p.worldCoins - 500, worlds: { ...p.worlds, 'lava-forge': 'small' } }))
+    secondProgress.update((p) => ({ ...p, trophies: { blaze: 500 }, worldSteps: 1, worldCoins: p.worldCoins + 250 }))
+
+    expect(get(secondProgress)).toMatchObject({ worldCoins: 750, worldSteps: 1 })
+    expect(get(secondProgress).worlds['lava-forge']).toBe('small')
+    first.destroy()
+    second.destroy()
+  })
+
+  it('two tabs that both see the same trophy step give its world coins once', () => {
+    const storage = memoryStorage()
+    const first = createAccountsStore(storage, 'en', syncTarget().target)
+    const second = createAccountsStore(storage, 'en', syncTarget().target)
+    progressStore(first).update((p) => ({ ...p, trophies: { blaze: 500 }, worldSteps: 1, worldCoins: 250 }))
+    progressStore(second).update((p) => ({ ...p, trophies: { blaze: 510 }, worldSteps: 1, worldCoins: 250 }))
+
+    expect(get(progressStore(second))).toMatchObject({ worldSteps: 1, worldCoins: 250 })
+    first.destroy()
+    second.destroy()
+  })
+
+  it('two tabs: a world grown in each keeps the bigger size; world codes from both are kept', () => {
+    const storage = memoryStorage()
+    const first = createAccountsStore(storage, 'en', syncTarget().target)
+    const second = createAccountsStore(storage, 'en', syncTarget().target)
+    const firstProgress = progressStore(first)
+    const secondProgress = progressStore(second)
+
+    firstProgress.update((p) => ({ ...p, worlds: { ...p.worlds, canyon: 'medium' } }))
+    secondProgress.update((p) => ({ ...p, worlds: { ...p.worlds, canyon: 'large' }, worldCodes: { 'code-a': 9999 } }))
+    expect(get(secondProgress).worlds.canyon).toBe('large')
+
+    firstProgress.update((p) => ({ ...p, worldCodes: { 'code-b': 5 } }))
+    expect(get(firstProgress)).toMatchObject({ worldCodes: { 'code-a': 9999, 'code-b': 5 }, worlds: { canyon: 'large' } })
+    first.destroy()
+    second.destroy()
+  })
+
   it('merges created skins of two tabs: adds from both, deletions kept, same id renumbered', () => {
     const storage = memoryStorage()
     const look = { name: 'Nova', type: 'tank' as const, main: '#ff0000', second: '#00ff00', head: 0, body: 0, hands: 0, legs: 0 }

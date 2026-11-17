@@ -59,6 +59,23 @@ export const WORLDS: readonly WorldInfo[] = [
   { id: 'desert-oasis', free: false, theme: 'oasis', seed: 13 },
 ]
 
+export const WORLD_IDS: readonly WorldId[] = WORLDS.map((w) => w.id)
+/** The world every account starts with (Canyon, Small). */
+export const DEFAULT_WORLD: WorldId = 'canyon'
+
+export function isWorldId(value: unknown): value is WorldId {
+  return typeof value === 'string' && (WORLD_IDS as readonly string[]).includes(value)
+}
+
+export function isWorldSize(value: unknown): value is WorldSize {
+  return typeof value === 'string' && (WORLD_SIZES as readonly string[]).includes(value)
+}
+
+/** 0 for Small, 1 for Medium, 2 for Large. */
+export function sizeIndex(size: WorldSize): number {
+  return WORLD_SIZES.indexOf(size)
+}
+
 interface SizeLayout {
   width: number
   depth: number

@@ -10,6 +10,7 @@ import {
   saveProgress,
   startProgress,
   totalTrophies,
+  type Progress,
 } from './progress'
 
 describe('progress', () => {
@@ -61,7 +62,7 @@ describe('progress', () => {
     const { hackExpiries: _hackExpiries, createdFighters: _createdFighters, ...progress } = defaultProgress()
     const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'], createdFighter: null }
     const migrated = parseProgress(legacy, 1000)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.hackExpiries).toEqual({
       infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
       power22: null,
@@ -87,7 +88,7 @@ describe('progress', () => {
     }
     const migrated = parseProgress(v5, 1000)
     expect(migrated).toMatchObject({
-      version: 7,
+      version: 8,
       credits: 321,
       selectedFighter: 'custom',
       trophies: { custom: 42 },
@@ -108,7 +109,7 @@ describe('progress', () => {
       createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Two' } }],
     }
     const migrated = parseProgress(v6)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.trophies).toEqual({ 'custom-2': 9 })
     expect(migrated?.createdFighters).toEqual([
       { id: 'custom', look: { ...look, hands: 0, legs: 0 }, skins: [] },
@@ -165,5 +166,45 @@ describe('progress', () => {
     expect(withFighter({ skins: [{ ...skin, id: 's6' }] })).toBeNull()
     expect(withFighter({ skins: [1, 2, 3, 4, 5, 6].map((n) => ({ ...skin, id: `s${n}` })) })).toBeNull()
     expect(withFighter({ skins: undefined })).toBeNull()
+  })
+
+  it('migrates version 7: 1240 trophies give 500 world coins, the three free worlds and Canyon Small', () => {
+    const { worldCoins: _worldCoins, worldSteps: _worldSteps, worlds: _worlds, selectedWorld: _selectedWorld, worldCodes: _worldCodes, ...v7 } = {
+      ...defaultProgress(),
+      trophies: { blaze: 1240 },
+    }
+    const migrated = parseProgress({ ...v7, version: 7 })
+    expect(migrated).toMatchObject({ version: 8, worldCoins: 500, worldSteps: 2, selectedWorld: { id: 'canyon', size: 'small' }, worldCodes: {} })
+    expect(Object.keys(migrated?.worlds ?? {})).toHaveLength(3)
+    expect(Object.values(migrated?.worlds ?? {})).toEqual(['small', 'small', 'small'])
+    expect(migrated?.worlds.canyon).toBe('small')
+  })
+
+  it('refuses version 8 saves with bad world fields', () => {
+    const v8 = defaultProgress()
+    expect(parseProgress({ ...v8, worldCoins: -1 })).toBeNull()
+    expect(parseProgress({ ...v8, worldSteps: 1.5 })).toBeNull()
+    expect(parseProgress({ ...v8, worlds: { canyon: 'huge' } })).toBeNull()
+    expect(parseProgress({ ...v8, selectedWorld: { id: 'canyon', size: 'huge' } })).toBeNull()
+  })
+
+  it('a new account starts with 0 world coins, 0 steps, the three free worlds in Small and Canyon Small chosen', () => {
+    const p = startProgress()
+    expect(p).toMatchObject({ worldCoins: 0, worldSteps: 0, selectedWorld: { id: 'canyon', size: 'small' }, worldCodes: {} })
+    expect(p.worlds).toEqual({ canyon: 'small', 'jungle-ruins': 'small', 'neon-docks': 'small' })
+  })
+
+  it('reset: 0 world coins and steps, free worlds only, Canyon Small chosen, world codes usable again', () => {
+    const before: Progress = {
+      ...defaultProgress(),
+      worldCoins: 900,
+      worldSteps: 4,
+      worlds: { canyon: 'large', 'lava-forge': 'medium' },
+      selectedWorld: { id: 'lava-forge', size: 'medium' },
+      worldCodes: { 'code-a': 99 },
+    }
+    const p = resetProgress(before)
+    expect(p).toMatchObject({ worldCoins: 0, worldSteps: 0, selectedWorld: { id: 'canyon', size: 'small' }, worldCodes: {} })
+    expect(p.worlds).toEqual(startProgress().worlds)
   })
 })

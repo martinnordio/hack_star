@@ -1,6 +1,7 @@
 import { derived, writable, type Readable } from 'svelte/store'
 import { nextCreatedFighterId, nextCreatedSkinId } from './created'
 import { SETTINGS } from './game/settings'
+import { sizeIndex, type WorldSize } from './game/worlds'
 import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { MAX_CREATED_SKINS, PROGRESS_KEY, parseProgress, startProgress, type CreatedSkin, type Progress } from './progress'
@@ -238,6 +239,11 @@ function mergeCreatedFighters(
   return { fighters: merged, acceptedLocalCost }
 }
 
+/** Sizes only grow: the bigger size wins when two tabs grow the same world. */
+function biggerSize(_base: WorldSize, localSize: WorldSize, remoteSize: WorldSize): WorldSize {
+  return sizeIndex(localSize) >= sizeIndex(remoteSize) ? localSize : remoteSize
+}
+
 function mergeProgress(base: Progress, local: Progress, remote: Progress): Progress {
   const merged: Progress = { ...remote }
   let rejectedCreationRefund = 0
@@ -274,6 +280,21 @@ function mergeProgress(base: Progress, local: Progress, remote: Progress): Progr
   }
   if (local.credits !== base.credits || rejectedCreationRefund !== 0) {
     merged.credits = Math.max(0, remote.credits + local.credits - base.credits + rejectedCreationRefund)
+  }
+  if (local.worldSteps !== base.worldSteps) {
+    merged.worldSteps = local.worldSteps < base.worldSteps ? local.worldSteps : Math.max(remote.worldSteps, local.worldSteps)
+  }
+  if (local.worldCoins !== base.worldCoins || local.worldSteps !== base.worldSteps) {
+    // A step paid in both tabs gives its world coins once.
+    const paidInBoth = Math.max(0, Math.min(local.worldSteps, remote.worldSteps) - base.worldSteps)
+    merged.worldCoins = Math.max(0, remote.worldCoins + local.worldCoins - base.worldCoins - paidInBoth * SETTINGS.worldCoinsPerStep)
+  }
+  if (!same(base.worlds, local.worlds)) merged.worlds = mergeMap(base.worlds, local.worlds, remote.worlds, biggerSize)
+  if (!same(base.selectedWorld, local.selectedWorld)) merged.selectedWorld = local.selectedWorld
+  if (!same(base.worldCodes, local.worldCodes)) {
+    merged.worldCodes = mergeMap(base.worldCodes, local.worldCodes, remote.worldCodes, (_base, localTime, remoteTime) =>
+      Math.max(localTime, remoteTime),
+    )
   }
   return merged
 }

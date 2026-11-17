@@ -56,6 +56,14 @@ export interface Settings {
   superDamage: number
   /** How much faster the Super charges with the HYPERCHARGE hack. */
   hackSuperGain: number
+  /** Every multiple of this many trophies (in total) pays world coins once. */
+  trophiesPerWorldStep: number
+  /** World coins paid for each such step. */
+  worldCoinsPerStep: number
+  /** World coins to unlock a world at its biggest size: Small, Medium or Large. */
+  worldPrices: Record<'small' | 'medium' | 'large', number>
+  /** World coins to grow an unlocked world by one size. */
+  worldSizeStep: number
 }
 
 export const SETTINGS: Settings = {
@@ -93,6 +101,10 @@ export const SETTINGS: Settings = {
   hyperSuperShots: 7,
   superDamage: 1.2,
   hackSuperGain: 3,
+  trophiesPerWorldStep: 500,
+  worldCoinsPerStep: 250,
+  worldPrices: { small: 500, medium: 750, large: 1000 },
+  worldSizeStep: 250,
 }
 
 export interface BotSkill {

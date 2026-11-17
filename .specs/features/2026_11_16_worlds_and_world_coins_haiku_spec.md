@@ -16,6 +16,7 @@
 | 2026-11-16 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | — | — | issue #24 created |
 | 2026-11-16 | plan | `PLAN:` | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | Part 2 written |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~2.08 M | ~CHF 0.03 (3 credits) | Step 1 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.90 M | ~CHF 0.07 (8 credits) | Step 2 done |
 
 ---
 
@@ -166,7 +167,7 @@ _None — answered on 2026-11-16._
 | Step | Description | Status | Detail |
 |------|-------------|--------|--------|
 | **1** | World catalogue and sizes | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
-| **2** | World coins, worlds and saved progress v8 | ⬜ Not started | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
+| **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
@@ -237,24 +238,27 @@ Accounts earn world coins per 500 trophies, buy worlds and bigger sizes, and kee
 saved progress v8 with old saves migrated (S8–S13, S19, S20, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `progress.ts`: version 8 fields and start values (D6); migration from v2–v7 with world
+- [x] Record the start time in Notes below.
+- [x] `progress.ts`: version 8 fields and start values (D6); migration from v2–v7 with world
       coins for trophies already reached; `resetProgress` resets them (S21).
-- [ ] `accounts.ts`: merge rules for the new fields (D7).
-- [ ] `settings.ts` numbers and `game/worldShop.ts` rules (D8): earning per new 500-step,
+- [x] `accounts.ts`: merge rules for the new fields (D7).
+- [x] `settings.ts` numbers and `game/worldShop.ts` rules (D8): earning per new 500-step,
       buying in Small / Small + Medium / all sizes, growing one size for 250, refusals with the
       missing amount, already unlocked refused; credits and the infinite-credits and
       UNLOCK_ALL hacks do not count (S10).
-- [ ] `Arena.svelte` `saveReward`: add world coins when a match passes a 500-step, and keep the
+- [x] `Arena.svelte` `saveReward`: add world coins when a match passes a 500-step, and keep the
       amount for the result screen.
-- [ ] Tests: earning (499 → 509 gives 250; 990 → 1010 gives 250; a step is never paid twice);
+- [x] Tests: earning (499 → 509 gives 250; 990 → 1010 gives 250; a step is never paid twice);
       prices and size rules; migration (1240 trophies → 500 world coins, free worlds, Canyon
       Small chosen; v2–v7 saves load); reset; two-tab merges (a purchase and a match in two
       tabs, codes, sizes).
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-17 09:32
+**Done (2026-11-17 · ~6 min · Claude Haiku 5.5)** — Saved progress v8 (`worldCoins`, `worldSteps`, `worlds`, `selectedWorld`, `worldCodes`) with migration from v2–v7 and reset; `settings.ts` prices and amounts; `game/worldShop.ts` earning, buy, grow, choose and refusals; `accounts.ts` two-tab merges; `Arena.svelte` pays world coins per new 500-step. `npm test` 30 files, 299 tests pass; `npm run check` 0 errors, 0 warnings · ~5.90 M · ~CHF 0.07
+
+Deviations: `worlds.ts` gained `WORLD_IDS`, `DEFAULT_WORLD`, `isWorldId`, `isWorldSize`, `sizeIndex` (named in the brief, missing from the code). `worldCoinsFor(total, paidSteps)` uses the brief's signature, not D8's `(totalBefore, totalAfter, steps)`. A step paid in two tabs counts once (`paidInBoth` in `accounts.ts`). Reset also clears `worldCodes` (S21). Open: `worldCoinsEarned` is stored in `Arena.svelte` but not yet shown on the result screen.
 
 ---
 
