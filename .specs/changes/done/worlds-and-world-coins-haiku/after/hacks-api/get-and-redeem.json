@@ -1,0 +1,32 @@
+﻿{
+  "count": 15,
+  "normal codes": [
+    "INFINITY",
+    "OPENSESAME",
+    "POWER22",
+    "HYPERCHARGE",
+    "CREATOR"
+  ],
+  "last entry": {
+    "id": "wc1000-5",
+    "code": "WC-F7YSU",
+    "name": "1000 world coins",
+    "description": "Adds 1000 world coins. Can be used again after 30 days.",
+    "duration_seconds": null,
+    "world_coins": 1000,
+    "reuse_days": 30
+  },
+  "POST /api/hacks/redeem wc-7k2qx": {
+    "status": 200,
+    "body": {
+      "id": "wc500-1",
+      "code": "WC-7K2QX",
+      "name": "500 world coins",
+      "description": "Adds 500 world coins. Can be used again after 30 days.",
+      "duration_seconds": null,
+      "world_coins": 500,
+      "reuse_days": 30
+    }
+  }
+}
+

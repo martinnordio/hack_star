@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Worlds and world coins (Haiku run) — semantic diff</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --surface: #ffffff; --border: #d5d9e0; --text: #1a1d21; --text-dim: #4b5563;
+    --primary: #2563eb; --add: #dcfce7; --add-text: #14532d; --del: #fee2e2; --del-text: #7f1d1d;
+    --warn: #b45309; --tip-bg: #1a1d21; --tip-text: #f7f8fa;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111418; --surface: #1a1e24; --border: #343a44; --text: #e6e8eb; --text-dim: #a8afb9;
+      --primary: #6ea2ff; --add: #12301f; --add-text: #bbf7d0; --del: #3a1717; --del-text: #fecaca;
+      --warn: #fbbf24; --tip-bg: #e6e8eb; --tip-text: #111418;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 var(--font-sans); }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1100px); gap: 24px; padding: 24px; }
+  nav.toc { position: sticky; top: 24px; align-self: start; font-size: 14px; }
+  nav.toc ol { margin: 4px 0; padding-left: 18px; }
+  nav.toc a { color: var(--text-dim); text-decoration: none; }
+  nav.toc a:hover, nav.toc a:focus { color: var(--primary); }
+  header.page .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--text-dim); font-size: 14px; }
+  .recommendation { border-left: 4px solid var(--primary); padding: 8px 12px; background: var(--surface); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } nav.toc { position: static; } }
+  h1 { font-size: 24px; margin: 0 0 8px; } h2 { font-size: 19px; margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  h3 { font-size: 16px; margin: 0 0 8px; } h4 { font-size: 13px; margin: 0 0 4px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+  a { color: var(--primary); }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: var(--surface); }
+  code, pre { font-family: var(--font-mono); font-variant-ligatures: none; font-size: 13px; }
+  pre { margin: 0; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; white-space: pre; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--border); text-transform: uppercase; }
+  .added { color: var(--add-text); background: var(--add); } .removed { color: var(--del-text); background: var(--del); }
+  .modified { color: var(--warn); }
+  .note { color: var(--text-dim); margin: 4px 0 8px; }
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  main, .ba > div { min-width: 0; }
+  @media (max-width: 700px) { .ba { grid-template-columns: 1fr; } }
+  .ba pre > span { display: block; min-height: 1.5em; }
+  .ba pre .add { background: var(--add); color: var(--add-text); }
+  .ba pre .del { background: var(--del); color: var(--del-text); }
+  .absent { padding: 24px; text-align: center; color: var(--text-dim); border: 1px dashed var(--border); border-radius: 4px;
+    background: repeating-linear-gradient(45deg, transparent, transparent 6px, var(--bg) 6px, var(--bg) 12px); }
+  table.diff { font-family: var(--font-mono); font-variant-ligatures: none; font-size: 13px; border: 1px solid var(--border); display: block; overflow-x: auto; }
+  table.diff td { border: none; padding: 0 8px; white-space: pre; }
+  table.diff td.ln { color: var(--text-dim); text-align: right; width: 1%; user-select: none; }
+  table.diff tr.add td { background: var(--add); color: var(--add-text); }
+  table.diff tr.del td { background: var(--del); color: var(--del-text); }
+  .concept { border-bottom: 1px dotted var(--primary); position: relative; cursor: help; }
+  .concept .tip { display: none; position: absolute; left: 0; top: 1.6em; z-index: 10; width: 320px; padding: 8px;
+    background: var(--tip-bg); color: var(--tip-text); border-radius: 4px; font: 13px/1.4 var(--font-sans); white-space: normal; }
+  .concept:hover .tip, .concept:focus .tip { display: block; }
+  .sev-blocking { color: var(--del-text); background: var(--del); } .sev-should-fix { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Table of contents">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#spec-context">Spec context</a></li>
+    <li><a href="#semantic-diff">Semantic diff</a>
+      <ol>
+        <li><a href="#sd-progress-v8">Saved progress v8</a></li>
+        <li><a href="#sd-hacks-api">Hacks API</a></li>
+        <li><a href="#sd-start-message">Room start message</a></li>
+        <li><a href="#sd-world-settings">World settings</a></li>
+        <li><a href="#sd-world-screen">World screen</a></li>
+        <li><a href="#sd-world-catalogue">World catalogue</a></li>
+        <li><a href="#sd-qa">Author Q&amp;A</a></li>
+      </ol></li>
+    <li><a href="#previous">Previously reviewed</a></li>
+    <li><a href="#highlights">Highlights</a>
+      <ol>
+        <li><a href="#c1">Merging two tabs</a></li>
+        <li><a href="#c2">Removing old friends</a></li>
+        <li><a href="#c3">Using a world-coin code</a></li>
+      </ol></li>
+    <li><a href="#findings">Findings</a></li>
+    <li><a href="#not-covered">Not covered</a></li>
+    <li><a href="#glossary">Concepts glossary</a></li>
+    <li><a href="#checklist">Reviewer checklist</a></li>
+  </ol>
+</nav>
+<main>
+<header class="page">
+  <h1>Worlds and world coins (Haiku run) — semantic diff</h1>
+  <div class="meta">
+    <span><b>Branch</b> feature/worlds-and-world-coins-haiku</span><span><b>Base</b> a6a0f64</span><span><b>Head</b> 99b3f5b</span>
+    <span><b>Target</b> main</span><span><b>Date</b> 2026-11-17</span>
+    <span><b>Commits</b> 11</span><span><b>Files</b> 46 · +3291 / −160</span>
+    <span><b>Written by</b> REVIEW: · Claude Sonnet 5.5</span>
+  </div>
+</header>
+
+<section id="summary"><h2>Summary</h2>
+  <ul>
+    <li>Same feature as the Sonnet run, written by Claude Haiku 5.5 from the same spec: 13 worlds in three sizes, world coins, ten world-coin codes, a world screen, and worlds in rooms.</li>
+    <li>Saved progress moves to version 8; older saves migrate and the dev account's real save loaded correctly.</li>
+    <li>Tests: server 70, UI 382, all passing; type check and build pass.</li>
+    <li>The code is close to the spec and well structured; the weak points are two edge cases (a reset undone by another tab, <code>world: null</code> handled differently on server and UI) and checks that were skipped or only partly done in the browser.</li>
+  </ul>
+  <p class="recommendation"><strong>Recommendation:</strong> Approve with follow-ups — every statement is covered by code and tests; the follow-ups are small.</p>
+</section>
+
+<section id="spec-context"><h2>Spec context</h2>
+  <p><a href="../features/done/2026_11_16_worlds_and_world_coins_haiku_spec.md">2026_11_16_worlds_and_world_coins_haiku_spec.md</a> — statements S1–S24; Steps 1–8 (all done). The spec also has a section on how the model behaved.</p>
+</section>
+
+<section id="semantic-diff"><h2>Semantic diff</h2>
+  <div class="card" data-card="0-record">
+    <p><strong>Why:</strong> Every match was played in the same canyon; the change adds worlds, world coins and the screens and codes around them.</p>
+    <p><strong>Breaking:</strong> saved progress version 8 cannot be read by an older game; friends on the previous version play only in Canyon Small. · <strong>Checks:</strong> 6 pass · 3 n/a · 0 fail</p>
+    <table><tr><th>#</th><th>Check</th><th>Result</th></tr>
+      <tr><td>C1</td><td>A record exists when required</td><td>pass</td></tr>
+      <tr><td>C2</td><td>The record passes the schema</td><td>pass (read against the schema; no validator was run)</td></tr>
+      <tr><td>C3</td><td>Every S&lt;n&gt; exists in the spec</td><td>pass</td></tr>
+      <tr><td>C4</td><td>Every block's object differs Before / After</td><td>pass</td></tr>
+      <tr><td>C5</td><td>Detectable changes have a block</td><td>pass</td></tr>
+      <tr><td>C6</td><td>API / schema changes with contract docs</td><td>n/a (no contract files)</td></tr>
+      <tr><td>C7</td><td>output / api / command changes come with tests</td><td>pass</td></tr>
+      <tr><td>C8</td><td>ui / tokens changes with a UI catalog</td><td>n/a</td></tr>
+      <tr><td>C9</td><td>Added dependencies have a decision</td><td>n/a (none added)</td></tr>
+    </table>
+  </div>
+
+  <article class="card" id="sd-progress-v8" data-card="1-progress-v8">
+    <h3><span class="badge">data-format</span> Saved progress: version 7 to 8 <span class="badge modified">modified</span></h3>
+    <p class="note">Five new fields; a version 7 save gets 250 world coins per 500 trophies it already reached · S8, S19, S20, S21</p>
+    <pre class="input">parseProgress(&lt;a version 7 save with 1240 trophies&gt;)   (excerpt)</pre>
+    <div class="ba">
+      <div><h4>Before</h4><pre><span>{</span><span class="del">  &quot;version&quot;: 7,</span><span>  &quot;credits&quot;: 77,</span><span>  &quot;trophies&quot;: { &quot;blaze&quot;: 1240 },</span><span>  &quot;createdFighters&quot;: []</span><span>}</span></pre></div>
+      <div><h4>After</h4><pre><span>{</span><span class="add">  &quot;version&quot;: 8,</span><span>  &quot;credits&quot;: 77,</span><span>  &quot;trophies&quot;: { &quot;blaze&quot;: 1240 },</span><span>  &quot;createdFighters&quot;: [],</span><span class="add">  &quot;worldCoins&quot;: 500,</span><span class="add">  &quot;worldSteps&quot;: 2,</span><span class="add">  &quot;worlds&quot;: { &quot;canyon&quot;: &quot;small&quot;, &quot;jungle-ruins&quot;: &quot;small&quot;, &quot;neon-docks&quot;: &quot;small&quot; },</span><span class="add">  &quot;selectedWorld&quot;: { &quot;id&quot;: &quot;canyon&quot;, &quot;size&quot;: &quot;small&quot; },</span><span class="add">  &quot;worldCodes&quot;: {}</span><span>}</span></pre></div>
+    </div>
+  </article>
+
+  <article class="card" id="sd-hacks-api" data-card="2-hacks-api">
+    <h3><span class="badge">api</span> GET /api/hacks and POST /api/hacks/redeem <span class="badge modified">modified</span></h3>
+    <p class="note">Ten world-coin codes join the five hacks; they carry world_coins and reuse_days · S14, S15, S17, S18</p>
+    <pre class="input">GET /api/hacks
+POST /api/hacks/redeem {&quot;code&quot;: &quot;wc-7k2qx&quot;}</pre>
+    <div class="ba">
+      <div><h4>Before</h4><pre><span class="del">count: 5</span><span>normal codes: INFINITY, OPENSESAME, POWER22,</span><span>               HYPERCHARGE, CREATOR</span><span class="del">redeem wc-7k2qx: 404 {&quot;detail&quot;: &quot;Unknown code&quot;}</span></pre></div>
+      <div><h4>After</h4><pre><span class="add">count: 15</span><span>normal codes: INFINITY, OPENSESAME, POWER22,</span><span>               HYPERCHARGE, CREATOR</span><span class="add">redeem wc-7k2qx: 200</span><span class="add">  {&quot;id&quot;: &quot;wc500-1&quot;, &quot;name&quot;: &quot;500 world coins&quot;,</span><span class="add">   &quot;duration_seconds&quot;: null,</span><span class="add">   &quot;world_coins&quot;: 500, &quot;reuse_days&quot;: 30, ...}</span></pre></div>
+    </div>
+  </article>
+
+  <article class="card" id="sd-start-message" data-card="3-start-message">
+    <h3><span class="badge">message</span> Room message start, and member version <span class="badge modified">modified</span></h3>
+    <p class="note">The start message carries the host's world; members tell version 2; the server removes older members outside Canyon Small · S7. Before is the same message without <code>world</code> (manual).</p>
+    <pre class="input">startInfo(settings, members, catalogue, random, { id: 'lava-forge', size: 'large' })   (excerpt)</pre>
+    <div class="ba">
+      <div><h4>Before</h4><pre><span>{</span><span>  &quot;type&quot;: &quot;start&quot;,</span><span>  &quot;settings&quot;: { &quot;matchSeconds&quot;: 120, ... },</span><span>  &quot;fighters&quot;: [ ... ]</span><span>}</span></pre></div>
+      <div><h4>After</h4><pre><span>{</span><span>  &quot;type&quot;: &quot;start&quot;,</span><span class="add">  &quot;world&quot;: { &quot;id&quot;: &quot;lava-forge&quot;, &quot;size&quot;: &quot;large&quot; },</span><span>  &quot;settings&quot;: { &quot;matchSeconds&quot;: 120, ... },</span><span>  &quot;fighters&quot;: [ ... ]</span><span>}</span></pre></div>
+    </div>
+  </article>
+
+  <article class="card" id="sd-world-settings" data-card="4-world-settings">
+    <h3><span class="badge">config</span> SETTINGS: world coin numbers <span class="badge added">added</span></h3>
+    <p class="note">Prices and amounts live in settings.ts; the codes and the 30 days in world_codes.py · S9, S11, S12, S17</p>
+    <pre class="input">SETTINGS.trophiesPerWorldStep, worldCoinsPerStep, worldPrices, worldSizeStep</pre>
+    <div class="ba">
+      <div><h4>Before</h4><div class="absent">absent</div></div>
+      <div><h4>After</h4><pre><span class="add">trophiesPerWorldStep: 500</span><span class="add">worldCoinsPerStep:    250</span><span class="add">worldPrices: small 500, medium 750, large 1000</span><span class="add">worldSizeStep:        250</span></pre></div>
+    </div>
+  </article>
+
+  <article class="card" id="sd-world-screen" data-card="5-world-screen">
+    <h3><span class="badge">ui</span> World screen, Home world-coin chip, result line <span class="badge added">added</span></h3>
+    <p class="note">New screen before Play, Training and a room's START; Home gets a second chip · S1, S3, S8, S9, S11, S12, S13, S22, S23 · manual: no Before side; checked in the browser at 390 × 844, 844 × 390 and 820 × 1180 for overflow.</p>
+    <pre class="input">route=Home &gt; PLAY</pre>
+    <div class="ba">
+      <div><h4>Before</h4><div class="absent">PLAY started the match at once</div></div>
+      <div><h4>After</h4><pre><span class="add">Choose a world</span><span class="add">Your world coins: 750</span><span class="add">13 world cards with Small / Medium / Large buttons,</span><span class="add">locked ones with prices (500 / 750 / 1000, +250)</span><span class="add">Playing in Canyon · Small            [START]</span></pre></div>
+    </div>
+  </article>
+
+  <article class="card" id="sd-world-catalogue" data-card="6-world-catalogue">
+    <h3><span class="badge">output</span> arenaFor(worldId, size) <span class="badge added">added</span></h3>
+    <p class="note">Canyon Small is today's arena unchanged; every other layout is generated from a fixed seed · S2, S4, S5, S6 · manual: new function, checked by worlds.test.ts.</p>
+    <pre class="input">arenaFor('lava-forge', 'large')</pre>
+    <div class="ba">
+      <div><h4>Before</h4><div class="absent">absent (one arena, CANYON, 30 × 24)</div></div>
+      <div><h4>After</h4><pre><span class="add">width 42, depth 34, 9 spawns, 3 dummies,</span><span class="add">more walls and bushes than Medium (36 × 30)</span></pre></div>
+    </div>
+  </article>
+
+  <div class="card" id="sd-qa" data-card="9-qa"><h3>Author Q&amp;A</h3><dl>
+    <dt>Are old saves safe?</dt><dd>Yes. Versions 2 to 7 migrate forward; the dev account's real version 7 save loaded with fighters and credits unchanged.</dd>
+    <dt>Can a world-coin code be used again early?</dt><dd>Yes, by clearing the browser's data: the dates are kept in each account's progress on the device because the game has no server accounts (decision D10).</dd>
+    <dt>What happens to a friend on the previous version?</dt><dd>In Canyon Small nothing changes. In any other world the server sends an update message, closes the connection and tells the host who was removed.</dd>
+  </dl></div>
+</section>
+
+<section id="previous"><h2>Previously reviewed</h2>
+  <p>None — first review of this branch. (The Sonnet run of the same spec was reviewed on its own branch.)</p>
+</section>
+
+<section id="highlights"><h2>Highlights</h2>
+  <article class="card" id="c1">
+    <h3>1 · Merging two tabs: world fields</h3>
+    <p class="note"><code>ui/src/lib/accounts.ts:242-245, 284-298</code> · 21e1d84 · Step 2 · S19, S21</p>
+    <table class="diff">
+      <tr class="add"><td class="ln">242</td><td>/** Sizes only grow: the bigger size wins when two tabs grow the same world. */</td></tr>
+      <tr class="add"><td class="ln">243</td><td>function biggerSize(_base: WorldSize, localSize: WorldSize, remoteSize: WorldSize): WorldSize {</td></tr>
+      <tr class="add"><td class="ln">244</td><td>  return sizeIndex(localSize) &gt;= sizeIndex(remoteSize) ? localSize : remoteSize</td></tr>
+      <tr class="add"><td class="ln">287</td><td>  if (local.worldCoins !== base.worldCoins || local.worldSteps !== base.worldSteps) {</td></tr>
+      <tr class="add"><td class="ln">288</td><td>    // A step paid in both tabs gives its world coins once.</td></tr>
+      <tr class="add"><td class="ln">289</td><td>    const paidInBoth = Math.max(0, Math.min(local.worldSteps, remote.worldSteps) - base.worldSteps)</td></tr>
+      <tr class="add"><td class="ln">290</td><td>    merged.worldCoins = Math.max(0, remote.worldCoins + local.worldCoins - base.worldCoins - paidInBoth * SETTINGS.worldCoinsPerStep)</td></tr>
+      <tr class="add"><td class="ln">292</td><td>  if (!same(base.worlds, local.worlds)) merged.worlds = mergeMap(base.worlds, local.worlds, remote.worlds, biggerSize)</td></tr>
+    </table>
+    <p><strong>What changed:</strong> world coins merge as a <span class="concept" tabindex="0">delta<span class="tip" role="tooltip"><b>Delta merge</b> — add what this tab changed (local − base) to the latest saved value, so changes in two tabs both count.</span></span>, and a step paid in both tabs is counted once (<code>paidInBoth</code>) — a case the plan did not ask for. <strong>Why it matters:</strong> no coins are paid twice. <strong>Check:</strong> but <code>biggerSize</code> always keeps the larger size, so a reset in one tab (sizes go back to Small) is undone by the other tab's bigger size (finding 1).</p>
+  </article>
+
+  <article class="card" id="c2">
+    <h3>2 · The server removes friends on the previous version</h3>
+    <p class="note"><code>server/src/hack_star_server/rooms.py:169-170, 198-211</code> · aebb34e · Step 6 · S7</p>
+    <table class="diff">
+      <tr class="add"><td class="ln">169</td><td>if message.get("world", CANYON_SMALL) != CANYON_SMALL:</td></tr>
+      <tr class="add"><td class="ln">170</td><td>    await self.remove_outdated(room)</td></tr>
+      <tr class="add"><td class="ln">200</td><td>outdated = [s for s in room.seats[1:] if (s.member.version or 0) &lt; WORLDS_VERSION]</td></tr>
+      <tr class="add"><td class="ln">203</td><td>for seat in outdated:</td></tr>
+      <tr class="add"><td class="ln">204</td><td>    room.seats.remove(seat)</td></tr>
+      <tr class="add"><td class="ln">205</td><td>    await self.error(seat.socket, "update")</td></tr>
+      <tr class="add"><td class="ln">206</td><td>    await self.close(seat.socket)</td></tr>
+      <tr class="add"><td class="ln">210</td><td>await self.send(room.host.socket, json.dumps({"type": "removed", "members": members, "reason": "update"}))</td></tr>
+    </table>
+    <p><strong>What changed:</strong> a start outside Canyon Small removes members without a <span class="concept" tabindex="0">version<span class="tip" role="tooltip"><b>Member version</b> — a number each device sends when it joins. Devices before worlds send none, so a missing value means "cannot play other worlds".</span></span>. <strong>Why it matters:</strong> a previous-version client would draw the wrong arena. <strong>Check:</strong> <code>test_rooms.py</code>. A start whose <code>world</code> is <code>null</code> counts as another world here but as Canyon Small in the UI (finding 2).</p>
+  </article>
+
+  <article class="card" id="c3">
+    <h3>3 · Using a world-coin code</h3>
+    <p class="note"><code>ui/src/lib/hacks.ts:89-101</code> · cbc7be8 · Step 7 · S15, S16</p>
+    <table class="diff">
+      <tr class="add"><td class="ln">90</td><td>export function useWorldCode(progress: Progress, hack: WorldCoinHack, now = Date.now()): WorldCodeResult {</td></tr>
+      <tr class="add"><td class="ln">91</td><td>  const availableAt = progress.worldCodes[hack.id]</td></tr>
+      <tr class="add"><td class="ln">92</td><td>  if (availableAt !== undefined &amp;&amp; availableAt &gt; now) return { ok: false, availableAt }</td></tr>
+      <tr class="add"><td class="ln">97</td><td>      worldCoins: progress.worldCoins + hack.world_coins,</td></tr>
+      <tr class="add"><td class="ln">98</td><td>      worldCodes: { ...progress.worldCodes, [hack.id]: now + hack.reuse_days * DAY_MS },</td></tr>
+    </table>
+    <p><strong>What changed:</strong> the date lives in the account's progress. <strong>Why it matters:</strong> this is the only guard against reuse (decision D10). <strong>Check:</strong> before 30 days refused with the date, exactly 30 days accepted, another account and a reset independent (<code>hacks.test.ts</code>).</p>
+  </article>
+</section>
+
+<section id="findings"><h2>Findings</h2>
+  <table><tr><th>#</th><th>Finding</th><th>Layer</th><th>Class</th><th>Severity</th><th>Target</th></tr>
+    <tr><td>1</td><td><code>biggerSize</code> keeps the larger size even when a tab went down (a reset), so another tab's bigger size undoes the reset of worlds (S21); the Sonnet run has an explicit "a lower local value wins" rule.</td><td>code</td><td>test</td><td class="sev-should-fix">Should-fix</td><td>deferred</td></tr>
+    <tr><td>2</td><td>A start with <code>world: null</code> or a non-object removes old-version friends on the server but is played as Canyon Small by <code>worldOf()</code>.</td><td>code</td><td>test</td><td class="sev-should-fix">Should-fix</td><td>deferred</td></tr>
+    <tr><td>3</td><td>S23: a Large world on a real iPad or phone and its frame rate were not measured; Steps 3 and 4 passed the check on.</td><td>spec</td><td>test</td><td class="sev-should-fix">Should-fix</td><td>deferred (spec 5)</td></tr>
+    <tr><td>4</td><td>Step 6's check asked for a Large world in a room; Jungle Ruins Small was used. The "+N world coins" result line and removal on screen were not played in the browser.</td><td>spec</td><td>test</td><td>Nit</td><td>deferred (spec 5)</td></tr>
+    <tr><td>5</td><td>The codes are <code>WC-XXXXX</code>, not the spec's example <code>WC5-7K2QX</code> (the spec gave an example only).</td><td>spec</td><td>docs</td><td>Nit</td><td>no action</td></tr>
+    <tr><td>6</td><td>Step 1 shipped without <code>WORLD_IDS</code>, <code>isWorldId</code>, <code>isWorldSize</code>, <code>sizeIndex</code> and <code>worldInfo</code>, which later Steps needed and added.</td><td>spec</td><td>architecture</td><td>Nit</td><td>no action</td></tr>
+    <tr><td>7</td><td>No component tests for <code>WorldScreen.svelte</code> and <code>HackScreen.svelte</code>; rules are in tested modules.</td><td>code</td><td>test</td><td>Nit</td><td>deferred</td></tr>
+  </table>
+  <p>Good: <code>paidInBoth</code> removes a double payment that the Sonnet merge had; bots use a shared <code>isOpponent</code> helper; <code>worlds.test.ts</code> checks reachability and a clear line for generated worlds; prices and codes each live in one file; all texts exist in five languages.</p>
+</section>
+
+<section id="not-covered"><h2>Not covered</h2>
+  <ul>
+    <li>The five dictionary files line by line — only checked by the dictionary test.</li>
+    <li>Styling of <code>WorldScreen.svelte</code>, <code>WorldGallery.svelte</code> and the Home chip — looked at in the browser, not read.</li>
+    <li>The 13 theme tables in <code>themes.ts</code> and the generated layouts — data, covered by tests.</li>
+  </ul>
+</section>
+
+<section id="glossary"><h2>Concepts glossary</h2><dl>
+  <dt>Delta merge</dt><dd>Adds what one tab changed to the latest saved value, so changes in two tabs both count.</dd>
+  <dt>Member version</dt><dd>A number a device sends when it joins a room; a missing one means the previous version.</dd>
+</dl></section>
+
+<section id="checklist"><h2>Reviewer checklist</h2>
+  <ul>
+    <li><input type="checkbox" id="chk1"> <label for="chk1">Every statement the change claims is met</label></li>
+    <li><input type="checkbox" id="chk2"> <label for="chk2">Each Before | After is what I expect</label></li>
+    <li><input type="checkbox" id="chk3"> <label for="chk3">The findings are acceptable or have a target</label></li>
+  </ul>
+</section>
+
+<script type="application/json" id="review-meta">
+{ "version": 1, "date": "2026-11-17", "branch": "feature/worlds-and-world-coins-haiku", "base": "a6a0f64", "head": "99b3f5b",
+  "record": "../changes/done/worlds-and-world-coins-haiku/change_record.yaml",
+  "commits": ["726e1d1", "21e1d84", "0cad340", "b7becbe", "3780efb", "aebb34e", "cbc7be8", "99b3f5b"],
+  "covered": ["ui/src/lib/accounts.ts:242-245,284-298", "server/src/hack_star_server/rooms.py:169-170,198-211", "ui/src/lib/hacks.ts:89-101"],
+  "findings": [
+    { "id": 1, "severity": "should-fix", "target": "deferred" },
+    { "id": 2, "severity": "should-fix", "target": "deferred" },
+    { "id": 3, "severity": "should-fix", "target": "deferred" },
+    { "id": 4, "severity": "nit", "target": "deferred" },
+    { "id": 5, "severity": "nit", "target": "none" },
+    { "id": 6, "severity": "nit", "target": "none" },
+    { "id": 7, "severity": "nit", "target": "deferred" }
+  ],
+  "specs": [".specs/features/done/2026_11_16_worlds_and_world_coins_haiku_spec.md"] }
+</script>
+</main>
+</div>
+</body>
+</html>

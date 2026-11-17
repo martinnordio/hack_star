@@ -1,0 +1,35 @@
+{
+  "type": "start",
+  "settings": {
+    "matchSeconds": 120,
+    "overtimeSeconds": 60,
+    "botCount": 2,
+    "countdownSeconds": 3,
+    "botLevel": "easy"
+  },
+  "fighters": [
+    {
+      "fighter": "blaze",
+      "type": "spreader",
+      "skin": "default",
+      "power": 7,
+      "hyper": false,
+      "slot": 0
+    },
+    {
+      "fighter": "rocko",
+      "type": "tank",
+      "skin": "crystal",
+      "power": 4,
+      "hyper": true,
+      "slot": 1
+    },
+    {
+      "fighter": "luna",
+      "type": "sharpshooter",
+      "skin": "default",
+      "power": 5,
+      "hyper": false
+    }
+  ]
+}

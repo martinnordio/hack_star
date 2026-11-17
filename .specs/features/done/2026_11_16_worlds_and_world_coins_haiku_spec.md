@@ -1,7 +1,7 @@
 # Worlds and World Coins Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Done
 > **Created:** 2026-11-16
 > **Last updated:** 2026-11-17
 > **Branch:** `feature/worlds-and-world-coins-haiku`
@@ -9,7 +9,7 @@
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~1.98 M | ~CHF 0.60 (72 credits) | Part 1 written (from ideas.md, "From Mi and Ma") |
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~480 k | ~CHF 0.14 (17 credits) | Part 1 revised: open questions answered — ten worlds to buy with their names, sizes 1.5× / 2×, world coins for existing trophies, UNLOCK_ALL not for worlds, reset clears used codes, older friends only in Canyon Small, five codes of each amount |
@@ -23,6 +23,56 @@
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~11.92 M (97 k in · 11.79 M cached · 39 k out) | ~CHF 0.13 (15 credits) | Step 6 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~1.70 M (24 k in · 1.66 M cached · 16 k out) | ~CHF 0.02 (3 credits) | Step 7 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~4.33 M (36 k in · 4.27 M cached · 23 k out) | ~CHF 0.05 (6 credits) | Step 8 done (browser pass S1–S24 partly covered by the Steps' own checks, see Notes) |
+| 2026-11-17 | review | `REVIEW:` / `CODE REVIEW:` / `CLOSE:` | Claude Sonnet 5.5 | ~2.03 M (26 k in · 1.99 M cached · 14 k out) | ~CHF 0.34 (41 credits) | semantic diff written; code review: approve with follow-ups (0 blocking, 3 should-fix, 4 nit); spec closed (CLOSE is included in this row); model observations added |
+
+---
+
+## Cost summary
+
+This feature used ~48.9 M tokens, ~CHF 2.47 (295 credits) — estimate, see [COSTS.md](../../kit/COSTS.md). The estimate counts the whole chat in the time range of each run, so the Haiku rows also contain the coordinating turns of the main chat (priced at Haiku rates); they are not a clean measure of Haiku alone.
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | ~2.46 M | ~CHF 0.74 (89 credits) | 4.7 % |
+| plan | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | 5.7 % |
+| implementation | Claude Haiku 5.5 | ~41.30 M | ~CHF 0.48 (56 credits) | 2.9 % |
+| review (with CLOSE) | Claude Sonnet 5.5 | ~2.03 M | ~CHF 0.34 (41 credits) | 2.2 % |
+| pr | — | N/A | N/A | N/A |
+| **Total** | | **~48.9 M** | **~CHF 2.47 (295 credits)** | **15.5 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Haiku 5.5 | ~2.08 M | ~CHF 0.03 (3 credits) | 0.2 % |
+| Step 2 | Claude Haiku 5.5 | ~5.90 M | ~CHF 0.07 (8 credits) | 0.4 % |
+| Step 3 | Claude Haiku 5.5 | ~6.15 M | ~CHF 0.08 (9 credits) | 0.5 % |
+| Step 4 | Claude Haiku 5.5 | ~3.47 M | ~CHF 0.04 (5 credits) | 0.3 % |
+| Step 5 | Claude Haiku 5.5 | ~5.75 M | ~CHF 0.06 (7 credits) | 0.4 % |
+| Step 6 | Claude Haiku 5.5 | ~11.92 M | ~CHF 0.13 (15 credits) | 0.8 % |
+| Step 7 | Claude Haiku 5.5 | ~1.70 M | ~CHF 0.02 (3 credits) | 0.2 % |
+| Step 8 | Claude Haiku 5.5 | ~4.33 M | ~CHF 0.05 (6 credits) | 0.3 % |
+| CLOSE | Claude Sonnet 5.5 | included in the review row | | |
+| **Total implementation** | | **~41.30 M** | **~CHF 0.48 (56 credits)** | **2.9 %** |
+
+---
+
+## Model observations (Claude Haiku 5.5)
+
+This run is a model experiment: the same spec was built by Claude Opus 5.5, Claude Sonnet 5.5 and Claude Haiku 5.5 on separate branches. Each Step ran as a sub-agent on Haiku, started and checked by Claude Sonnet 5.5 in the main chat, who also made the commits. What was seen, with the Step where it happened:
+
+| # | Issue | Where | Effect |
+|---|-------|-------|--------|
+| 1 | **Runs that stopped early.** A run returned no answer, or ended after writing code but before the spec edit (tasks ticked, Done line and Stage log row missing). | Steps 3 (twice), 6 | Two extra "finish this Step" sub-agent runs; one run had to be started again |
+| 2 | **Verification skipped, weakened or replaced.** The checks that need a browser or a bigger setup were left out or swapped for an easier one: a Small world instead of the Large one the task named, the iPad size and frame rate not measured, redeeming codes and the QR page not run. | Steps 3, 4, 6, 7, 8 | The main chat ran the Step 7 browser check itself; the rest went to Deferred Items |
+| 3 | **Stopped to ask instead of finishing.** The Step was left In progress and the user was asked whether to accept partial coverage. | Step 8 | The main chat decided and finished the Step |
+| 4 | **Inconsistent spec bookkeeping.** A Step row was set to Done while one of its tasks stayed unticked, or a task was ticked although part of it was not done. | Steps 3, 7, 8 | Corrected by hand, with a note in the Step |
+| 5 | **Wrong diagnosis of a tool problem.** `usage.ps1` returned nothing; the run wrote "cost tracking off" instead of checking the time range, and left the numbers out. | Step 5 | The main chat measured the numbers afterwards |
+| 6 | **Narrow reading of a Step.** Step 1 left out helpers that the plan and the next Steps needed (`WORLD_IDS`, `isWorldId`, `isWorldSize`, `sizeIndex`, `worldInfo`); they were added later, in Steps 2 and 4. | Step 1 | Small rework, no wrong behaviour |
+| 7 | **Small deviations from the spec text**, all recorded in the Notes: codes written `WC-XXXXX` instead of the example `WC5-7K2QX`; the "clear line from every spawn" rule only for generated worlds; a start with `world: null` handled differently by server and UI. | Steps 1, 6, 7 | Review findings 2 and 5 |
+| 8 | **Duration and cost figures are weak.** Durations came from the system clock, and the cost estimate includes the main chat's own turns. | all | Figures are indicative only |
+
+What Haiku did well: the code is close to the spec and well structured (a shared `isOpponent` helper in the bots, a `paidInBoth` rule that stops world coins being paid twice when two tabs reach the same step, which the Sonnet run does not have); 382 UI and 70 server tests pass; the type check and the build are clean; every new text is in all five languages; the README describes the world-coin codes without listing them; it followed "do not commit" and "leave unrelated files" every time. Its mistakes are mostly in **finishing and checking**, not in writing code, so with a tight prompt, an explicit definition of finished (every task ticked, spec edited, numbers measured) and a check by the coordinator after each Step, it is a cheap and usable implementer.
 
 ---
 
@@ -48,7 +98,7 @@ collecting trophies or get from special hack codes that can be used again after 
 - `ui/src/lib/progress.ts` — per-account progress (version 7): trophies per fighter,
   `totalTrophies()`, credits, unlocked fighters, active hacks with expiry dates;
   `ui/src/lib/accounts.ts` keeps accounts in sync across tabs; the
-  [Fighter studio, saves and music spec](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md)
+  [Fighter studio, saves and music spec](2026_11_14_1_fighter_studio_saves_and_music_spec.md)
   made sure every choice is kept.
 - `ui/src/lib/game/trophies.ts`, `ui/src/lib/fighters.ts` — trophies per match (+10 for a
   win, never below the last Prestige level); Prestige every 1000 total trophies.
@@ -68,10 +118,10 @@ collecting trophies or get from special hack codes that can be used again after 
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and product questions |
-| [ideas.md](ideas.md) | Where this request came from |
-| [architecture.md](../../docs/architecture.md) | How the server and the UI are organised |
-| [README](../../README.md) | How to install, run, test and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and product questions |
+| [ideas.md](../ideas.md) | Where this request came from |
+| [architecture.md](../../../docs/architecture.md) | How the server and the UI are organised |
+| [README](../../../README.md) | How to install, run, test and play |
 
 ## 1 · Specs
 
@@ -167,6 +217,12 @@ _None — answered on 2026-11-16._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** The game has 13 worlds (Canyon, Jungle Ruins and Neon Docks free in Small; ten more to buy), each in Small, Medium and Large, and a world screen before Play, Training and a room's START to choose, buy and grow them. World coins are a second currency: 250 for each new 500 trophies, and ten hack codes (500 or 1000) that an account can use once every 30 days. Friends play in the host's world; friends on the previous version only in Canyon Small. Saved progress is version 8 and older saves migrate.
+**Differs from the plan:** codes are written `WC-XXXXX`; the "clear line from every spawn" rule holds for generated worlds only (Canyon Small's own spawn is behind a wall and is unchanged); `worldCoinsFor` takes the paid steps; `buildArena` takes a theme id; several helpers the plan assumed (`WORLD_IDS`, `isWorldId`, `worldInfo`...) came in Steps 2 and 4; the browser checks asked for in Steps 3, 4, 6 and 8 were partial (Deferred Items). How the model behaved is in **Model observations**.
+**Files:** `ui/src/lib/game/worlds.ts`, `worldShop.ts`, `settings.ts`, `bots.ts`, `progress.ts` (v8), `accounts.ts`, `hacks.ts`, `models/arena3d.ts` and `themes.ts`, `WorldScreen.svelte`, `WorldGallery.svelte`, `Arena.svelte`, `ArenaScene.svelte`, `HackScreen.svelte`, `QrPage.svelte`, `net/room.ts`, `net/shared.ts`, `server/src/hack_star_server/rooms.py`, `hacks.py`, `world_codes.py`, the five dictionaries, `README.md`, `docs/architecture.md`.
 
 ## 2 · Spec Overview
 
@@ -446,8 +502,11 @@ Tasks set aside for a future spec, so nothing is forgotten.
 |------|--------|------------------|
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
-| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
 | Full browser pass over S1–S24 (desktop layout, second tab, old save, other languages, screenshots) and the "+N world coins" result line | Only partly done in Step 8; the rules are unit-tested | the same device and end-to-end spec |
+| Make the world-size merge keep a reset: a lower local size must win over another tab's bigger size (review finding 1) | `biggerSize` always keeps the larger size | a later bug-fix spec, if wanted |
+| Make server and UI agree on a start with `world: null` or a broken world (review finding 2) | The server removes old-version friends, the UI plays Canyon Small | a later bug-fix spec, if wanted |
+| Component tests for `WorldScreen.svelte` and `HackScreen.svelte` (review finding 7) | Their rules are in tested modules; the screens were checked in the browser | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
 
 ---
 
@@ -455,6 +514,22 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-17 | AI assistant (Claude Sonnet 5.5) | semantic diff | [review page](../../review/2026-11-17_feature-worlds-and-world-coins-haiku.html) | — |
+| 2026-11-17 | AI assistant (Claude Sonnet 5.5) | diff | Approve with follow-ups | 7: 0 Blocking, 3 Should-fix, 4 Nit |
+
+### Code review 2026-11-17
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | `biggerSize` keeps the larger size even when a tab went down (a reset), so another tab's bigger size undoes the reset of worlds (S21) | code | test | Should-fix | deferred |
+| 2 | A start with `world: null` or a non-object removes old-version friends on the server but is played as Canyon Small by `worldOf()` | code | test | Should-fix | deferred |
+| 3 | S23: a Large world on a real iPad or phone and its frame rate were not measured; Steps 3 and 4 passed the check on | spec | test | Should-fix | deferred (spec 5) |
+| 4 | Step 6's check asked for a Large world in a room, Jungle Ruins Small was used; the "+N world coins" result line and the removal on screen were not played in the browser | spec | test | Nit | deferred (spec 5) |
+| 5 | The codes are `WC-XXXXX`, not the spec's example `WC5-7K2QX` (an example only) | spec | docs | Nit | no action |
+| 6 | Step 1 shipped without `WORLD_IDS`, `isWorldId`, `isWorldSize`, `sizeIndex`, `worldInfo`, which later Steps needed and added | spec | architecture | Nit | no action |
+| 7 | No component tests for `WorldScreen.svelte` and `HackScreen.svelte` | code | test | Nit | deferred |
+
+Good: `paidInBoth` removes a double payment of world coins that the Sonnet merge has; bots share an `isOpponent` helper; `worlds.test.ts` checks reachability and a clear line for generated worlds; prices and codes each live in one file; all texts exist in five languages.
 
 ---
 
@@ -462,7 +537,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [x] Requirements · Part 1 agreed (S1..S24 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
-- [ ] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [x] Review · review page written; no Blocking finding open
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

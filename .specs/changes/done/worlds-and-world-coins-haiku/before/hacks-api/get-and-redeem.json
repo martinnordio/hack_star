@@ -1,0 +1,24 @@
+﻿{
+  "count": 5,
+  "normal codes": [
+    "INFINITY",
+    "OPENSESAME",
+    "POWER22",
+    "HYPERCHARGE",
+    "CREATOR"
+  ],
+  "last entry": {
+    "id": "creator",
+    "code": "CREATOR",
+    "name": "Creator",
+    "description": "Unlocks the fighter you created.",
+    "duration_seconds": 259200
+  },
+  "POST /api/hacks/redeem wc-7k2qx": {
+    "status": 404,
+    "body": {
+      "detail": "Unknown code"
+    }
+  }
+}
+
