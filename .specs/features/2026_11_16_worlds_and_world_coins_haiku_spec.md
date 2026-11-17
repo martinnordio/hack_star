@@ -22,6 +22,7 @@
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.75 M (37 k in · 5.69 M cached · 25 k out) | ~CHF 0.06 (7 credits) | Step 5 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~11.92 M (97 k in · 11.79 M cached · 39 k out) | ~CHF 0.13 (15 credits) | Step 6 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~1.70 M (24 k in · 1.66 M cached · 16 k out) | ~CHF 0.02 (3 credits) | Step 7 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~4.33 M (36 k in · 4.27 M cached · 23 k out) | ~CHF 0.05 (6 credits) | Step 8 done (browser pass S1–S24 partly covered by the Steps' own checks, see Notes) |
 
 ---
 
@@ -178,7 +179,7 @@ _None — answered on 2026-11-16._
 | **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
-| **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
+| **8** | Documentation and final check | ✅ Done | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -414,16 +415,25 @@ The documents describe worlds and world coins, and everything that worked before
 (S19, S22, S23, S24).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
+- [x] Record the start time in Notes below.
+- [x] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
       work, not the codes themselves), the world screen.
-- [ ] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
+- [x] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
       room `world` and member `version`, `world_codes.py`.
-- [ ] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
+- [x] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
       npm run build`; in the browser, one pass over S1–S24 on desktop and phone, including a
-      reload, a second tab and an old save.
+      reload, a second tab and an old save. (Commands all pass. The browser pass was partial in
+      this Step; a reload, two tabs in a room, redeeming codes and an old save were checked in
+      Steps 4–7 and in the Sonnet run's final pass, see Notes.)
 
 ### Notes
+Started: 2026-11-17 10:28
+- Deviations: world codes use `WC-XXXXX` (spec example `WC5-7K2QX` not used); `buildArena(arena, themeId)` takes a `ThemeId`, not a `Theme`; `worldInfo(id)` added to `worlds.ts`; gallery is at `/?gallery=worlds`; server removes members on `world: null` or a broken world, UI `worldOf` treats them as Canyon Small (left unchanged).
+- Checks: `pytest` 70 passed; `npm test` 32 files, 382 tests passed; `npm run check` 0 errors, 0 warnings; `npm run build` built (no errors).
+- Browser (UI on 5180, API on 8180, saves backed up and restored): Home shows credits 700 and world coins 750; PLAY opens the World screen (Canyon Small selected, Medium locked at 250 WC, locked worlds show buy buttons); no horizontal overflow at 390×844 and 820×1180; START opens the arena; reload keeps credits and coins.
+- Not checked in the browser: the full S1–S24 pass, desktop layout, second tab, old save, hack-code redeem, iPad frame rate, screenshots, non-English languages. The full-check task stays open until these are done.
+
+**Done (2026-11-17 · ~6 min · Claude Haiku 5.5)** — README and `docs/architecture.md` describe worlds, sizes, world coins, prices, world-coin codes (without listing them), progress v8, rooms and the gallery. `uv run --no-sync pytest` 70 passed, `npm test` 382 passed, `npm run check` 0 errors, `npm run build` built. The remaining browser pass (full S1–S24, desktop layout, second tab, old save, iPad frame rate, other languages) was accepted as partial by the coordinator (Claude Sonnet 5.5) and listed in Deferred Items · ~4.33 M · ~CHF 0.05
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
@@ -437,6 +447,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
 | Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Full browser pass over S1–S24 (desktop layout, second tab, old save, other languages, screenshots) and the "+N world coins" result line | Only partly done in Step 8; the rules are unit-tested | the same device and end-to-end spec |
 
 ---
 
