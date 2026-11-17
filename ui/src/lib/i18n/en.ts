@@ -12,6 +12,7 @@ export const en = {
   'common.no': 'No',
   'common.yesReset': 'Yes, reset',
   'common.free': 'free',
+  'common.yes': 'Yes',
   'common.price': '{credits} C',
   'common.needMore': 'Need {credits} more C',
   'common.newSkin': 'NEW SKIN!',
@@ -30,6 +31,7 @@ export const en = {
 
   'home.totalTrophies': 'Total trophies',
   'home.credits': 'Credits',
+  'home.worldCoins': 'World coins',
   'home.account': 'Account {name}, change account',
   'home.friends': 'Friends',
   'home.fighters': 'Fighters',
@@ -198,6 +200,7 @@ export const en = {
   'arena.place.other': '{place}th',
   'arena.nobodyWon': 'Nobody won this time',
   'arena.trophies': 'Trophies',
+  'arena.worldCoins': '+{coins} world coins',
   'arena.prestigeProgress': '{shown} of {next} trophies to the next Prestige',
   'arena.prestigeUp': 'PRESTIGE {level}!',
   'arena.backToRoom': 'Back to the room',
@@ -395,6 +398,21 @@ export const en = {
   'worldSize.small': 'Small',
   'worldSize.medium': 'Medium',
   'worldSize.large': 'Large',
+
+  'worlds.title': 'Choose a world',
+  'worlds.balance': 'World coins: {coins}',
+  'worlds.hint': 'Every {trophies} trophies bring {coins} world coins.',
+  'worlds.free': 'Free',
+  'worlds.locked': 'Locked',
+  'worlds.needMore': 'Need {coins} more WC',
+  'worlds.lockedSize': '🔒 {size} · {coins} WC',
+  'worlds.buy': 'Buy {sizes} · {coins} WC',
+  'worlds.confirmBuy': 'Unlock {world} in {size} for {coins} world coins?',
+  'worlds.confirmGrow': 'Unlock {size} in {world} for {coins} world coins?',
+  'worlds.unlockedWorld': '{world} unlocked!',
+  'worlds.unlockedSize': '{world} · {size} unlocked!',
+  'worlds.playingIn': 'Playing in {world} · {size}',
+  'worlds.start': 'START',
 } as const satisfies Record<string, string>
 
 export type TextKey = keyof typeof en

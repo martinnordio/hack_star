@@ -57,8 +57,13 @@
       <span class="icon">🏆</span>{totalTrophies($progress).toLocaleString()}
     </div>
     <h1 class="title">Hack<span>star</span></h1>
-    <div class="chip" aria-label={$t('home.credits')}>
-      <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
+    <div class="wallets">
+      <div class="chip" aria-label={$t('home.credits')}>
+        <span class="icon coin">C</span>{shownCredits === Infinity ? '∞' : shownCredits.toLocaleString()}
+      </div>
+      <div class="chip" aria-label={$t('home.worldCoins')}>
+        <span class="icon coin world">W</span>{$progress.worldCoins.toLocaleString()}
+      </div>
     </div>
   </header>
 
@@ -135,9 +140,16 @@
     left: var(--pad-left);
     right: var(--pad-right);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.5rem;
+  }
+
+  .wallets {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
   }
 
   .chip {
@@ -188,6 +200,11 @@
     font-size: 0.85em;
     border: 2px solid #000;
     text-shadow: none;
+  }
+
+  .coin.world {
+    background: radial-gradient(circle at 35% 30%, #cfe6ff, #2f6bff);
+    color: #0b1d4d;
   }
 
   .title {
@@ -336,7 +353,7 @@
     }
 
     .plate {
-      top: calc(var(--pad-top) + 4rem);
+      top: calc(var(--pad-top) + 7rem);
       bottom: auto;
       left: auto;
       right: var(--pad-right);

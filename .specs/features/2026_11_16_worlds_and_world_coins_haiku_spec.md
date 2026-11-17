@@ -19,6 +19,7 @@
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.90 M | ~CHF 0.07 (8 credits) | Step 2 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~6.15 M | ~CHF 0.08 (9 credits) | Step 3 done |
 | 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~3.47 M | ~CHF 0.04 (5 credits) | Step 4 done |
+| 2026-11-17 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | ~5.75 M (37 k in · 5.69 M cached · 25 k out) | ~CHF 0.06 (7 credits) | Step 5 done |
 
 ---
 
@@ -172,7 +173,7 @@ _None — answered on 2026-11-16._
 | **2** | World coins, worlds and saved progress v8 | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
-| **5** | World screen: choose, buy and grow worlds | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
+| **5** | World screen: choose, buy and grow worlds | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
@@ -329,22 +330,23 @@ worlds and bigger sizes; the result screen shows world coins earned (S1, S3, S8,
 S22, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home: world-coin balance next to the credits.
-- [ ] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
+- [x] Record the start time in Notes below.
+- [x] Home: world-coin balance next to the credits.
+- [x] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
       locked ones with their prices (500 / 750 / 1000, +250 per size); buy and grow with
       confirmation; "N more world coins needed" when too few; the choice is saved.
-- [ ] Play and Training open the world screen first, preselected on the last choice, with
+- [x] Play and Training open the world screen first, preselected on the last choice, with
       **Start**.
-- [ ] Result screen: "+250 world coins" when a step was reached.
-- [ ] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
+- [x] Result screen: "+250 world coins" when a step was reached.
+- [x] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
       landscape.
-- [ ] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
+- [x] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
       enough and with too few coins, grow a free world to Medium, choose it, start a match,
       reload — all kept; screenshots.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-17 10:05
+**Done (2026-11-17 · ~5 min · Claude Haiku 5.5)** — Home shows a world-coin chip next to the credits; new `ui/src/lib/WorldScreen.svelte` lists the 13 worlds with Small / Medium / Large choices, buy and grow with confirmation, "Need N more WC" when too few, and START; Play and Training open it first (`App.svelte`); the match result shows "+N world coins" (`Arena.svelte`); world-coin texts in all five i18n files. Verified: `npm test` 32 files, 370 tests pass; `npm run check` 0 errors, 0 warnings. Browser (desktop 852×632): bought Lava Forge Small (500), grew it to Medium (250), chose Small; reload kept coins and choice; START opened a match; no horizontal overflow on Home or the world screen at 390×844, 844×390 and 820×1180. Deviations: none in behaviour. Not checked: screenshots, touch input, the UI in the four non-English languages, the result line on screen (no match reached a 500-step), the too-few-coins click (disabled "Need N more" buttons were seen instead), iPad frame rate. Cost: ~5.75 M tokens, ~CHF 0.06 (measured by the coordinator with `usage.ps1`; the Haiku run reported tracking as off).
 
 ---
 

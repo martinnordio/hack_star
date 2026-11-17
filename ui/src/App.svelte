@@ -11,6 +11,7 @@
   import ShopScreen from './lib/ShopScreen.svelte'
   import SettingsScreen from './lib/SettingsScreen.svelte'
   import FriendsScreen from './lib/FriendsScreen.svelte'
+  import WorldScreen from './lib/WorldScreen.svelte'
   import { leaveRoom, room, type RoomConnection } from './lib/net/room'
   import { startInfo, type StartInfo } from './lib/net/shared'
   import { options } from './lib/options'
@@ -23,7 +24,7 @@
   import { withCreated } from './lib/created'
   import { dismissSaveNotice, saveNotice } from './lib/saving'
 
-  type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'match' | 'training'
+  type Screen = 'home' | 'fighters' | 'fighter' | 'creator' | 'shop' | 'info' | 'hack' | 'settings' | 'friends' | 'worlds' | 'match' | 'training'
 
   // A QR code scanned with the camera app opens the game with `?hack=<CODE>` or `?room=<CODE>`.
   const params = new URLSearchParams(location.search)
@@ -33,6 +34,8 @@
   let linkedCode = $state(codeInLink)
 
   let screen = $state<Screen>(codeInLink ? 'hack' : roomInLink ? 'friends' : 'home')
+  // The mode the world screen starts when START is pressed.
+  let worldMode = $state<'match' | 'training'>('match')
   let openFighterId = $state<string>()
   let creatorFighterId = $state<string>()
   let creatorSkinId = $state<string>()
@@ -107,7 +110,12 @@
     onEntranceEnd={() => (entrance = false)}
     onNavigate={(next) => {
       entrance = false
-      screen = next
+      if (next === 'match' || next === 'training') {
+        worldMode = next
+        screen = 'worlds'
+      } else {
+        screen = next
+      }
     }}
   />
 {:else if screen === 'match' || screen === 'training'}
@@ -122,6 +130,10 @@
       onPlayAgain={() => matchNumber++}
     />
   {/key}
+{:else if screen === 'worlds'}
+  <Panel title={$t('worlds.title')} onBack={() => (screen = 'home')}>
+    <WorldScreen onStart={() => (screen = worldMode)} />
+  </Panel>
 {:else if screen === 'fighters'}
   <Panel title={$t('panel.fighters')} onBack={() => (screen = 'home')}>
     <FighterList

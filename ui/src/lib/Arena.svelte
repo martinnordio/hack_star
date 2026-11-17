@@ -309,6 +309,9 @@
             {reward.change > 0 ? '+' : ''}{reward.change} 🏆
             <span class="credits">+{earned} <span class="coin">C</span></span>
           </span>
+          {#if worldCoinsEarned > 0}
+            <div class="world-coins">{$t('arena.worldCoins', { coins: worldCoinsEarned })}</div>
+          {/if}
           <div class="bar" aria-label={$t('arena.prestigeProgress', { shown, next: nextPrestigeAt(shown) })}>
             <div class="fill" style="width: {((shown - floor) / 1000) * 100}%"></div>
             <span>🏆 {shown} / {nextPrestigeAt(shown)}</span>
@@ -708,6 +711,14 @@
   .credits {
     margin-left: 0.6em;
     color: #ffe45c;
+  }
+
+  .world-coins {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #fff3a0;
+    -webkit-text-stroke: 0.04em #160f33;
+    paint-order: stroke fill;
   }
 
   .coin {
