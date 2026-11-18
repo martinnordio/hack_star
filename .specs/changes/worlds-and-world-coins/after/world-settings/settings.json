@@ -1,0 +1,10 @@
+{
+  "worldCoinsPerStep": 250,
+  "trophiesPerWorldStep": 500,
+  "worldPrices": {
+    "small": 500,
+    "medium": 750,
+    "large": 1000
+  },
+  "worldSizeStep": 250
+}

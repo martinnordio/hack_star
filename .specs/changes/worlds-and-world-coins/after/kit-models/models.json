@@ -1,0 +1,12 @@
+{
+  "models": {
+    "reasoning": "Claude Opus 5.5",
+    "standard": "Claude Sonnet 5.5",
+    "light": "Claude Haiku 5.5",
+    "guide": {
+      "reasoning": "Requirements, plans, architecture, refactorings, security, tricky logic, open decisions, complex work such as graphics-heavy Steps",
+      "standard": "Implementation that follows a clear plan, with tests",
+      "light": "Mechanical edits, renames, copies, docs"
+    }
+  }
+}

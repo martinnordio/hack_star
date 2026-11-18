@@ -1,0 +1,55 @@
+{
+  "WORLD_CODE_REUSE_DAYS": 30,
+  "WORLD_CODES": [
+    {
+      "id": "world_500_1",
+      "code": "«code»",
+      "amount": 500
+    },
+    {
+      "id": "world_500_2",
+      "code": "«code»",
+      "amount": 500
+    },
+    {
+      "id": "world_500_3",
+      "code": "«code»",
+      "amount": 500
+    },
+    {
+      "id": "world_500_4",
+      "code": "«code»",
+      "amount": 500
+    },
+    {
+      "id": "world_500_5",
+      "code": "«code»",
+      "amount": 500
+    },
+    {
+      "id": "world_1000_1",
+      "code": "«code»",
+      "amount": 1000
+    },
+    {
+      "id": "world_1000_2",
+      "code": "«code»",
+      "amount": 1000
+    },
+    {
+      "id": "world_1000_3",
+      "code": "«code»",
+      "amount": 1000
+    },
+    {
+      "id": "world_1000_4",
+      "code": "«code»",
+      "amount": 1000
+    },
+    {
+      "id": "world_1000_5",
+      "code": "«code»",
+      "amount": 1000
+    }
+  ]
+}

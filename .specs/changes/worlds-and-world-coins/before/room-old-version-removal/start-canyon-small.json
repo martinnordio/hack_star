@@ -1,0 +1,20 @@
+{
+  "host": [
+    {
+      "type": "input",
+      "x": 1,
+      "slot": 1
+    }
+  ],
+  "A (no version)": [
+    {
+      "type": "start",
+      "settings": {
+        "world": {
+          "id": "canyon",
+          "size": "small"
+        }
+      }
+    }
+  ]
+}

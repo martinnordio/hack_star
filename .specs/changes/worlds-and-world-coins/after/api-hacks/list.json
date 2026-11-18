@@ -1,0 +1,151 @@
+{
+  "openapi": {
+    "paths": {
+      "/api/hacks": {
+        "get": {
+          "summary": "Hacks",
+          "operationId": "hacks_api_hacks_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "items": {
+                      "$ref": "#/components/schemas/Hack"
+                    },
+                    "type": "array",
+                    "title": "Response Hacks Api Hacks Get"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/hacks/redeem": {
+        "post": {
+          "summary": "Redeem",
+          "operationId": "redeem_api_hacks_redeem_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedeemRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Hack"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Hack": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "world_coins": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "World Coins"
+          },
+          "reuse_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reuse Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "name",
+          "description",
+          "duration_seconds"
+        ],
+        "title": "Hack"
+      }
+    }
+  },
+  "GET /api/hacks": {
+    "count": 15,
+    "first": {
+      "id": "infinite_credits",
+      "code": "«code»",
+      "name": "Unlimited credits",
+      "description": "Credits never run out.",
+      "duration_seconds": 259200,
+      "world_coins": null,
+      "reuse_days": null
+    },
+    "sixth": {
+      "id": "world_500_1",
+      "code": "«code»",
+      "name": "500 world coins",
+      "description": "Gives 500 world coins, once every 30 days.",
+      "duration_seconds": null,
+      "world_coins": 500,
+      "reuse_days": 30
+    }
+  }
+}

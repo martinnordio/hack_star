@@ -1,0 +1,18 @@
+{
+  "triangles": 94922,
+  "meshes": 21,
+  "box": {
+    "min": [
+      -35,
+      -3.94,
+      -32
+    ],
+    "max": [
+      35,
+      7.39,
+      32
+    ]
+  },
+  "placeChecksum": -2686660.61,
+  "colourChecksum": 352832.37
+}

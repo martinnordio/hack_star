@@ -1,0 +1,11 @@
+{
+  "phase": "over",
+  "result": {
+    "kind": "defeat",
+    "place": 3
+  },
+  "endedAfterSeconds": 26.17,
+  "overtime": false,
+  "matchSeconds": 120,
+  "countdownSeconds": 3
+}

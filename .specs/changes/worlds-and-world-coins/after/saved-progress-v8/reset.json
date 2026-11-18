@@ -1,0 +1,30 @@
+{
+  "version": 8,
+  "credits": 0,
+  "trophies": {},
+  "powerLevels": {},
+  "unlockedFighters": [
+    "blaze",
+    "rocko",
+    "turbo",
+    "marina"
+  ],
+  "activeHacks": [],
+  "hackExpiries": {},
+  "selectedFighter": "blaze",
+  "selectedSkins": {},
+  "ownedSkins": {},
+  "createdFighters": [],
+  "worldCoins": 0,
+  "worldSteps": 0,
+  "worlds": {
+    "canyon": "small",
+    "jungle-ruins": "small",
+    "neon-docks": "small"
+  },
+  "selectedWorld": {
+    "id": "canyon",
+    "size": "small"
+  },
+  "worldCodes": {}
+}

@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "body": {
+    "id": "world_1000_1",
+    "code": "«code»",
+    "name": "1000 world coins",
+    "description": "Gives 1000 world coins, once every 30 days.",
+    "duration_seconds": null,
+    "world_coins": 1000,
+    "reuse_days": 30
+  }
+}

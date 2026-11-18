@@ -1,0 +1,29 @@
+{
+  "sizes": [
+    {
+      "size": "small",
+      "width": 30,
+      "depth": 24,
+      "walls": 6,
+      "bushes": 5,
+      "spawns": 9
+    },
+    {
+      "size": "medium",
+      "width": 36,
+      "depth": 30,
+      "walls": 10,
+      "bushes": 8,
+      "spawns": 10
+    },
+    {
+      "size": "large",
+      "width": 42,
+      "depth": 34,
+      "walls": 14,
+      "bushes": 12,
+      "spawns": 10
+    }
+  ],
+  "canyonSmallEqualsCANYON": true
+}

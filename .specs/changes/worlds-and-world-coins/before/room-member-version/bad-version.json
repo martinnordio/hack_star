@@ -1,0 +1,17 @@
+{
+  "reply": {
+    "type": "room",
+    "code": "<code>",
+    "you": 0,
+    "started": false,
+    "members": [
+      {
+        "slot": 0,
+        "fighter": "blaze",
+        "skin": "default",
+        "power": 1,
+        "hyper": false
+      }
+    ]
+  }
+}

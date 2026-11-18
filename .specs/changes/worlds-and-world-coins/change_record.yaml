@@ -1,0 +1,363 @@
+# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+version: 1
+branch: feature/worlds-and-world-coins
+base: 2cf090e
+why: |
+  Every match and every Training session was played in the same arena, the same size. Players
+  want to choose between several worlds, each in Small, Medium and Large, so matches feel
+  different and bigger worlds mean more running. Three worlds are free in Small; the others and
+  the bigger sizes are unlocked with a new currency, world coins, earned per 500 trophies or from
+  special hack codes that each account can use again after 30 days.
+spec:
+  path: .specs/features/2026_11_16_worlds_and_world_coins_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24]
+changes:
+  # ── Screens ──────────────────────────────────────────────────────────────
+  - id: world-screen
+    kind: ui
+    change: added
+    object: World screen (opened by Play, Training and the room host's START)
+    note: Every world with Small / Medium / Large; unlocked sizes choose, the next one shows its price and asks to confirm, too few coins disables Buy with "N more world coins needed"; START plays the choice.
+    statements: [S1, S3, S8, S11, S12, S13, S22, S23]
+    examples:
+      - name: rich-account
+        input: |
+          route=/ → PLAY, account with 800 world coins, free worlds in Small,
+          Jungle Ruins chosen in Small
+        views: [desktop, phone]
+      - name: too-few-coins
+        input: |
+          route=/ → PLAY, account with 300 world coins, tap Sky Islands · Large (1000)
+        views: [phone]
+  - id: home-balance
+    kind: ui
+    change: modified
+    object: Home screen header (world-coin chip next to the credits)
+    note: A 🌍 chip with the account's world coins now sits left of the credits chip; check it fits on a phone in portrait.
+    statements: [S8, S23]
+    examples:
+      - name: header
+        input: |
+          route=/, account with 750 world coins and 500 credits
+        views: [desktop, phone]
+  - id: result-world-coins
+    kind: ui
+    change: modified
+    object: Match result screen (world-coin line)
+    note: "\"+250 world coins\" appears under trophies and credits only when the match crossed a new 500-step of total trophies."
+    statements: [S9, S22]
+    extraction: manual
+    manual_reason: A won match that crosses a 500-step cannot be played by script on either side (Step 5 checked it only with a temporary forced value); the earning rule itself is shown by the world-coin-earning block.
+    examples:
+      - name: crossing-500
+        input: |
+          account with 495 total trophies (Blaze 495), win a match (+10 trophies) → result screen
+        views: [desktop]
+  - id: hack-screen
+    kind: ui
+    change: modified
+    object: Hack screen (world-coin codes and the used-codes list)
+    note: A world-coin code adds its coins and is celebrated; the same code again is refused with the date it works again; a list "Used world-coin codes" shows each code's date.
+    statements: [S14, S15, S16, S22, S23]
+    examples:
+      - name: redeem-twice
+        input: |
+          route=/ → Hacks, enter the code of world_500_1 (world_codes.py), then enter it again;
+          clock fixed at <timestamp>
+        views: [desktop, phone]
+  - id: qr-page
+    kind: ui
+    change: modified
+    object: /?qr print page (world-coin codes)
+    note: After the existing password, 15 cards instead of 5; the ten world-coin cards read "500 / 1000 world coins" and "Once every 30 days for each player."
+    statements: [S18, S22]
+    examples:
+      - name: after-password
+        input: |
+          route=/?qr, the QR password entered (API running)
+        views: [desktop]
+  - id: friends-lobby
+    kind: ui
+    change: modified
+    object: Friends' room lobby (older-game tag and removal notice)
+    note: 'A friend without a room version is tagged "Older game: plays only in Canyon · Small"; after a start elsewhere the host reads who had to leave and why.'
+    statements: [S7, S22]
+    examples:
+      - name: old-friend-removed
+        input: |
+          host (this version) with Neon Docks · Large chosen creates a room; a friend joins with a
+          raw WebSocket member without "version"; host → START → world screen → START → back to the lobby
+        views: [desktop]
+  - id: world-gallery
+    kind: ui
+    change: added
+    object: /?gallery=worlds developer view
+    note: Shows one world and size with its theme (ground, border, walls, cover) and a data-fps value; /?gallery without the parameter still shows the fighters.
+    statements: [S4, S5, S23]
+    examples:
+      - name: lava-forge-large
+        input: |
+          route=/?gallery=worlds&world=lava-forge&size=large
+        views: [desktop]
+
+  # ── Game rules ───────────────────────────────────────────────────────────
+  - id: world-catalogue
+    kind: output
+    change: added
+    object: WORLDS and arenaFor(worldId, size) (ui/src/lib/game/worlds.ts)
+    note: 13 worlds (3 free) and a seeded mirror-symmetric layout per size; Small 30×24, Medium 36×30, Large 42×34 with more walls and bushes; Canyon Small is exactly today's CANYON.
+    statements: [S2, S3, S4, S5]
+    examples:
+      - name: catalogue
+        input: |
+          WORLDS.map((w) => [w.id, w.free])
+      - name: canyon-sizes
+        input: |
+          (['small', 'medium', 'large'] as const).map((s) => {
+            const a = arenaFor('canyon', s)
+            return { size: s, width: a.width, depth: a.depth, walls: a.walls.length,
+                     bushes: a.bushes.length, spawns: a.spawns.length }
+          })
+          JSON.stringify(arenaFor('canyon', 'small')) === JSON.stringify(CANYON)
+  - id: world-looks
+    kind: output
+    change: modified
+    object: buildArena(arena, theme) and WORLD_LOOKS (ui/src/lib/models/arena3d.ts)
+    note: One look per theme from simple shapes, merged by material into a few draw calls; Canyon must draw exactly as before (triangles, positions, colours).
+    statements: [S4, S5, S23]
+    examples:
+      - name: canyon-unchanged
+        input: |
+          fingerprint(buildArena(CANYON))   # triangle count, mesh count, bounding box, colours
+      - name: candy-large
+        input: |
+          fingerprint(buildArena(arenaFor('candy-factory', 'large'), 'candy'))
+  - id: world-coin-earning
+    kind: output
+    change: added
+    object: worldCoinsFor / earnWorldCoins (ui/src/lib/game/worldShop.ts) and saveReward after a match
+    note: 250 world coins for each new 500-step of total trophies, paid once per step; a step reached again after losing trophies pays nothing.
+    statements: [S9, S10]
+    examples:
+      - name: steps
+        input: |
+          [worldCoinsFor(499, 509, 0), worldCoinsFor(990, 1010, 1),
+           worldCoinsFor(1010, 990, 2), worldCoinsFor(990, 1005, 2), worldCoinsFor(480, 1020, 0)]
+  - id: world-shop
+    kind: output
+    change: added
+    object: buyWorld, growWorld, worldOffers, chooseWorld, chosenWorld (ui/src/lib/game/worldShop.ts)
+    note: 500 / 750 / 1000 for a new world, +250 per next size; refusals 'world-coins' with the missing amount, 'owned', 'locked'; credits and hacks never count; a locked choice falls back to Canyon Small.
+    statements: [S1, S10, S11, S12, S13]
+    examples:
+      - name: buy-and-grow
+        input: |
+          p = { ...startProgress(), worldCoins: 800, credits: Infinity, activeHacks: ['unlock_all'] }
+          [buyWorld(p, 'lava-forge', 'small'), growWorld(p, 'jungle-ruins'),
+           buyWorld(p, 'sky-islands', 'large'), buyWorld(p, 'canyon', 'small'),
+           growWorld(p, 'moon-base')]   # show ok / reason / missing / cost / worldCoins
+      - name: offers-and-choice
+        input: |
+          p = { ...startProgress(), worldCoins: 300 }
+          worldOffers(p, 'canyon'); worldOffers(p, 'sky-islands')
+          chosenWorld(chooseWorld(p, 'sky-islands', 'small'))
+  - id: bot-seek
+    kind: output
+    change: modified
+    object: Bots.think — seek rule (ui/src/lib/game/bots.ts)
+    note: A bot that has seen nobody for 6 seconds (SEEK_AFTER_SECONDS) walks towards the nearest opponent still in, instead of wandering; sight is unchanged.
+    statements: [S6]
+    examples:
+      - name: out-of-sight
+        input: |
+          World(arenaFor('neon-docks', 'large')), player at (-18, -14) standing still, one bot at (18, 14),
+          bot level easy, fixed random seed; distance bot → player after 0 s, 6 s and 12 s
+      - name: bots-only-large
+        input: |
+          Match(arenaFor('lava-forge', 'large'), SETTINGS with 3 bots, every fighter a bot),
+          fixed random seed; phase and time when the match ends
+      - name: hidden-in-bush
+        input: |
+          World(CANYON), player standing still inside CANYON.bushes[0] (-9, -7), one easy bot at the
+          spawn farthest from it (13, 8), fixed random seed; distance bot → player after 0 s, 6 s and 12 s
+          (added by REVIEW: — shows the seek rule in Canyon Small)
+
+  # ── Saved progress ───────────────────────────────────────────────────────
+  - id: saved-progress-v8
+    kind: data-format
+    change: modified
+    object: hack-star.accounts progress (version 8)
+    note: Adds worldCoins, worldSteps, worlds, selectedWorld, worldCodes; v2–v7 saves migrate with the free worlds in Small, Canyon Small and 250 world coins per 500-step already reached; reset clears all five.
+    statements: [S8, S19, S20, S21]
+    examples:
+      - name: migrate-v7
+        input: |
+          parseProgress({ version: 7, credits: 500, trophies: { blaze: 1000, rocko: 240 }, ...rest of a v7 save })
+      - name: reset
+        input: |
+          resetProgress({ ...startProgress(), worldCoins: 900, worldSteps: 4,
+            worlds: { canyon: 'large', 'lava-forge': 'small' }, selectedWorld: { id: 'lava-forge', size: 'small' },
+            worldCodes: { world_500_1: <timestamp> } })
+  - id: progress-merge
+    kind: output
+    change: modified
+    object: Two-tab merge of an account's progress (mergeProgress in ui/src/lib/accounts.ts)
+    note: worldCoins merge as a delta (with a refund when both tabs bought the same world), worlds keep the bigger size, worldSteps the larger, worldCodes the later date, selectedWorld the local change; a reset wins.
+    statements: [S13, S19, S21]
+    examples:
+      - name: purchase-and-match
+        input: |
+          base: 800 world coins; tab A buys Lava Forge Small (−500); tab B, stale, wins a match
+          crossing 500 trophies (+250); tab A saves after tab B → merged worldCoins, worlds, worldSteps
+      - name: same-world-both-tabs
+        input: |
+          base: 1000 world coins; tab A buys Lava Forge Small (−500); tab B, stale, buys Lava Forge
+          Small + Medium (−750) → merged worldCoins and worlds
+      - name: both-tabs-cross-500
+        input: |
+          base: 0 world coins, worldSteps 0, trophies { blaze: 490, rocko: 5 } (495); tab A wins with
+          Blaze (+10, earnWorldCoins), tab B, stale, wins with Rocko (+10, earnWorldCoins) → merged
+          worldCoins, worldSteps, total trophies (added by REVIEW: — the same 500-step in both tabs)
+
+  # ── Room messages ────────────────────────────────────────────────────────
+  - id: room-start-world
+    kind: schema
+    change: modified
+    object: Room start message — settings.world (StartInfo in ui/src/lib/net/shared.ts)
+    note: The host sends { id, size }; every device builds the host's arena and theme from it, even if not unlocked; a start without a known world is Canyon Small; old friends are left out of the fighters outside Canyon Small.
+    statements: [S7]
+    examples:
+      - name: start-large
+        input: |
+          startInfo(SETTINGS, [host seat, friend seat with version 2, friend seat without version],
+                    catalogue, { id: 'neon-docks', size: 'large' }, seededRandom)
+      - name: start-from-old-host
+        input: |
+          sharedWorld({ type: 'start', settings: { matchSeconds: 120, overtimeSeconds: 30,
+            botCount: 2, countdownSeconds: 3, botLevel: 'easy' }, fighters: [] })
+  - id: room-member-version
+    kind: schema
+    change: modified
+    object: Room member (WS /api/rooms) — version
+    note: This game sends version 2; the server accepts members without it (previous version) and refuses 1, 100 or "2" with bad-member.
+    statements: [S7]
+    examples:
+      - name: join-with-version
+        input: |
+          {"type": "create", "member": {"fighter": "blaze", "skin": "default", "power": 1}}
+          {"type": "join", "code": "<code>", "member": {"fighter": "rocko", "skin": "default", "power": 1, "version": 2}}
+      - name: bad-version
+        input: |
+          {"type": "create", "member": {"fighter": "blaze", "skin": "default", "power": 1, "version": "2"}}
+  - id: room-old-version-removal
+    kind: output
+    change: added
+    object: Server removal on start outside Canyon Small (rooms.py) and the new "removed" message
+    note: Friends without version get error update-the-game and leave the room; the host gets {type removed, reason, members}; their later input is ignored; nothing changes in Canyon Small or with no world.
+    statements: [S7]
+    examples:
+      - name: start-jungle-large
+        input: |
+          host creates a room; friend A joins without version, friend B with version 2;
+          host sends {"type": "start", "settings": {"world": {"id": "jungle-ruins", "size": "large"}}}
+          → messages received by A, host and B; then A and B each send {"type": "input", "x": 1}
+      - name: start-canyon-small
+        input: |
+          same room with friend A only; host sends {"type": "start", "settings": {"world": {"id": "canyon", "size": "small"}}}
+
+  # ── API ──────────────────────────────────────────────────────────────────
+  - id: api-hacks
+    kind: api
+    change: modified
+    object: GET /api/hacks, POST /api/hacks/redeem
+    note: Hack gains optional world_coins and reuse_days; the list adds ten world-coin hacks after the five old ones (unchanged, without the new fields); redeem accepts them in any case with spaces trimmed.
+    statements: [S14, S15, S17, S18]
+    examples:
+      - name: list
+        input: |
+          GET /api/hacks → count, and the fields of the first and the sixth entry
+      - name: redeem-world-code
+        input: |
+          POST /api/hacks/redeem {"code": " <code of world_1000_1, lower case> "}
+
+  # ── Configuration ────────────────────────────────────────────────────────
+  - id: world-settings
+    kind: config
+    change: added
+    object: SETTINGS world numbers (ui/src/lib/game/settings.ts)
+    note: worldCoinsPerStep 250, trophiesPerWorldStep 500, worldPrices { small 500, medium 750, large 1000 }, worldSizeStep 250 — every world rule reads them.
+    statements: [S9, S11, S12]
+    examples:
+      - name: settings
+        input: |
+          SETTINGS in ui/src/lib/game/settings.ts (keys world*, trophiesPerWorldStep)
+  - id: world-codes-file
+    kind: config
+    change: added
+    object: server/src/hack_star_server/world_codes.py
+    note: WORLD_CODE_REUSE_DAYS = 30 and ten { id, code, amount } (five of 500, five of 1000); the one place to change codes, amounts and the waiting time.
+    statements: [S14, S15, S17]
+    examples:
+      - name: codes
+        input: |
+          WORLD_CODE_REUSE_DAYS, and [(c.id, c.amount) for c in WORLD_CODES]   # codes masked as «code»
+  - id: kit-models
+    kind: config
+    change: modified
+    object: .specs/spec-nx.json models
+    note: 'Not part of the spec — commit "Experiment: per-Step models" replaces the fixed model with reasoning / standard / light tiers and a guide.'
+    examples:
+      - name: models
+        input: |
+          "models" in .specs/spec-nx.json
+
+  # ── Texts and documents ──────────────────────────────────────────────────
+  - id: world-texts
+    kind: message
+    change: added
+    object: New texts in en, de, gsw, es, it (world and size names, world screen, result, hack screen, rooms)
+    note: 39 keys per language; world names are i18n keys and never saved.
+    statements: [S4, S22]
+    examples:
+      - name: key-texts
+        input: |
+          keys world.kata-jungle.name, world.size.medium, worlds.needMore {coins: 450},
+          hackScreen.worldCodeWait {date: "<date>"}, room.error.update, arena.worldCoins {coins: 250}
+          in each of en, de, gsw, es, it
+  - id: docs-worlds
+    kind: output
+    change: modified
+    object: README.md and docs/architecture.md (worlds, world coins, codes)
+    note: README gains "Worlds and world coins" (sizes, prices, earning, code rules without the codes); architecture.md gains worlds.ts, worldShop.ts, themes, progress v8 merge rules, room world / version, world_codes.py.
+    statements: [S24]
+    examples:
+      - name: sections
+        input: |
+          README.md section "Worlds and world coins"; docs/architecture.md lines mentioning worlds, world coins or world_codes
+breaking: |
+  None for players on this version: v2–v7 saves migrate and get world coins for trophies already
+  reached; Canyon Small plays exactly as before. Friends on the previous version can still join
+  and play rooms in Canyon Small; when the host starts in any other world or size the server
+  removes them with "update-the-game" (S7, by design). As with earlier versions, a v8 save is
+  not read by the previous version of the game.
+review:
+  - question: Do old saves keep everything, and can the trophy world coins be paid twice?
+    answer: |
+      They keep everything and get the free worlds in Small with Canyon Small chosen. The
+      migration pays 250 per 500-step already reached and stores worldSteps, so later matches
+      only pay steps above it (S9, S20; 1240 trophies → 500 world coins).
+  - question: Do today's matches in Canyon change?
+    answer: |
+      No. arenaFor('canyon', 'small') returns CANYON itself, and a test pins Canyon's 3D build
+      (triangles, positions, colours) to the previous one; only the bot seek rule after 6 s
+      without seeing anybody is new in every world (D2, D5).
+  - question: Can a player use a world-coin code again early?
+    answer: |
+      Only by clearing the browser's data or resetting the account: the codes are checked by the
+      server, but the "used" dates live in the account's saved progress (D10). The game has no
+      server accounts; server-side tracking is a Deferred Item.
+  - question: What does a friend on the previous version see?
+    answer: |
+      In Canyon Small, nothing changes. Elsewhere the server sends the existing room-error
+      message with the reason "update-the-game", which older games show as it is; the host's
+      lobby says who had to leave and why (D11).

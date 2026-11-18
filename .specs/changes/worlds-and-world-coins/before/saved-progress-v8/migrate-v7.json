@@ -1,0 +1,21 @@
+{
+  "version": 7,
+  "credits": 500,
+  "trophies": {
+    "blaze": 1000,
+    "rocko": 240
+  },
+  "powerLevels": {},
+  "unlockedFighters": [
+    "blaze",
+    "rocko",
+    "turbo",
+    "marina"
+  ],
+  "activeHacks": [],
+  "hackExpiries": {},
+  "selectedFighter": "blaze",
+  "selectedSkins": {},
+  "ownedSkins": {},
+  "createdFighters": []
+}

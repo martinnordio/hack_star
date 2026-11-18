@@ -1,0 +1,28 @@
+{
+  "tabA": {
+    "worldCoins": 550,
+    "worldSteps": 1,
+    "worlds": {
+      "canyon": "small",
+      "jungle-ruins": "small",
+      "neon-docks": "small",
+      "lava-forge": "small"
+    },
+    "trophies": {
+      "blaze": 505
+    }
+  },
+  "tabB": {
+    "worldCoins": 550,
+    "worldSteps": 1,
+    "worlds": {
+      "canyon": "small",
+      "jungle-ruins": "small",
+      "neon-docks": "small",
+      "lava-forge": "small"
+    },
+    "trophies": {
+      "blaze": 505
+    }
+  }
+}

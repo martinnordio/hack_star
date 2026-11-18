@@ -1,0 +1,37 @@
+[
+  {
+    "call": "worldCoinsFor(499, 509, 0)",
+    "result": {
+      "coins": 250,
+      "steps": 1
+    }
+  },
+  {
+    "call": "worldCoinsFor(990, 1010, 1)",
+    "result": {
+      "coins": 250,
+      "steps": 2
+    }
+  },
+  {
+    "call": "worldCoinsFor(1010, 990, 2)",
+    "result": {
+      "coins": 0,
+      "steps": 2
+    }
+  },
+  {
+    "call": "worldCoinsFor(990, 1005, 2)",
+    "result": {
+      "coins": 0,
+      "steps": 2
+    }
+  },
+  {
+    "call": "worldCoinsFor(480, 1020, 0)",
+    "result": {
+      "coins": 500,
+      "steps": 2
+    }
+  }
+]

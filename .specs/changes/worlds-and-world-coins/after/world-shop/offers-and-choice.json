@@ -1,0 +1,42 @@
+{
+  "worldOffers(p, 'canyon')": [
+    {
+      "size": "small",
+      "state": "unlocked"
+    },
+    {
+      "size": "medium",
+      "state": "grow",
+      "price": 250,
+      "missing": 0
+    },
+    {
+      "size": "large",
+      "state": "locked"
+    }
+  ],
+  "worldOffers(p, 'sky-islands')": [
+    {
+      "size": "small",
+      "state": "buy",
+      "price": 500,
+      "missing": 200
+    },
+    {
+      "size": "medium",
+      "state": "buy",
+      "price": 750,
+      "missing": 450
+    },
+    {
+      "size": "large",
+      "state": "buy",
+      "price": 1000,
+      "missing": 700
+    }
+  ],
+  "chosenWorld(chooseWorld(p, 'sky-islands', 'small'))": {
+    "id": "canyon",
+    "size": "small"
+  }
+}

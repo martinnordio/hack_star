@@ -1,0 +1,67 @@
+{
+  "host": [
+    {
+      "type": "room",
+      "code": "<code>",
+      "you": 0,
+      "started": false,
+      "members": [
+        {
+          "slot": 0,
+          "fighter": "blaze",
+          "skin": "default",
+          "power": 1,
+          "hyper": false
+        }
+      ]
+    },
+    {
+      "type": "room",
+      "code": "<code>",
+      "you": 0,
+      "started": false,
+      "members": [
+        {
+          "slot": 0,
+          "fighter": "blaze",
+          "skin": "default",
+          "power": 1,
+          "hyper": false
+        },
+        {
+          "slot": 1,
+          "fighter": "rocko",
+          "skin": "default",
+          "power": 1,
+          "hyper": false,
+          "version": 2
+        }
+      ]
+    }
+  ],
+  "friend": [
+    {
+      "type": "room",
+      "code": "<code>",
+      "you": 1,
+      "started": false,
+      "members": [
+        {
+          "slot": 0,
+          "fighter": "blaze",
+          "skin": "default",
+          "power": 1,
+          "hyper": false
+        },
+        {
+          "slot": 1,
+          "fighter": "rocko",
+          "skin": "default",
+          "power": 1,
+          "hyper": false,
+          "version": 2
+        }
+      ]
+    }
+  ]
+}

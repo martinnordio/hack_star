@@ -1,0 +1,31 @@
+{
+  "host": [
+    {
+      "type": "input",
+      "x": 1,
+      "slot": 1
+    }
+  ],
+  "A (no version)": [
+    {
+      "type": "start",
+      "settings": {
+        "world": {
+          "id": "jungle-ruins",
+          "size": "large"
+        }
+      }
+    }
+  ],
+  "B (version 2)": [
+    {
+      "type": "start",
+      "settings": {
+        "world": {
+          "id": "jungle-ruins",
+          "size": "large"
+        }
+      }
+    }
+  ]
+}

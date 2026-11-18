@@ -1,0 +1,15 @@
+{
+  "tabA": {
+    "trophies": {
+      "blaze": 500,
+      "rocko": 15
+    }
+  },
+  "tabB": {
+    "trophies": {
+      "blaze": 500,
+      "rocko": 15
+    }
+  },
+  "totalTrophies": 515
+}

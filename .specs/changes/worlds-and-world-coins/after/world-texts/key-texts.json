@@ -1,0 +1,42 @@
+{
+  "en": {
+    "world.kata-jungle.name": "Kata Jungle",
+    "world.size.medium": "Medium",
+    "worlds.needMore {coins: 450}": "450 more world coins needed",
+    "hackScreen.worldCodeWait {date: \"<date>\"}": "You already used this code. It works again on <date>.",
+    "room.error.update": "Your game is too old for this world. Update the game to play with your friends.",
+    "arena.worldCoins {coins: 250}": "+250 world coins"
+  },
+  "de": {
+    "world.kata-jungle.name": "Kata-Dschungel",
+    "world.size.medium": "Mittel",
+    "worlds.needMore {coins: 450}": "Dir fehlen noch 450 Weltmünzen",
+    "hackScreen.worldCodeWait {date: \"<date>\"}": "Du hast diesen Code schon benutzt. Er funktioniert wieder am <date>.",
+    "room.error.update": "Dein Spiel ist zu alt für diese Welt. Aktualisiere das Spiel, um mit deinen Freunden zu spielen.",
+    "arena.worldCoins {coins: 250}": "+250 Weltmünzen"
+  },
+  "gsw": {
+    "world.kata-jungle.name": "Kata-Dschungel",
+    "world.size.medium": "Mittel",
+    "worlds.needMore {coins: 450}": "Dir fehled no 450 Wältmünze",
+    "hackScreen.worldCodeWait {date: \"<date>\"}": "Du hesch dä Code scho bruucht. Är gaat wieder am <date>.",
+    "room.error.update": "Dis Spiel isch z alt für die Wält. Aktualisier s Spiel, zum mit dine Fründe spiele.",
+    "arena.worldCoins {coins: 250}": "+250 Wältmünze"
+  },
+  "es": {
+    "world.kata-jungle.name": "Jungla Kata",
+    "world.size.medium": "Mediano",
+    "worlds.needMore {coins: 450}": "Te faltan 450 monedas de mundo",
+    "hackScreen.worldCodeWait {date: \"<date>\"}": "Ya usaste este código. Vuelve a funcionar el <date>.",
+    "room.error.update": "Tu juego es demasiado antiguo para este mundo. Actualiza el juego para jugar con tus amigos.",
+    "arena.worldCoins {coins: 250}": "+250 monedas de mundo"
+  },
+  "it": {
+    "world.kata-jungle.name": "Giungla Kata",
+    "world.size.medium": "Medio",
+    "worlds.needMore {coins: 450}": "Ti mancano 450 monete mondo",
+    "hackScreen.worldCodeWait {date: \"<date>\"}": "Hai già usato questo codice. Funziona di nuovo il <date>.",
+    "room.error.update": "Il tuo gioco è troppo vecchio per questo mondo. Aggiorna il gioco per giocare con i tuoi amici.",
+    "arena.worldCoins {coins: 250}": "+250 monete mondo"
+  }
+}

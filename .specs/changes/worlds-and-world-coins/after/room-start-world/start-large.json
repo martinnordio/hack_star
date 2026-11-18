@@ -1,0 +1,46 @@
+{
+  "type": "start",
+  "settings": {
+    "matchSeconds": 120,
+    "overtimeSeconds": 60,
+    "botCount": 3,
+    "countdownSeconds": 3,
+    "botLevel": "easy",
+    "world": {
+      "id": "neon-docks",
+      "size": "large"
+    }
+  },
+  "fighters": [
+    {
+      "fighter": "blaze",
+      "type": "spreader",
+      "skin": "default",
+      "power": 1,
+      "hyper": false,
+      "slot": 0
+    },
+    {
+      "fighter": "rocko",
+      "type": "tank",
+      "skin": "default",
+      "power": 1,
+      "hyper": false,
+      "slot": 1
+    },
+    {
+      "fighter": "marina",
+      "type": "thrower",
+      "skin": "default",
+      "power": 5,
+      "hyper": false
+    },
+    {
+      "fighter": "turbo",
+      "type": "sharpshooter",
+      "skin": "default",
+      "power": 5,
+      "hyper": false
+    }
+  ]
+}

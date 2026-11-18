@@ -1,0 +1,51 @@
+[
+  {
+    "call": "buyWorld(p, 'lava-forge', 'small')",
+    "result": {
+      "ok": true,
+      "cost": 500,
+      "worldCoins": 300,
+      "worlds": {
+        "canyon": "small",
+        "jungle-ruins": "small",
+        "neon-docks": "small",
+        "lava-forge": "small"
+      }
+    }
+  },
+  {
+    "call": "growWorld(p, 'jungle-ruins')",
+    "result": {
+      "ok": true,
+      "cost": 250,
+      "worldCoins": 550,
+      "worlds": {
+        "canyon": "small",
+        "jungle-ruins": "medium",
+        "neon-docks": "small"
+      }
+    }
+  },
+  {
+    "call": "buyWorld(p, 'sky-islands', 'large')",
+    "result": {
+      "ok": false,
+      "reason": "world-coins",
+      "missing": 200
+    }
+  },
+  {
+    "call": "buyWorld(p, 'canyon', 'small')",
+    "result": {
+      "ok": false,
+      "reason": "owned"
+    }
+  },
+  {
+    "call": "growWorld(p, 'moon-base')",
+    "result": {
+      "ok": false,
+      "reason": "locked"
+    }
+  }
+]

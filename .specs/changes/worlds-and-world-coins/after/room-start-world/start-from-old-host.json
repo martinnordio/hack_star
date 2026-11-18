@@ -1,0 +1,12 @@
+{
+  "sharedWorld": {
+    "id": "canyon",
+    "size": "small"
+  },
+  "sharedArena": {
+    "theme": "canyon",
+    "width": 30,
+    "depth": 24,
+    "isCANYON": true
+  }
+}

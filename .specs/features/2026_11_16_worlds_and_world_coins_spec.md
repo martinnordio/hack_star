@@ -23,6 +23,7 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 6 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 7 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | — | — | Step 8 done |
+| 2026-11-18 | review | `REVIEW:` | Claude Opus 5.5 | — | — | semantic diff written |
 
 ---
 
@@ -457,6 +458,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-18 | Claude Opus 5.5 | semantic diff | — | [review page](../review/2026-11-18_feature-worlds-and-world-coins.html) |
 
 ---
 
@@ -465,6 +467,6 @@ Tasks set aside for a future spec, so nothing is forgotten.
 - [x] Requirements · Part 1 agreed (S1..S24 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
