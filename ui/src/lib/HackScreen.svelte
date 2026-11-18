@@ -1,9 +1,9 @@
 <script lang="ts">
   import Celebration from './Celebration.svelte'
-  import { codeFromScan, hackTimeRemaining, isHackActive, redeem, UnknownCodeError, withHack, type Hack, type HackId } from './hacks'
+  import { codeFromScan, formatCodeDate, hackTimeRemaining, isHackActive, isWorldCode, redeem, UnknownCodeError, usedWorldCodes, useWorldCode, withHack, type Hack, type HackId } from './hacks'
   import { progress } from './accounts'
   import QrScanner from './QrScanner.svelte'
-  import { t, tOr } from './i18n'
+  import { language, t, tOr } from './i18n'
 
   /** `initialCode` comes from a scanned link that opened the game (`?hack=`). */
   let { hacks, initialCode }: { hacks: Hack[]; initialCode?: string } = $props()
@@ -12,6 +12,7 @@
   let now = $state(Date.now())
   let busy = $state(false)
   let error = $state<'hackScreen.unknownCode' | 'common.serverDown'>()
+  let waitUntil = $state<number>()
   let shake = $state(false)
   let celebrating = $state<Hack>()
   let confirmReset = $state(false)
@@ -20,6 +21,11 @@
   let handledInitialCode: string | undefined
 
   const active = $derived(hacks.filter((h) => isHackActive($progress, h.id, now)))
+  const usedCodes = $derived(usedWorldCodes($progress, hacks, now))
+
+  const hackName = (hack: Hack) => (isWorldCode(hack) ? $t('hack.worldCoins.name', { amount: hack.world_coins }) : $tOr(`hack.${hack.id}.name`, hack.name))
+  const hackDescription = (hack: Hack) =>
+    isWorldCode(hack) ? $t('hack.worldCoins.description', { days: hack.reuse_days }) : $tOr(`hack.${hack.id}.description`, hack.description)
 
   $effect(() => {
     const updateTime = () => (now = Date.now())
@@ -47,9 +53,28 @@
     if (!text.trim() || busy) return
     busy = true
     error = undefined
+    waitUntil = undefined
     try {
       const hack = await redeem(text)
-      progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      if (isWorldCode(hack)) {
+        let nextUseAt: number | undefined
+        progress.update((p) => {
+          const result = useWorldCode(p, hack)
+          if (result.kind === 'wait') {
+            waitUntil = result.nextUseAt
+            return p
+          }
+          nextUseAt = result.nextUseAt
+          return result.progress
+        })
+        if (nextUseAt === undefined) {
+          shake = false
+          requestAnimationFrame(() => (shake = true))
+          return
+        }
+      } else {
+        progress.update((p) => withHack(p, hack.id as HackId, hack.duration_seconds))
+      }
       now = Date.now()
       code = ''
       celebrating = hack
@@ -96,12 +121,14 @@
         spellcheck="false"
         maxlength="100"
         placeholder="●●●●●●"
-        oninput={() => (error = undefined)}
+        oninput={() => ((error = undefined), (waitUntil = undefined))}
       />
       <button class="go" disabled={busy || !code.trim()}>{$t('hackScreen.go')}</button>
     </div>
     {#if error}
       <p class="error" role="alert">{$t(error)}</p>
+    {:else if waitUntil !== undefined}
+      <p class="error" role="alert">{$t('hackScreen.worldCodeWait', { date: formatCodeDate(waitUntil, $language) })}</p>
     {/if}
   </form>
 
@@ -131,7 +158,7 @@
           <li>
             <span class="on">{$t('hackScreen.on')}</span>
             <span class="details">
-              <strong>{$tOr(`hack.${hack.id}.name`, hack.name)}</strong><br />{$tOr(`hack.${hack.id}.description`, hack.description)}
+              <strong>{hackName(hack)}</strong><br />{hackDescription(hack)}
               {#if remaining?.kind === 'permanent'}
                 <small class="duration">{$t('hackScreen.permanent')}</small>
               {:else if remaining?.kind === 'timed'}
@@ -152,13 +179,27 @@
       {/if}
     {/if}
   </section>
+
+  {#if usedCodes.length > 0}
+    <section>
+      <h3>{$t('hackScreen.worldCodesUsed')}</h3>
+      <ul class="active">
+        {#each usedCodes as { hack, nextUseAt } (hack.id)}
+          <li>
+            <span class="on">🌍</span>
+            <span class="details">
+              <strong>{hackName(hack)}</strong><br />{hack.code}
+              <small class="duration">{$t('hackScreen.worldCodeAgain', { date: formatCodeDate(nextUseAt, $language) })}</small>
+            </span>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 </div>
 
 {#if celebrating}
-  <Celebration
-    title={$tOr(`hack.${celebrating.id}.name`, celebrating.name)}
-    subtitle={$tOr(`hack.${celebrating.id}.description`, celebrating.description)}
-  />
+  <Celebration title={hackName(celebrating)} subtitle={hackDescription(celebrating)} />
 {/if}
 
 <style>

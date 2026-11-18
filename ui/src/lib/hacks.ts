@@ -4,12 +4,22 @@ import { SETTINGS } from './game/settings'
 export type HackId = 'infinite_credits' | 'unlock_all' | 'power22' | 'hypercharge' | 'creator'
 
 export interface Hack {
-  id: HackId
+  id: string
   code: string
   name: string
   description: string
   duration_seconds: number | null
+  /** Set on a world-coin code: the coins it gives. */
+  world_coins?: number | null
+  /** Set on a world-coin code: the days before the same account can use it again. */
+  reuse_days?: number | null
 }
+
+export type WorldCodeHack = Hack & { world_coins: number; reuse_days: number }
+
+export type WorldCodeResult = { kind: 'used'; progress: Progress; nextUseAt: number } | { kind: 'wait'; nextUseAt: number }
+
+const DAY_MS = 24 * 60 * 60 * 1000
 
 export type HackTimeRemaining = { kind: 'permanent' } | { kind: 'timed'; days: number; hours: number }
 
@@ -55,6 +65,42 @@ export function codeFromScan(text: string): string {
 
 export function hackLink(origin: string, code: string): string {
   return `${origin}/?hack=${encodeURIComponent(code)}`
+}
+
+export function isWorldCode(hack: Hack): hack is WorldCodeHack {
+  return typeof hack.world_coins === 'number' && typeof hack.reuse_days === 'number'
+}
+
+/** A world-coin code gives its coins once per account until `reuse_days` have passed. */
+export function useWorldCode(progress: Progress, hack: WorldCodeHack, now = Date.now()): WorldCodeResult {
+  const waitUntil = progress.worldCodes[hack.id]
+  if (waitUntil !== undefined && waitUntil > now) return { kind: 'wait', nextUseAt: waitUntil }
+  const nextUseAt = now + hack.reuse_days * DAY_MS
+  return {
+    kind: 'used',
+    nextUseAt,
+    progress: {
+      ...progress,
+      worldCoins: progress.worldCoins + hack.world_coins,
+      worldCodes: { ...progress.worldCodes, [hack.id]: nextUseAt },
+    },
+  }
+}
+
+/** The world-coin codes the account used that cannot be used again yet, soonest first. */
+export function usedWorldCodes(progress: Progress, hacks: Hack[], now = Date.now()): { hack: WorldCodeHack; nextUseAt: number }[] {
+  return hacks
+    .filter(isWorldCode)
+    .flatMap((hack) => {
+      const nextUseAt = progress.worldCodes[hack.id]
+      return nextUseAt !== undefined && nextUseAt > now ? [{ hack, nextUseAt }] : []
+    })
+    .sort((a, b) => a.nextUseAt - b.nextUseAt)
+}
+
+/** The day a code works again, in the language of the game (Swiss German uses the Swiss format). */
+export function formatCodeDate(at: number, language: string): string {
+  return new Date(at).toLocaleDateString(language === 'gsw' ? 'de-CH' : language, { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 export function withHack(progress: Progress, id: HackId, durationSeconds: number | null, now = Date.now()): Progress {

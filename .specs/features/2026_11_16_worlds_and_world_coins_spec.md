@@ -21,6 +21,7 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 4 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 5 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 6 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 7 done |
 
 ---
 
@@ -176,7 +177,7 @@ _None — answered on 2026-11-16._
 | **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
-| **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
+| **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | light (Claude Haiku 5.5) — docs and running checks | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -389,23 +390,27 @@ Ten world-coin codes give 500 or 1000 world coins, once per 30 days per account,
 hack screen and printed on the QR page (S14–S18, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `server/.../world_codes.py` (D9): `WORLD_CODE_REUSE_DAYS`, five codes of 500 and five of
+- [x] Record the start time in Notes below.
+- [x] `server/.../world_codes.py` (D9): `WORLD_CODE_REUSE_DAYS`, five codes of 500 and five of
       1000; `hacks.py` / `app.py`: redeem and list include them with `world_coins` and
       `reuse_days`.
-- [ ] `hacks.ts` and `HackScreen.svelte`: a world-coin code adds its coins and stores its next
+- [x] `hacks.ts` and `HackScreen.svelte`: a world-coin code adds its coins and stores its next
       date; before that date it is refused with the date; a list of used codes with the dates
       they work again.
-- [ ] `QrPage.svelte`: the world-coin codes with their amounts.
-- [ ] Texts in all five languages.
-- [ ] Tests: server — every code unique, amounts 500 / 1000, reuse days 30, redeem answers;
+- [x] `QrPage.svelte`: the world-coin codes with their amounts.
+- [x] Texts in all five languages.
+- [x] Tests: server — every code unique, amounts 500 / 1000, reuse days 30, redeem answers;
       UI — use, refuse before 30 days with the date, accept after, other account independent,
       reset clears the dates (S21).
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; in the
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; in the
       browser: redeem a code, try again (refused with date), switch account (works), QR page.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 14:43
+
+**Done (2026-11-18 · ~6m · Claude Sonnet 5.5)** — `server/.../world_codes.py`: `WORLD_CODE_REUSE_DAYS = 30` and ten codes (`WC5-7K2QX` … five of 500, `WC1-K3W7P` … five of 1000; unique, no vowels or 0/1 so never a word). `hacks.py`: `Hack` gets optional `world_coins` and `reuse_days`; `ALL_HACKS` adds one hack per world code, so `/api/hacks` (QR page) and `/api/hacks/redeem` (any case, spaces trimmed) include them; the five old hacks are unchanged. `hacks.ts`: `isWorldCode`, `useWorldCode` (adds the coins and stores `worldCodes[id] = now + reuse_days`; before that date it answers `wait` with the date), `usedWorldCodes`, `formatCodeDate` (Swiss German → `de-CH`). `HackScreen.svelte`: a world-coin code adds its coins and is celebrated; a used code is refused with "It works again on {date}"; a list "Used world-coin codes" with the dates; `QrPage.svelte`: the ten codes with amount and waiting time. 5 new texts in en, de, gsw, es, it. Tests: server — five normal hacks unchanged, ten codes (five of each amount, 30 days, unique ids and codes, non-word pattern), redeem answers, normal hacks without the new fields; UI — world code detection, use, refuse before 30 days with the date and accept after, other code and other account independent, used list, reset clears the dates (S21), date in the language. `cd server; uv run --no-sync pytest` 56 passed; `cd ui; npm test` 375 passed, `npm run check` 0 errors. Browser (Vite dev + API, integrated Chromium): `?hack=WC5-7K2QX` → 500 world coins, "HACKED!" and the used list; entering it again → "You already used this code. It works again on December 18, 2026." with coins unchanged; a new account "Mia" redeemed the same code (500) while Player 1 kept its date; `/?qr` with password `M6D2` shows 15 QR codes, the ten world-coin codes with 500 / 1000 and "Once every 30 days for each player."; servers stopped. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · — · — (usage script: does not work in this environment)
 
 ---
 

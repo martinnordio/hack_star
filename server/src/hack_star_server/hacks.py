@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from hack_star_server.world_codes import WORLD_CODE_REUSE_DAYS, WORLD_CODES
+
 
 class Hack(BaseModel):
     id: str
@@ -7,6 +9,8 @@ class Hack(BaseModel):
     name: str
     description: str
     duration_seconds: int | None
+    world_coins: int | None = None
+    reuse_days: int | None = None
 
 
 HACKS: list[Hack] = [
@@ -48,6 +52,22 @@ HACKS: list[Hack] = [
 ]
 
 
+WORLD_COIN_HACKS: list[Hack] = [
+    Hack(
+        id=world_code.id,
+        code=world_code.code,
+        name=f"{world_code.amount} world coins",
+        description=f"Gives {world_code.amount} world coins, once every {WORLD_CODE_REUSE_DAYS} days.",
+        duration_seconds=None,
+        world_coins=world_code.amount,
+        reuse_days=WORLD_CODE_REUSE_DAYS,
+    )
+    for world_code in WORLD_CODES
+]
+
+ALL_HACKS: list[Hack] = [*HACKS, *WORLD_COIN_HACKS]
+
+
 def find_hack(code: str) -> Hack | None:
     wanted = code.strip().upper()
-    return next((hack for hack in HACKS if hack.code == wanted), None)
+    return next((hack for hack in ALL_HACKS if hack.code == wanted), None)
