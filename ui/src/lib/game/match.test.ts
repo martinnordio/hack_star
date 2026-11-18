@@ -3,6 +3,7 @@ import { CANYON, type Arena } from './arena'
 import { Match } from './match'
 import { SETTINGS } from './settings'
 import { SHOT_DAMAGE, World } from './world'
+import { WORLDS, arenaFor } from './worlds'
 
 const open: Arena = {
   ...CANYON,
@@ -149,6 +150,18 @@ describe('Match', () => {
         match.update(dt)
       })
       expect(match.result).toEqual({ kind: 'victory' })
+    })
+
+    it('removes the walls and bushes of every Large world', () => {
+      for (const w of WORLDS) {
+        const arena = arenaFor(w.id, 'large')
+        const match = new Match(arena, overtime, still)
+        expect(match.world.walls.length + match.world.bushes.length, w.id).toBeGreaterThan(0)
+        run(13.05, (dt) => match.update(dt))
+        expect(match.overtime, w.id).toBe(true)
+        expect(match.world.walls, w.id).toEqual([])
+        expect(match.world.bushes, w.id).toEqual([])
+      }
     })
 
     it('keeps the walls when set so', () => {

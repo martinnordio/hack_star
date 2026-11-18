@@ -18,6 +18,7 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 1 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 2 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 3 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 4 done |
 
 ---
 
@@ -170,7 +171,7 @@ _None — answered on 2026-11-16._
 | **1** | World catalogue and sizes | reasoning (Claude Opus 5.5) — seeded layout generator and its checks | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
-| **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
+| **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
@@ -301,18 +302,22 @@ Matches and Training are played in the account's chosen world and size, with the
 as today (S1, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
+- [x] Record the start time in Notes below.
+- [x] `Arena.svelte` and the match / Training start use `arenaFor(selectedWorld)` instead of
       `CANYON`; overtime removes the cover of any world.
-- [ ] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
-- [ ] Tests: a bots-only match ends with a winner in every Large world within the match time
+- [x] Bots (D5): walk towards the nearest fighter after 6 seconds without seeing anyone.
+- [x] Tests: a bots-only match ends with a winner in every Large world within the match time
       (fixed random seed); Training dummies and start in every world; overtime empties walls
       and bushes of a Large world.
-- [ ] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
+- [x] Check: `npm test; npm run check`; in the browser, a short match (`?seconds=20&bots=3`)
       in a Large world and Training in a Medium world.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 14:06
+
+**Done (2026-11-18 · ~9m · Claude Sonnet 5.5)** — `Arena.svelte` plays Matches and Training in `arenaFor(chosenWorld(progress))` with the world's `theme` passed to `ArenaScene` and the world's sky colours as the background (rooms still use Canyon Small until Step 6); `bots.ts`: a bot that has seen nobody for `SEEK_AFTER_SECONDS` (6) walks towards the nearest opponent that is still in (D5; `lastSeenAt` in `BotState`); tests: seek rule (fails with the rule off), bots-only match in all 13 Large worlds ends with a win or defeat within the match time (seeded), Training dummies and start in every world × size, overtime empties walls and bushes of every Large world; architecture lines for Match / Training and `bots.ts`. No new visible text. `cd ui; npm test` 361 passed, `npm run check` 0 errors. Browser (headless Chromium with software rendering, so frame rate is not meaningful; 820 × 1180): Large Neon Docks match (`?seconds=20&bots=3&overtime=5`) with the Neon sky, themed cover, overtime removing the walls, through to the result (410 × 590 run), and Training in Jungle Ruins Medium with its dummies and walking; no page errors. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · — · — (usage script: does not work in this environment)
 
 ---
 

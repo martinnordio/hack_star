@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CANYON, type Arena } from './arena'
 import { DUMMY_HEALTH, FIRE_COOLDOWN, PLAYER_RADIUS, RESPAWN_SECONDS, SHOT_DAMAGE, World } from './world'
+import { WORLDS, WORLD_SIZES, arenaFor } from './worlds'
 
 const empty: Arena = {
   width: 30,
@@ -21,6 +22,14 @@ function run(world: World, seconds: number, each?: () => void) {
 }
 
 describe('World', () => {
+  it('Training in every world has its dummies and starts the player at the start point', () => {
+    for (const { id, size, arena } of WORLDS.flatMap((w) => WORLD_SIZES.map((size) => ({ id: w.id, size, arena: arenaFor(w.id, size) })))) {
+      const world = new World(arena)
+      expect(world.dummies.length, `${id} ${size}`).toBe(arena.dummies.length)
+      expect(world.dummies.length, `${id} ${size}`).toBeGreaterThan(0)
+      expect([world.player.x, world.player.z], `${id} ${size}`).toEqual([arena.start.x, arena.start.z])
+    }
+  })
   it('cannot walk through a wall', () => {
     const world = new World(empty)
     run(world, 2, () => world.move(0, -1, 1 / 60))

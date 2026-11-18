@@ -4,6 +4,7 @@ import { Bots } from './bots'
 import { Match } from './match'
 import { BOT_LEVELS, SETTINGS } from './settings'
 import { World } from './world'
+import { WORLDS, arenaFor } from './worlds'
 
 const easy = BOT_LEVELS.easy
 
@@ -81,6 +82,30 @@ describe('Bots', () => {
     expect(world.fighters[1].speedFactor).toBeLessThan(1)
     expect(world.fighters[1].cooldownFactor).toBeGreaterThan(1)
     expect(world.player.speedFactor).toBe(1)
+  })
+
+  it('a bot that has seen nobody for a while walks towards the nearest opponent', () => {
+    const far = { ...arena([{ x: 0, z: 14 }, { x: 0, z: -14 }]), depth: 34 }
+    const world = new World(far, { fighters: 2 })
+    const bots = new Bots(world, easy, true, () => 0)
+    play(world, bots, 5)
+    expect(bots.states[0].targetId).toBeNull()
+    const before = world.fighters[1].z
+    play(world, bots, 3)
+    // Only after the wait does it head for the player on the far side (+z), beyond its sight.
+    expect(world.fighters[1].z).toBeGreaterThan(before + 1)
+  })
+
+  it('a bots-only match ends with a winner in every Large world within the match time', () => {
+    const settings = { ...SETTINGS, botCount: 3, botLevel: 'hard' as const }
+    for (const w of WORLDS) {
+      let seed = w.seed
+      const random = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32)
+      const match = new Match(arenaFor(w.id, 'large'), settings, { random, humans: 0 })
+      run(settings.countdownSeconds + settings.matchSeconds, (dt) => match.update(dt))
+      expect(match.result, w.id).not.toBeNull()
+      expect(match.result?.kind, w.id).not.toBe('timeup')
+    }
   })
 
   it('a full match with default settings ends within its time and overtime', () => {

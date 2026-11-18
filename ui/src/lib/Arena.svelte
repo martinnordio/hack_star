@@ -27,7 +27,9 @@
   import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
   import { isCreatedFighterId, totalTrophies } from './progress'
-  import { earnWorldCoins } from './game/worldShop'
+  import { chosenWorld, earnWorldCoins } from './game/worldShop'
+  import { arenaFor, worldInfo, type WorldTheme } from './game/worlds'
+  import { WORLD_LOOKS } from './models/arena3d'
 
   interface Props {
     mode: 'match' | 'training'
@@ -47,25 +49,30 @@
   function sharedMatch(s: NonNullable<Props['shared']>) {
     const match = s.you === 0 ? new HostMatch(CANYON, s.start, s.connection) : new GuestMatch(CANYON, s.start, s.you, s.connection)
     const looks: Look[] = s.start.fighters.map((f) => ({ fighterId: f.fighter, skinId: f.skin }))
-    return { match, world: match.world, looks, player: looks[match.world.playerId] }
+    return { match, world: match.world, looks, player: looks[match.world.playerId], theme: 'canyon' as WorldTheme }
   }
 
   // A new Arena component is mounted for every match, so these are made once per match.
-  const { match, world, looks, player } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look } => {
+  // Matches and Training are played in the account's chosen world and size; rooms still use Canyon.
+  const { match, world, looks, player, theme } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look; theme: WorldTheme } => {
     if (shared) return sharedMatch(shared)
     const player = chosen
     const playerPower = powerOf(get(progress), player.fighterId)
     const settings = settingsFrom(location.search, SETTINGS, get(options))
+    const picked = chosenWorld(get(progress))
+    const arena = arenaFor(picked.id, picked.size)
+    const theme = worldInfo(picked.id).theme
     const others = fighters.filter((f) => f.id !== player.fighterId && !isCreatedFighterId(f.id)).sort(() => Math.random() - 0.5)
     const count = mode === 'match' ? settings.botCount + 1 : 1
     const ids = Array.from({ length: count }, (_, i) => (i === 0 ? player.fighterId : others[(i - 1) % others.length].id))
     const types = ids.map((id) => fighterType(fighters.find((f) => f.id === id)?.type))
-    const match = mode === 'match' ? new Match(CANYON, settings, { playerPower, types }) : undefined
-    const world = match?.world ?? new World(CANYON, { stats: [stats(playerPower, SETTINGS, types[0])], types })
+    const match = mode === 'match' ? new Match(arena, settings, { playerPower, types }) : undefined
+    const world = match?.world ?? new World(arena, { stats: [stats(playerPower, SETTINGS, types[0])], types })
     Object.assign(world.player, superHack(get(progress)))
     const looks: Look[] = ids.map((id, i) => (i === 0 ? player : { fighterId: id, skinId: 'default' }))
-    return { match, world, looks, player }
+    return { match, world, looks, player, theme }
   })
+  const sky = WORLD_LOOKS[theme].sky
   const actions = match instanceof GuestMatch ? match : undefined
   // Leaving early: the host gives friends a draw; a friend hands its fighter to a bot.
   $effect(() => () => match?.stop?.())
@@ -245,6 +252,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="arena"
+  style:background="linear-gradient({sky[0]}, {sky[1]})"
   bind:this={root}
   onpointerdown={down}
   onpointermove={move}
@@ -255,7 +263,7 @@
 >
   <div class="scene">
     <Canvas shadows={PCFShadowMap}>
-      <ArenaScene {world} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} />
+      <ArenaScene {world} {theme} {match} {actions} {controls} {looks} {overlay} {onHud} {onPower} />
     </Canvas>
   </div>
   <div class="floaters" bind:this={overlay} aria-hidden="true"></div>
@@ -365,7 +373,6 @@
     position: fixed;
     inset: 0;
     overflow: hidden;
-    background: linear-gradient(#7fd0ff, #ffe6b0);
     touch-action: none;
     -webkit-touch-callout: none;
   }

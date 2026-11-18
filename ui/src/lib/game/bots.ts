@@ -8,7 +8,12 @@ export interface BotState {
   seenAt: number
   wander: { x: number; z: number } | null
   wanderUntil: number
+  /** The last time the bot saw an opponent (or the time it was made). */
+  lastSeenAt: number
 }
+
+/** After this many seconds without seeing anybody a bot walks towards the nearest opponent (big worlds). */
+export const SEEK_AFTER_SECONDS = 6
 
 /** Brains for every fighter that is not a person (by default fighter 0 is the player). */
 export class Bots {
@@ -32,7 +37,7 @@ export class Bots {
     f.speedFactor = this.skill.speed
     f.cooldownFactor = this.skill.cooldown
     f.canHyper = this.skill.hyper
-    this.states.push({ id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0 })
+    this.states.push({ id, targetId: null, seenAt: 0, wander: null, wanderUntil: 0, lastSeenAt: this.world.time })
   }
 
   think(dt: number) {
@@ -42,13 +47,14 @@ export class Bots {
     }
   }
 
-  private pickTarget(bot: Fighter): Fighter | undefined {
+  /** The nearest opponent; with `range` only those the bot can see, without it anybody still in. */
+  private pickTarget(bot: Fighter, range?: number): Fighter | undefined {
     let best: Fighter | undefined
     let bestDist = Infinity
     for (const o of this.world.fighters) {
       const otherBot = this.states.some((s) => s.id === o.id)
       if (o === bot || o.team === bot.team || (!this.fightEachOther && otherBot)) continue
-      if (!this.world.canSee(bot, o, this.skill.sight)) continue
+      if (range === undefined ? o.out : !this.world.canSee(bot, o, range)) continue
       const d = Math.hypot(o.x - bot.x, o.z - bot.z)
       if (d < bestDist) {
         best = o
@@ -60,7 +66,8 @@ export class Bots {
 
   private thinkOne(s: BotState, bot: Fighter, dt: number) {
     const world = this.world
-    const target = this.pickTarget(bot)
+    const target = this.pickTarget(bot, this.skill.sight)
+    if (target) s.lastSeenAt = world.time
     if ((target?.id ?? null) !== s.targetId) {
       s.targetId = target?.id ?? null
       s.seenAt = world.time
@@ -91,6 +98,15 @@ export class Bots {
       if (dist <= bot.type.superReach && world.useSuper(bot, aimX, aimZ)) return
       if (dist <= range * 0.9) world.fireFrom(bot, aimX, aimZ)
       return
+    }
+
+    if (world.time - s.lastSeenAt >= SEEK_AFTER_SECONDS) {
+      const nearest = this.pickTarget(bot)
+      if (nearest) {
+        s.wander = null
+        world.moveFighter(bot, nearest.x - bot.x, nearest.z - bot.z, dt)
+        return
+      }
     }
 
     // Nobody to fight: walk to random points, picking a new one now and then (or when stuck).
