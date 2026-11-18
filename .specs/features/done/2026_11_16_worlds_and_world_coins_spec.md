@@ -1,7 +1,7 @@
 # Worlds and World Coins Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/worlds-and-world-coins
 > **Created:** 2026-11-16
 > **Last updated:** 2026-11-18
 > **Branch:** `feature/worlds-and-world-coins`
@@ -9,7 +9,7 @@
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~1.98 M | ~CHF 0.60 (72 credits) | Part 1 written (from ideas.md, "From Mi and Ma") |
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~480 k | ~CHF 0.14 (17 credits) | Part 1 revised: open questions answered — ten worlds to buy with their names, sizes 1.5× / 2×, world coins for existing trophies, UNLOCK_ALL not for worlds, reset clears used codes, older friends only in Canyon Small, five codes of each amount |
@@ -24,6 +24,36 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 7 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | — | — | Step 8 done |
 | 2026-11-18 | review | `REVIEW:` | Claude Opus 5.5 | — | — | semantic diff written |
+| 2026-11-18 | implementation | `CLOSE:` | Claude Sonnet 5.5 | — | — | spec closed |
+
+---
+
+## Cost summary
+
+This feature used at least ~5.55 M tokens, ~CHF 1.65 — estimate, see [COSTS.md](../../kit/COSTS.md). Only the requirements and plan stages have numbers; the token counts of implementation, review and `CLOSE:` were unavailable (the `usage` script has no price for these models here), so those cells read N/A and the totals are **incomplete**.
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | ~2.46 M | ~CHF 0.74 (89 credits) | 4.7 % |
+| plan | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | 5.7 % |
+| implementation | Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 | N/A | N/A | N/A |
+| review | Claude Opus 5.5 | N/A | N/A | N/A |
+| **Total** | | **~5.55 M (requirements and plan only)** | **~CHF 1.65 (198 credits)** | **10.4 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Opus 5.5 | N/A | N/A | N/A |
+| Step 2 | Claude Opus 5.5 | N/A | N/A | N/A |
+| Step 3 | Claude Opus 5.5 | N/A | N/A | N/A |
+| Step 4 | Claude Sonnet 5.5 | N/A | N/A | N/A |
+| Step 5 | Claude Sonnet 5.5 | N/A | N/A | N/A |
+| Step 6 | Claude Opus 5.5 | N/A | N/A | N/A |
+| Step 7 | Claude Sonnet 5.5 | N/A | N/A | N/A |
+| Step 8 | Claude Haiku 5.5 | N/A | N/A | N/A |
+| CLOSE | Claude Sonnet 5.5 | N/A | N/A | N/A |
+| **Total implementation** | | **N/A** | **N/A** | **N/A** |
 
 ---
 
@@ -49,7 +79,7 @@ collecting trophies or get from special hack codes that can be used again after 
 - `ui/src/lib/progress.ts` — per-account progress (version 7): trophies per fighter,
   `totalTrophies()`, credits, unlocked fighters, active hacks with expiry dates;
   `ui/src/lib/accounts.ts` keeps accounts in sync across tabs; the
-  [Fighter studio, saves and music spec](done/2026_11_14_1_fighter_studio_saves_and_music_spec.md)
+  [Fighter studio, saves and music spec](2026_11_14_1_fighter_studio_saves_and_music_spec.md)
   made sure every choice is kept.
 - `ui/src/lib/game/trophies.ts`, `ui/src/lib/fighters.ts` — trophies per match (+10 for a
   win, never below the last Prestige level); Prestige every 1000 total trophies.
@@ -69,10 +99,10 @@ collecting trophies or get from special hack codes that can be used again after 
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../overall_req.md) | Overall game idea and product questions |
-| [ideas.md](ideas.md) | Where this request came from |
-| [architecture.md](../../docs/architecture.md) | How the server and the UI are organised |
-| [README](../../README.md) | How to install, run, test and play |
+| [overall_req.md](../../overall_req.md) | Overall game idea and product questions |
+| [ideas.md](../ideas.md) | Where this request came from |
+| [architecture.md](../../../docs/architecture.md) | How the server and the UI are organised |
+| [README](../../../README.md) | How to install, run, test and play |
 
 ## 1 · Specs
 
@@ -168,6 +198,22 @@ _None — answered on 2026-11-16._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** Players choose a world and a size before Play, Training and a friends' room. There are 13 original worlds (Canyon, Jungle Ruins and Neon Docks free in Small; ten more to buy), each in Small (30 × 24, today's arena), Medium (36 × 30) and Large (42 × 34), drawn with their own looks and generated from fixed seeds (Canyon Small is exactly today's arena). Accounts have a world-coin balance (shown on Home), earn 250 world coins for every 500 trophies reached for the first time (also for trophies already earned when an old save loads), and buy worlds (500 / 750 / 1000) and bigger sizes (+250) on a new world screen. Friends play in the host's world, and friends on the previous version are only allowed in Canyon Small. Ten server-side world-coin codes (five of 500, five of 1000) work once per account every 30 days, are listed on the hack screen and printed on the QR page. All of it is saved per account in progress v8 with a migration from v2–v7, merged across tabs, cleared by reset, and translated into all five languages. README and `docs/architecture.md` describe it. Checks at the end: `pytest` 56, `npm test` 375, `npm run check` 0 errors, `npm run build` ok.
+**Differs from the plan:** Mostly small deviations, all recorded in the Steps' Done lines:
+- Step 1 — the "clear line from every spawn to the centre" check is a **walkable-path check** (flood fill from the centre), because a straight line would fail for Canyon's own back spawn.
+- Step 2 — the tab merge also **refunds** a world bought in two tabs (D7 only said the bigger size is kept); a step crossed in two tabs is *not* refunded (review finding 1).
+- Step 3 — all cover of a world is merged by material (a few draw calls instead of ~1000); Canyon's look is pinned by a fingerprint test; the gallery is `/?gallery=worlds&world=<id>&size=<size>`. Frame rates were measured on a desktop GPU, not a real iPad.
+- Step 4 — the bots' seek rule (D5) targets the nearest fighter that is still in, **without checking bushes**, so after 6 s a bot also walks to a player hiding in a bush, in Canyon Small too (review finding 2; the plan did not say whether hiding still works).
+- Step 5 — the pure rule `worldOffers` (what each size button does) was added to `worldShop.ts`; the result line `+N world coins` was seen only with a temporary forced value (the earning itself is covered by tests); touch was not emulated on the world screen.
+- Step 6 — the server also sends the host a `removed` message (who and why), tags old friends in the lobby, and hands a friend removed after the start to a bot; its error message is `update-the-game`.
+- Step 7 — codes look like `WC5-7K2QX` with no vowels or 0/1 so they are never words; the world codes are part of `ALL_HACKS`, so the existing list and redeem endpoints serve them.
+- Step 8 — S7 was only partly checked in the browser (the friend shared the host's storage; the not-unlocked and old-version rules are covered by `room.test.ts`, `shared.test.ts` and `test_rooms.py`); Large-world smoothness on a real iPad and the camera QR scan were **not** verified (the real-device check is in Deferred Items). The reset warning does not name world coins (Deferred Items).
+- Review — no Blocking finding; two Should-fix and five Nit findings. Findings 1 and 5 were marked "fix now" but are **not fixed** in this spec; they are in Deferred Items, finding 1 first. Finding 7 (Definition of Done) is fixed by this close.
+- Cost — token counts and prices were unavailable, so the Stage log and the Cost summary have no numbers for implementation, review and `CLOSE:`.
+**Files:** `ui/src/lib/game/worlds.ts`, `worldShop.ts`, `settings.ts`, `bots.ts`; `ui/src/lib/progress.ts`, `accounts.ts`, `hacks.ts`; `ui/src/lib/models/arena3d.ts`, `ArenaScene.svelte`, `WorldGallery.svelte`; `ui/src/lib/WorldScreen.svelte`, `Arena.svelte`, `App.svelte`, `Home.svelte`, `HackScreen.svelte`, `QrPage.svelte`; `ui/src/lib/net/shared.ts`, `room.ts`; `ui/src/lib/i18n/` (five languages); `server/src/hack_star_server/world_codes.py`, `hacks.py`, `rooms.py`; the matching tests; `README.md`, `docs/architecture.md`.
 
 ## 2 · Spec Overview
 
@@ -449,8 +495,14 @@ Tasks set aside for a future spec, so nothing is forgotten.
 |------|--------|------------------|
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
-| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](../2026_11_14_5_device_and_end_to_end_testing_spec.md) |
 | Reset warning (`settings.resetWarning`, five languages) names credits, trophies, fighters, power and skins only | Found in the browser pass: the reset does clear world coins, worlds and world-coin codes (S21), but the text does not say so | a later spec, if wanted |
+| **Fix first (review finding 1, Should-fix, target "fix now"):** two stale tabs of one account that both cross the **same** 500-trophy step both keep their 250 world coins (495 → 515 trophies ends with `worldCoins: 500`, `worldSteps: 1`). `mergeProgress` merges `worldCoins` as a delta and `worldSteps` by max, with no refund for a step paid in both tabs (as `worldRefund` has for worlds). Add the refund and a two-tab test. | S9 "each step pays only once" is broken in this race. Not fixed in this spec (CLOSE changes no code); it needs two tabs of the same account finishing matches at once and only gives coins, so it was not Blocking | **fix now** — a follow-up fix to S9 / D7 (no spec yet) |
+| Bots seek a player hiding in a bush (review finding 2, Should-fix, plan decision): the seek rule (D5) skips `canSee`, so after 6 s a bot walks straight to a player in a bush, also in Canyon Small (26.6 → 5.4 after 12 s; before it stopped at 13.9). Decide whether to seek only fighters not in a bush, or only in Medium / Large, and note it in D5 | D2 says Canyon Small matches stay identical and S6 keeps today's rules, but D5 does not say whether hiding still works | needs a plan decision on D5 / D2 (a follow-up fix or a small spec) |
+| "It works again on *date*" names the day, but `useWorldCode` stores `now + 30 × 24 h` (review finding 3, Nit): on that day the code is still refused until the time of day it was used, and across a DST change the day can shift. Round `nextUseAt` to the start of the local day, or show the time | Nit; found in the review | a later spec, if wanted |
+| The server removes friends without `version` for any start whose world is not exactly Canyon Small — also an unknown or malformed world, for which every client falls back to Canyon Small (review finding 4, Nit). Check the id and size against the catalogue so both sides agree | Only a modified host can send it | a later spec, if wanted |
+| Unused `SETTINGS` import in `WorldScreen.svelte` (review finding 5, Nit, target "fix now") | Dead code; not removed because CLOSE changes no code | a follow-up fix (no spec yet) |
+| The ten world-coin codes are readable without the QR password from `GET /api/hacks` and in `world_codes.py` (review finding 6, Nit): the 30-day limit is a speed bump, not a lock | Accepted by D9 / D10 for a kids' game; belongs with "Server-side record of used world-coin codes" above | a later accounts spec, if wanted |
 
 ---
 
@@ -458,7 +510,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-18 | Claude Opus 5.5 | semantic diff | — | [review page](../review/2026-11-18_feature-worlds-and-world-coins.html) |
+| 2026-11-18 | Claude Opus 5.5 | semantic diff | — | [review page](../../review/2026-11-18_feature-worlds-and-world-coins.html) |
 
 ---
 
@@ -466,7 +518,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 
 - [x] Requirements · Part 1 agreed (S1..S24 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
+- [x] Implementation · every Step's tasks checked; `uv run pytest`, `npm test`, `npm run check` and `npm run build` pass; README / `docs/architecture.md` updated where affected
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `.specs/features/done/`
+- [x] Spec closed · moved to `.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

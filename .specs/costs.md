@@ -1,9 +1,9 @@
 # Cost of the specs
 
 > Estimate — see [COSTS.md](kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
-> `costs_ledger` from the Stage logs on 2026-11-16; do not edit by hand.
+> `costs_ledger` from the Stage logs on 2026-11-18; do not edit by hand.
 
-**All specs: ~2.40 M · ~CHF 0.75 (90 credits)**
+**All specs: ~8.74 M · ~CHF 2.62 (314 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -28,5 +28,7 @@
 | [Originality Review](features/2026_11_14_4_originality_review_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Device and End-to-End Testing](features/2026_11_14_5_device_and_end_to_end_testing_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Bug Fixes](features/done/2026_11_14_bug_fixes_spec.md) | ✅ Complete | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Model Comparison Experiment](features/2026_11_16_model_experiment_spec.md) | 🔄 In progress | ~789 k · ~CHF 0.22 | — | — | — | — | — | ~789 k · ~CHF 0.22 |
 | [spec-nx Kit Update](features/done/2026_11_16_spec_nx_kit_update_spec.md) | ✅ Complete | — | — | — | — | — | ~2.40 M · ~CHF 0.75 | ~2.40 M · ~CHF 0.75 |
-| **All specs** | | | | | | | | **~2.40 M · ~CHF 0.75** |
+| [Worlds and World Coins](features/done/2026_11_16_worlds_and_world_coins_spec.md) | ✅ Complete | ~2.46 M · ~CHF 0.74 | ~3.09 M · ~CHF 0.91 | — | — | — | — | ~5.55 M · ~CHF 1.65 |
+| **All specs** | | | | | | | | **~8.74 M · ~CHF 2.62** |

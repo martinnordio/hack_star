@@ -18,7 +18,7 @@
 
 ## Context
 
-The [worlds and world coins spec](2026_11_16_worlds_and_world_coins_spec.md) (#24) is a large
+The [worlds and world coins spec](done/2026_11_16_worlds_and_world_coins_spec.md) (#24) is a large
 feature with a finished plan. We use it to compare how the AI model choice changes cost and
 result: the same spec and plan are implemented three times, each on its own branch with a
 different `models` setting, and one branch is kept. The other two are not merged, but their

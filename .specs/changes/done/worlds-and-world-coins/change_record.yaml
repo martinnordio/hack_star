@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../kit/review/change_record.schema.json
+# yaml-language-server: $schema=../../../kit/review/change_record.schema.json
 version: 1
 branch: feature/worlds-and-world-coins
 base: 2cf090e
@@ -9,7 +9,7 @@ why: |
   the bigger sizes are unlocked with a new currency, world coins, earned per 500 trophies or from
   special hack codes that each account can use again after 30 days.
 spec:
-  path: .specs/features/2026_11_16_worlds_and_world_coins_spec.md
+  path: .specs/features/done/2026_11_16_worlds_and_world_coins_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24]
 changes:
   # ── Screens ──────────────────────────────────────────────────────────────
