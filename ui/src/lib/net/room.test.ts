@@ -34,6 +34,7 @@ describe('room', () => {
       fighter: 'custom-2',
       skin: 'L010ff8a1affd23f',
       name: 'Comet',
+      version: 2,
     })
   })
 

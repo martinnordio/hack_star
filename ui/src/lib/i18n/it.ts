@@ -173,6 +173,8 @@ export const it: Record<TextKey, string> = {
   'friends.players.other': '{count} giocatori',
   'friends.waitingForHost': 'In attesa che il Giocatore 1 inizi…',
   'friends.leave': 'Esci dalla stanza',
+  'friends.oldVersion': 'Versione vecchia: gioca solo in {world}',
+  'friends.removed': '{player} è dovuto uscire: il suo gioco è troppo vecchio per giocare fuori da {world}. Deve aggiornare il gioco.',
 
   'room.error.noRoom': 'Non esiste una stanza con questo codice.',
   'room.error.full': 'La stanza è piena (3 giocatori).',
@@ -181,6 +183,7 @@ export const it: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Il server ha troppe stanze. Riprova più tardi.',
   'room.error.disconnected': 'Connessione al server di gioco persa.',
   'room.error.closed': 'Il Giocatore 1 è uscito, quindi la stanza è chiusa.',
+  'room.error.update': 'Il tuo gioco è troppo vecchio per questo mondo. Aggiorna il gioco per giocare con i tuoi amici.',
 
   'arena.fightersLeft': 'Combattenti rimasti',
   'arena.fight': 'COMBATTI!',

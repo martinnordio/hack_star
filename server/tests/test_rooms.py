@@ -200,3 +200,62 @@ def test_too_big_or_broken_messages_are_refused() -> None:
         assert receive(socket) == {"type": "error", "reason": "too-big"}
         socket.send_text("not json")
         assert receive(socket) == {"type": "error", "reason": "bad-message"}
+
+NEW_ROCKO = {**ROCKO, "version": 2}
+LARGE_JUNGLE = {"type": "start", "settings": {"world": {"id": "jungle-ruins", "size": "large"}}}
+
+
+def test_members_join_with_or_without_a_version() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as friend:
+            send(friend, {"type": "join", "code": code, "member": NEW_ROCKO})
+            members = receive(friend)["members"]
+            assert members[1] == {"slot": 1, **NEW_ROCKO} and "version" not in members[0]
+            assert receive(host)["members"][1]["version"] == 2
+
+
+@pytest.mark.parametrize("version", [1, 100, "2"])
+def test_a_bad_version_is_refused(version: Any) -> None:
+    with client.websocket_connect("/api/rooms") as socket:
+        send(socket, {"type": "create", "member": {**BLAZE, "version": version}})
+        assert receive(socket) == {"type": "error", "reason": "bad-member"}
+
+
+def test_start_outside_canyon_small_removes_friends_of_the_previous_version() -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old, client.websocket_connect("/api/rooms") as new:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            send(new, {"type": "join", "code": code, "member": NEW_ROCKO})
+            receive(new), receive(old), receive(host)
+            send(host, LARGE_JUNGLE)
+            assert receive(old) == {"type": "error", "reason": "update-the-game"}
+            assert receive(host) == {"type": "removed", "reason": "update-the-game", "members": [{"slot": 1, **ROCKO}]}
+            assert [m["slot"] for m in receive(host)["members"]] == [0, 2]
+            assert [m["slot"] for m in receive(new)["members"]] == [0, 2]
+            assert receive(new) == LARGE_JUNGLE
+            # The removed friend's input no longer reaches the host.
+            send(old, {"type": "input", "x": 1})
+            send(new, {"type": "input", "x": 2})
+            assert receive(host) == {"type": "input", "x": 2, "slot": 2}
+
+
+@pytest.mark.parametrize(
+    "start",
+    [
+        {"type": "start", "settings": {"world": {"id": "canyon", "size": "small"}}},
+        {"type": "start", "settings": {"matchSeconds": 120}},
+    ],
+)
+def test_start_in_canyon_small_keeps_friends_of_the_previous_version(start: dict[str, Any]) -> None:
+    with client.websocket_connect("/api/rooms") as host:
+        code = create(host)
+        with client.websocket_connect("/api/rooms") as old:
+            send(old, {"type": "join", "code": code, "member": ROCKO})
+            receive(old), receive(host)
+            send(host, start)
+            assert receive(old) == start
+            send(old, {"type": "input", "x": 1})
+            assert receive(host) == {"type": "input", "x": 1, "slot": 1}

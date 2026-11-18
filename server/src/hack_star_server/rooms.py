@@ -26,6 +26,10 @@ FIGHTER_IDS = {f.id for f in FIGHTERS}
 # The look of a created fighter: "L", type 0-4, head and body (0-2), two colours; or with
 # head and body 0-4 followed by hands and legs 0-2.
 CREATED_LOOK = re.compile(r"^L[0-4](?:[0-2][0-2]|[0-4][0-4][0-2][0-2])[0-9a-fA-F]{12}$")
+# Members of the previous version send no `version` and can only play in this world (D11).
+OLD_VERSION_WORLD = {"id": "canyon", "size": "small"}
+# Shown as it is by previous versions, which do not know this reason.
+UPDATE_REASON = "update-the-game"
 
 
 class Member(BaseModel):
@@ -36,6 +40,8 @@ class Member(BaseModel):
     power: int = Field(ge=1, le=22)
     hyper: bool = False
     name: str | None = Field(default=None, min_length=1, max_length=12)
+    # Missing for the previous version of the game, which plays only in Canyon Small.
+    version: int | None = Field(default=None, ge=2, le=99, strict=True)
 
     @field_validator("fighter")
     @classmethod
@@ -53,6 +59,15 @@ class Member(BaseModel):
         if not CREATED_FIGHTER_ID.fullmatch(self.fighter) and self.name is not None:
             raise ValueError("only a created fighter has a name")
         return self
+
+
+def start_world(message: dict[str, Any]) -> dict[str, Any]:
+    """The world of a start message; a host of the previous version sends none: Canyon Small."""
+    settings = message.get("settings")
+    world = settings.get("world") if isinstance(settings, dict) else None
+    if not isinstance(world, dict):
+        return OLD_VERSION_WORLD
+    return {"id": world.get("id"), "size": world.get("size")}
 
 
 @dataclass
@@ -111,6 +126,11 @@ class RoomManager:
                     await self.error(socket, "bad-message")
                     continue
                 kind = message.get("type")
+                if room is not None and seat is not None and seat not in room.seats:
+                    # Removed by the server, or the room is closed: only a new create or join counts.
+                    if kind not in ("create", "join"):
+                        continue
+                    room, seat = None, None
                 if room is None or seat is None:
                     room, seat = await self.enter(socket, kind, message)
                 elif seat is room.host:
@@ -161,6 +181,8 @@ class RoomManager:
     async def from_host(self, room: Room, kind: Any, message: dict[str, Any], text: str) -> None:
         if kind == "start":
             room.started = True
+            if start_world(message) != OLD_VERSION_WORLD:
+                await self.remove_old_versions(room)
             await self.to_friends(room, text)
         elif kind == "state":
             await self.to_friends(room, text)
@@ -186,6 +208,26 @@ class RoomManager:
             room.seats.clear()
             return
         await self.send(room.host.socket, json.dumps({"type": "left", "slot": seat.slot}))
+        await self.announce(room)
+
+    async def remove_old_versions(self, room: Room) -> None:
+        """Friends on the previous version cannot play outside Canyon Small: they leave the room."""
+        old = [s for s in room.seats[1:] if s.member.version is None]
+        if not old:
+            return
+        for s in old:
+            room.seats.remove(s)
+            await self.error(s.socket, UPDATE_REASON)
+        await self.send(
+            room.host.socket,
+            json.dumps(
+                {
+                    "type": "removed",
+                    "reason": UPDATE_REASON,
+                    "members": [{"slot": s.slot, **s.member.model_dump(exclude_none=True)} for s in old],
+                }
+            ),
+        )
         await self.announce(room)
 
     async def announce(self, room: Room) -> None:

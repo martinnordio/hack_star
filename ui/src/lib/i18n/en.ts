@@ -171,6 +171,8 @@ export const en = {
   'friends.players.other': '{count} players',
   'friends.waitingForHost': 'Waiting for Player 1 to start…',
   'friends.leave': 'Leave the room',
+  'friends.oldVersion': 'Older game: plays only in {world}',
+  'friends.removed': '{player} had to leave: their game is too old to play outside {world}. They need to update the game.',
 
   'room.error.noRoom': 'There is no room with that code.',
   'room.error.full': 'That room is full (3 players).',
@@ -179,6 +181,7 @@ export const en = {
   'room.error.tooManyRooms': 'The server has too many rooms. Try again later.',
   'room.error.disconnected': 'Lost the connection to the game server.',
   'room.error.closed': 'The host left, so the room is closed.',
+  'room.error.update': 'Your game is too old for this world. Update the game to play with your friends.',
 
   'arena.fightersLeft': 'Fighters left',
   'arena.fight': 'FIGHT!',

@@ -8,6 +8,8 @@
   import QrScanner from './QrScanner.svelte'
   import { options } from './options'
   import { t, tOr } from './i18n'
+  import { START_WORLD } from './progress'
+  import { worldNameKey, worldSizeKey } from './game/worlds'
 
   let { fighters, initialCode, onStart }: { fighters: Fighter[]; initialCode?: string; onStart: () => void } = $props()
 
@@ -33,6 +35,8 @@
   const host = $derived(info?.you === 0)
   const name = (seat: Seat) => seat.name ?? fighters.find((f) => f.id === seat.fighter)?.name ?? seat.fighter
   const bots = $derived(info ? Math.max(1, $options.botCount + 1 - info.members.length) : 0)
+  const oldWorld = $derived(`${$t(worldNameKey(START_WORLD.id))} · ${$t(worldSizeKey(START_WORLD.size))}`)
+  const playerName = (seat: Seat) => `${$t('friends.player', { number: seat.slot + 1 })} (${name(seat)})`
 
   $effect(() => {
     if (!info) return
@@ -95,6 +99,7 @@
             <span class="who">
               <strong>{$t('friends.player', { number: slot + 1 })}{slot === 0 ? ' 👑' : ''}</strong>
               <span>{name(seat)} · ⚡ {seat.power}{seat.slot === info.you ? ` · ${$t('friends.you')}` : ''}</span>
+              {#if seat.version === undefined}<span class="old">⚠ {$t('friends.oldVersion', { world: oldWorld })}</span>{/if}
             </span>
           {:else}
             <span class="who"><strong>{$t('friends.player', { number: slot + 1 })}</strong><span>{$t('friends.waitingForFriend')}</span></span>
@@ -106,6 +111,9 @@
     {#if $room?.error}
       <p class="error" role="alert">{$tOr($room.error, $room.error)}</p>
     {/if}
+    {#each $room?.removed ?? [] as seat (seat.slot)}
+      <p class="error" role="alert">{$t('friends.removed', { player: playerName(seat), world: oldWorld })}</p>
+    {/each}
 
     {#if host}
       <button class="big start-match" onclick={onStart}>
@@ -295,5 +303,10 @@
   .who span {
     font-size: 0.9rem;
     opacity: 0.9;
+  }
+
+  .who .old {
+    color: #ffd23f;
+    font-size: 0.8rem;
   }
 </style>

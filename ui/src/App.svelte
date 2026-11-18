@@ -12,8 +12,9 @@
   import WorldScreen from './lib/WorldScreen.svelte'
   import SettingsScreen from './lib/SettingsScreen.svelte'
   import FriendsScreen from './lib/FriendsScreen.svelte'
-  import { leaveRoom, room, type RoomConnection } from './lib/net/room'
+  import { clearRemoved, leaveRoom, room, type RoomConnection } from './lib/net/room'
   import { startInfo, type StartInfo } from './lib/net/shared'
+  import { chosenWorld } from './lib/game/worldShop'
   import { options } from './lib/options'
   import { SETTINGS, settingsFrom } from './lib/game/settings'
   import { untrack } from 'svelte'
@@ -47,8 +48,9 @@
   let entrance = $state(true)
   // Changing it mounts a fresh arena (Play again).
   let matchNumber = $state(0)
-  // Play and Training open the world screen first; this is where Start goes afterwards.
-  let afterWorld = $state<'match' | 'training'>('match')
+  // Play and Training open the world screen first; this is where Start goes afterwards
+  // (`room`: the host of a room starts the shared match in the chosen world).
+  let afterWorld = $state<'match' | 'training' | 'room'>('match')
 
   function load() {
     error = false
@@ -73,9 +75,13 @@
   }
 
   function startShared() {
-    if (!$room?.info || !fighters) return
+    if (!$room?.info || !fighters) {
+      screen = 'friends'
+      return
+    }
     const settings = settingsFrom(location.search, SETTINGS, $options)
-    const start = startInfo(settings, $room.info.members, fighters)
+    const start = startInfo(settings, $room.info.members, fighters, chosenWorld($progress))
+    clearRemoved()
     $room.connection.send(start)
     playShared(start)
   }
@@ -117,9 +123,10 @@
     }}
   />
 {:else if screen === 'world'}
-  <Panel title={$t('panel.world')} onBack={() => (screen = 'home')}>
+  <Panel title={$t('panel.world')} onBack={() => (screen = afterWorld === 'room' ? 'friends' : 'home')}>
     <WorldScreen
       onStart={() => {
+        if (afterWorld === 'room') return startShared()
         matchNumber++
         screen = afterWorld
       }}
@@ -205,7 +212,14 @@
       screen = 'home'
     }}
   >
-    <FriendsScreen {fighters} initialCode={roomInLink} onStart={startShared} />
+    <FriendsScreen
+      {fighters}
+      initialCode={roomInLink}
+      onStart={() => {
+        afterWorld = 'room'
+        screen = 'world'
+      }}
+    />
   </Panel>
 {:else if screen === 'hack'}
   <Panel

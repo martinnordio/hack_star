@@ -173,6 +173,8 @@ export const de: Record<TextKey, string> = {
   'friends.players.other': '{count} Spieler',
   'friends.waitingForHost': 'Warte, bis Spieler 1 startet…',
   'friends.leave': 'Raum verlassen',
+  'friends.oldVersion': 'Ältere Version: spielt nur in {world}',
+  'friends.removed': '{player} musste raus: Das Spiel ist zu alt für andere Welten als {world}. Es muss aktualisiert werden.',
 
   'room.error.noRoom': 'Es gibt keinen Raum mit diesem Code.',
   'room.error.full': 'Der Raum ist voll (3 Spieler).',
@@ -181,6 +183,7 @@ export const de: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Der Server hat zu viele Räume. Versuch es später nochmal.',
   'room.error.disconnected': 'Die Verbindung zum Spiel-Server ist weg.',
   'room.error.closed': 'Spieler 1 ist gegangen, darum ist der Raum zu.',
+  'room.error.update': 'Dein Spiel ist zu alt für diese Welt. Aktualisiere das Spiel, um mit deinen Freunden zu spielen.',
 
   'arena.fightersLeft': 'Kämpfer übrig',
   'arena.fight': 'KAMPF!',

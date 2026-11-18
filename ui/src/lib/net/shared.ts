@@ -6,9 +6,10 @@ import { Match, teamArena, type MatchLike, type MatchPhase, type MatchResult } f
 import { SETTINGS, type BotLevel, type Settings } from '../game/settings'
 import { fighterType } from '../game/types'
 import { World, type Shot, type WorldEvent } from '../game/world'
-import type { RoomConnection, RoomMessage, Seat } from './room'
+import { arenaFor, isWorldId, isWorldSize, worldInfo, type WorldId, type WorldSize, type WorldTheme } from '../game/worlds'
+import { canPlayIn, type RoomConnection, type RoomMessage, type Seat } from './room'
 import { parseLookSkin } from '../created'
-import { isCreatedFighterId } from '../progress'
+import { isCreatedFighterId, START_WORLD } from '../progress'
 
 /** Seconds between two snapshots from the host, and between two positions from a friend. */
 export const SEND_EVERY = 0.05
@@ -27,19 +28,29 @@ export interface SharedFighter {
 
 export interface StartInfo {
   type: 'start'
-  settings: Pick<Settings, 'matchSeconds' | 'overtimeSeconds' | 'botCount' | 'countdownSeconds'> & { botLevel: BotLevel }
+  settings: Pick<Settings, 'matchSeconds' | 'overtimeSeconds' | 'botCount' | 'countdownSeconds'> & {
+    botLevel: BotLevel
+    /** The host's world; friends play in it even if they have not unlocked it (S7). */
+    world: SharedWorld
+  }
   /** People first (fighter ids 0..), then bots. */
   fighters: SharedFighter[]
 }
 
-/** The start message the host sends: people in slot order, then bots with random fighters. */
+export type SharedWorld = { id: WorldId; size: WorldSize }
+
+/**
+ * The start message the host sends: people in slot order, then bots with random fighters.
+ * Friends on the previous version are left out outside Canyon Small; the server removes them.
+ */
 export function startInfo(
   settings: Settings,
   members: Seat[],
   catalogue: { id: string; type: string }[],
+  world: SharedWorld,
   random = Math.random,
 ): StartInfo {
-  const people = [...members].sort((a, b) => a.slot - b.slot)
+  const people = members.filter((m) => canPlayIn(m, world)).sort((a, b) => a.slot - b.slot)
   const count = Math.max(settings.botCount + 1, people.length + 1)
   // A created fighter's type is in its look (skin id); every device has its own.
   const typeOf = (id: string, skin = 'default') =>
@@ -62,6 +73,7 @@ export function startInfo(
       botCount: settings.botCount,
       countdownSeconds: settings.countdownSeconds,
       botLevel: settings.botLevel,
+      world: { id: world.id, size: world.size },
     },
     fighters: [
       ...people.map((p) => ({ fighter: p.fighter, type: typeOf(p.fighter, p.skin), skin: p.skin, power: p.power, hyper: p.hyper, slot: p.slot })),
@@ -71,7 +83,22 @@ export function startInfo(
 }
 
 export function sharedSettings(start: StartInfo): Settings {
-  return { ...SETTINGS, ...start.settings }
+  const { matchSeconds, overtimeSeconds, botCount, countdownSeconds, botLevel } = start.settings
+  return { ...SETTINGS, matchSeconds, overtimeSeconds, botCount, countdownSeconds, botLevel }
+}
+
+/** The world of a start message; a host of the previous version sends none: Canyon Small. */
+export function sharedWorld(start: StartInfo): SharedWorld {
+  const world: unknown = start.settings.world
+  if (typeof world !== 'object' || world === null) return { ...START_WORLD }
+  const { id, size } = world as Record<string, unknown>
+  return isWorldId(id) && isWorldSize(size) ? { id, size } : { ...START_WORLD }
+}
+
+/** The arena and look every device builds from the host's start message. */
+export function sharedArena(start: StartInfo): { arena: Arena; theme: WorldTheme } {
+  const { id, size } = sharedWorld(start)
+  return { arena: arenaFor(id, size), theme: worldInfo(id).theme }
 }
 
 const humansOf = (start: StartInfo) => start.fighters.filter((f) => f.slot !== undefined).length
@@ -134,6 +161,11 @@ export class HostMatch implements MatchLike {
 
   private receive(m: RoomMessage) {
     if (m.type === 'left') return this.takeOver(this.idOf(m.slot))
+    if (m.type === 'removed' && Array.isArray(m.members)) {
+      // Only when a friend of the previous version joined just before the start (`startInfo` leaves them out).
+      for (const s of m.members as { slot?: unknown }[]) if (typeof s?.slot === 'number') this.takeOver(this.idOf(s.slot))
+      return
+    }
     if (m.type !== 'input') return
     const id = this.idOf(m.slot)
     const f = this.world.fighters[id]

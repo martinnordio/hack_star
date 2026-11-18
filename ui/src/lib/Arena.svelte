@@ -4,7 +4,6 @@
   import { PCFShadowMap } from 'three'
   import ArenaScene, { type Hud, type Look, type Power } from './ArenaScene.svelte'
   import type { Fighter } from './fighters'
-  import { CANYON } from './game/arena'
   import { newControls, stickVector } from './game/controls'
   import { Match, type MatchLike } from './game/match'
   import { SETTINGS, settingsFrom } from './game/settings'
@@ -24,7 +23,7 @@
   import { get } from 'svelte/store'
   import { creditsFor, earn, powerOf, stats } from './game/economy'
   import type { RoomConnection } from './net/room'
-  import { GuestMatch, HostMatch, type StartInfo } from './net/shared'
+  import { GuestMatch, HostMatch, sharedArena, type StartInfo } from './net/shared'
   import { t, type TextKey } from './i18n'
   import { isCreatedFighterId, totalTrophies } from './progress'
   import { chosenWorld, earnWorldCoins } from './game/worldShop'
@@ -47,13 +46,15 @@
   const TAP_MS = 250
 
   function sharedMatch(s: NonNullable<Props['shared']>) {
-    const match = s.you === 0 ? new HostMatch(CANYON, s.start, s.connection) : new GuestMatch(CANYON, s.start, s.you, s.connection)
+    // Everyone plays in the host's world, even friends who have not unlocked it (S7).
+    const { arena, theme } = sharedArena(s.start)
+    const match = s.you === 0 ? new HostMatch(arena, s.start, s.connection) : new GuestMatch(arena, s.start, s.you, s.connection)
     const looks: Look[] = s.start.fighters.map((f) => ({ fighterId: f.fighter, skinId: f.skin }))
-    return { match, world: match.world, looks, player: looks[match.world.playerId], theme: 'canyon' as WorldTheme }
+    return { match, world: match.world, looks, player: looks[match.world.playerId], theme }
   }
 
   // A new Arena component is mounted for every match, so these are made once per match.
-  // Matches and Training are played in the account's chosen world and size; rooms still use Canyon.
+  // Matches and Training are played in the account's chosen world and size; rooms in the host's.
   const { match, world, looks, player, theme } = untrack((): { match?: MatchLike & { stop?: () => void }; world: World; looks: Look[]; player: Look; theme: WorldTheme } => {
     if (shared) return sharedMatch(shared)
     const player = chosen

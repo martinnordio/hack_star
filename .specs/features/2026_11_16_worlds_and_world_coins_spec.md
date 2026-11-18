@@ -20,6 +20,7 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 3 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 4 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 5 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 6 done |
 
 ---
 
@@ -174,7 +175,7 @@ _None — answered on 2026-11-16._
 | **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
-| **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
+| **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | light (Claude Haiku 5.5) — docs and running checks | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
 
@@ -360,20 +361,24 @@ Friends play in the host's world and size; friends on the previous version only 
 Small (S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
-- [ ] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
+- [x] Record the start time in Notes below.
+- [x] `net/shared.ts`: the start settings carry `world`; guests build the host's arena.
+- [x] `net/room.ts` and `server/.../rooms.py`: member `version` (D11); on a start outside Canyon
       Small, members without it are removed with the room-error message; the host sees who and
       why.
-- [ ] The host chooses the world on the world screen before **START**.
-- [ ] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
+- [x] The host chooses the world on the world screen before **START**.
+- [x] Tests: server — joins with and without `version`; removal on start outside Canyon Small,
       none in Canyon Small (`server/tests/test_rooms.py`); UI — start info with the world;
       a guest builds the same arena as the host.
-- [ ] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
+- [x] Check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check`; two
       browser tabs: host in a Large world, friend joins and plays in it.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 14:32
+
+**Done (2026-11-18 · ~10m · Claude Opus 5.5)** — `net/shared.ts`: the start settings carry `world: { id, size }` (`startInfo(…, world)`, the host's `chosenWorld`); `sharedWorld` / `sharedArena` build the same arena and theme on every device (a start without a known world, from a previous host, is Canyon Small); friends play there even if they have not unlocked it; `startInfo` leaves out friends without `version` outside Canyon Small and `HostMatch` hands a late-removed friend to a bot. `net/room.ts`: members send `version: 2` (`ROOM_VERSION`), `canPlayIn`, the room state keeps `removed`. `rooms.py`: `Member.version` (optional, strict 2–99); on a start outside Canyon Small the server removes members without it with the room-error message `update-the-game` (shown as is by previous versions), sends the host `removed` with who, and announces the room; a removed socket can only create or join again. The host's **START** opens the world screen first (`App.svelte`); the lobby tags friends with an older game and, after the start, says who had to leave and why; `Arena.svelte` plays rooms in the host's world with its sky. 3 new texts in en, de, gsw, es, it; two architecture lines. Tests: server — joins with and without `version`, bad versions refused, removal on a Large start (old friend gets the error, host gets `removed`, its input no longer reaches the host), none in Canyon Small or with no world; UI — start info with the world, a guest builds the same arena as the host from the JSON start (Large Neon Docks, walls, bushes, spawns, walking far), unknown world → Canyon Small, old friends left out outside Canyon Small, `removed` → bot. `cd server; uv run --no-sync pytest` 52 passed; `cd ui; npm test` 368 passed, `npm run check` 0 errors. Browser (headless Chromium, two separate browser contexts as two tabs, 1000 × 700): host with Neon Docks Large chosen creates a room, a fresh friend (free worlds in Small only) joins, host START → world screen (Neon Docks · Large) → START; both play in Large Neon Docks (same sky and layout), the friend walks in it; and with a previous-version friend (raw WebSocket without `version`): the lobby shows "Older game: plays only in Canyon · Small", on the Large start the old client gets `update-the-game`, and back in the lobby the host reads "Player 2 (Rocko) had to leave: …"; no page errors. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · — · — (usage script: does not work in this environment)
 
 ---
 

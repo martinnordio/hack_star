@@ -173,6 +173,8 @@ export const gsw: Record<TextKey, string> = {
   'friends.players.other': '{count} Spieler',
   'friends.waitingForHost': 'Warte, bis Spieler 1 startet…',
   'friends.leave': 'Raum verlah',
+  'friends.oldVersion': 'Elteri Version: spielt nume in {world}',
+  'friends.removed': '{player} het müesse gah: Sis Spiel isch z alt für anderi Wälte als {world}. Es mues aktualisiert werde.',
 
   'room.error.noRoom': 'Es git kei Raum mit däm Code.',
   'room.error.full': 'Dä Raum isch voll (3 Spieler).',
@@ -181,6 +183,7 @@ export const gsw: Record<TextKey, string> = {
   'room.error.tooManyRooms': 'Dä Server hät z vill Rüüm. Probier spöter nomal.',
   'room.error.disconnected': 'D Verbindig zum Spiel-Server isch wäg.',
   'room.error.closed': 'Spieler 1 isch gange, drum isch dä Raum zue.',
+  'room.error.update': 'Dis Spiel isch z alt für die Wält. Aktualisier s Spiel, zum mit dine Fründe spiele.',
 
   'arena.fightersLeft': 'Kämpfer übrig',
   'arena.fight': 'KAMPF!',

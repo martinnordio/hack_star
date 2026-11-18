@@ -16,7 +16,12 @@ export interface Member {
   hyper: boolean
   /** The name of a created fighter (its look is in `skin`). */
   name?: string
+  /** Missing for the previous version of the game, which plays only in Canyon Small (D11). */
+  version?: number
 }
+
+/** The room version of this game: friends with it can play in every world. */
+export const ROOM_VERSION = 2
 
 export function memberFor(progress: Progress, fighters: Fighter[]): Member {
   const fighter = currentFighter(progress, fighters)
@@ -27,7 +32,13 @@ export function memberFor(progress: Progress, fighters: Fighter[]): Member {
     power: powerOf(progress, fighter.id),
     hyper: isHackActive(progress, 'hypercharge'),
     ...(look ? { name: look.name } : {}),
+    version: ROOM_VERSION,
   }
+}
+
+/** A friend on the previous version can play only in Canyon Small; the server removes them elsewhere. */
+export function canPlayIn(member: Member, world: { id: string; size: string }): boolean {
+  return member.version !== undefined || (world.id === 'canyon' && world.size === 'small')
 }
 
 export interface Seat extends Member {
@@ -63,6 +74,7 @@ export const ERRORS: Record<string, TextKey> = {
   'too-many-rooms': 'room.error.tooManyRooms',
   disconnected: 'room.error.disconnected',
   closed: 'room.error.closed',
+  'update-the-game': 'room.error.update',
 }
 
 /** One device's connection to a room on the game server. */
@@ -131,6 +143,8 @@ export interface RoomState {
   info: RoomInfo | null
   /** A text key, or the server's reason when it is unknown. */
   error: string | null
+  /** Friends the server removed at the last start because their game is too old for the world. */
+  removed: Seat[]
 }
 
 /** The room this device is in (one at a time). */
@@ -147,7 +161,7 @@ async function enter(message: RoomMessage): Promise<void> {
   try {
     connection = await openSocket()
   } catch {
-    if (mine === attempt) room.set({ connection: new RoomConnection(closedSocket()), info: null, error: ERRORS.disconnected })
+    if (mine === attempt) room.set({ connection: new RoomConnection(closedSocket()), info: null, error: ERRORS.disconnected, removed: [] })
     return
   }
   if (mine !== attempt) {
@@ -158,10 +172,11 @@ async function enter(message: RoomMessage): Promise<void> {
   connection.on((m) => {
     if (m.type === 'room') room.update((s) => s && { ...s, info: m as unknown as RoomInfo, error: null })
     else if (m.type === 'error') room.update((s) => s && { ...s, error: ERRORS[String(m.reason)] ?? String(m.reason) })
+    else if (m.type === 'removed') room.update((s) => s && { ...s, removed: removedSeats(m) })
     else if (m.type === 'closed' || m.type === 'disconnected')
       room.update((s) => s && { ...s, info: null, error: ERRORS[m.type] })
   })
-  room.set({ connection, info: null, error: null })
+  room.set({ connection, info: null, error: null, removed: [] })
   connection.send(message)
 }
 
@@ -172,6 +187,19 @@ export function leaveRoom() {
   attempt++
   current?.connection.close()
   room.set(null)
+}
+
+/** The host starts again: the last removal notice is old news. */
+export function clearRemoved() {
+  room.update((s) => s && { ...s, removed: [] })
+}
+
+function removedSeats(m: RoomMessage): Seat[] {
+  const members = Array.isArray(m.members) ? (m.members as unknown[]) : []
+  return members.filter(
+    (s): s is Seat =>
+      typeof s === 'object' && s !== null && typeof (s as Seat).slot === 'number' && typeof (s as Seat).fighter === 'string',
+  )
 }
 
 function closedSocket(): Socket {
