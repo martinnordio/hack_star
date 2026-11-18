@@ -22,6 +22,7 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 5 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 6 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 7 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | — | — | Step 8 done |
 
 ---
 
@@ -178,7 +179,7 @@ _None — answered on 2026-11-16._
 | **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ✅ Done | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ✅ Done | [→ Step 7](#step-7--world-coin-hack-codes) |
-| **8** | Documentation and final check | light (Claude Haiku 5.5) — docs and running checks | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
+| **8** | Documentation and final check | light (Claude Haiku 5.5) — docs and running checks | ✅ Done | [→ Step 8](#step-8--documentation-and-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -421,17 +422,21 @@ The documents describe worlds and world coins, and everything that worked before
 (S19, S22, S23, S24).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
+- [x] Record the start time in Notes below.
+- [x] `README.md`: worlds and sizes, world coins and prices, world-coin codes (table of how they
       work, not the codes themselves), the world screen.
-- [ ] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
+- [x] `docs/architecture.md`: `worlds.ts`, `worldShop.ts`, themes, progress v8 and merge rules,
       room `world` and member `version`, `world_codes.py`.
-- [ ] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
+- [x] Full check: `cd server; uv run --no-sync pytest`; `cd ui; npm test; npm run check;
       npm run build`; in the browser, one pass over S1–S24 on desktop and phone, including a
       reload, a second tab and an old save.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 14:49
+
+**Done (2026-11-18 · ~20m · Claude Haiku 5.5)** — `README.md`: worlds and sizes, free worlds and prices, world coins, the world-coin code rules (no codes listed), the world screen and friends' worlds; `docs/architecture.md`: worlds and shop, themes, progress v8 and merge rules, room `world` and member `version`, world codes (extended the existing lines, no duplicates); no code changed. Check: server `uv run --no-sync pytest` 56 passed; `npm test` 375 passed; `npm run check` 0 errors; `npm run build` passed (chunk-size warning only). Browser pass on the dev server and API: desktop with mouse, phone 390×844 with touch, tablet and landscape layouts; S1–S6, S8–S13, S15–S16, S18–S22 (German checked, other languages by `i18n.test.ts`), S19 with reload, a second tab and a v7 save (1240 trophies → 500 coins), S23 except below, S24; S17 by reading the code. Partly: S7 (a room started in Neon Docks Medium with a friend, but the friend shared the host's storage; the not-unlocked and old-version rules are covered by `room.test.ts`, `shared.test.ts` and `test_rooms.py`). Not verified: Large-world smoothness on a real iPad (headless ~30 fps is not a device test); the camera QR scan. Found: the reset warning does not name world coins (see Deferred Items). suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5
 
 ---
 
@@ -444,6 +449,7 @@ Tasks set aside for a future spec, so nothing is forgotten.
 | Server-side record of used world-coin codes (D10) | The game has no server accounts; clearing the browser's data lets a code be used early | a later accounts spec, if wanted |
 | Music or rules of their own per world | Part 1 asks for looks and layouts only (S6) | a later spec, if wanted |
 | Real-device check of Large worlds on an iPad and phone | Real-device testing is spec 5's subject | [Device and end-to-end testing](2026_11_14_5_device_and_end_to_end_testing_spec.md) |
+| Reset warning (`settings.resetWarning`, five languages) names credits, trophies, fighters, power and skins only | Found in the browser pass: the reset does clear world coins, worlds and world-coin codes (S21), but the text does not say so | a later spec, if wanted |
 
 ---
 

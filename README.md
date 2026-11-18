@@ -7,8 +7,8 @@
 > the generated kit and links to every spec: **[SPEC-NX.md](SPEC-NX.md)**.
 
 A top-down arena browser game for kids, with **hack codes** that give unlimited
-credits, unlock every fighter and allow power levels up to 22. It runs on a desktop, iPad and
-phone browser. Made by Martin Nordio and Mattia Nordio.
+credits, unlock every fighter and allow power levels up to 22, and 13 **worlds** to play in,
+unlocked with **world coins**. It runs on a desktop, iPad and phone browser. Made by Martin Nordio and Mattia Nordio.
 
 - Vision: [.specs/overall_req.md](.specs/overall_req.md)
 - Feature list and MVP scope: [MVP and architecture spec](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md)
@@ -62,8 +62,9 @@ Hack star server" with a **Try again** button.
 ### What is there
 
 - **Home:** the selected fighter in 3D with an entrance animation (tap to skip), trophies,
-  credits, Prestige badge, **Play** and **Training**.
-- **Play:** a match in the canyon, last fighter standing, against 3 bots (other fighters; level
+  credits, world coins, Prestige badge, **Play** and **Training**.
+- **Play:** a match in the chosen world (see **Worlds and world coins** below), last fighter
+  standing, against 3 bots (other fighters; level
   and number of bots on the **Settings** screen):
   - "3, 2, 1, FIGHT!" countdown (showing for example "Easy · 3 bots"), then a 2-minute timer
     (red in the last 10 seconds) and the number of fighters still in.
@@ -86,7 +87,7 @@ Hack star server" with a **Try again** button.
     **Prestige** (1000, 2000, 3000…); reaching one shows "PRESTIGE n!" and the fighter gets the
     diamond badge with that number. A fighter never drops below a Prestige it reached.
     Training never changes trophies.
-- **Training:** the same arena with three target dummies (5 hits break one; it comes back
+- **Training:** the chosen world with three target dummies (5 hits break one; it comes back
   after 5 seconds) to practise.
 
   Controls in matches and training:
@@ -140,7 +141,8 @@ Hack star server" with a **Try again** button.
   account; a new account starts in the browser's language), bot level (**Easy**, **Medium**,
   **Hard**) and number of bots (1–5) for every match (saved on the device; default Easy and 3
   bots), and **Reset coins and trophies**: after a confirmation the account starts again with
-  0 credits, 0 trophies, only the start fighters, power 1 and default skins (hack codes and
+  0 credits, 0 trophies, 0 world coins, only the start fighters, power 1, default skins and the
+    three free worlds in Small (used world-coin codes can be used again; hack codes and
   created fighters stay; extra created fighters still need `CREATOR` to be active).
   **Music** turns the music on or off and chooses the track (saved on the device; on at
   first); it plays during every match and Training and pauses while the tab is hidden. The
@@ -152,7 +154,7 @@ Hack star server" with a **Try again** button.
   one (up to 5 per device, names 1–16 characters, all different) or rename one (accounts
   cannot be deleted). A name typed in the rename box is kept when the panel is closed. Each
   account has its own credits, trophies, fighters, skins, hack codes,
-  created fighters and language. The progress saved before accounts existed became "Player 1".
+    created fighters, world coins, worlds, the chosen world, used world-coin codes and language. The progress saved before accounts existed became "Player 1".
   Existing saves migrate automatically, preserving the original created fighter and its progress.
   Same-origin tabs reconcile account changes and refresh when brought back to the front.
 - **Friends:** play together, each on your own iPad, phone or computer on the same Wi-Fi — you
@@ -162,14 +164,15 @@ Hack star server" with a **Try again** button.
      **Scan QR** or the camera app, which opens the game straight into the room).
   3. The room shows Player 1 👑 (the host) and the friends with their fighters. The host taps
      **START**: friends take the place of bots (the host's Settings decide how many fighters in
-     total, at least one bot) and everyone starts along the bottom of the arena.
+     total, at least one bot) and everyone starts along the bottom of the arena, in the host's world.
   4. Shots never hurt teammates; teammates' health bars are blue. The team wins if one of you
-     is the last one standing. Each player gets trophies and credits on their own device, and
+     is the last one standing. Each player gets trophies, credits and world coins on their own device, and
      hacks work only on the device that entered them. Created fighters send their stable ID,
      name and look so friends see the same fighter.
   5. After the match, **Back to the room** to play again. If a friend leaves, a bot takes over
      their fighter; if the host leaves, the room closes and the friends get a draw.
-- **Hack:** type a hack code or scan its QR code:
+- **Hack:** type a hack code or scan its QR code (world-coin codes work the same way, see
+  **Worlds and world coins**):
 
   | Code | Hack |
   |------|------|
@@ -189,18 +192,88 @@ Hack star server" with a **Try again** button.
   only wore thanks to OPENSESAME go back to Default).
 
 Progress (accounts, chosen fighter, bought and chosen skins, trophies, hack expiry, created
-fighters with their parts and skins) and the Settings choices are saved in the browser of each
+fighters with their parts and skins, world coins, unlocked worlds, the chosen world and used
+world-coin codes) and the Settings choices are saved in the browser of each
 device as soon as they change, so they are there after closing the game or turning off the
 device. The game asks the browser to keep this data (Safari may otherwise delete it after
 about a week without playing); when the browser does not allow saving (for example private
 browsing) a notice says so once per visit. Open <http://localhost:5180/?gallery> to see
 every fighter and skin side by side (`?gallery=custom` shows created-fighter parts).
 
+### Worlds and world coins
+
+Every match and every Training session is played in a **world**. There are 13 worlds, and each
+comes in three sizes:
+
+| Size | Ground |
+|------|--------|
+| Small | 30 × 24, today's arena |
+| Medium | 36 × 30, about 1.5 times the ground |
+| Large | 42 × 34, about 2 times the ground |
+
+A bigger size has more cover (walls and bushes), so fighters walk further to meet. The rules
+are the same in every world: fighters, match length, overtime, bots, Training dummies, Supers
+and rewards.
+
+- **Free** for every account, in Small: **Canyon**, **Jungle Ruins** and **Neon Docks**.
+- **To buy** with world coins: **Lava Forge**, **Sky Islands**, **Crystal Caves**, **Mini City**,
+  **Kata Jungle**, **Candy Factory**, **Robot Workshop**, **Pirate Cove**, **Moon Base** and
+  **Desert Oasis**.
+
+**World coins** (🌍, shown on Home next to the credits; a new account starts with 0):
+
+- **Earn:** each time the account's total trophies reach the next 500 (500, 1000, 1500…) for the
+  first time, it gets **250 world coins** at once, and the result screen shows it. Each 500 pays
+  only once, even if the total goes down and up again.
+- **Old saves** get the coins for every 500 their trophies had already reached (1240 trophies →
+  500 world coins), and keep everything else.
+- **Prices:**
+
+  | To get | World coins |
+  |--------|-------------|
+  | A locked world in Small | 500 |
+  | A locked world in Small + Medium | 750 |
+  | A locked world in Small + Medium + Large | 1000 |
+  | The next size of a world you have (Medium after Small, Large after Medium) | 250 |
+
+- Credits cannot buy worlds, the `INFINITY` hack gives no world coins, and `OPENSESAME` does not
+  unlock worlds or sizes. Worlds come only from world coins.
+
+**World-coin codes:** ten codes, five give 500 world coins and five give 1000. They are typed on
+the Hack screen or scanned like the other codes; the codes themselves are listed in
+`server/src/hack_star_server/world_codes.py`, not here.
+
+| Question | Answer |
+|----------|--------|
+| How often | Once per account. The same code works again for that account 30 days after it was used |
+| Before that | It is refused, with the date it works again |
+| Other accounts | Each account on the device has its own 30 days |
+| Where the dates are kept | In each account's saved progress on the device, not on the server, so clearing the browser's data lets a code be used early |
+| Shown | The Hack screen lists the used world-coin codes with the date they work again |
+| Reset | **Reset coins and trophies** (Settings) makes every code usable again at once; **Reset all hacks** does not touch them |
+| Changing | The amounts, the 30 days and the codes are all in `world_codes.py` |
+
+**The world screen** is opened by **Play** and **Training** before the match, and by the host of a
+room before **START**:
+
+- The balance is shown at the top, and each world has a card with its name (free worlds are
+  tagged **Free**).
+- Each card has three size buttons, **Small**, **Medium** and **Large**. An unlocked size shows ✔:
+  tap it to choose that world and size (the choice is kept for next time, and the chosen card is
+  highlighted). A size you can buy shows its price in 🌍: tap it and confirm. With too few world
+  coins the screen says how many more are needed. A size above the next one stays 🔒 until the
+  smaller one is unlocked.
+- The bar at the bottom shows the chosen world and size; **START** plays it.
+- In a room, the host's world is used for everyone, including friends who have not unlocked it.
+  A friend on the previous version of the game can join only a room that plays in Canyon Small.
+  In any other world the server removes that friend, and the host is told why; the friend needs
+  to update the game.
+
 ### Match settings
 
 Match length, overtime length (and whether it removes walls), default number of bots and bot
 level (easy, medium, hard), what "time's up" means, the
-trophies and credits for each result, prices (fighters and skins, skin-of-the-day discount), upgrade costs, power bonus, Super and Hypercharge numbers and the bots' power
+trophies and credits for each result, prices (fighters and skins, skin-of-the-day discount, worlds and world coins), upgrade costs, power bonus, Super and Hypercharge numbers and the bots' power
 level are in [ui/src/lib/game/settings.ts](ui/src/lib/game/settings.ts)
 (`SETTINGS`). To try other values
 without changing code, add them to the address, for example
@@ -220,7 +293,8 @@ without changing code, add them to the address, for example
 
 Open `/?qr` with the **Network** address (for example `http://192.168.1.20:5180/?qr`), type
 the password `M6D2` (asked every time; it keeps kids from printing the codes, it is not real
-security: it is in this public code) and print the page. The QR codes contain a link to the
+security: it is in this public code) and print the page; it lists the world-coin codes with their amounts too. The QR codes contain a
+link to the
 game with the code, so:
 
 - the **camera app** of an iPad or phone opens the game and applies the hack directly;
