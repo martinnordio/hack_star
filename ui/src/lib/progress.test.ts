@@ -61,7 +61,7 @@ describe('progress', () => {
     const { hackExpiries: _hackExpiries, createdFighters: _createdFighters, ...progress } = defaultProgress()
     const legacy = { ...progress, version: 4, activeHacks: ['infinite_credits', 'power22'], createdFighter: null }
     const migrated = parseProgress(legacy, 1000)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.hackExpiries).toEqual({
       infinite_credits: 1000 + TEMPORARY_HACK_SECONDS * 1000,
       power22: null,
@@ -87,7 +87,7 @@ describe('progress', () => {
     }
     const migrated = parseProgress(v5, 1000)
     expect(migrated).toMatchObject({
-      version: 7,
+      version: 8,
       credits: 321,
       selectedFighter: 'custom',
       trophies: { custom: 42 },
@@ -108,7 +108,7 @@ describe('progress', () => {
       createdFighters: [{ id: 'custom', look }, { id: 'custom-2', look: { ...look, name: 'Two' } }],
     }
     const migrated = parseProgress(v6)
-    expect(migrated?.version).toBe(7)
+    expect(migrated?.version).toBe(8)
     expect(migrated?.trophies).toEqual({ 'custom-2': 9 })
     expect(migrated?.createdFighters).toEqual([
       { id: 'custom', look: { ...look, hands: 0, legs: 0 }, skins: [] },
@@ -165,5 +165,71 @@ describe('progress', () => {
     expect(withFighter({ skins: [{ ...skin, id: 's6' }] })).toBeNull()
     expect(withFighter({ skins: [1, 2, 3, 4, 5, 6].map((n) => ({ ...skin, id: `s${n}` })) })).toBeNull()
     expect(withFighter({ skins: undefined })).toBeNull()
+  })
+
+  const FREE_SMALL = { canyon: 'small', 'jungle-ruins': 'small', 'neon-docks': 'small' } as const
+
+  it('a new account has 0 world coins, the free worlds in Small and Canyon Small chosen', () => {
+    expect(startProgress()).toMatchObject({
+      worldCoins: 0,
+      worldSteps: 0,
+      worlds: FREE_SMALL,
+      selectedWorld: { id: 'canyon', size: 'small' },
+      worldCodes: {},
+    })
+  })
+
+  it('migrates version 7: free worlds, Canyon Small, 250 world coins per 500-step reached (1240 → 500)', () => {
+    const { worldCoins: _c, worldSteps: _s, worlds: _w, selectedWorld: _sel, worldCodes: _codes, ...v7 } = {
+      ...defaultProgress(),
+      version: 7,
+      trophies: { blaze: 1000, rocko: 240 },
+    }
+    const migrated = parseProgress(v7)
+    expect(migrated).toEqual({
+      ...v7,
+      version: 8,
+      worldCoins: 500,
+      worldSteps: 2,
+      worlds: FREE_SMALL,
+      selectedWorld: { id: 'canyon', size: 'small' },
+      worldCodes: {},
+    })
+  })
+
+  it.each([2, 3, 4, 5, 6, 7])('a version %i save loads with the world fields and coins for its trophies', (version) => {
+    const { worldCoins: _c, worldSteps: _s, worlds: _w, selectedWorld: _sel, worldCodes: _codes, createdFighters, hackExpiries, ...rest } =
+      defaultProgress()
+    const old = {
+      ...rest,
+      version,
+      ...(version >= 5 ? { hackExpiries } : {}),
+      ...(version === 4 || version === 5 ? { createdFighter: null } : {}),
+      ...(version >= 6 ? { createdFighters } : {}),
+    }
+    const migrated = parseProgress(old)
+    expect(migrated).toMatchObject({ version: 8, worldCoins: 750, worldSteps: 3, worlds: FREE_SMALL, trophies: rest.trophies })
+  })
+
+  it('refuses broken world fields', () => {
+    const p = defaultProgress()
+    expect(parseProgress({ ...p, worldCoins: -1 })).toBeNull()
+    expect(parseProgress({ ...p, worlds: { canyon: 'huge' } })).toBeNull()
+    expect(parseProgress({ ...p, selectedWorld: { id: 'canyon' } })).toBeNull()
+    expect(parseProgress({ ...p, worldCodes: { wc1: 'soon' } })).toBeNull()
+    const kept = { ...p, worldCoins: 9, worlds: { ...p.worlds, 'lava-forge': 'large' as const }, worldCodes: { wc1: 5 } }
+    expect(parseProgress(JSON.parse(JSON.stringify(kept)))).toEqual(kept)
+  })
+
+  it('reset: no world coins or steps, only the free worlds in Small, Canyon Small, every code usable again', () => {
+    const p = resetProgress({
+      ...defaultProgress(),
+      worldCoins: 1250,
+      worldSteps: 5,
+      worlds: { ...FREE_SMALL, canyon: 'large', 'moon-base': 'medium' },
+      selectedWorld: { id: 'moon-base', size: 'medium' },
+      worldCodes: { wc1: Date.now() + 1000 },
+    })
+    expect(p).toMatchObject({ worldCoins: 0, worldSteps: 0, worlds: FREE_SMALL, selectedWorld: { id: 'canyon', size: 'small' }, worldCodes: {} })
   })
 })

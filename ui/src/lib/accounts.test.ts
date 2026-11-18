@@ -14,7 +14,8 @@ import {
 import { addCreatedSkin, deleteCreatedSkin, saveCreated } from './created'
 import { browserLanguage } from './i18n/languages'
 import { MAX_CREATED_FIGHTERS } from './created'
-import { PROGRESS_KEY, defaultProgress, memoryStorage, startProgress } from './progress'
+import { PROGRESS_KEY, defaultProgress, memoryStorage, resetProgress, startProgress, type Progress } from './progress'
+import { buyWorld, earnWorldCoins, growWorld, type WorldPurchase } from './game/worldShop'
 
 function added(state: Accounts, name: string): Accounts {
   const result = addAccount(state, name, 'en')
@@ -375,6 +376,68 @@ describe('accounts', () => {
     const storage = memoryStorage()
     storage.setItem(ACCOUNTS_KEY, '{"version":1,"current":"a1","accounts":[]}')
     expect(currentAccount(loadAccounts(storage, 'en')).progress).toEqual(startProgress())
+  })
+
+  describe('worlds in two tabs', () => {
+    function twoTabs(seed: Partial<Progress>) {
+      const storage = memoryStorage()
+      const setup = createAccountsStore(storage, 'en')
+      progressStore(setup).update((p) => ({ ...p, ...seed }))
+      setup.destroy()
+      const first = createAccountsStore(storage, 'en')
+      const second = createAccountsStore(storage, 'en')
+      return {
+        first: progressStore(first),
+        second: progressStore(second),
+        sync() {
+          first.refresh()
+          second.refresh()
+        },
+        destroy() {
+          first.destroy()
+          second.destroy()
+        },
+      }
+    }
+
+    function paid(result: WorldPurchase): Progress {
+      if (!result.ok) throw new Error(result.reason)
+      return result.progress
+    }
+
+    it('keeps a purchase in one tab and the world coins of a match in the other', () => {
+      const tabs = twoTabs({ worldCoins: 600, trophies: { blaze: 495 } })
+      tabs.first.update((p) => paid(buyWorld(p, 'moon-base', 'small')))
+      tabs.second.update((p) => earnWorldCoins({ ...p, trophies: { blaze: 505 } }, 495).progress)
+      tabs.sync()
+      for (const tab of [tabs.first, tabs.second]) {
+        expect(get(tab)).toMatchObject({ worldCoins: 350, worldSteps: 1, trophies: { blaze: 505 }, worlds: { 'moon-base': 'small' } })
+      }
+      tabs.destroy()
+    })
+
+    it('keeps the bigger size and pays only once for a world bought in both tabs', () => {
+      const tabs = twoTabs({ worldCoins: 2000 })
+      tabs.first.update((p) => paid(growWorld(paid(buyWorld(p, 'moon-base', 'small')), 'canyon')))
+      tabs.second.update((p) => paid(growWorld(paid(growWorld(paid(buyWorld(p, 'moon-base', 'medium')), 'canyon')), 'canyon')))
+      tabs.sync()
+      // Moon Base Small + Medium (750) and Canyon up to Large (500).
+      expect(get(tabs.first)).toMatchObject({ worldCoins: 750, worlds: { canyon: 'large', 'moon-base': 'medium' } })
+      expect(get(tabs.second)).toEqual(get(tabs.first))
+      tabs.destroy()
+    })
+
+    it('keeps the later date of a used code and a reset in one tab', () => {
+      const tabs = twoTabs({ worldCoins: 1000, worldSteps: 2, worldCodes: { wc1: 100, wc2: 100 }, worlds: { canyon: 'medium' } })
+      tabs.first.update((p) => ({ ...p, worldCodes: { ...p.worldCodes, wc1: 500, wc3: 300 } }))
+      tabs.second.update((p) => ({ ...p, worldCodes: { ...p.worldCodes, wc1: 400, wc3: 600 } }))
+      tabs.sync()
+      expect(get(tabs.first).worldCodes).toEqual({ wc1: 500, wc2: 100, wc3: 600 })
+      tabs.first.update((p) => resetProgress(p))
+      tabs.sync()
+      expect(get(tabs.second)).toMatchObject({ worldCoins: 0, worldSteps: 0, worldCodes: {}, worlds: startProgress().worlds })
+      tabs.destroy()
+    })
   })
 })
 

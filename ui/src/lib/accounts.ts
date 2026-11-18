@@ -1,6 +1,8 @@
 import { derived, writable, type Readable } from 'svelte/store'
 import { nextCreatedFighterId, nextCreatedSkinId } from './created'
 import { SETTINGS } from './game/settings'
+import { worldCost } from './game/worldShop'
+import { WORLD_SIZES } from './game/worlds'
 import { isHackActive } from './hacks'
 import { browserLanguage, isLanguage, type Language } from './i18n/languages'
 import { MAX_CREATED_SKINS, PROGRESS_KEY, parseProgress, startProgress, type CreatedSkin, type Progress } from './progress'
@@ -238,10 +240,60 @@ function mergeCreatedFighters(
   return { fighters: merged, acceptedLocalCost }
 }
 
+/**
+ * A key whose number grew in this tab keeps the larger of both tabs; one that went down or was
+ * removed (a reset) keeps this tab's value.
+ */
+function mergeLargest<T extends string | number>(
+  base: Record<string, T>,
+  local: Record<string, T>,
+  remote: Record<string, T>,
+  order: (value: T) => number,
+): Record<string, T> {
+  const merged = { ...remote }
+  for (const key of new Set([...Object.keys(base), ...Object.keys(local)])) {
+    const hadBase = Object.hasOwn(base, key)
+    const hasLocal = Object.hasOwn(local, key)
+    if (hadBase === hasLocal && same(base[key], local[key])) continue
+    if (!hasLocal) delete merged[key]
+    else if (hadBase && order(local[key]) < order(base[key])) merged[key] = local[key]
+    else if (!Object.hasOwn(remote, key) || order(local[key]) > order(remote[key])) merged[key] = local[key]
+  }
+  return merged
+}
+
+/** World coins this tab paid for a world that the other tab had already bought. */
+function worldRefund(base: Progress['worlds'], local: Progress['worlds'], remote: Progress['worlds']): number {
+  let refund = 0
+  for (const [id, localSize] of Object.entries(local)) {
+    const baseSize = base[id] ?? null
+    const remoteSize = remote[id] ?? null
+    if (worldCost(baseSize, localSize) === 0 || worldCost(baseSize, remoteSize) === 0) continue
+    const bigger = remoteSize !== null && worldCost(localSize, remoteSize) > 0 ? remoteSize : localSize
+    refund += Math.max(0, worldCost(baseSize, localSize) - worldCost(remoteSize, bigger))
+  }
+  return refund
+}
+
 function mergeProgress(base: Progress, local: Progress, remote: Progress): Progress {
   const merged: Progress = { ...remote }
   let rejectedCreationRefund = 0
   if (local.selectedFighter !== base.selectedFighter) merged.selectedFighter = local.selectedFighter
+  if (!same(base.selectedWorld, local.selectedWorld)) merged.selectedWorld = local.selectedWorld
+  if (local.worldSteps !== base.worldSteps) {
+    merged.worldSteps = local.worldSteps < base.worldSteps ? local.worldSteps : Math.max(local.worldSteps, remote.worldSteps)
+  }
+  if (!same(base.worldCodes, local.worldCodes)) {
+    merged.worldCodes = mergeLargest(base.worldCodes, local.worldCodes, remote.worldCodes, (at) => at)
+  }
+  let worldCoinsRefund = 0
+  if (!same(base.worlds, local.worlds)) {
+    merged.worlds = mergeLargest(base.worlds, local.worlds, remote.worlds, (size) => WORLD_SIZES.indexOf(size))
+    worldCoinsRefund = worldRefund(base.worlds, local.worlds, remote.worlds)
+  }
+  if (local.worldCoins !== base.worldCoins || worldCoinsRefund !== 0) {
+    merged.worldCoins = Math.max(0, remote.worldCoins + local.worldCoins - base.worldCoins + worldCoinsRefund)
+  }
   if (!same(base.trophies, local.trophies)) merged.trophies = mergeMap(base.trophies, local.trophies, remote.trophies)
   if (!same(base.powerLevels, local.powerLevels)) merged.powerLevels = mergeMap(base.powerLevels, local.powerLevels, remote.powerLevels)
   if (!same(base.hackExpiries, local.hackExpiries)) merged.hackExpiries = mergeMap(base.hackExpiries, local.hackExpiries, remote.hackExpiries)

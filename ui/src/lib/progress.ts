@@ -1,7 +1,9 @@
 import type { FighterTypeId } from './game/types'
+import { SETTINGS } from './game/settings'
+import { WORLDS, isWorldSize, type WorldId, type WorldSize } from './game/worlds'
 
 export const PROGRESS_KEY = 'hack-star.progress'
-export const PROGRESS_VERSION = 7
+export const PROGRESS_VERSION = 8
 export const TEMPORARY_HACK_SECONDS = 72 * 60 * 60
 const PERMANENT_HACKS = new Set(['power22'])
 
@@ -56,6 +58,19 @@ export interface Progress {
   /** Bought skin ids per fighter id; the default skin is always owned. */
   ownedSkins: Record<string, string[]>
   createdFighters: CreatedFighter[]
+  worldCoins: number
+  /** 500-trophy steps already paid in world coins; each step pays only once. */
+  worldSteps: number
+  /** The biggest unlocked size per world id; a world that is not here is locked. */
+  worlds: Record<string, WorldSize>
+  selectedWorld: WorldChoice
+  /** When each used world-coin code (by its id) works again, as a timestamp. */
+  worldCodes: Record<string, number>
+}
+
+export interface WorldChoice {
+  id: string
+  size: WorldSize
 }
 
 /** Fighters every new account starts with (the server's `unlocked_at_start`). */
@@ -63,6 +78,24 @@ export const START_FIGHTERS = ['blaze', 'rocko', 'turbo', 'marina']
 export const START_CREDITS = 500
 /** The original created fighter keeps this id so existing selections and room links still work. */
 export const CREATED_ID = 'custom'
+export const START_WORLD: { id: WorldId; size: WorldSize } = { id: 'canyon', size: 'small' }
+
+type WorldFields = Pick<Progress, 'worldCoins' | 'worldSteps' | 'worlds' | 'selectedWorld' | 'worldCodes'>
+
+/**
+ * The world part of a save from before worlds (and of a new account, with 0 trophies): the
+ * free worlds in Small, Canyon Small chosen, and the world coins for every 500-step reached.
+ */
+function startWorlds(trophies = 0): WorldFields {
+  const worldSteps = Math.floor(trophies / SETTINGS.trophiesPerWorldStep)
+  return {
+    worldCoins: worldSteps * SETTINGS.worldCoinsPerStep,
+    worldSteps,
+    worlds: Object.fromEntries(WORLDS.filter((w) => w.free).map((w) => [w.id, 'small'])),
+    selectedWorld: { ...START_WORLD },
+    worldCodes: {},
+  }
+}
 
 export function isCreatedFighterId(id: string): boolean {
   return /^custom(?:-(?:[2-9]|1[0-5]))?$/.test(id)
@@ -82,10 +115,14 @@ export function startProgress(): Progress {
     selectedSkins: {},
     ownedSkins: {},
     createdFighters: [],
+    ...startWorlds(),
   }
 }
 
-/** Settings reset: back to the start with 0 credits; hack codes and the created fighter stay. */
+/**
+ * Settings reset: back to the start with 0 credits, no world coins, only the free worlds and
+ * no used world-coin codes; hack codes and the created fighter stay.
+ */
 export function resetProgress(progress: Progress): Progress {
   return {
     ...startProgress(),
@@ -114,6 +151,7 @@ export function defaultProgress(): Progress {
     selectedSkins: {},
     ownedSkins: {},
     createdFighters: [],
+    ...startWorlds(1240 + 420 + 85),
   }
 }
 
@@ -273,11 +311,47 @@ function isProgress(value: unknown): value is Progress {
     isOwnedSkins(p.ownedSkins) &&
     isHackExpiryMap(p.hackExpiries) &&
     p.createdFighter === undefined &&
+    isCreatedFighters(p.createdFighters) &&
+    isWorldFields(p)
+  )
+}
+
+function isWorldFields(p: Record<string, unknown>): boolean {
+  const selected = p.selectedWorld as Record<string, unknown> | null | undefined
+  return (
+    Number.isSafeInteger(p.worldCoins) &&
+    (p.worldCoins as number) >= 0 &&
+    Number.isSafeInteger(p.worldSteps) &&
+    (p.worldSteps as number) >= 0 &&
+    typeof p.worlds === 'object' &&
+    p.worlds !== null &&
+    Object.values(p.worlds).every(isWorldSize) &&
+    typeof selected === 'object' &&
+    selected !== null &&
+    typeof selected.id === 'string' &&
+    isWorldSize(selected.size) &&
+    typeof p.worldCodes === 'object' &&
+    p.worldCodes !== null &&
+    Object.values(p.worldCodes).every((at) => Number.isSafeInteger(at) && at >= 0)
+  )
+}
+
+type ProgressV7 = Omit<Progress, 'version' | keyof WorldFields> & { version: 7 }
+
+function isProgressV7(value: unknown): value is ProgressV7 {
+  if (typeof value !== 'object' || value === null) return false
+  const p = value as Record<string, unknown>
+  return (
+    p.version === 7 &&
+    isProgressFields(p) &&
+    isOwnedSkins(p.ownedSkins) &&
+    isHackExpiryMap(p.hackExpiries) &&
+    p.createdFighter === undefined &&
     isCreatedFighters(p.createdFighters)
   )
 }
 
-type ProgressV6 = Omit<Progress, 'version' | 'createdFighters'> & { version: 6; createdFighters: CreatedFighterV6[] }
+type ProgressV6 = Omit<ProgressV7, 'version' | 'createdFighters'> & { version: 6; createdFighters: CreatedFighterV6[] }
 
 function isProgressV6(value: unknown): value is ProgressV6 {
   if (typeof value !== 'object' || value === null) return false
@@ -292,7 +366,7 @@ function isProgressV6(value: unknown): value is ProgressV6 {
   )
 }
 
-type ProgressV5 = Omit<Progress, 'version' | 'createdFighters'> & { version: 5; createdFighter: CreatedFighterV6['look'] | null }
+type ProgressV5 = Omit<ProgressV7, 'version' | 'createdFighters'> & { version: 5; createdFighter: CreatedFighterV6['look'] | null }
 
 function isProgressV5(value: unknown): value is ProgressV5 {
   if (typeof value !== 'object' || value === null) return false
@@ -306,7 +380,7 @@ function isProgressV5(value: unknown): value is ProgressV5 {
   )
 }
 
-type ProgressV4 = Omit<Progress, 'version' | 'hackExpiries' | 'createdFighters'> & { version: 4; createdFighter: CreatedFighterV6['look'] | null }
+type ProgressV4 = Omit<ProgressV7, 'version' | 'hackExpiries' | 'createdFighters'> & { version: 4; createdFighter: CreatedFighterV6['look'] | null }
 
 function isProgressV4(value: unknown): value is ProgressV4 {
   if (typeof value !== 'object' || value === null) return false
@@ -319,11 +393,17 @@ function isProgressV4(value: unknown): value is ProgressV4 {
   )
 }
 
+/** Version 7 to 8: the free worlds in Small, Canyon Small chosen, world coins for the 500-steps already reached. */
+function migrateV7(progress: ProgressV7): Progress {
+  const trophies = Object.values(progress.trophies).reduce((sum, n) => sum + n, 0)
+  return { ...progress, version: PROGRESS_VERSION, ...startWorlds(trophies) }
+}
+
 /** Version 6 to 7: hands and legs 0 (the body's own, so every look stays the same) and no skins yet. */
-function migrateV6(progress: ProgressV6): Progress {
+function migrateV6(progress: ProgressV6): ProgressV7 {
   return {
     ...progress,
-    version: PROGRESS_VERSION,
+    version: 7,
     createdFighters: progress.createdFighters.map((fighter) => ({
       id: fighter.id,
       look: { ...fighter.look, hands: 0, legs: 0 },
@@ -377,10 +457,11 @@ function migrateV2(value: unknown): ProgressV4 | null {
 /** A saved progress of any known version, or `null` when it is broken or unknown. */
 export function parseProgress(value: unknown, now = Date.now()): Progress | null {
   if (isProgress(value)) return value
-  if (isProgressV6(value)) return migrateV6(value)
-  if (isProgressV5(value)) return migrateV6(migrateV5(value))
+  if (isProgressV7(value)) return migrateV7(value)
+  if (isProgressV6(value)) return migrateV7(migrateV6(value))
+  if (isProgressV5(value)) return migrateV7(migrateV6(migrateV5(value)))
   const old = isProgressV4(value) ? value : (migrateV3(value) ?? migrateV2(value))
-  return old ? migrateV6(migrateV5(migrateV4(old, now))) : null
+  return old ? migrateV7(migrateV6(migrateV5(migrateV4(old, now)))) : null
 }
 
 /** Older versions are migrated; missing, unreadable or unknown data falls back to a fresh start. */

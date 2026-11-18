@@ -1,5 +1,7 @@
 /** Match settings. Answers from Mattia (see "Questions to Mattia" in .specs/overall_req.md) go here. */
 
+import type { WorldSize } from './worlds'
+
 export type BotLevel = 'easy' | 'medium' | 'hard'
 
 export interface Settings {
@@ -56,6 +58,14 @@ export interface Settings {
   superDamage: number
   /** How much faster the Super charges with the HYPERCHARGE hack. */
   hackSuperGain: number
+  /** World coins paid each time the total trophies reach the next step. */
+  worldCoinsPerStep: number
+  /** Total trophies between two world-coin steps (500, 1000, 1500, …). */
+  trophiesPerWorldStep: number
+  /** World coins for a locked world: Small, Small + Medium, or every size. */
+  worldPrices: Record<WorldSize, number>
+  /** World coins for the next size of an unlocked world. */
+  worldSizeStep: number
 }
 
 export const SETTINGS: Settings = {
@@ -93,6 +103,10 @@ export const SETTINGS: Settings = {
   hyperSuperShots: 7,
   superDamage: 1.2,
   hackSuperGain: 3,
+  worldCoinsPerStep: 250,
+  trophiesPerWorldStep: 500,
+  worldPrices: { small: 500, medium: 750, large: 1000 },
+  worldSizeStep: 250,
 }
 
 export interface BotSkill {

@@ -16,6 +16,7 @@
 | 2026-11-16 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | — | — | issue #24 created |
 | 2026-11-16 | plan | `PLAN:` | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | Part 2 written |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 1 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 2 done |
 
 ---
 
@@ -166,7 +167,7 @@ _None — answered on 2026-11-16._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | World catalogue and sizes | reasoning (Claude Opus 5.5) — seeded layout generator and its checks | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
-| **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ⬜ Not started | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
+| **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
@@ -240,24 +241,28 @@ Accounts earn world coins per 500 trophies, buy worlds and bigger sizes, and kee
 saved progress v8 with old saves migrated (S8–S13, S19, S20, S21).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `progress.ts`: version 8 fields and start values (D6); migration from v2–v7 with world
+- [x] Record the start time in Notes below.
+- [x] `progress.ts`: version 8 fields and start values (D6); migration from v2–v7 with world
       coins for trophies already reached; `resetProgress` resets them (S21).
-- [ ] `accounts.ts`: merge rules for the new fields (D7).
-- [ ] `settings.ts` numbers and `game/worldShop.ts` rules (D8): earning per new 500-step,
+- [x] `accounts.ts`: merge rules for the new fields (D7).
+- [x] `settings.ts` numbers and `game/worldShop.ts` rules (D8): earning per new 500-step,
       buying in Small / Small + Medium / all sizes, growing one size for 250, refusals with the
       missing amount, already unlocked refused; credits and the infinite-credits and
       UNLOCK_ALL hacks do not count (S10).
-- [ ] `Arena.svelte` `saveReward`: add world coins when a match passes a 500-step, and keep the
+- [x] `Arena.svelte` `saveReward`: add world coins when a match passes a 500-step, and keep the
       amount for the result screen.
-- [ ] Tests: earning (499 → 509 gives 250; 990 → 1010 gives 250; a step is never paid twice);
+- [x] Tests: earning (499 → 509 gives 250; 990 → 1010 gives 250; a step is never paid twice);
       prices and size rules; migration (1240 trophies → 500 world coins, free worlds, Canyon
       Small chosen; v2–v7 saves load); reset; two-tab merges (a purchase and a match in two
       tabs, codes, sizes).
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 13:40
+
+**Done (2026-11-18 · ~7m · Claude Opus 5.5)** — progress v8 (`worldCoins`, `worldSteps`, `worlds`, `selectedWorld`, `worldCodes`) with v2–v7 migration (free worlds in Small, Canyon Small, 250 world coins per 500-step reached) and reset; tab merge (coins as a delta with a refund for a world bought in both tabs, bigger size, larger steps, later code date, local choice; a reset wins); world numbers in `settings.ts` and `game/worldShop.ts` (`worldCoinsFor`, `earnWorldCoins`, `buyWorld`, `growWorld`, `chosenWorld`, `chooseWorld`, refusals with the missing amount; credits and hacks never count); `Arena.svelte` pays world coins after a match and keeps `earnedWorldCoins` for the result screen (Step 5). No new visible text yet. `cd ui; npm test` 352 passed, `npm run check` 0 errors. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · — · — (usage script: no price for this model in this environment)
 
 ---
 
