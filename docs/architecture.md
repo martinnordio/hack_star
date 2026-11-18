@@ -58,7 +58,7 @@ value (no router):
 
 Extra pages by address: `/?qr` (printable QR codes, after the password `M6D2` — checked in the
 browser, a lock for kids, not security), `/?gallery` (all fighters and skins; `?gallery=custom`
-for created-fighter parts), `/?dev` (`lib/dev/DevPage.svelte`, the developer page: asks the
+for created-fighter parts; `?gallery=worlds&world=<id>&size=<size>` for each world's look, `lib/WorldGallery.svelte`), `/?dev` (`lib/dev/DevPage.svelte`, the developer page: asks the
 same code once, then turns developer mode on in this browser; English only; one component per
 section — `MusicSection.svelte`).
 
@@ -109,7 +109,7 @@ Everything is built in code from simple shapes, so there is no art to download o
 | `heroes3d.ts` | The five newest, more detailed fighters (Marina, Drako, Spectra, Mecha Max, Zeus Jr.) |
 | `skins3d.ts` | The 3 extra skins of every fighter: the default look recoloured plus one extra part (crown, halo, horns, shades, scarf, backpack, cape) |
 | `custom3d.ts` | The created fighter, built from its look: 5 heads × 5 bodies × 3 hands × 3 legs × 2 colours. Each body is a torso with its own arms and legs; hands and legs 0 use them, 1–2 replace them (claws, big gloves; springs, big boots), so looks saved before hands and legs existed draw exactly as before (`custom3d.test.ts` pins them) |
-| `arena3d.ts` | Tiles, cliffs, rock walls, cacti, crates, barrels, skulls |
+| `arena3d.ts` | `buildArena(arena, theme)`: tiles, border, walls, cover and crates, barrels, skulls in the colours and shapes of the world's theme (`WORLD_LOOKS`: canyon cliffs and cacti, ruins and ferns, docks and neon posts…); walls, cover and border are merged by material into a few meshes so Large worlds stay smooth |
 | `dummy3d.ts`, `healthBar.ts` | Training dummy; health bars |
 | `particles.ts` | One pool of reused meshes for dust, flashes, sparks and pieces |
 

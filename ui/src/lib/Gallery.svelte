@@ -3,6 +3,7 @@
   import { lookSkin } from './created'
   import FighterStage from './FighterStage.svelte'
   import { VARIANTS } from './models/skins3d'
+  import WorldGallery from './WorldGallery.svelte'
 
   // Created fighters: every head and body, and each body with new hands and legs.
   const created: [string, string][] = [0, 1, 2, 3, 4].flatMap((n) => [
@@ -31,17 +32,21 @@
   const rows = Math.ceil(combos.length / columns)
 </script>
 
-<div style="position:fixed;inset:0;background:#3a2a8c">
-  <Canvas>
-    <T.PerspectiveCamera makeDefault position={[0, 3, only ? 7 : 19]} fov={50} oncreate={(c) => c.lookAt(0, 1, 0)} />
-    <T.HemisphereLight args={['#ffffff', '#6a4fbf', 1.6]} />
-    <T.DirectionalLight position={[3, 6, 8]} intensity={2.5} />
-    {#each combos as [fighter, skin], i}
-      <FighterStage
-        fighterId={fighter}
-        skinId={skin}
-        position={[(i % columns) * 2.6 - (columns - 1) * 1.3, ((rows - 1) / 2 - Math.floor(i / columns)) * 3.6, 0]}
-      />
-    {/each}
-  </Canvas>
-</div>
+{#if only === 'worlds'}
+  <WorldGallery />
+{:else}
+  <div style="position:fixed;inset:0;background:#3a2a8c">
+    <Canvas>
+      <T.PerspectiveCamera makeDefault position={[0, 3, only ? 7 : 19]} fov={50} oncreate={(c) => c.lookAt(0, 1, 0)} />
+      <T.HemisphereLight args={['#ffffff', '#6a4fbf', 1.6]} />
+      <T.DirectionalLight position={[3, 6, 8]} intensity={2.5} />
+      {#each combos as [fighter, skin], i}
+        <FighterStage
+          fighterId={fighter}
+          skinId={skin}
+          position={[(i % columns) * 2.6 - (columns - 1) * 1.3, ((rows - 1) / 2 - Math.floor(i / columns)) * 3.6, 0]}
+        />
+      {/each}
+    </Canvas>
+  </div>
+{/if}

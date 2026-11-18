@@ -17,6 +17,7 @@
 | 2026-11-16 | plan | `PLAN:` | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | Part 2 written |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 1 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 2 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 3 done |
 
 ---
 
@@ -168,7 +169,7 @@ _None — answered on 2026-11-16._
 |------|-------------|-------------------|--------|--------|
 | **1** | World catalogue and sizes | reasoning (Claude Opus 5.5) — seeded layout generator and its checks | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
-| **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
+| **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
 | **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
@@ -273,19 +274,23 @@ Every world is drawn with its own theme and cover, in every size, smoothly on an
 S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `models/arena3d.ts`: themes (D4) — ground colours, edge (cliffs or other border), wall and
+- [x] Record the start time in Notes below.
+- [x] `models/arena3d.ts`: themes (D4) — ground colours, edge (cliffs or other border), wall and
       bush shapes per theme; `buildArena(arena, theme)`.
-- [ ] `ArenaScene.svelte`: draw the arena it is given instead of `CANYON`; the light's shadow
+- [x] `ArenaScene.svelte`: draw the arena it is given instead of `CANYON`; the light's shadow
       area covers Large.
-- [ ] `/?gallery`: a section that shows each world's ground and cover, to look at the themes.
-- [ ] Tests: every theme id of the catalogue has a look; building every world × size gives
+- [x] `/?gallery`: a section that shows each world's ground and cover, to look at the themes.
+- [x] Tests: every theme id of the catalogue has a look; building every world × size gives
       ground, walls and cover.
-- [ ] Check: `npm test; npm run check`; in the browser, `/?gallery` and a Large world at iPad
+- [x] Check: `npm test; npm run check`; in the browser, `/?gallery` and a Large world at iPad
       size (820 × 1180) — screenshots of several themes, frame rate noted.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 13:47
+
+**Done (2026-11-18 · ~18m · Claude Opus 5.5)** — `models/arena3d.ts`: `WORLD_LOOKS` for all 13 themes (tiles, floor, sky, border: cliffs / trees / docks and water / clouds / buildings / lollipops / dunes; walls: rock / ruin / crates / crystal / house / machine / blocks / logs; cover: cacti / ferns / neon posts / clouds / crystals / mushrooms / hedges / sweets / palms), `buildArena(arena, theme)` merges border, walls, cover and decorations by material (a few draw calls instead of ~1000; Canyon draws exactly as before — pinned by a triangle/position/colour fingerprint), `disposeArena`, `shadowReach`; `ArenaScene.svelte` draws `world.arena` with an optional `theme` prop (Canyon by default — `Arena.svelte` passes the chosen world and uses `look.sky` for its background in Step 4), overtime bursts in the theme's colours, the shadow area covers Large; `/?gallery=worlds&world=<id>&size=<size>` (`WorldGallery.svelte`, names from the existing i18n keys, `data-fps`); `arena3d.test.ts`; architecture lines for `arena3d.ts` and the gallery. `cd ui; npm test` 357 passed, `npm run check` 0 errors, `npm run build` ok; browser (integrated browser, viewport emulated at 820 × 1180 via CDP): all 13 worlds in Large in the gallery at 60 fps (desktop GPU, not a real iPad), screenshots of Lava Forge, Neon Docks, Candy Factory, Jungle Ruins, Sky Islands, Crystal Caves, Mini City, Kata Jungle, Robot Workshop, Pirate Cove, Moon Base, Desert Oasis and Canyon; a Canyon match (`?seconds=20&bots=3`) at 820 × 1180 at 60 fps through overtime to the result, no page errors; `/?gallery` fighters unchanged. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · — · — (usage script: no price for this model in this environment)
 
 ---
 
