@@ -381,4 +381,21 @@ export const gsw: Record<TextKey, string> = {
   'vocabulary.hyperchargeCode.word': 'HYPERCHARGE (Code)',
   'vocabulary.hyperchargeCode.meaning':
     'Hack-Code in Hack star: Din Super ladt 3-mal schnäller und jede Super isch en Hypercharge.',
+
+  'world.canyon.name': 'Canyon',
+  'world.jungle-ruins.name': 'Dschungelruine',
+  'world.neon-docks.name': 'Neon-Hafe',
+  'world.lava-forge.name': 'Lavaschmitte',
+  'world.sky-islands.name': 'Himmelsinsle',
+  'world.crystal-caves.name': 'Kristallhöhle',
+  'world.mini-city.name': 'Mini-Stadt',
+  'world.kata-jungle.name': 'Kata-Dschungel',
+  'world.candy-factory.name': 'Täfelifabrik',
+  'world.robot-workshop.name': 'Roboterwerkstatt',
+  'world.pirate-cove.name': 'Piratebucht',
+  'world.moon-base.name': 'Mondbasis',
+  'world.desert-oasis.name': 'Wüesteoase',
+  'world.size.small': 'Chli',
+  'world.size.medium': 'Mittel',
+  'world.size.large': 'Gross',
 }

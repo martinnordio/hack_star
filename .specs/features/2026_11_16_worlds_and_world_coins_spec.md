@@ -1,9 +1,9 @@
 # Worlds and World Coins Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-16
-> **Last updated:** 2026-11-16
+> **Last updated:** 2026-11-18
 > **Branch:** `feature/worlds-and-world-coins`
 > **Issue:** #24
 
@@ -15,6 +15,7 @@
 | 2026-11-16 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | ~480 k | ~CHF 0.14 (17 credits) | Part 1 revised: open questions answered — ten worlds to buy with their names, sizes 1.5× / 2×, world coins for existing trophies, UNLOCK_ALL not for worlds, reset clears used codes, older friends only in Canyon Small, five codes of each amount |
 | 2026-11-16 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | — | — | issue #24 created |
 | 2026-11-16 | plan | `PLAN:` | Claude Opus 5.5 | ~3.09 M | ~CHF 0.91 (109 credits) | Part 2 written |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 1 done |
 
 ---
 
@@ -164,7 +165,7 @@ _None — answered on 2026-11-16._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | World catalogue and sizes | reasoning (Claude Opus 5.5) — seeded layout generator and its checks | ⬜ Not started | [→ Step 1](#step-1--world-catalogue-and-sizes) |
+| **1** | World catalogue and sizes | reasoning (Claude Opus 5.5) — seeded layout generator and its checks | ✅ Done | [→ Step 1](#step-1--world-catalogue-and-sizes) |
 | **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ⬜ Not started | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ⬜ Not started | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
@@ -212,19 +213,23 @@ The 13 worlds and their Small, Medium and Large layouts exist as game data, with
 equal to today's arena (S2, S3, S4, S5).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `ui/src/lib/game/worlds.ts`: the 13 worlds (D1), sizes and dimensions (D2),
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `ui/src/lib/game/worlds.ts`: the 13 worlds (D1), sizes and dimensions (D2),
       `arenaFor(worldId, size)` with the seeded layout generator (D3); Canyon Small returns
       `CANYON`.
-- [ ] World and size names as i18n keys in all five languages.
-- [ ] Tests `worlds.test.ts`: 13 worlds, 3 free, unique ids; Canyon Small deep-equals `CANYON`;
+- [x] World and size names as i18n keys in all five languages.
+- [x] Tests `worlds.test.ts`: 13 worlds, 3 free, unique ids; Canyon Small deep-equals `CANYON`;
       every world × size: dimensions and ground ratio (~1.5, ~2.0), no spawn / start / dummy in
       a wall, a clear line from every spawn towards the centre, at least 9 spawns, cover grows
       with size, the same layout for the same world and size every time.
-- [ ] Check: `cd ui; npm test; npm run check`.
+- [x] Check: `cd ui; npm test; npm run check`.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 13:34
+
+**Done (2026-11-18 · ~7m · Claude Opus 5.5)** — `ui/src/lib/game/worlds.ts`: 13 worlds (ids, free flag, theme, seed), sizes Small 30×24 / Medium 36×30 / Large 42×34, `arenaFor(id, size)` with a seeded mirror-symmetric generator (Canyon Small returns `CANYON`); world and size names in all five languages; `worlds.test.ts` checks the catalogue, ground ratios, free and reachable spawns / start / dummies (flood fill from the centre — a straight line would fail for Canyon's own back spawn), ≥ 9 spawns, growing cover and stable layouts. `cd ui; npm test` 324 passed, `npm run check` 0 errors. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · — · — (usage script: no price for this model outside VS Code)
 
 ---
 
