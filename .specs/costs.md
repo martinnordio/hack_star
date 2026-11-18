@@ -3,7 +3,7 @@
 > Estimate — see [COSTS.md](kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-18; do not edit by hand.
 
-**All specs: ~8.74 M · ~CHF 2.62 (314 credits)**
+**All specs: ~94.77 M · ~CHF 25.44 (3037 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -30,5 +30,18 @@
 | [Bug Fixes](features/done/2026_11_14_bug_fixes_spec.md) | ✅ Complete | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Model Comparison Experiment](features/2026_11_16_model_experiment_spec.md) | 🔄 In progress | ~789 k · ~CHF 0.22 | — | — | — | — | — | ~789 k · ~CHF 0.22 |
 | [spec-nx Kit Update](features/done/2026_11_16_spec_nx_kit_update_spec.md) | ✅ Complete | — | — | — | — | — | ~2.40 M · ~CHF 0.75 | ~2.40 M · ~CHF 0.75 |
-| [Worlds and World Coins](features/done/2026_11_16_worlds_and_world_coins_spec.md) | ✅ Complete | ~2.46 M · ~CHF 0.74 | ~3.09 M · ~CHF 0.91 | — | — | — | — | ~5.55 M · ~CHF 1.65 |
-| **All specs** | | | | | | | | **~8.74 M · ~CHF 2.62** |
+| [Worlds and World Coins](features/done/2026_11_16_worlds_and_world_coins_spec.md) | ✅ Complete | ~2.46 M · ~CHF 0.74 | ~3.09 M · ~CHF 0.91 | ~65.37 M · ~CHF 15.64 | ~20.66 M · ~CHF 7.18 | — | — | ~91.58 M · ~CHF 24.47 |
+| **All specs** | | | | | | | | **~94.77 M · ~CHF 25.44** |
+
+## Implementation by Step
+
+| Spec | Step | Model | Tokens | Cost |
+|------|------|-------|--------|------|
+| Worlds and World Coins | 1 | Claude Opus 5.5 | ~2.06 M | ~CHF 1.18 (141 credits) |
+| Worlds and World Coins | 2 | Claude Opus 5.5 | ~4.22 M | ~CHF 1.73 (206 credits) |
+| Worlds and World Coins | 3 | Claude Opus 5.5 | ~11.75 M | ~CHF 3.95 (472 credits) |
+| Worlds and World Coins | 4 | Claude Sonnet 5.5 | ~3.86 M | ~CHF 0.75 (89 credits) |
+| Worlds and World Coins | 5 | Claude Sonnet 5.5 | ~8.24 M | ~CHF 1.34 (160 credits) |
+| Worlds and World Coins | 6 | Claude Opus 5.5 | ~7.65 M | ~CHF 2.74 (327 credits) |
+| Worlds and World Coins | 7 | Claude Sonnet 5.5 | ~5.14 M | ~CHF 0.92 (110 credits) |
+| Worlds and World Coins | 8 | Claude Haiku 5.5 | ~19.72 M | ~CHF 1.15 (137 credits) |
