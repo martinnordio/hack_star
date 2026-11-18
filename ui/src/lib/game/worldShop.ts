@@ -90,3 +90,24 @@ export function chosenWorld(progress: Progress): { id: WorldId; size: WorldSize 
 export function chooseWorld(progress: Progress, id: string, size: WorldSize): Progress {
   return isWorldUnlocked(progress, id, size) ? { ...progress, selectedWorld: { id, size } } : progress
 }
+
+/** What a size button of the world screen does: play it, pay for it, or wait for a smaller size. */
+export type SizeOffer =
+  | { size: WorldSize; state: 'unlocked' }
+  | { size: WorldSize; state: 'buy' | 'grow'; price: number; missing: number }
+  | { size: WorldSize; state: 'locked' }
+
+/**
+ * The three sizes of a world as the world screen shows them: a locked world offers every size
+ * with its price (500 / 750 / 1000); an unlocked one offers the next size for 250 and keeps the
+ * ones after it locked until then.
+ */
+export function worldOffers(progress: Progress, id: string, settings: Settings = SETTINGS): SizeOffer[] {
+  const biggest = unlockedSize(progress, id)
+  return WORLD_SIZES.map((size): SizeOffer => {
+    if (biggest !== null && rank(size) <= rank(biggest)) return { size, state: 'unlocked' }
+    if (biggest !== null && rank(size) > rank(biggest) + 1) return { size, state: 'locked' }
+    const price = worldCost(biggest, size, settings)
+    return { size, state: biggest === null ? 'buy' : 'grow', price, missing: Math.max(0, price - progress.worldCoins) }
+  })
+}

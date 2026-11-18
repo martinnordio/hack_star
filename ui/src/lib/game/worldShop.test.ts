@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { TEMPORARY_HACK_SECONDS, startProgress, type Progress } from '../progress'
 import { withHack } from '../hacks'
-import { buyWorld, chooseWorld, chosenWorld, earnWorldCoins, growWorld, isWorldUnlocked, worldCoinsFor } from './worldShop'
+import { buyWorld, chooseWorld, chosenWorld, earnWorldCoins, growWorld, isWorldUnlocked, worldCoinsFor, worldOffers } from './worldShop'
 
 const withCoins = (worldCoins: number, extra: Partial<Progress> = {}): Progress => ({ ...startProgress(), worldCoins, ...extra })
 
@@ -78,5 +78,38 @@ describe('world shop', () => {
     expect(chosenWorld(chosen)).toEqual({ id: 'moon-base', size: 'medium' })
     expect(chooseWorld(p, 'moon-base', 'large')).toBe(p)
     expect(chosenWorld({ ...p, selectedWorld: { id: 'lava-forge', size: 'small' } })).toEqual({ id: 'canyon', size: 'small' })
+  })
+})
+
+describe('what the world screen offers', () => {
+  const states = (p: Progress, id: string) => worldOffers(p, id).map((o) => o.state)
+
+  it('a free world is playable in Small and offers Medium for 250; Large waits for Medium', () => {
+    const offers = worldOffers(withCoins(100), 'jungle-ruins')
+    expect(offers).toEqual([
+      { size: 'small', state: 'unlocked' },
+      { size: 'medium', state: 'grow', price: 250, missing: 150 },
+      { size: 'large', state: 'locked' },
+    ])
+  })
+
+  it('a locked world offers every size with its price and the missing world coins', () => {
+    expect(worldOffers(withCoins(600), 'lava-forge')).toEqual([
+      { size: 'small', state: 'buy', price: 500, missing: 0 },
+      { size: 'medium', state: 'buy', price: 750, missing: 150 },
+      { size: 'large', state: 'buy', price: 1000, missing: 400 },
+    ])
+  })
+
+  it('shows what was bought and what comes next', () => {
+    const p = withCoins(250, { worlds: { 'moon-base': 'medium' } })
+    expect(states(p, 'moon-base')).toEqual(['unlocked', 'unlocked', 'grow'])
+    expect(states(withCoins(0, { worlds: { 'moon-base': 'large' } }), 'moon-base')).toEqual(['unlocked', 'unlocked', 'unlocked'])
+  })
+
+  it('credits and hacks change nothing', () => {
+    const p = withHack(withCoins(0, { credits: 99_999 }), 'unlock_all', TEMPORARY_HACK_SECONDS)
+    expect(states(p, 'lava-forge')).toEqual(['buy', 'buy', 'buy'])
+    expect(worldOffers(p, 'lava-forge')[0]).toMatchObject({ missing: 500 })
   })
 })

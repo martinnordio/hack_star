@@ -19,6 +19,7 @@
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 2 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | — | — | Step 3 done |
 | 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 4 done |
+| 2026-11-18 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | — | — | Step 5 done |
 
 ---
 
@@ -172,7 +173,7 @@ _None — answered on 2026-11-16._
 | **2** | World coins, worlds and saved progress v8 | reasoning (Claude Opus 5.5) — migration and two-tab merge | ✅ Done | [→ Step 2](#step-2--world-coins-worlds-and-saved-progress-v8) |
 | **3** | A look for every world | reasoning (Claude Opus 5.5) — graphics-heavy | ✅ Done | [→ Step 3](#step-3--a-look-for-every-world) |
 | **4** | Matches and Training in the chosen world | standard (Claude Sonnet 5.5) — clear wiring, bot rule with tests | ✅ Done | [→ Step 4](#step-4--matches-and-training-in-the-chosen-world) |
-| **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ⬜ Not started | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
+| **5** | World screen: choose, buy and grow worlds | standard (Claude Sonnet 5.5) — screen following the plan | ✅ Done | [→ Step 5](#step-5--world-screen-choose-buy-and-grow-worlds) |
 | **6** | Worlds in friends' rooms | reasoning (Claude Opus 5.5) — room protocol and old clients | ⬜ Not started | [→ Step 6](#step-6--worlds-in-friends-rooms) |
 | **7** | World-coin hack codes | standard (Claude Sonnet 5.5) — server list, client rules, tests | ⬜ Not started | [→ Step 7](#step-7--world-coin-hack-codes) |
 | **8** | Documentation and final check | light (Claude Haiku 5.5) — docs and running checks | ⬜ Not started | [→ Step 8](#step-8--documentation-and-final-check) |
@@ -329,22 +330,26 @@ worlds and bigger sizes; the result screen shows world coins earned (S1, S3, S8,
 S22, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Home: world-coin balance next to the credits.
-- [ ] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
+- [x] Record the start time in Notes below.
+- [x] Home: world-coin balance next to the credits.
+- [x] `WorldScreen.svelte` (D12): every world with its size buttons; unlocked ones selectable,
       locked ones with their prices (500 / 750 / 1000, +250 per size); buy and grow with
       confirmation; "N more world coins needed" when too few; the choice is saved.
-- [ ] Play and Training open the world screen first, preselected on the last choice, with
+- [x] Play and Training open the world screen first, preselected on the last choice, with
       **Start**.
-- [ ] Result screen: "+250 world coins" when a step was reached.
-- [ ] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
+- [x] Result screen: "+250 world coins" when a step was reached.
+- [x] Texts in all five languages; mouse and touch; desktop, iPad and phone in portrait and
       landscape.
-- [ ] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
+- [x] Check: `npm test; npm run check`; in the browser at the three sizes: buy a world with
       enough and with too few coins, grow a free world to Medium, choose it, start a match,
       reload — all kept; screenshots.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+Started: 2026-11-18 14:17
+
+**Done (2026-11-18 · ~14m · Claude Sonnet 5.5)** — WorldScreen.svelte (D12): every world with Small / Medium / Large buttons (unlocked: choose, saved at once; next size: price and confirmation dialog; `N more world coins needed` with a disabled Buy when too few; locked sizes wait for the smaller one), balance and **Start**; the pure rule `worldOffers` in `game/worldShop.ts` (what each size button does, with prices and the missing amount; 4 new tests); Play and Training open the world screen first (`App.svelte`), preselected on the last choice; Home shows the world-coin balance next to the credits; the result screen shows `+N world coins`; 16 new texts in en, de, gsw, es, it; architecture line. `cd ui; npm test` 365 passed, `npm run check` 0 errors, `npm run build` ok. Browser (integrated browser; desktop 1280 wide, iPad 820 × 1180, phone 390 × 844 portrait and 844 × 390 landscape through same-origin iframes, mouse only — touch not emulated): bought Lava Forge Small with 800 world coins (→ 300), grew Jungle Ruins to Medium (→ 50), Sky Islands refused with `450 more world coins needed` (nothing changed), chose Jungle Ruins Medium, Start → arena, reload and Play again: balance, bought world, Medium and the choice all kept; Training also opens the world screen; screenshots of all sizes looked right. The result line `+250 world coins` was checked only with a temporary forced value (a time-up match pays 0 trophies and a win could not be played by script); the earning itself is covered by the Step 2 tests. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · — · — (usage script: does not work in this environment)
 
 ---
 
