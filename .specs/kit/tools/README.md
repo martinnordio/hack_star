@@ -60,6 +60,7 @@ file.
 | `-Transcript` | The chat log (default: of all logs of this project written since `-Since` — Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions — the one with the most requests in the range) |
 | `-Root` | The project root (default: the current folder) |
 | `-ContextCap` | Context size at which the chat is assumed to be summarized (default 200000) |
+| `-Agent` | `all` (default), `main` (only the chat's own requests) or `subagents` (only its sub-agents') — Copilot CLI logs only; a `Split:` line always shows both parts |
 | `-Json` | One JSON line instead of the three text lines |
 
 ```

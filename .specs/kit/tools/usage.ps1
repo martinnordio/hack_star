@@ -15,6 +15,7 @@ param(
     [string] $Transcript,
     [string] $Root = '.',
     [int] $ContextCap = 200000,
+    [ValidateSet('all', 'main', 'subagents')] [string] $Agent = 'all',
     [switch] $Json
 )
 $ErrorActionPreference = 'Stop'
@@ -70,27 +71,36 @@ function Get-Kind([string[]] $lines) {
 function Measure-Log([string] $path) {
     $lines = [IO.File]::ReadAllLines($path, [Text.Encoding]::UTF8)
     $kind = Get-Kind $lines
-    $t = @{ kind = $kind; requests = 0; input = [long]0; cached = [long]0; output = [long]0; credits = $null; models = @() }
+    $t = @{ kind = $kind; requests = 0; input = [long]0; cached = [long]0; output = [long]0; credits = $null; models = @(); main = $null; sub = $null }
     if ($kind -eq 'cli') {
-        $nano = [double]0; $models = @{}
+        $nano = [double]0; $models = @{}; $split = @{ main = [double]0; sub = [double]0 }
         foreach ($raw in $lines) {
             if (-not $raw.StartsWith('{"type":"session.usage_record"')) { continue }
             $ts = Get-Stamp $raw
             if ([string]::CompareOrdinal($ts, $sinceUtc) -lt 0 -or [string]::CompareOrdinal($ts, $untilUtc) -ge 0) { continue }
-            $u = ($raw | ConvertFrom-Json).data.usage
+            $record = $raw | ConvertFrom-Json
+            # Requests of sub-agents carry the sub-agent's id; the main agent's have none.
+            $isSub = [bool]$record.PSObject.Properties['agentId'] -and [bool]$record.agentId
+            $u = $record.data.usage
+            $n = [double]0
+            if ($u.copilotUsage -and $null -ne $u.copilotUsage.totalNanoAiu) {
+                $n = [double]$u.copilotUsage.totalNanoAiu
+            } elseif ($u.copilotUsage -and $u.copilotUsage.tokenDetails) {
+                foreach ($d in $u.copilotUsage.tokenDetails) { $n += [double]$d.tokenCount * [double]$d.costPerBatch / [double]$d.batchSize }
+            }
+            if ($isSub) { $split.sub += $n } else { $split.main += $n }
+            if (($Agent -eq 'main' -and $isSub) -or ($Agent -eq 'subagents' -and -not $isSub)) { continue }
             $t.requests++
             $t.input += [long]$u.inputTokens - [long]$u.cacheReadTokens
             $t.cached += [long]$u.cacheReadTokens
             $t.output += [long]$u.outputTokens
             $name = if ($u.modelDisplayName) { $u.modelDisplayName } else { $u.model }
             $models[$name] = $true
-            if ($u.copilotUsage -and $null -ne $u.copilotUsage.totalNanoAiu) {
-                $nano += [double]$u.copilotUsage.totalNanoAiu
-            } elseif ($u.copilotUsage -and $u.copilotUsage.tokenDetails) {
-                foreach ($d in $u.copilotUsage.tokenDetails) { $nano += [double]$d.tokenCount * [double]$d.costPerBatch / [double]$d.batchSize }
-            }
+            $nano += $n
         }
         $t.credits = $nano / 1e9
+        $t.main = $split.main / 1e9
+        $t.sub = $split.sub / 1e9
         $t.models = @($models.Keys | Sort-Object)
     } elseif ($kind -eq 'vscode') {
         $base = if ($cost.ContainsKey('base_tokens')) { [long]$cost['base_tokens'] } else { 35000 }
@@ -196,6 +206,9 @@ if ($null -eq $t -or $t.requests -eq 0) {
     throw "No AI requests found between $sinceUtc and $(if ($Until) { $untilUtc } else { 'now' }) for $rootPath. Logs checked:`n$list`nCheck the start time, or pass -Transcript <file> (Copilot CLI: ~/.copilot/session-state/<session>/events.jsonl)."
 }
 $vscode = $t.kind -eq 'vscode'
+if ($Agent -ne 'all' -and $t.kind -ne 'cli') {
+    throw "-Agent $Agent needs a Copilot CLI log (only it marks the requests of sub-agents); $Transcript is a $($t.kind) log."
+}
 
 function Get-Prices {
     $sid = [IO.Path]::GetFileNameWithoutExtension($Transcript)
@@ -244,7 +257,9 @@ if ($Json) {
         credits = [math]::Round($credits, 4); usd = [math]::Round($usd, 4); currency = $currency
         local = [math]::Round($localAmount, 4)
         share_percent = $(if ($null -ne $share) { [math]::Round($share, 4) } else { $null })
-        plan = $cost['plan']
+        plan = $cost['plan']; agent = $Agent
+        main_credits = $(if ($null -ne $t.main) { [math]::Round($t.main, 4) } else { $null })
+        subagent_credits = $(if ($null -ne $t.sub) { [math]::Round($t.sub, 4) } else { $null })
     } | ConvertTo-Json -Compress
     return
 }
@@ -261,3 +276,7 @@ $creditsRounded = [math]::Round($credits)
 $creditsWord = if ($creditsRounded -eq 1) { 'credit' } else { 'credits' }
 Write-Output ("Cost: {0}{1} {2} ({3} {4}{5})" -f $tilde, $currency, ([math]::Round($localAmount, 2)).ToString('0.00', $inv), $creditsRounded.ToString('0', $inv), $creditsWord, $planText)
 Write-Output ("Source: {0} from {1}{2}{3} requests{2}{4}" -f $source, $Transcript, $dot, $t.requests, $modelText)
+if ($null -ne $t.main) {
+    $shown = if ($Agent -eq 'all') { '' } else { " (counted above: $Agent)" }
+    Write-Output ("Split: main agent {0} credits{1}sub-agents {2} credits{3}" -f ([math]::Round($t.main)).ToString('0', $inv), $dot, ([math]::Round($t.sub)).ToString('0', $inv), $shown)
+}

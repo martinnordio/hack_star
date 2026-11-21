@@ -128,6 +128,10 @@ Only with per-Step models (`models` has tiers). Fixed or no `models`: one Step p
    - If the agent's permissions deny `git commit` (`.claude/settings.json`, the user's
      answer), or the tool has no sub-agents with a model choice, do **only Step <n>** and say
      why.
+   - With cost tracking on, after the last Step add one **Stage log** row for this
+     orchestrating chat: `implementation`, `IMPLEMENT:`, your model, `orchestrator of the
+     per-Step run (Steps <n>–<m>)`, with the numbers of `usage` `-Agent main` over the whole
+     run; each Step's row uses `-Agent subagents` over its sub-agent's time (`../COSTS.md`).
 3. **Only Step <n>:** that Step on its model (as a sub-agent where possible), then stop; the
    user commits.
 4. **No:** stop.

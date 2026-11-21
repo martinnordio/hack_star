@@ -13,11 +13,12 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.93 M (191 k in · 1.72 M cached · 20 k out) | CHF 1.42 (169 credits) | Part 1 written, together with spec 02 (measured from the Copilot CLI session log) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.66 M (12 k in · 1.64 M cached · 7 k out) | CHF 0.45 (53 credits) | Part 1 revised: open questions answered — GDScript, pinned latest stable Godot 4, browser only, no server yet; no own kit, the root kit with Godot specs in `hack_star_godot/.specs/` (S3 removed, S15–S19 added) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.07 M (34 k in · 2.02 M cached · 18 k out) | CHF 0.78 (93 credits) | Part 2 written |
-| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.12 M (54 k in · 1.06 M cached · 10 k out) | CHF 0.36 (43 credits) | Step 1 done |
-| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.64 M (49 k in · 1.58 M cached · 13 k out) | CHF 0.44 (52 credits) | Step 2 done |
-| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.45 M (97 k in · 2.32 M cached · 34 k out) | CHF 1.37 (163 credits) | Step 3 done |
-| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.21 M (86 k in · 3.11 M cached · 20 k out) | CHF 0.65 (78 credits) | Step 4 done except the iPad check |
-| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 3.51 M (110 k in · 3.36 M cached · 37 k out) | CHF 0.19 (23 credits) | Step 5 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 737 k (67 k in · 660 k cached · 11 k out) | CHF 0.26 (32 credits) | Step 1 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 879 k (40 k in · 827 k cached · 12 k out) | CHF 0.26 (30 credits) | Step 2 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.75 M (102 k in · 2.61 M cached · 37 k out) | CHF 1.49 (177 credits) | Step 3 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.08 M (88 k in · 2.97 M cached · 20 k out) | CHF 0.61 (72 credits) | Step 4 done except the iPad check |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 3.53 M (112 k in · 3.38 M cached · 37 k out) | CHF 0.12 (14 credits) | Step 5 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.51 M (640 k in · 6.85 M cached · 21 k out) | CHF 4.18 (498 credits) | orchestrator of the per-Step run (Steps 1–5): starting each Step's sub-agent, checking its result, the new-chat check, commits (`usage.ps1 -Agent main`; the Step rows are `-Agent subagents` over each sub-agent's own time) |
 
 ---
 
@@ -228,7 +229,7 @@ Started: 2026-11-21 13:59
 - The Check task stays unticked: its "new chat asked where a new Godot spec goes" part is run by the orchestrator, who ticks it. The tool part passed.
 - New-chat check (orchestrator, Claude Opus 5.5): a fresh agent asked, with no hints, where a new Godot spec, its review page and cost list go and which test command replaces `npm test` answered `hack_star_godot/.specs/features/`, `hack_star_godot/.specs/review/`, `hack_star_godot/.specs/costs.md`, `hack_star_godot/tools/test.ps1`, citing `AGENTS.md` — passed; `.github/copilot-instructions.md` not needed.
 
-**Done (2026-11-21 · ~15m · Claude Sonnet 5.5)** — Created `hack_star_godot/.specs/` (features/done, changes, review, guidelines/gdscript.md, spec-nx.json), `.gitignore`, `tools/versions.json`, `tools/check_tools.ps1`, root `AGENTS.md`; installed Godot 4.7.2, web templates, gdtoolkit 4.5.0. `tools/check_tools.ps1` parses cleanly, exit 0: Godot, templates and gdtoolkit OK, GUT pending; `git status` shows changes only in `hack_star_godot/` and `AGENTS.md`; the new-chat check is done by the orchestrator. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.12 M (54 k in · 1.06 M cached · 10 k out) · CHF 0.36 (43 credits)
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — Created `hack_star_godot/.specs/` (features/done, changes, review, guidelines/gdscript.md, spec-nx.json), `.gitignore`, `tools/versions.json`, `tools/check_tools.ps1`, root `AGENTS.md`; installed Godot 4.7.2, web templates, gdtoolkit 4.5.0. `tools/check_tools.ps1` parses cleanly, exit 0: Godot, templates and gdtoolkit OK, GUT pending; `git status` shows changes only in `hack_star_godot/` and `AGENTS.md`; the new-chat check is done by the orchestrator. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 737 k (67 k in · 660 k cached · 11 k out) · CHF 0.26 (32 credits)
 ---
 
 ## Step 2 — Godot project, start screen, test and lint
@@ -265,7 +266,7 @@ Started: 2026-11-21 14:02
 - The editor GUI is not available: the check is headless (`--import`, `--editor --quit-after 60`, `--quit-after 120`): no ERROR / WARNING / SCRIPT ERROR lines. The visual look is checked by the author / in the browser in Step 4.
 - Godot writes `.uid` files next to scripts; they are committed (Godot 4.4+ practice). `.godot/` stays ignored.
 
-**Done (2026-11-21 · ~10m · Claude Sonnet 5.5)** — Created `project.godot`, `scenes/start_screen.tscn/.gd`, placeholder `scenes/arena.tscn`, `tests/test_start_screen.gd`, `addons/gut/` (9.7.1), `tools/godot.ps1`, `test.ps1`, `lint.ps1`. Headless check: `test.ps1` passes (2 tests, exit 0; exit 1 with a failing test), `lint.ps1` OK, `check_tools.ps1` all OK (GUT 9.7.1), headless import / editor / run print no ERROR or WARNING lines; all scripts parse. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.64 M (49 k in · 1.58 M cached · 13 k out) · CHF 0.44 (52 credits)
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — Created `project.godot`, `scenes/start_screen.tscn/.gd`, placeholder `scenes/arena.tscn`, `tests/test_start_screen.gd`, `addons/gut/` (9.7.1), `tools/godot.ps1`, `test.ps1`, `lint.ps1`. Headless check: `test.ps1` passes (2 tests, exit 0; exit 1 with a failing test), `lint.ps1` OK, `check_tools.ps1` all OK (GUT 9.7.1), headless import / editor / run print no ERROR or WARNING lines; all scripts parse. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 879 k (40 k in · 827 k cached · 12 k out) · CHF 0.26 (30 credits)
 
 
 ---
@@ -308,7 +309,7 @@ Started: 2026-11-21 14:06
 - Touch joystick: own `Control` (drawn circles), bottom-left in the `Hud` `CanvasLayer`, visible only when `DisplayServer.is_touchscreen_available()`; follows one finger (`InputEventScreenTouch` / `ScreenDrag`), releases to zero.
 - How it was checked (the editor GUI is not available to the agent): `tools/test.ps1` — 14 tests pass (`test_movement` 8, `test_arena` 4 incl. the east-wall test with 150 simulated physics frames and the camera framing, `test_start_screen` 2); `tools/lint.ps1` OK (gdformat applied); headless `--import`, `--editor --quit-after 60`, the main scene and `arena.tscn` with `--quit-after 120`: no ERROR / WARNING / SCRIPT ERROR lines. Screenshots (non-headless run with a temporary SceneTree script, removed) at 1280 × 720, 820 × 1180 and 1180 × 820: the whole arena and the fighter in view in all three, Back top-left. A second temporary script fed a synthetic touch + drag into the joystick (made visible): direction (0.96, −0.29), the fighter walked and turned, release → direction 0; `move_up` pressed 20 frames moved the fighter 1.67 m north; **Back** → `StartScreen`. Keyboard play by hand and the editor's *Emulate Touch From Mouse* were not run by the agent; **the touch joystick on a real device (iPad) is checked by the author in Step 4.**
 
-**Done (2026-11-21 · ~6m · Claude Opus 5.5)** — `game/movement.gd`; `scenes/arena.tscn/.gd` (floor, walls, framing camera, light, HUD with Back and joystick), `scenes/fighter.tscn/.gd`, `scenes/touch_joystick.tscn/.gd`; `tests/test_movement.gd`, `tests/test_arena.gd`. `tools/test.ps1` 14/14 passed, `tools/lint.ps1` OK, headless import / editor / run clean, screenshots in landscape and portrait frame the whole arena. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.45 M (97 k in · 2.32 M cached · 34 k out) · CHF 1.37 (163 credits)
+**Done (2026-11-21 · ~7m · Claude Opus 5.5)** — `game/movement.gd`; `scenes/arena.tscn/.gd` (floor, walls, framing camera, light, HUD with Back and joystick), `scenes/fighter.tscn/.gd`, `scenes/touch_joystick.tscn/.gd`; `tests/test_movement.gd`, `tests/test_arena.gd`. `tools/test.ps1` 14/14 passed, `tools/lint.ps1` OK, headless import / editor / run clean, screenshots in landscape and portrait frame the whole arena. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.75 M (102 k in · 2.61 M cached · 37 k out) · CHF 1.49 (177 credits)
 
 ---
 
@@ -342,7 +343,7 @@ Started: 2026-11-21 14:14
 - Desktop browser check: Playwright (installed only in a temporary folder, deleted afterwards) drove headless Chromium (`--use-gl=swiftshader`, WebGL 2) against `tools/serve_web.ps1` at 1280 × 720. Console: Godot 4.7.2 banner, `OpenGL ES 3.0 (WebGL 2.0) - Compatibility`, `single-threaded`; **0 errors**; only a `CONTEXT_LOST_WEBGL` warning at page start and the Chromium "GPU stall due to ReadPixels" warnings (software rendering). Screenshots: start screen with "Hack star" and **Play**; after Play the whole arena, the fighter, **Back** top-left and `FPS: 15` top-right (software GL, not meaningful); after D and S held 1 s each the fighter had walked to the south-east corner; after **Back** the start screen again.
 - **How the author runs the iPad check:** `tools\export_web.ps1`, then `tools\serve_web.ps1`; open the printed address `http://<address>:8060` in Safari on the iPad, on the same Wi-Fi as the computer (Windows Firewall may ask to allow Python — allow it on the private network). Check landscape and portrait, the touch joystick, and that the label shows ≥ 30 fps; write the result here.
 
-**Done except the iPad check (2026-11-21 · ~7m · Claude Sonnet 5.5)** — `export_presets.cfg`, `tools/export_web.ps1`, `tools/serve_web.ps1`, the FPS label in `scenes/arena.tscn` / `arena.gd`, a test in `tests/test_arena.gd`. `tools/test.ps1` 15/15 passed, `tools/lint.ps1` OK, `tools/export_web.ps1` OK from a clean `build/`, desktop Chromium start → Play → walk → Back with 0 console errors, `git status` clean of `build/` and `.godot/`. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 3.21 M (86 k in · 3.11 M cached · 20 k out) · CHF 0.65 (78 credits)
+**Done except the iPad check (2026-11-21 · ~6m · Claude Sonnet 5.5)** — `export_presets.cfg`, `tools/export_web.ps1`, `tools/serve_web.ps1`, the FPS label in `scenes/arena.tscn` / `arena.gd`, a test in `tests/test_arena.gd`. `tools/test.ps1` 15/15 passed, `tools/lint.ps1` OK, `tools/export_web.ps1` OK from a clean `build/`, desktop Chromium start → Play → walk → Back with 0 console errors, `git status` clean of `build/` and `.godot/`. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 3.08 M (88 k in · 2.97 M cached · 20 k out) · CHF 0.61 (72 credits)
 
 ---
 
@@ -389,7 +390,7 @@ Started: 2026-11-21 14:20
   passed (28 files); `npm run check` 0 errors; `npm run build` OK (exit 0).
 - `git diff --stat main`: changes only in `hack_star_godot/`, `.specs/kit/` (the cost-script fix, already committed on this branch), `AGENTS.md` and the one line in `README.md`.
 
-**Done (2026-11-21 · ~5m · Claude Haiku 5.5)** — `hack_star_godot/README.md` and `LICENSES.md` written, one line in the root README. All Godot checks (`check_tools`, `test` 15/15, `lint`, `export_web`) and the root game's checks (`pytest` 45, `npm test` 267, `npm run check`, `npm run build`) pass. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 3.51 M (110 k in · 3.36 M cached · 37 k out) · CHF 0.19 (23 credits)
+**Done (2026-11-21 · ~4m · Claude Haiku 5.5)** — `hack_star_godot/README.md` and `LICENSES.md` written, one line in the root README. All Godot checks (`check_tools`, `test` 15/15, `lint`, `export_web`) and the root game's checks (`pytest` 45, `npm test` 267, `npm run check`, `npm run build`) pass. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 3.53 M (112 k in · 3.38 M cached · 37 k out) · CHF 0.12 (14 credits)
 
 ---
 

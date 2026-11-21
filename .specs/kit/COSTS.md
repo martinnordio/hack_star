@@ -102,7 +102,11 @@ Only when cost tracking is on.
      numbers have no `~`;
    - a Step's Done line ends with `· ~<tokens> · ~<currency> <amount>`.
    A Step run by a sub-agent is counted from the sub-agent's start to its end; the script
-   includes the sub-agent's requests.
+   includes the sub-agent's requests. In a **per-Step run** with a Copilot CLI log, measure
+   each Step with `-Agent subagents` over its sub-agent's time, and add one Stage log row
+   for the **orchestrator** (the chat that starts the sub-agents, checks and commits) with
+   `-Agent main` over the whole run — so Steps plus orchestrator equal the run's total and
+   nothing is counted twice or left out. The `Split:` line shows both parts.
 3. **Never leave the cells empty, and never guess.** If the script stops with an error, read
    it: fix the start time, or pass the right log with `-Transcript` (for the Copilot CLI:
    `~/.copilot/session-state/<session>/events.jsonl`; the current session's folder is the
