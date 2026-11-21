@@ -1,19 +1,21 @@
 extends Node3D
-## The arena: floor, walls, one fighter, a camera above and behind it, and the HUD.
+## The arena: the canyon (`Canyon`, built from `ArenaLayout`), one fighter, a camera above
+## and behind it, and the HUD.
 ## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`).
 
 ## The camera looks at this point from above and behind (towards +z), at this angle down.
 const CAMERA_TARGET: Vector3 = Vector3(0.0, 0.0, 0.4)
 const CAMERA_PITCH_DEGREES: float = 55.0
 const CAMERA_MIN_DISTANCE: float = 8.0
-const CAMERA_MAX_DISTANCE: float = 60.0
+const CAMERA_MAX_DISTANCE: float = 120.0
 const CAMERA_DISTANCE_STEP: float = 0.25
-## Top corners of the outer walls: the camera moves back until all of them are in view.
+## Top corners of the border walls (`ArenaLayout.SIZE`): the camera moves back until all of
+## them are in view.
 const ARENA_CORNERS: Array[Vector3] = [
-	Vector3(-8.5, 1.2, -6.5),
-	Vector3(8.5, 1.2, -6.5),
-	Vector3(-8.5, 1.2, 6.5),
-	Vector3(8.5, 1.2, 6.5),
+	Vector3(-ArenaLayout.SIZE.x / 2.0, Canyon.WALL_HEIGHT, -ArenaLayout.SIZE.y / 2.0),
+	Vector3(ArenaLayout.SIZE.x / 2.0, Canyon.WALL_HEIGHT, -ArenaLayout.SIZE.y / 2.0),
+	Vector3(-ArenaLayout.SIZE.x / 2.0, Canyon.CAMERA_SIDE_WALL_HEIGHT, ArenaLayout.SIZE.y / 2.0),
+	Vector3(ArenaLayout.SIZE.x / 2.0, Canyon.CAMERA_SIDE_WALL_HEIGHT, ArenaLayout.SIZE.y / 2.0),
 ]
 ## Free border around the arena as a share of the screen; more at the top for the Back button.
 const FRAME_MARGIN: float = 0.03
@@ -33,6 +35,7 @@ var _fps_timer: float = 0.0
 
 
 func _ready() -> void:
+	_fighter.position = Vector3(ArenaLayout.START.x, 0.0, ArenaLayout.START.y)
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
 	_update_fps_label()

@@ -17,6 +17,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #30 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.35 M (144 k in · 3.16 M cached · 37 k out) | CHF 1.76 (210 credits) | Part 2 written (8 Steps: standard, reasoning, standard, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s06-lead` from 18:42:18) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 269 k (50 k in · 213 k cached · 5 k out) | CHF 0.17 (20 credits) | Step 1 done (`usage.ps1 -AgentName s06-step1`) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.39 M (102 k in · 3.26 M cached · 35 k out) | CHF 1.56 (186 credits) | Step 2 done (`usage.ps1 -AgentName s06-step2` from 18:51) |
 
 ---
 
@@ -139,7 +140,7 @@ right joystick)._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Combat rules | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D3 | ✅ Done | [→ Step 1](#step-1--combat-rules) |
-| **2** | Canyon arena | reasoning (Claude Opus 5.5) — graphics-heavy: a bigger arena built in code (rocks, cacti, decoration, light) that must look good and stay fast (D1, D2, D10) | ⬜ Not started | [→ Step 2](#step-2--canyon-arena) |
+| **2** | Canyon arena | reasoning (Claude Opus 5.5) — graphics-heavy: a bigger arena built in code (rocks, cacti, decoration, light) that must look good and stay fast (D1, D2, D10) | ✅ Done | [→ Step 2](#step-2--canyon-arena) |
 | **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ⬜ Not started | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
 | **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ⬜ Not started | [→ Step 4](#step-4--run-and-attack-animations) |
 | **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ⬜ Not started | [→ Step 5](#step-5--aiming-and-shooting) |
@@ -223,24 +224,45 @@ Started: 2026-11-21 18:49
 the fighter still walks and stops at every wall and rock (S1, S3, S6, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/arena_layout.gd` (`ArenaLayout`) after D2; physics layer names of D13 in
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/arena_layout.gd` (`ArenaLayout`) after D2; physics layer names of D13 in
       `project.godot`.
-- [ ] `scenes/canyon.gd` (`Canyon`) after D2, in `arena.tscn`; the old hand-placed walls and
+- [x] `scenes/canyon.gd` (`Canyon`) after D2, in `arena.tscn`; the old hand-placed walls and
       materials of the `.tscn` removed; `Floor` and `Walls` kept (D1); the fighter starts at
       `ArenaLayout.START`. Until Step 3 the camera still frames the whole (bigger) arena:
       `ARENA_CORNERS` follow `ArenaLayout.SIZE`.
-- [ ] Tests: `tests/test_arena_layout.gd` (start, dummy spots and bushes do not overlap walls;
+- [x] Tests: `tests/test_arena_layout.gd` (start, dummy spots and bushes do not overlap walls;
       `in_bush` inside and outside a patch; every wall inside the arena); `tests/test_arena.gd`
       updated (walls built from the layout, the fighter stops at the east border and at one
       rock block).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the arena at
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the arena at
       1280×720 and 390×844: sand, canyon walls, cacti and decoration are clearly visible,
       colourful and sunny, nothing hides the fighter; the FPS label of a windowed desktop run
       is noted.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 18:51
+
+- Layout: 20 × 26 m, 4 border walls + 7 rock blocks (`ArenaLayout.BORDER_COUNT` = 4), 4 cactus
+  patches, 12 decoration spots, dummies at (−4, −2.5), (4, −2.5), (0, −9), start (0, 9.5); the
+  centre rock lies straight north of the start (used by the rock test).
+- `Canyon` gets `Floor` and `Walls` as exported nodes and builds into them; wall heights 2.2 m
+  (border), 0.7 m (camera side), 1.4 m (rocks) — `Canyon.wall_height(index)`. Sand tiles,
+  boulders (on the walls and outside the arena) and cacti are four MultiMeshes with per-instance
+  colours; decoration and walls are plain meshes with cached toon materials. The warm sky,
+  ambient light and the sun (energy 0.8, `directional_shadow_max_distance` 40) are set in
+  `arena.tscn`. The fighter is on layer 2 `fighter` with mask `world` + `targets` (D13).
+- `CAMERA_MAX_DISTANCE` raised from 60 to 120 m so the whole 20 m wide arena still fits a phone
+  in portrait until Step 3.
+- Screenshots (windowed run, temporary capture script under `%TEMP%`, removed): first run too
+  pale (sand nearly white, the outside blended with the sky, bones looked like sparkles, skull
+  eyes inside the head) → richer sand and rock colours, darker outside ground, cooler and
+  weaker ambient light, sun 1.1 → 0.8, bigger bones and skulls. Final at 1280×720 and 390×844:
+  checkered sand, red canyon walls with boulders, green cacti with pink flowers, crates, skulls,
+  bones and rocks clearly visible; the fighter (still the capsule) visible, nothing hides it.
+  FPS label of the windowed desktop run: **60**.
+
+**Done (2026-11-21 · ~8 min · Claude Opus 5.5)** — `game/arena_layout.gd` (`ArenaLayout`), `scenes/canyon.gd` (`Canyon`), `arena.tscn` (hand-placed walls removed, `Canyon` node, warm light), `arena.gd` (start at `ArenaLayout.START`, `ARENA_CORNERS` from `ArenaLayout.SIZE`), D13 layer names in `project.godot`, fighter layers; tests `tests/test_arena_layout.gd` (7) and `tests/test_arena.gd` (walls from the layout, start, east border, rock). `tools/test.ps1` 195 tests passed, `tools/lint.ps1` exit 0, screenshots checked (FPS 60); suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 3.39 M tokens · CHF 1.56 (186 credits)
 
 ---
 
