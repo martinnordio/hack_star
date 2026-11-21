@@ -69,12 +69,17 @@ func test_only_the_legendary_skin_has_the_gold_frame() -> void:
 	assert_gt(gold.border_width_left, plain.border_width_left)
 
 
-func test_choosing_a_skin_previews_it() -> void:
-	var screen: Control = _show("blaze")
-	_skin_button(screen, "Lava").pressed.emit()
+func test_a_click_or_a_touch_on_a_skin_previews_it() -> void:
+	GameState.viewed_fighter = "blaze"
+	var opened: Dictionary = await UiInput.open(self, SCREEN)
+	var screen: Control = opened["screen"]
 	var stage: FighterStage = screen.get_node(BODY + "/FighterStage")
-	assert_eq(stage.model.skin_id, "lava")
+	UiInput.click(opened["viewport"], _skin_button(screen, "Lava"))
+	assert_eq(stage.model.skin_id, "lava", "a click previews the skin")
+	UiInput.touch(opened["viewport"], _skin_button(screen, "Phoenix"))
+	assert_eq(stage.model.skin_id, "phoenix", "a touch previews the skin")
 	assert_eq(GameState.selected_skins["blaze"], "default", "previewing does not choose")
+	await UiInput.close(self, await UiInput.settle(self, opened))
 
 
 func test_starts_on_the_chosen_skin() -> void:
@@ -85,41 +90,56 @@ func test_starts_on_the_chosen_skin() -> void:
 	assert_eq(stage.model.skin_id, "crystal")
 
 
-func test_select_chooses_rocko_with_crystal_and_goes_home() -> void:
-	var screen: Control = HOME.instantiate()
-	var shown: Node = await _scene_after(
-		func(placeholder: Node) -> void:
-			GameState.viewed_fighter = "rocko"
-			var fighter_screen: Control = SCREEN.instantiate()
-			placeholder.add_child(fighter_screen)
-			_skin_button(fighter_screen, "Crystal").pressed.emit()
-			_select(fighter_screen).pressed.emit()
-	)
+func test_clicking_crystal_and_select_chooses_rocko_and_goes_home() -> void:
+	GameState.viewed_fighter = "rocko"
+	var opened: Dictionary = await UiInput.open(self, SCREEN)
+	var screen: Control = opened["screen"]
+	UiInput.click(opened["viewport"], _skin_button(screen, "Crystal"))
+	UiInput.click(opened["viewport"], _select(screen))
+	var shown: Node = await UiInput.settle(self, opened)
 	assert_eq(shown.scene_file_path, Screens.HOME)
 	assert_eq(GameState.selected_fighter, "rocko")
 	assert_eq(GameState.selected_skin(), "crystal")
-	shown.queue_free()
-	await wait_process_frames(1)
-	add_child(screen)
-	var stage: FighterStage = screen.get_node("Margin/Column/Body/FighterStage")
+	await UiInput.close(self, shown)
+	var home: Control = autofree(HOME.instantiate())
+	add_child(home)
+	var stage: FighterStage = home.get_node("Margin/Column/Body/FighterStage")
 	assert_eq(stage.model.fighter_id, "rocko")
 	assert_eq(stage.model.skin_id, "crystal")
-	screen.queue_free()
+
+
+func test_touching_select_chooses_the_fighter_and_goes_home() -> void:
+	GameState.viewed_fighter = "turbo"
+	var opened: Dictionary = await UiInput.open(self, SCREEN)
+	var screen: Control = opened["screen"]
+	UiInput.touch(opened["viewport"], _skin_button(screen, "Neon"))
+	UiInput.touch(opened["viewport"], _select(screen))
+	var shown: Node = await UiInput.settle(self, opened)
+	assert_eq(shown.scene_file_path, Screens.HOME)
+	assert_eq(GameState.selected_fighter, "turbo")
+	assert_eq(GameState.selected_skin(), "neon")
+	await UiInput.close(self, shown)
 
 
 func test_a_locked_fighter_cannot_be_selected() -> void:
-	var screen: Control = _show("pixel")
+	GameState.viewed_fighter = "pixel"
+	var opened: Dictionary = await UiInput.open(self, SCREEN)
+	var screen: Control = opened["screen"]
 	var button: Button = _select(screen)
 	assert_true(button.disabled)
 	assert_eq(button.text, "Locked")
-	_skin_button(screen, "Glitch").pressed.emit()
+	UiInput.click(opened["viewport"], _skin_button(screen, "Glitch"))
 	assert_eq(
 		(screen.get_node(BODY + "/FighterStage") as FighterStage).model.skin_id,
 		"glitch",
 		"a locked fighter can be looked at"
 	)
-	button.pressed.emit()
+	UiInput.click(opened["viewport"], button)
+	UiInput.touch(opened["viewport"], button)
+	var shown: Node = await UiInput.settle(self, opened)
+	assert_eq(shown, screen.get_parent(), "the screen did not change")
 	assert_eq(GameState.selected_fighter, "blaze", "the choice did not change")
+	await UiInput.close(self, shown)
 
 
 func test_the_choice_stays_after_the_arena_and_back() -> void:
@@ -137,14 +157,15 @@ func test_the_choice_stays_after_the_arena_and_back() -> void:
 	await wait_process_frames(1)
 
 
-func test_back_goes_home() -> void:
-	var shown: Node = await _scene_after(
-		func(placeholder: Node) -> void:
-			var fighter_screen: Control = SCREEN.instantiate()
-			placeholder.add_child(fighter_screen)
-			fighter_screen.get_node("Margin/Column/Header/BackButton").pressed.emit()
-	)
-	assert_eq(shown.scene_file_path, Screens.HOME)
-	assert_eq(GameState.selected_fighter, "blaze", "Back changes nothing")
-	shown.queue_free()
-	await wait_process_frames(1)
+func test_back_goes_home_by_click_and_by_touch() -> void:
+	for use_touch: bool in [false, true]:
+		var opened: Dictionary = await UiInput.open(self, SCREEN)
+		var back: Control = opened["screen"].get_node("Margin/Column/Header/BackButton")
+		if use_touch:
+			UiInput.touch(opened["viewport"], back)
+		else:
+			UiInput.click(opened["viewport"], back)
+		var shown: Node = await UiInput.settle(self, opened)
+		assert_eq(shown.scene_file_path, Screens.HOME, "touch: %s" % use_touch)
+		assert_eq(GameState.selected_fighter, "blaze", "Back changes nothing")
+		await UiInput.close(self, shown)

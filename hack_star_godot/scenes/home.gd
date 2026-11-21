@@ -281,12 +281,12 @@ func _burst_sparkles() -> CPUParticles3D:
 	particles.amount = 64
 	particles.lifetime = 1.2
 	particles.direction = Vector3.UP
-	particles.spread = 100.0
-	particles.initial_velocity_min = 3.0
-	particles.initial_velocity_max = 6.0
+	particles.spread = 75.0
+	particles.initial_velocity_min = 1.2
+	particles.initial_velocity_max = 2.8
 	particles.gravity = Vector3(0.0, -6.0, 0.0)
-	particles.damping_min = 1.0
-	particles.damping_max = 2.0
+	particles.damping_min = 1.5
+	particles.damping_max = 2.5
 	var fade: Curve = Curve.new()
 	fade.add_point(Vector2(0.0, 1.0))
 	fade.add_point(Vector2(1.0, 0.0))

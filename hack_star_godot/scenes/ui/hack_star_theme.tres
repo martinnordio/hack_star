@@ -83,6 +83,118 @@ border_color = Color(0.3, 0.34, 0.5, 1)
 [sub_resource type="StyleBoxFlat" id="Panel_background"]
 bg_color = Color(0.09, 0.1, 0.16, 1)
 
+[sub_resource type="StyleBoxFlat" id="Panel_badge"]
+content_margin_left = 20.0
+content_margin_top = 6.0
+content_margin_right = 20.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.82, 0.2, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7, 0.45, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="Skin_normal"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.15, 0.17, 0.26, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.34, 0.5, 1)
+
+[sub_resource type="StyleBoxFlat" id="Skin_hover"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.22, 0.25, 0.37, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.34, 0.5, 1)
+
+[sub_resource type="StyleBoxFlat" id="Skin_chosen"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.42, 0.27, 0.85, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.34, 0.5, 1)
+
+[sub_resource type="StyleBoxFlat" id="Legendary_normal"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.15, 0.17, 0.26, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 0.82, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="Legendary_hover"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.22, 0.25, 0.37, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 0.82, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="Legendary_chosen"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.42, 0.27, 0.85, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 0.82, 0.2, 1)
+
 [resource]
 default_font_size = 28
 BackgroundPanel/base_type = &"Panel"
@@ -101,6 +213,27 @@ Button/styles/focus = SubResource("Button_hover")
 Button/styles/hover = SubResource("Button_hover")
 Button/styles/normal = SubResource("Button_normal")
 Button/styles/pressed = SubResource("Button_pressed")
+BadgePanel/base_type = &"PanelContainer"
+BadgePanel/styles/panel = SubResource("Panel_badge")
+BadgeLabel/base_type = &"Label"
+BadgeLabel/colors/font_color = Color(0.25, 0.14, 0.02, 1)
+SkinButton/base_type = &"Button"
+SkinButton/font_sizes/font_size = 28
+SkinButton/styles/focus = SubResource("Skin_hover")
+SkinButton/styles/hover = SubResource("Skin_hover")
+SkinButton/styles/hover_pressed = SubResource("Skin_chosen")
+SkinButton/styles/normal = SubResource("Skin_normal")
+SkinButton/styles/pressed = SubResource("Skin_chosen")
+LegendarySkinButton/base_type = &"Button"
+LegendarySkinButton/font_sizes/font_size = 28
+LegendarySkinButton/styles/focus = SubResource("Legendary_hover")
+LegendarySkinButton/styles/hover = SubResource("Legendary_hover")
+LegendarySkinButton/styles/hover_pressed = SubResource("Legendary_chosen")
+LegendarySkinButton/styles/normal = SubResource("Legendary_normal")
+LegendarySkinButton/styles/pressed = SubResource("Legendary_chosen")
+WordLabel/base_type = &"Label"
+WordLabel/colors/font_outline_color = Color(0.94, 0.95, 1, 1)
+WordLabel/constants/outline_size = 2
 HeadingLabel/base_type = &"Label"
 HeadingLabel/font_sizes/font_size = 56
 SubheadingLabel/base_type = &"Label"

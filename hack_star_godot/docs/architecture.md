@@ -17,7 +17,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | `project.godot` | The project: main scene `scenes/home.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
 | `scenes/` | Screens and objects: each `.tscn` with the script of the same name |
 | `scenes/ui/` | Shared UI parts: the theme (`hack_star_theme.tres`), the Back button, the fighter stage and pictures, the fighter card and skin button, the Prestige badge |
-| `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen) and `GameState` (what the player has and has chosen) |
+| `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen), `GameState` (what the player has and has chosen) and `UiScaler` (the content scale factor of the window, see *Minimum sizes* below) |
 | `game/` | Game rules: plain scripts without scene access |
 | `tests/` | GUT tests, `test_<name>.gd` |
 | `tools/` | PowerShell scripts: `check_tools.ps1`, `test.ps1`, `lint.ps1`, `export_web.ps1`, `serve_web.ps1`, `godot.ps1` (finds Godot), the pinned versions in `versions.json` |
@@ -41,7 +41,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | `arena.tscn` | `arena.gd` | The 3D arena (floor, walls, inner walls), one fighter, the camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick and the FPS label (top-right) |
 | `fighter_list.tscn` | `fighter_list.gd` | The fighter list (**Fighters** on home; Back goes home): a scrolling grid, columns follow the width, of `ui/fighter_card.tscn` cards — picture, name, rarity in its colour, trophies, power level, Prestige badge; locked fighters greyed out with "Locked". A card opens the fighter screen |
 | `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (opened from a card; the fighter comes from `GameState.viewed_fighter`): the fighter in a `FighterStage`, name, rarity, trophies, power level, Prestige badge and one `ui/skin_button.tscn` per skin (Legendary skins with a gold frame); choosing a skin previews it; **Select** (`GameState.select`) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked". Back goes home |
-| `info.tscn` | `info.gd` | The info page (**Info** on home; Back goes home): a title and a scrolling list with one row per word of `Vocabulary`, the word in a bold font and its meaning wrapped |
+| `info.tscn` | `info.gd` | The info page (**Info** on home; Back goes home): a title and a scrolling list with one row per word of `Vocabulary`, the word in the `WordLabel` style (bold) and its meaning wrapped |
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame |
 | `touch_joystick.tscn` | `touch_joystick.gd` (`TouchJoystick`) | On-screen joystick, visible only on a touch screen; its `direction` has length ≤ 1 |
 
@@ -68,7 +68,7 @@ without a scene.
 | `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
 | `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies |
-| `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, unlocks, 500 credits, the Default skins) until matches exist |
+| `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
 | `vocabulary.gd` (`Vocabulary`) | The 24 words of the info page with their one-sentence meanings (`LIST`); English until spec 15 |
 
 Later specs add their rules here, one script per rule, with a test next to it in `tests/`:
@@ -83,7 +83,8 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   in `project.godot`). It holds the colours, the font sizes (label 28, subheading 40, heading
   56, button 36), the button styles (rounded, a minimum height for a thumb) and the panel
   styles. The variations are `BigButton` (the **Play** button), `HeadingLabel`,
-  `SubheadingLabel`, `BackgroundPanel` and `CardPanel`. Screens set no colours or font sizes of
+  `SubheadingLabel`, `BackgroundPanel`, `CardPanel`, `BadgePanel`, `BadgeLabel`, `WordLabel`,
+  `SkinButton` and `LegendarySkinButton` (the gold frame). Screens set no colours or font sizes of
   their own, except the title's size. Colours that code needs (the rarity colours, Legendary
   gold) are the constants of `Rarity`.
 - **Screens:** the autoload `Screens` (`scenes/autoload/screens.gd`) has one constant per screen
@@ -106,6 +107,13 @@ Every screen uses the same parts, so a later spec reuses them and does not build
 
 Screen sizes: the layouts use anchors and containers; `tests/test_screen_sizes.gd` checks every
 screen at the five sizes.
+
+**Minimum sizes (spec 04, D13):** the stretch of the 1280-wide base shrinks the layout to 0.30
+on a phone in portrait. `game/ui_scale.gd` (`UiScale`) gives a content scale factor that keeps
+the total scale at 0.6 or more, the autoload `UiScaler` sets it on the window when it opens or
+is resized, and the layouts fit the smaller content area. On the screen every button is then at
+least 44 px tall and every text at least 14 px; `test_screen_sizes.gd` checks both at the five
+sizes.
 
 ## 3D models
 
@@ -173,7 +181,8 @@ Tests are GUT 9.7.1 files in `tests/`: `test_movement.gd` checks `game/movement.
 `test_fighter_screen.gd`, `test_info.gd`, `test_back_button.gd`, `test_arena.gd` and
 `test_touch_joystick.gd` check the scenes; `test_screens.gd` checks the screen constants and
 `go_to`; `test_screen_sizes.gd` checks that every screen fits five screen sizes and that Play,
-Info, Back and the cards react to a mouse click and a touch. Run
+Info, Back, the cards, the skin buttons and Select react to a mouse click and a touch (real input
+pushed with `tests/ui_input.gd`); `test_ui_scale.gd` checks the scale factor. Run
 them headless, from the `hack_star_godot` folder:
 
 | Command | What |

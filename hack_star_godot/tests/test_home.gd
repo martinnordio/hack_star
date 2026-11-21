@@ -54,60 +54,33 @@ func test_fighter_under_1000_trophies_shows_no_badge() -> void:
 	assert_false(screen.get_node("Margin/Column/Body/Controls/NameRow/PrestigeBadge").visible)
 
 
-func test_info_opens_the_info_page() -> void:
-	var tree: SceneTree = get_tree()
-	var previous: Node = tree.current_scene
-	var placeholder: Node = Node.new()
-	tree.root.add_child(placeholder)
-	tree.current_scene = placeholder
-	var screen: Control = HOME.instantiate()
-	placeholder.add_child(screen)
-	var button: Button = screen.get_node("Margin/Column/Body/Controls/MoreRow/InfoButton")
-	assert_false(button.disabled)
-	button.pressed.emit()
-	await wait_process_frames(2)
-	var shown: Node = tree.current_scene
-	assert_eq(shown.scene_file_path, Screens.INFO, "Info opens the info page")
-	shown.queue_free()
-	await wait_process_frames(1)
-	tree.current_scene = previous
+func test_info_opens_the_info_page_by_click_and_by_touch() -> void:
+	await _assert_opens("Info", Screens.INFO, "Margin/Column/Body/Controls/MoreRow/InfoButton")
 
 
-func test_fighters_opens_the_fighter_list() -> void:
-	var tree: SceneTree = get_tree()
-	var previous: Node = tree.current_scene
-	var placeholder: Node = Node.new()
-	tree.root.add_child(placeholder)
-	tree.current_scene = placeholder
-	var screen: Control = HOME.instantiate()
-	placeholder.add_child(screen)
-	var button: Button = screen.get_node("Margin/Column/Body/Controls/MoreRow/FightersButton")
-	assert_false(button.disabled)
-	button.pressed.emit()
-	await wait_process_frames(2)
-	var shown: Node = tree.current_scene
-	assert_eq(shown.scene_file_path, Screens.FIGHTERS, "Fighters opens the list")
-	shown.queue_free()
-	await wait_process_frames(1)
-	tree.current_scene = previous
+func test_fighters_opens_the_fighter_list_by_click_and_by_touch() -> void:
+	await _assert_opens(
+		"Fighters", Screens.FIGHTERS, "Margin/Column/Body/Controls/MoreRow/FightersButton"
+	)
 
 
-func test_play_opens_the_arena() -> void:
-	var tree: SceneTree = get_tree()
-	var previous: Node = tree.current_scene
-	var placeholder: Node = Node.new()
-	tree.root.add_child(placeholder)
-	tree.current_scene = placeholder
-	var screen: Control = HOME.instantiate()
-	placeholder.add_child(screen)
-	var button: Button = screen.get_node("Margin/Column/Body/Controls/PlayButton")
-	button.pressed.emit()
-	await wait_process_frames(2)
-	var shown: Node = tree.current_scene
-	assert_eq(shown.scene_file_path, Screens.ARENA, "Play opens the arena")
-	shown.queue_free()
-	await wait_process_frames(1)
-	tree.current_scene = previous
+func _assert_opens(label: String, scene_path: String, button_path: String) -> void:
+	GameState.entrance_played = true
+	for use_touch: bool in [false, true]:
+		var opened: Dictionary = await UiInput.open(self, HOME)
+		var button: Button = opened["screen"].get_node(button_path)
+		assert_false(button.disabled)
+		if use_touch:
+			UiInput.touch(opened["viewport"], button)
+		else:
+			UiInput.click(opened["viewport"], button)
+		var shown: Node = await UiInput.settle(self, opened)
+		assert_eq(shown.scene_file_path, scene_path, "%s (touch: %s)" % [label, use_touch])
+		await UiInput.close(self, shown)
+
+
+func test_play_opens_the_arena_by_click_and_by_touch() -> void:
+	await _assert_opens("Play", Screens.ARENA, PLAY_PATH)
 
 
 # --- Entrance (S2) ----------------------------------------------------------------------------

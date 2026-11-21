@@ -22,23 +22,23 @@ func test_has_one_row_per_word_in_order() -> void:
 
 func test_words_are_bold_and_meanings_wrap() -> void:
 	var row: Node = _show_info().get_node(ROWS_PATH).get_child(0)
-	assert_true(row.get_node("Word").get_theme_font("font") is FontVariation)
+	var word: Label = row.get_node("Word")
+	assert_eq(word.theme_type_variation, &"WordLabel")
+	assert_gt(word.get_theme_constant("outline_size"), 0, "the theme makes the word bold")
+	assert_eq(row.get_node("Meaning").get_theme_constant("outline_size"), 0)
 	var meaning: Label = row.get_node("Meaning")
+	assert_eq(meaning.autowrap_mode, TextServer.AUTOWRAP_WORD_SMART)
 	assert_eq(meaning.autowrap_mode, TextServer.AUTOWRAP_WORD_SMART)
 
 
-func test_back_goes_home() -> void:
-	var tree: SceneTree = get_tree()
-	var previous: Node = tree.current_scene
-	var placeholder: Node = Node.new()
-	tree.root.add_child(placeholder)
-	tree.current_scene = placeholder
-	var screen: Control = INFO.instantiate()
-	placeholder.add_child(screen)
-	screen.get_node("Margin/Column/Header/BackButton").pressed.emit()
-	await wait_process_frames(2)
-	var shown: Node = tree.current_scene
-	assert_eq(shown.scene_file_path, Screens.HOME, "Back opens the home screen")
-	shown.queue_free()
-	await wait_process_frames(1)
-	tree.current_scene = previous
+func test_back_goes_home_by_click_and_by_touch() -> void:
+	for use_touch: bool in [false, true]:
+		var opened: Dictionary = await UiInput.open(self, INFO)
+		var back: Control = opened["screen"].get_node("Margin/Column/Header/BackButton")
+		if use_touch:
+			UiInput.touch(opened["viewport"], back)
+		else:
+			UiInput.click(opened["viewport"], back)
+		var shown: Node = await UiInput.settle(self, opened)
+		assert_eq(shown.scene_file_path, Screens.HOME, "Back opens home (touch: %s)" % use_touch)
+		await UiInput.close(self, shown)

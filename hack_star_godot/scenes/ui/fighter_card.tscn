@@ -19,7 +19,7 @@ theme_override_constants/separation = 6
 
 [node name="Picture" type="TextureRect" parent="Column"]
 material = SubResource("CanvasItemMaterial_premult")
-custom_minimum_size = Vector2(0, 260)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5

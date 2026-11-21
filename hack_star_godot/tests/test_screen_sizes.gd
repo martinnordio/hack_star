@@ -1,6 +1,7 @@
 extends GutTest
 ## Every screen fits desktop, iPad and phone sizes in landscape and portrait (spec 03, D5),
-## and Play and Back react to a mouse click and to a touch.
+## and Play and Back react to a mouse click and to a touch; buttons and text keep a minimum
+## size on the screen (spec 04, D13).
 
 const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
 const LIST_SCENE: PackedScene = preload("res://scenes/fighter_list.tscn")
@@ -8,6 +9,8 @@ const FIGHTER_SCENE: PackedScene = preload("res://scenes/fighter_screen.tscn")
 const INFO_SCENE: PackedScene = preload("res://scenes/info.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const ArenaScript: GDScript = preload("res://scenes/arena.gd")
+const MIN_BUTTON_HEIGHT: float = 44.0
+const MIN_TEXT_SIZE: float = 14.0
 const SIZES: Dictionary = {
 	"desktop 1280x720": Vector2i(1280, 720),
 	"iPad landscape 1180x820": Vector2i(1180, 820),
@@ -17,17 +20,20 @@ const SIZES: Dictionary = {
 }
 
 
-## The window's content scale as the project sets it (`canvas_items`, `expand`): the scene is
-## laid out in a rectangle of the base aspect or wider/taller, then scaled to the window.
+## The window's content scale as the project sets it (`canvas_items`, `expand`, and the content
+## scale factor of `UiScale`): the scene is laid out in a rectangle of the base aspect or
+## wider/taller, then scaled to the window.
 func _content_size(window_size: Vector2i) -> Vector2:
 	assert_eq(ProjectSettings.get_setting("display/window/stretch/mode"), "canvas_items")
 	assert_eq(ProjectSettings.get_setting("display/window/stretch/aspect"), "expand")
-	var base: Vector2 = Vector2(
+	return Vector2(window_size) / UiScale.total(Vector2(window_size), _base_size())
+
+
+func _base_size() -> Vector2:
+	return Vector2(
 		ProjectSettings.get_setting("display/window/size/viewport_width"),
 		ProjectSettings.get_setting("display/window/size/viewport_height")
 	)
-	var scale: float = minf(window_size.x / base.x, window_size.y / base.y)
-	return Vector2(window_size) / scale
 
 
 func _show_in_viewport(scene: PackedScene, size: Vector2i) -> Array:
@@ -45,28 +51,6 @@ func _show_in_viewport(scene: PackedScene, size: Vector2i) -> Array:
 func _assert_inside(control: Control, visible_rect: Rect2, label: String) -> void:
 	var rect: Rect2 = control.get_global_rect()
 	assert_true(visible_rect.encloses(rect), "%s %s is inside %s" % [label, rect, visible_rect])
-
-
-func _click(viewport: SubViewport, control: Control) -> void:
-	var position: Vector2 = control.get_global_rect().get_center()
-	for pressed: bool in [true, false]:
-		var event: InputEventMouseButton = InputEventMouseButton.new()
-		event.button_index = MOUSE_BUTTON_LEFT
-		event.pressed = pressed
-		event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
-		event.position = position
-		event.global_position = position
-		viewport.push_input(event, true)
-
-
-func _touch(viewport: SubViewport, control: Control) -> void:
-	var position: Vector2 = control.get_global_rect().get_center()
-	for pressed: bool in [true, false]:
-		var event: InputEventScreenTouch = InputEventScreenTouch.new()
-		event.index = 0
-		event.pressed = pressed
-		event.position = position
-		viewport.push_input(event, true)
 
 
 ## Without leaving the test scene: the screen's own handler would change the scene.
@@ -145,9 +129,9 @@ func test_back_on_the_list_reacts_to_mouse_click_and_touch() -> void:
 	var button: Button = shown[1].get_node("Margin/Column/Header/BackButton")
 	_drop_handlers(button)
 	watch_signals(button)
-	_click(shown[0], button)
+	UiInput.click(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
-	_touch(shown[0], button)
+	UiInput.touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
 
 
@@ -174,9 +158,9 @@ func test_back_on_the_info_page_reacts_to_mouse_click_and_touch() -> void:
 	var button: Button = shown[1].get_node("Margin/Column/Header/BackButton")
 	_drop_handlers(button)
 	watch_signals(button)
-	_click(shown[0], button)
+	UiInput.click(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
-	_touch(shown[0], button)
+	UiInput.touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
 
 
@@ -206,7 +190,7 @@ func test_play_reacts_to_mouse_click() -> void:
 	var button: Button = shown[1].get_node("Margin/Column/Body/Controls/PlayButton")
 	_drop_handlers(button)
 	watch_signals(button)
-	_click(shown[0], button)
+	UiInput.click(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Play")
 
 
@@ -217,7 +201,7 @@ func test_play_reacts_to_touch() -> void:
 	var button: Button = shown[1].get_node("Margin/Column/Body/Controls/PlayButton")
 	_drop_handlers(button)
 	watch_signals(button)
-	_touch(shown[0], button)
+	UiInput.touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a touch presses Play")
 
 
@@ -226,7 +210,64 @@ func test_back_reacts_to_mouse_click_and_touch() -> void:
 	var button: Button = shown[1].get_node("Hud/BackButton")
 	_drop_handlers(button)
 	watch_signals(button)
-	_click(shown[0], button)
+	UiInput.click(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
-	_touch(shown[0], button)
+	UiInput.touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
+
+
+func test_back_on_the_fighter_screen_reacts_to_mouse_click_and_touch() -> void:
+	GameState.viewed_fighter = "blaze"
+	var shown: Array = await _show_in_viewport(FIGHTER_SCENE, Vector2i(390, 844))
+	var button: Button = shown[1].get_node("Margin/Column/Header/BackButton")
+	_drop_handlers(button)
+	watch_signals(button)
+	UiInput.click(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
+	UiInput.touch(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
+
+
+## D13: at every size every visible button is at least 44 px tall and every visible text at
+## least 14 px, in screen pixels (after the stretch and the content scale factor).
+func _assert_minimums(node: Node, scale: float, label: String) -> void:
+	for child: Node in node.get_children():
+		_assert_minimums(child, scale, label)
+	var control: Control = node as Control
+	if control == null or not control.is_visible_in_tree():
+		return
+	if control is Button:
+		assert_gte(
+			control.size.y * scale,
+			MIN_BUTTON_HEIGHT,
+			"%s button %s is %.1f px tall" % [label, control.get_path(), control.size.y * scale]
+		)
+	if control is Button or control is Label:
+		var text: String = control.text
+		var font_size: int = control.get_theme_font_size("font_size")
+		if not text.is_empty():
+			assert_gte(
+				font_size * scale,
+				MIN_TEXT_SIZE,
+				"%s text '%s' is %.1f px" % [label, text.left(12), font_size * scale]
+			)
+
+
+func test_buttons_and_text_have_a_minimum_size_at_every_size() -> void:
+	GameState.viewed_fighter = "blaze"
+	var screens: Dictionary = {
+		"home": HOME_SCENE,
+		"list": LIST_SCENE,
+		"fighter": FIGHTER_SCENE,
+		"info": INFO_SCENE,
+		"arena": ARENA_SCENE,
+	}
+	for label: String in SIZES:
+		var size: Vector2i = SIZES[label]
+		var scale: float = UiScale.total(Vector2(size), _base_size())
+		for screen_name: String in screens:
+			# The entrance is still playing on the first home: its hint is visible too.
+			GameState.entrance_played = false
+			var shown: Array = await _show_in_viewport(screens[screen_name], size)
+			_assert_minimums(shown[1], scale, "%s %s" % [label, screen_name])
+			shown[0].queue_free()

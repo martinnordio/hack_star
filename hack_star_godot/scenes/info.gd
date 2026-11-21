@@ -5,21 +5,18 @@ extends Control
 
 
 func _ready() -> void:
-	var word_font: FontVariation = FontVariation.new()
-	word_font.base_font = ThemeDB.fallback_font
-	word_font.variation_embolden = 1.0
 	for entry: Dictionary in Vocabulary.LIST:
-		_rows.add_child(_row(entry, word_font))
+		_rows.add_child(_row(entry))
 
 
-static func _row(entry: Dictionary, word_font: Font) -> VBoxContainer:
+static func _row(entry: Dictionary) -> VBoxContainer:
 	var row: VBoxContainer = VBoxContainer.new()
 	row.name = String(entry["word"]).validate_node_name()
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var word: Label = Label.new()
 	word.name = "Word"
 	word.text = entry["word"]
-	word.add_theme_font_override("font", word_font)
+	word.theme_type_variation = &"WordLabel"
 	var meaning: Label = Label.new()
 	meaning.name = "Meaning"
 	meaning.text = entry["meaning"]

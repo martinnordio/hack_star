@@ -87,36 +87,42 @@ func test_columns_follow_the_width() -> void:
 	assert_eq(grid.columns, 1)
 
 
-func test_back_goes_home() -> void:
-	var tree: SceneTree = get_tree()
-	var previous: Node = tree.current_scene
-	var placeholder: Node = Node.new()
-	tree.root.add_child(placeholder)
-	tree.current_scene = placeholder
-	var screen: Control = LIST.instantiate()
-	placeholder.add_child(screen)
-	screen.get_node("Margin/Column/Header/BackButton").pressed.emit()
+## The card's button, with the list scrolled so that the whole card is in view.
+func _scrolled_to(screen: Control, fighter_id: String) -> Control:
+	var card: FighterCard = _card(screen, fighter_id)
+	(screen.get_node("Margin/Column/Scroll") as ScrollContainer).ensure_control_visible(card)
 	await wait_process_frames(2)
-	var shown: Node = tree.current_scene
-	assert_eq(shown.scene_file_path, Screens.HOME, "Back opens the home screen")
-	shown.queue_free()
-	await wait_process_frames(1)
-	tree.current_scene = previous
+	return card.get_node("OpenButton")
 
 
-func test_a_card_opens_its_fighter_screen() -> void:
-	var tree: SceneTree = get_tree()
-	var previous: Node = tree.current_scene
-	var placeholder: Node = Node.new()
-	tree.root.add_child(placeholder)
-	tree.current_scene = placeholder
-	var screen: Control = LIST.instantiate()
-	placeholder.add_child(screen)
-	_card(screen, "pixel").get_node("OpenButton").pressed.emit()
-	await wait_process_frames(2)
-	var shown: Node = tree.current_scene
+func test_back_goes_home_by_click_and_by_touch() -> void:
+	for use_touch: bool in [false, true]:
+		var opened: Dictionary = await UiInput.open(self, LIST)
+		var back: Control = opened["screen"].get_node("Margin/Column/Header/BackButton")
+		if use_touch:
+			UiInput.touch(opened["viewport"], back)
+		else:
+			UiInput.click(opened["viewport"], back)
+		var shown: Node = await UiInput.settle(self, opened)
+		assert_eq(shown.scene_file_path, Screens.HOME, "Back opens home (touch: %s)" % use_touch)
+		await UiInput.close(self, shown)
+
+
+func test_clicking_a_card_opens_its_fighter_screen() -> void:
+	var opened: Dictionary = await UiInput.open(self, LIST)
+	var card_button: Control = await _scrolled_to(opened["screen"], "turbo")
+	UiInput.click(opened["viewport"], card_button)
+	var shown: Node = await UiInput.settle(self, opened)
+	assert_eq(shown.scene_file_path, Screens.FIGHTER)
+	assert_eq(GameState.viewed_fighter, "turbo")
+	await UiInput.close(self, shown)
+
+
+func test_touching_a_locked_card_opens_its_fighter_screen_too() -> void:
+	var opened: Dictionary = await UiInput.open(self, LIST)
+	var card_button: Control = await _scrolled_to(opened["screen"], "pixel")
+	UiInput.touch(opened["viewport"], card_button)
+	var shown: Node = await UiInput.settle(self, opened)
 	assert_eq(shown.scene_file_path, Screens.FIGHTER, "a locked card can be opened too")
 	assert_eq(GameState.viewed_fighter, "pixel")
-	shown.queue_free()
-	await wait_process_frames(1)
-	tree.current_scene = previous
+	await UiInput.close(self, shown)
