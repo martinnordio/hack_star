@@ -10,8 +10,8 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 written, in the same run as spec 01 |
-| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 revised: the root kit is used, no Godot kit (Context, S12) |
+| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 written, in the same run as spec 01 |
+| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 revised: the root kit is used, no Godot kit (Context, S12) |
 
 ---
 
@@ -24,7 +24,7 @@ studying its code. Every finished spec of the root `.specs/features/done/` is co
 `hack_star_godot/.specs/features/` with its requirements only (Part 1), numbered in the order
 the features were built, so that the plan and implementation stages can then run on them one
 after the other. It needs the folder, and the rule for Godot specs with the root kit, from
-[2026_11_21_01_godot_setup_and_first_game_spec.md](2026_11_21_01_godot_setup_and_first_game_spec.md).
+[2026_11_21_01_godot_setup_and_first_game_spec.md](done/2026_11_21_01_godot_setup_and_first_game_spec.md).
 
 **Already in the repository:**
 - 17 finished specs in [.specs/features/done/](../../../.specs/features/done/). Each has a

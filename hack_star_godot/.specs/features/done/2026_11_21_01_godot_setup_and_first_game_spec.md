@@ -1,8 +1,7 @@
-| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 735 k (53 k in · 673 k cached · 10 k out) | CHF 0.25 (30 credits) | review fixes #2, #3, #5, #7, #8 |
 # Godot Setup and First Game Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-setup-and-first-game
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-setup-and-first-game`
@@ -10,7 +9,7 @@
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.93 M (191 k in · 1.72 M cached · 20 k out) | CHF 1.42 (169 credits) | Part 1 written, together with spec 02 (measured from the Copilot CLI session log) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.66 M (12 k in · 1.64 M cached · 7 k out) | CHF 0.45 (53 credits) | Part 1 revised: open questions answered — GDScript, pinned latest stable Godot 4, browser only, no server yet; no own kit, the root kit with Godot specs in `hack_star_godot/.specs/` (S3 removed, S15–S19 added) |
@@ -21,8 +20,38 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.08 M (88 k in · 2.97 M cached · 20 k out) | CHF 0.61 (72 credits) | Step 4 done except the iPad check |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 3.53 M (112 k in · 3.38 M cached · 37 k out) | CHF 0.12 (14 credits) | Step 5 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.51 M (640 k in · 6.85 M cached · 21 k out) | CHF 4.18 (498 credits) | orchestrator of the per-Step run (Steps 1–5): starting each Step's sub-agent, checking its result, the new-chat check, commits (`usage.ps1 -Agent main`; the Step rows are `-Agent subagents` over each sub-agent's own time) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 735 k (53 k in · 673 k cached · 10 k out) | CHF 0.25 (30 credits) | review fixes #2, #3, #5, #7, #8 |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | 4.16 M (385 k in · 3.77 M cached · 7 k out) | CHF 2.36 (282 credits) | issue #25 created; the author's desktop check recorded, the iPad check deferred (Step 4) |
 | 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 5.47 M (180 k in · 5.23 M cached · 61 k out) | CHF 2.65 (317 credits) | semantic diff written; code review: Approve (0 blocking, 4 should-fix, 6 nit) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 762 k (26 k in · 729 k cached · 7 k out) | CHF 0.18 (21 credits) | spec closed |
+
+## Cost summary
+
+This feature used 35.27 M tokens, CHF 15.01 (1788 credits) — measured from the Copilot CLI session log, see [COSTS.md](../../../../.specs/kit/COSTS.md). CHF is the sum of the Stage log cost cells; credits and tokens are sums of the rows; shares are credits ÷ 1900 (Copilot Business).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | 7.75 M | CHF 4.23 (504 credits) | 26.5 % |
+| plan | Claude Opus 5.5 | 2.07 M | CHF 0.78 (93 credits) | 4.9 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 19.98 M | CHF 7.35 (874 credits) | 46.0 % |
+| review | Claude Opus 5.5 | 5.47 M | CHF 2.65 (317 credits) | 16.7 % |
+| **Total** | | **35.27 M** | **CHF 15.01 (1788 credits)** | **94.1 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 737 k | CHF 0.26 (32 credits) | 1.7 % |
+| Step 2 | Claude Sonnet 5.5 | 879 k | CHF 0.26 (30 credits) | 1.6 % |
+| Step 3 | Claude Opus 5.5 | 2.75 M | CHF 1.49 (177 credits) | 9.3 % |
+| Step 4 | Claude Sonnet 5.5 | 3.08 M | CHF 0.61 (72 credits) | 3.8 % |
+| Step 5 | Claude Haiku 5.5 | 3.53 M | CHF 0.12 (14 credits) | 0.7 % |
+| Orchestrator (per-Step run) | Claude Opus 5.5 | 7.51 M | CHF 4.18 (498 credits) | 26.2 % |
+| Review fixes | Claude Sonnet 5.5 | 735 k | CHF 0.25 (30 credits) | 1.6 % |
+| CLOSE | Claude Sonnet 5.5 | 762 k | CHF 0.18 (21 credits) | 1.1 % |
+| **Total implementation** | | **19.98 M** | **CHF 7.35 (874 credits)** | **46.0 %** |
+
+---
 
 ---
 
@@ -36,14 +65,14 @@ existing Python + Svelte game. This first spec prepares the ground: the folder w
 specs, the tools every developer installs, the resources that live outside the
 folder, and a first small game that runs, so that the existing features can then be built
 again one spec at a time
-([2026_11_21_02_move_specs_to_godot_spec.md](2026_11_21_02_move_specs_to_godot_spec.md)).
+([2026_11_21_02_move_specs_to_godot_spec.md](../2026_11_21_02_move_specs_to_godot_spec.md)).
 
 **Already in the repository** (reuse, don't rebuild):
 - The Python + Svelte game: FastAPI server in `server/`, Svelte 5 + TypeScript UI in `ui/`,
-  described in [README.md](../../../README.md) and
-  [docs/architecture.md](../../../docs/architecture.md). It stays as it is.
-- Its specs in the root [.specs/](../../../.specs/) with the spec-nx kit in
-  [.specs/kit/](../../../.specs/kit/) (stages requirements, plan, implementation, review, pr;
+  described in [README.md](../../../../README.md) and
+  [docs/architecture.md](../../../../docs/architecture.md). It stays as it is.
+- Its specs in the root [.specs/](../../../../.specs/) with the spec-nx kit in
+  [.specs/kit/](../../../../.specs/kit/) (stages requirements, plan, implementation, review, pr;
   per-Step models; cost tracking). Its prompts are plain instructions that work for any
   spec file, but they name the Python + Svelte paths and checks (`server/`, `ui/`,
   `uv run pytest`, `npm test`, …) and write to the root `.specs/` — the reason for S15.
@@ -53,10 +82,10 @@ again one spec at a time
   desktop, an iPad and a phone; touch, mouse and keyboard; 30 frames per second or more on a
   recent iPad; fighters and arenas in 3D, seen from above at an angle.
 - Art rules: only original art or art with a free licence; all fighters, skins and arenas are
-  built in code from simple shapes ([LICENSES.md](../../../ui/public/assets/LICENSES.md)).
+  built in code from simple shapes ([LICENSES.md](../../../../ui/public/assets/LICENSES.md)).
 - Music: the repository has no music; each developer keeps tracks on their own computer,
   git-ignored, CC0 or CC BY only (README, *Developer page*).
-- The overall game idea: [.specs/overall_req.md](../../../.specs/overall_req.md).
+- The overall game idea: [.specs/overall_req.md](../../../../.specs/overall_req.md).
 
 **New:**
 - The folder `hack_star_godot/` with a Godot project and its own `.specs/`.
@@ -140,6 +169,12 @@ _None._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** `hack_star_godot/` is a Godot 4.7.2 (GDScript, Compatibility renderer) project next to the root game, with the rule for Godot specs in `AGENTS.md`, pinned tools (`tools/versions.json`) and PowerShell scripts for checking tools, testing (GUT 9.7.1, 20 tests), linting (gdtoolkit 4.5.0), exporting for the web and serving the export on the local network. The game has a start screen ("Hack star" and **Play**) and a 3D arena with walls where a fighter walks with WASD / arrows or an on-screen touch joystick (shown only on touch screens), a **Back** button and an FPS label; the pure movement rules are in `game/`. The web export (single-threaded) was checked in a desktop browser; the author checked the editor run and the export on the Windows desktop (~60 fps). The root game is unchanged.
+**Differs from the plan:** winget installs no `godot` command, so the tools find the console executable in the WinGet package folder (and prefer the pinned version when several are installed, with a warning when it differs). The web export templates were installed from the downloaded `.tpz`, not through the editor. The Step 4 iPad check was not done: it is deferred (Deferred Items) and S11's iPad part is not verified. The code review's findings #2, #3, #5, #7 and #8 were fixed (`test.ps1` keeps Godot's error output under Windows PowerShell 5.1, a GUT test for the touch joystick, help blocks readable by `Get-Help`, `lint.ps1` reads the gdtoolkit version, the Godot finder prefers the pinned version); #1, #4, #6, #9 and #10 are in Deferred Items.
+**Files:** `AGENTS.md`, `hack_star_godot/` (`project.godot`, `export_presets.cfg`, `scenes/`, `game/`, `tests/`, `addons/gut/`, `tools/*.ps1`, `README.md`, `LICENSES.md`, `.specs/`), one line in the root `README.md`, the cost-script fix in `.specs/kit/tools/usage.ps1`.
 
 ## 2 · Spec Overview
 
@@ -422,7 +457,7 @@ Started: 2026-11-21 14:20
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_feature-godot-setup-and-first-game.html) · 17 record blocks · checks 6 pass · 2 n/a · 1 fail (C7) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_feature-godot-setup-and-first-game.html) · 17 record blocks · checks 6 pass · 2 n/a · 1 fail (C7) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 blocking, 4 should-fix, 6 nit |
 | 2026-11-21 | AI assistant (Claude Sonnet 5.5) | review fixes | fixed | #2, #3, #5, #7, #8 |
 
@@ -453,7 +488,7 @@ script checks `$LASTEXITCODE`; the Step Notes say honestly what was and was not 
 
 - [x] Requirements · Part 1 agreed (S1..S19 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; the root `uv run pytest`, `npm test`, `npm run check` and `npm run build` still pass; READMEs updated
+- [ ] Implementation · every Step's tasks checked — **not ticked: the iPad check of Step 4 is open (deferred, see Deferred Items)**; all other tasks are checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; the root `uv run pytest`, `npm test`, `npm run check` and `npm run build` still pass; READMEs updated
 - [x] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# yaml-language-server: $schema=../../../../../.specs/kit/review/change_record.schema.json
 # Change record of feature/godot-setup-and-first-game (written by REVIEW:, 2026-11-21).
 # spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
 # accepts paths that start with ".specs/" (see finding 4 of the code review).
@@ -12,7 +12,7 @@ why: |
   Godot specs, and a first small game (start screen, 3D arena, one fighter) that runs in a
   browser. It also fixes the kit's cost script, which reported 0 for Copilot CLI sessions.
 spec:
-  path: .specs/features/2026_11_21_01_godot_setup_and_first_game_spec.md
+  path: .specs/features/done/2026_11_21_01_godot_setup_and_first_game_spec.md
   statements: [S1, S2, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19]
 changes:
   - id: start-screen
