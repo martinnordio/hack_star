@@ -31,7 +31,7 @@ part of F8).
 - [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — codes typed or scanned as QR, the
   printable QR codes, the list of hack codes, **Reset all hacks**.
 - [First match spec](2026_11_12_07_first_match_spec.md) — match rules, bots, HUD and joysticks;
-  [graphics demo spec](2026_11_12_06_graphics_demo_spec.md) — the arena, touch controls and
+  [graphics demo spec](done/2026_11_12_06_graphics_demo_spec.md) — the arena, touch controls and
   Training.
 - Fighter types come later with the [more fighters spec](2026_11_12_13_more_fighters_spec.md)
   (each type can have its own Super then); this spec does not need them.

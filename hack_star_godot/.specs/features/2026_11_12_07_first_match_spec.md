@@ -28,7 +28,7 @@ settings with a default, so his answers change one value each.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5).
-- [Graphics demo spec](2026_11_12_06_graphics_demo_spec.md) — the canyon arena, controls,
+- [Graphics demo spec](done/2026_11_12_06_graphics_demo_spec.md) — the canyon arena, controls,
   shots, effects, bushes, camera, target dummies, fighters and skins in 3D.
 - [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the home screen with **Play**; the
   selected fighter and skin; the UI foundation of the Godot game (S12).

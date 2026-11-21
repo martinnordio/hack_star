@@ -1,18 +1,18 @@
 # Graphics Demo Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #30
-> **Moved from:** [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4)
+> **Moved from:** [2026_11_12_graphics_demo_spec.md](../../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_graphics_demo_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_graphics_demo_spec.md (requirements only) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S2, S3, S4, S7, S9, S10 revised; S12 (English) and S13 (what worked before) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #30 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.35 M (144 k in · 3.16 M cached · 37 k out) | CHF 1.76 (210 credits) | Part 2 written (8 Steps: standard, reasoning, standard, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s06-lead` from 18:42:18) |
@@ -24,8 +24,44 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (101 k in · 2.70 M cached · 25 k out) | CHF 0.65 (77 credits) | Step 6 done (`usage.ps1 -AgentName s06-steps6-7` from 19:21:59 to 19:36:40) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.15 M (56 k in · 4.07 M cached · 26 k out) | CHF 0.67 (80 credits) | Step 7 done (`usage.ps1 -AgentName s06-steps6-7` from 19:36:40 to 19:45:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.61 M (93 k in · 1.49 M cached · 18 k out) | CHF 0.03 (4 credits) | Step 8 done (`usage.ps1 -AgentName s06-step8` from 18:42:18); the windowed FPS and browser check moved to Deferred Items |
-| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 7.43 M (218 k in · 7.16 M cached · 55 k out) | CHF 3.04 (363 credits) | semantic diff written (6 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-06-graphics-demo.html)); code review: Request changes, 1 Blocking · 2 Should-fix · 3 Nit (`usage.ps1 -AgentName s06-review` from 18:42:18) |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 7.43 M (218 k in · 7.16 M cached · 55 k out) | CHF 3.04 (363 credits) | semantic diff written (6 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../../review/2026-11-21_godot-mvp-06-graphics-demo.html)); code review: Request changes, 1 Blocking · 2 Should-fix · 3 Nit (`usage.ps1 -AgentName s06-review` from 18:42:18) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.93 M (123 k in · 3.79 M cached · 23 k out) | CHF 0.77 (91 credits) | review fixes #1, #2, #4, #6 and the decisions D15 (#3), D16 (#5); commit `Fix review findings (#30)` (`usage.ps1 -AgentName s06-close` 18:42:18–20:07:16) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.74 M (22 k in · 1.71 M cached · 10 k out) | CHF 0.27 (32 credits) | spec closed (`usage.ps1 -AgentName s06-close` from 20:07:16) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 457 k (232 k in · 219 k cached · 7 k out) | CHF 0.56 (67 credits) | spec runner (coordination) (`usage.ps1 -AgentName s06-runner` from 18:42:18) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 519 k (0 k in · 518 k cached · 1 k out) | CHF 0.10 (12 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 18:42:18) |
+
+---
+
+## Cost summary
+
+This feature used 37.17 M tokens, CHF 12.26 (1462 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Sonnet 5.5, Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 3.35 M | CHF 1.76 (210 credits) | 11.1 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 26.39 M | CHF 7.46 (889 credits) | 46.8 % |
+| review | Claude Opus 5.5 | 7.43 M | CHF 3.04 (363 credits) | 19.1 % |
+| **Total** | | **37.17 M** | **CHF 12.26 (1462 credits)** | **76.9 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 269 k | CHF 0.17 (20 credits) | 1.1 % |
+| Step 2 | Claude Opus 5.5 | 3.39 M | CHF 1.56 (186 credits) | 9.8 % |
+| Step 3 | Claude Sonnet 5.5 | 1.90 M | CHF 0.49 (59 credits) | 3.1 % |
+| Step 4 | Claude Sonnet 5.5 | 1.28 M | CHF 0.25 (30 credits) | 1.6 % |
+| Step 5 | Claude Opus 5.5 | 4.31 M | CHF 1.94 (231 credits) | 12.2 % |
+| Step 6 | Claude Sonnet 5.5 | 2.83 M | CHF 0.65 (77 credits) | 4.1 % |
+| Step 7 | Claude Sonnet 5.5 | 4.15 M | CHF 0.67 (80 credits) | 4.2 % |
+| Step 8 | Claude Haiku 5.5 | 1.61 M | CHF 0.03 (4 credits) | 0.2 % |
+| Review fixes | Claude Sonnet 5.5 | 3.93 M | CHF 0.77 (91 credits) | 4.8 % |
+| CLOSE | Claude Sonnet 5.5 | 1.74 M | CHF 0.27 (32 credits) | 1.7 % |
+| Spec runner (coordination) | Claude Sonnet 5.5 | 457 k | CHF 0.56 (67 credits) | 3.5 % |
+| Orchestrator (main chat) | Claude Opus 5.5 | 519 k | CHF 0.10 (12 credits) | 0.6 % |
+| **Total implementation** | | **26.39 M** | **CHF 7.46 (889 credits)** | **46.8 %** |
+
 ---
 
 # Part 1 · Requirements
@@ -35,22 +71,22 @@
 Before adding game rules, Hack star needs an impressive, playable demo that looks like a
 Brawl Stars match: a fighter running and shooting in a colourful arena. The rules (win, lose,
 trophies) are kept out on purpose and come from F4 on. This is F3 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) and "Spec 2" in
-[overall_req.md](../../../.specs/overall_req.md).
+[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) and "Spec 2" in
+[overall_req.md](../../../../.specs/overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4)
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4)
   — its numbers (speed 6/s, shots 16/s with range 9, cool-down 0.35 s, 480 damage, dummies
   2400 health) and its controls (left stick moves, right stick aims and fires on release, a
   quick tap fires at the nearest target) are the model.
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input), S6 (30 frames per second), S7 (own art) and S11 (3D from above at an angle)
   apply here too; the Godot technology, the architecture document
   `hack_star_godot/docs/architecture.md` and how to run the game (S12–S14); D5 (the screen
   sizes of the tests) and D6 (the device play-test stays with the author).
-- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the Play button (S3) opens the arena; the
+- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the Play button (S3) opens the arena; the
   selected fighter and skin (S5, S7); every Back goes home (S10); the UI foundation (S12).
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` makes every fighter
+- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` makes every fighter
   selectable, so every fighter and skin can appear in the arena; the hacks change nothing in the
   arena (its S12).
 - Checked 2026-11-21 (S0) in the code: **Play** on home opens `scenes/arena.tscn` (`arena.gd`):
@@ -75,7 +111,7 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
 
 ## 1 · Specs
 
@@ -123,7 +159,7 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
 - **S11 — One arena:** There is one arena with a sunny canyon theme (sand, rocks, cacti as
   bushes); the target dummies stand still.
 - **S12 — Language:** All new text (the damage numbers and any label) is in English;
-  translations come with [spec 15](2026_11_13_15_accounts_fighters_and_languages_spec.md).
+  translations come with [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md).
   _(added 2026-11-21: the Godot game has no languages yet, `docs/architecture.md`.)_
 - **S13 — What worked before:** Home, the fighter list, the fighter screen, the info page,
   the hack screen and the QR page work as before, and the arena keeps its FPS label. _(added
@@ -141,6 +177,14 @@ right joystick)._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** **Play** opens a sunny canyon arena (20 × 26 m: sand floor, rock walls and rocks, cacti as bushes, crates, skulls, bones) with the fighter and skin chosen on the home screen, now with idle, run and attack animations. The camera follows the fighter smoothly and keeps the whole fighter in view on all five test screen sizes. On a desktop the mouse aims and the left button fires (holding it keeps firing); on a touch screen the right stick aims and fires on release, and a quick tap fires at the nearest dummy. Shots fly visibly and stop at walls, rocks and dummies, also when the fighter touches them. Three still target dummies show a health bar, hit sparks and a damage number, break apart at zero health and come back after 5 seconds. The fighter is see-through in a cactus patch; dust, muzzle flash and sparks make the demo lively. The rules are pure and tested (`Combat`, `ArenaLayout`, `Movement.follow`). 228 GUT tests, `lint.ps1`, `check_tools.ps1` and `export_web.ps1` pass; `server/` and `ui/` are unchanged. The browser and device play-test (FPS on an iPad, "playable within 5 s after Play") stays with the author (D15, spec 03 D6, Deferred Items).
+
+**Differs from the plan:** The `Muzzle` is 0.6 m up, not 0.9 m (a 0.7 m wall would let shots fly over; D4 updated). `GeometryInstance3D.transparency` did nothing in the Compatibility renderer, so the see-through uses alpha copies of the materials (D11 fallback). Arena tests of dummies and effects live in `test_arena_dummies.gd` and `test_arena_effects.gd` (`gdlint` limits a test file to 20 public tests). The code review (Request changes, 1 Blocking · 2 Should-fix · 3 Nit) was handled: finding 1 (shots fired against a wall, rock or dummy the fighter touches passed through it) is fixed — the first ray starts at the fighter's centre — with tests at the border wall, a rock and a dummy; finding 2 (missing Started/Done lines and screenshot records of Steps 3 and 4) is filled in from the Stage log and the commits, and says plainly that the screenshot results were never recorded; findings 4 and 6 are fixed (D4, architecture, a comment); finding 3 (**D15**) keeps Step 8 done and puts the browser and iPad check of S10 into Deferred Items; finding 5 (**D16**) accepts the one-frame turn back to the running direction and changes D7's wording.
+
+**Files:** `hack_star_godot/game/` (`combat`, `arena_layout`, `movement`), `hack_star_godot/scenes/` (`arena`, `canyon`, `fighter`, `fighter_model`, `shot`, `target_dummy`, `arena_effects`, `touch_joystick`), `hack_star_godot/tests/`, `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`, `project.godot`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 
 ## 2 · Spec Overview
 
@@ -173,7 +217,7 @@ right joystick)._
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0. Nothing in `server/` or `ui/`
 > changes, and the demo calls no server (D12). **Looks are checked on real screenshots:** a
 > windowed Godot run with a temporary capture script (saved under `%TEMP%`, viewed, then
@@ -527,10 +571,10 @@ Started: 2026-11-21 19:46
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (both sticks, ≥ 30 frames per second, arena within 5 s after Play) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
-| Shots that hurt fighters, winning and losing | The demo has no rules on purpose (Context) | [07 First match](2026_11_12_07_first_match_spec.md) |
-| Super attacks | Not part of the demo | [12 Super and hypercharge](2026_11_12_12_super_and_hypercharge_spec.md) |
+| Shots that hurt fighters, winning and losing | The demo has no rules on purpose (Context) | [07 First match](../2026_11_12_07_first_match_spec.md) |
+| Super attacks | Not part of the demo | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
 | More arenas and moving targets | One arena with still dummies (S11) | a later spec (not in the ordered list yet) |
-| Translations of new text | English only (S12, D12) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Translations of new text | English only (S12, D12) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | Browser and iPad check of S10: "playable within 5 seconds after Play" (time from tapping **Play** to a playable arena in the web export), and ≥ 30 frames per second on a recent iPad and phone | Needs a browser and the devices; the agents had no browser session (D15). Measured only: a windowed desktop run, arena ready in 249 ms, 59.8 fps (code review) | the author, with the play-test (spec 03, D6) |
 | Windowed FPS run and browser check of the web export (FPS ≥ 30 while running and shooting; Play to the arena ≤ 5 s; home, fighter list, fighter screen, info, hack screen and QR page open as before) | Needs a display and a desktop browser; not run in Step 8 (the checks and the export pass) | the author, with the device play-test (spec 03, D6) |
 
@@ -540,7 +584,7 @@ Started: 2026-11-21 19:46
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-06-graphics-demo.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-06-graphics-demo.html) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Request changes | 1 Blocking · 2 Should-fix · 3 Nit |
 
 ### Code review 2026-11-21
@@ -578,7 +622,7 @@ no debug output, no TODO.
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [ ] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [x] Implementation · every Step's tasks checked (Step 8's browser check moved to the author's play-test, D15, Deferred Items); `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
+- [x] Review · review page written; no Blocking finding open
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

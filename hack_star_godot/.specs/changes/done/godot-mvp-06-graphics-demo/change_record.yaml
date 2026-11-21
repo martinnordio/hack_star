@@ -16,7 +16,7 @@ why: |
   camera, and adds aiming and shooting (mouse, a second touch stick, a tap), three target
   dummies, see-through bushes and small effects. No server, nothing saved.
 spec:
-  path: .specs/features/2026_11_12_06_graphics_demo_spec.md
+  path: .specs/features/done/2026_11_12_06_graphics_demo_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13]
 changes:
   - id: arena

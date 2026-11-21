@@ -92,7 +92,7 @@ other features build on.
 | [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
 | [Basic UI spec](2026_11_12_04_basic_ui_spec.md) | F1 |
 | [Hack codes spec](2026_11_12_05_hack_codes_spec.md) | F2 |
-| [Graphics demo spec](../2026_11_12_06_graphics_demo_spec.md) | F3 |
+| [Graphics demo spec](2026_11_12_06_graphics_demo_spec.md) | F3 |
 
 ### Investigation: Brawl Stars (the parts that matter for Hack star)
 
@@ -134,7 +134,7 @@ names and logos are copyrighted and are not used.
 | F0 | Architecture and foundation of the Godot game: architecture document, the existing FastAPI server for rooms and hack codes, runs in the browser on desktop, iPad, phone | this spec | ✅ |
 | F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_04_basic_ui_spec.md) | ✅ |
 | F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_05_hack_codes_spec.md) | ✅ |
-| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](../2026_11_12_06_graphics_demo_spec.md) | ✅ |
+| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_06_graphics_demo_spec.md) | ✅ |
 | F4 | First real match: last fighter standing against bots, win or lose | [first match](../2026_11_12_07_first_match_spec.md) | ✅ |
 | F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](../2026_11_12_08_trophies_spec.md) | ✅ |
 | F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) | later |

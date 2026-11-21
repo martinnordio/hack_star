@@ -124,7 +124,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   does not play it again. _(revised 2026-11-21: "the first time" made testable — once per
   game start — and a key added for the desktop.)_
 - **S3 — Play button:** Tapping **Play** opens the 3D arena with the fighter of spec 01 (the
-  arena that the [graphics demo spec](../2026_11_12_06_graphics_demo_spec.md) builds on); its
+  arena that the [graphics demo spec](2026_11_12_06_graphics_demo_spec.md) builds on); its
   **Back** returns to the home screen. _(revised 2026-11-21: the Godot game already has the
   arena of spec 01, so Play keeps opening it instead of showing "Coming soon".)_
 - **S4 — Fighter list:** A **Fighters** button opens a list of all 6 fighters (S11), each
@@ -541,7 +541,7 @@ Started: 2026-11-21 17:01
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
-| The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](../2026_11_12_06_graphics_demo_spec.md) (its S2) |
+| The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](2026_11_12_06_graphics_demo_spec.md) (its S2) |
 | **Hack** button on the home screen | F2 | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) (its S1) |
 | Unlocking fighters with credits | F6 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
 | Music and sound effects with a mute button | Left out of this spec (Open questions) | [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |

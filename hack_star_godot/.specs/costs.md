@@ -3,14 +3,14 @@
 > Estimate — see [COSTS.md](../../.specs/kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-21; do not edit by hand.
 
-**All specs: ~163.95 M · ~CHF 69.05 (8234 credits)**
+**All specs: ~201.12 M · ~CHF 81.31 (9696 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
 | [MVP and Architecture](features/done/2026_11_12_03_mvp_and_architecture_spec.md) | ✅ Complete | — | ~1.56 M · ~CHF 1.07 | ~9.43 M · ~CHF 4.32 | ~2.16 M · ~CHF 1.12 | — | — | ~13.15 M · ~CHF 6.51 |
 | [Basic UI](features/done/2026_11_12_04_basic_ui_spec.md) | ✅ Complete | — | ~2.32 M · ~CHF 1.34 | ~39.76 M · ~CHF 20.12 | ~8.35 M · ~CHF 2.84 | — | — | ~50.43 M · ~CHF 24.30 |
 | [Hack Codes](features/done/2026_11_12_05_hack_codes_spec.md) | ✅ Complete | — | ~3.39 M · ~CHF 1.70 | ~29.65 M · ~CHF 7.67 | ~8.27 M · ~CHF 2.98 | — | — | ~41.31 M · ~CHF 12.35 |
-| [Graphics Demo](features/2026_11_12_06_graphics_demo_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Graphics Demo](features/done/2026_11_12_06_graphics_demo_spec.md) | ✅ Complete | — | ~3.35 M · ~CHF 1.76 | ~26.39 M · ~CHF 7.46 | ~7.43 M · ~CHF 3.04 | — | — | ~37.17 M · ~CHF 12.26 |
 | [First Match](features/2026_11_12_07_first_match_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Trophies and Prestige](features/2026_11_12_08_trophies_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Unlock and Upgrade](features/2026_11_12_09_unlock_and_upgrade_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
@@ -25,7 +25,7 @@
 | [Worlds and World Coins](features/2026_11_16_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Godot Setup and First Game](features/done/2026_11_21_01_godot_setup_and_first_game_spec.md) | ✅ Complete | ~7.75 M · ~CHF 4.23 | ~2.07 M · ~CHF 0.78 | ~24.78 M · ~CHF 10.03 | ~5.47 M · ~CHF 2.65 | ~473 k · ~CHF 0.03 | — | ~40.55 M · ~CHF 17.72 |
 | [Move Specs to Godot](features/done/2026_11_21_02_move_specs_to_godot_spec.md) | ✅ Complete | — | ~3.05 M · ~CHF 0.88 | ~12.86 M · ~CHF 5.74 | ~2.60 M · ~CHF 1.55 | — | — | ~18.51 M · ~CHF 8.17 |
-| **All specs** | | | | | | | | **~163.95 M · ~CHF 69.05** |
+| **All specs** | | | | | | | | **~201.12 M · ~CHF 81.31** |
 
 ## Implementation by Step
 
@@ -53,6 +53,14 @@
 | Hack Codes | 7 | Claude Sonnet 5.5 | ~2.73 M | ~CHF 0.44 (52 credits) |
 | Hack Codes | 8 | Claude Opus 5.5 | ~6.32 M | ~CHF 2.18 (260 credits) |
 | Hack Codes | 9 | Claude Haiku 5.5 | ~1.84 M | ~CHF 0.05 (6 credits) |
+| Graphics Demo | 1 | Claude Sonnet 5.5 | ~269 k | ~CHF 0.17 (20 credits) |
+| Graphics Demo | 2 | Claude Opus 5.5 | ~3.39 M | ~CHF 1.56 (186 credits) |
+| Graphics Demo | 3 | Claude Sonnet 5.5 | ~1.90 M | ~CHF 0.49 (59 credits) |
+| Graphics Demo | 4 | Claude Sonnet 5.5 | ~1.28 M | ~CHF 0.25 (30 credits) |
+| Graphics Demo | 5 | Claude Opus 5.5 | ~4.31 M | ~CHF 1.94 (231 credits) |
+| Graphics Demo | 6 | Claude Sonnet 5.5 | ~2.83 M | ~CHF 0.65 (77 credits) |
+| Graphics Demo | 7 | Claude Sonnet 5.5 | ~4.15 M | ~CHF 0.67 (80 credits) |
+| Graphics Demo | 8 | Claude Haiku 5.5 | ~1.61 M | ~CHF 0.03 (4 credits) |
 | Godot Setup and First Game | 1 | Claude Sonnet 5.5 | ~737 k | ~CHF 0.26 (32 credits) |
 | Godot Setup and First Game | 2 | Claude Sonnet 5.5 | ~879 k | ~CHF 0.26 (30 credits) |
 | Godot Setup and First Game | 3 | Claude Opus 5.5 | ~2.75 M | ~CHF 1.49 (177 credits) |
