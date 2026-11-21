@@ -17,6 +17,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #27 created |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 1.56 M (108 k in · 1.43 M cached · 22 k out) | CHF 1.07 (127 credits) | Part 2 written (3 Steps: standard, standard, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 15:47) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.33 M (80 k in · 1.23 M cached · 19 k out) | CHF 0.57 (68 credits) | Step 1 done (`usage.ps1 -Agent subagents` from 15:51) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 839 k (41 k in · 785 k cached · 12 k out) | CHF 0.26 (30 credits) | Step 2 done (`usage.ps1 -Agent subagents` from 15:53) |
 
 ---
 
@@ -186,7 +187,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Architecture document | standard (Claude Sonnet 5.5) — a document whose content the decisions fix | ✅ Done | [→ Step 1](#step-1--architecture-document) |
-| **2** | Screen sizes and input checked by tests | standard (Claude Sonnet 5.5) — GUT tests in sub-viewports, small layout fixes if a size fails | ⬜ Not started | [→ Step 2](#step-2--screen-sizes-and-input-checked-by-tests) |
+| **2** | Screen sizes and input checked by tests | standard (Claude Sonnet 5.5) — GUT tests in sub-viewports, small layout fixes if a size fails | ✅ Done | [→ Step 2](#step-2--screen-sizes-and-input-checked-by-tests) |
 | **3** | README, ordered list, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 3](#step-3--readme-ordered-list-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -258,17 +259,20 @@ landscape and portrait, and that **Play** and **Back** work with a mouse click a
 (S1, S2, S3, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] New `tests/test_screen_sizes.gd` (D5): for each of the five sizes, the start screen's
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] New `tests/test_screen_sizes.gd` (D5): for each of the five sizes, the start screen's
       title and **Play** lie inside the visible rectangle; the arena's **Back**, joystick and
       FPS label lie inside it and its four corners are in view of the camera.
-- [ ] Tests that **Play** reacts to a mouse click and to a screen touch (Godot's emulated
+- [x] Tests that **Play** reacts to a mouse click and to a screen touch (Godot's emulated
       mouse from touch), and **Back** likewise, by sending input events to the button.
-- [ ] If a size fails, fix the layout in `scenes/` (anchors, margins, minimum sizes) — the
+- [x] If a size fails, fix the layout in `scenes/` (anchors, margins, minimum sizes) — the
       existing tests keep passing.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 15:53
+
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — new `tests/test_screen_sizes.gd` (the five sizes of D5: start-screen title and Play; arena Back, joystick, FPS label and the four corners in view; Play and Back pressed by a mouse click and by the left-button press Godot emulates from a touch). One layout fix: start-screen title font 96 → 72, it was cut off on the 390 px phone portrait. Check: `tools/test.ps1` 25 tests pass (was 20), `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 839 k tokens · CHF 0.26 (30 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
