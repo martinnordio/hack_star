@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — Step 6 of 7 done
+> **Status:** 🔄 In progress — all 7 Steps done; review and close next
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -22,6 +22,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.14 M (112 k in · 2.00 M cached · 29 k out) | CHF 1.29 (154 credits) | Step 4 done (`usage.ps1 -AgentName s07-step4` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (107 k in · 2.70 M cached · 18 k out) | CHF 0.60 (71 credits) | Step 5 done (`usage.ps1 -AgentName s07-steps5-6 -Until 20:59:30` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.97 M (194 k in · 4.75 M cached · 25 k out) | CHF 1.02 (121 credits) | Step 6 done (`usage.ps1 -AgentName s07-steps5-6 -Since 20:59:30 -Until 21:24:18`) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.18 M (106 k in · 2.05 M cached · 21 k out) | CHF 0.06 (8 credits) | Step 7 done (`usage.ps1 -AgentName s07-step7` from 20:14:28); checks: `check_tools`, `test` (298 pass), `lint`, `export_web` all exit 0 |
 ---
 
 # Part 1 · Requirements
@@ -161,7 +162,7 @@ original game's numbers (2.5 m in a bush, the place)._
 | **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ✅ Done | [→ Step 4](#step-4--match-arena-with-bots) |
 | **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ✅ Done | [→ Step 5](#step-5--match-hud) |
 | **6** | Result screen and Training on home | standard (Claude Sonnet 5.5) — one new screen from the UI foundation and one button (D10, D11) | ✅ Done | [→ Step 6](#step-6--result-screen-and-training-on-home) |
-| **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
+| **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 7](#step-7--final-check-readme-and-architecture) | [→ Step 7](#step-7--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -398,26 +399,28 @@ Everything that worked before still works, all Godot checks pass, and the README
 architecture describe the match (S13, S16, all statements).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/docs/architecture.md`: Layout and Screens (`match.tscn` /
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/docs/architecture.md`: Layout and Screens (`match.tscn` /
       `MatchArena`, the match HUD, the result screen, **Training** on home, `Screens.MATCH`
       and `RESULT`, `HealthBar`, `DamageNumber`, the fighter's health), Game rules
       (`MatchSettings`, `Match`, `BotBrain`, the new `Combat` functions, `ArenaLayout.STARTS`),
       UI foundation (`GameState.match_settings` and `last_result`), Physics layers (shots hit
       fighters, the shooter excluded), Tests (the new test files).
-- [ ] `hack_star_godot/README.md`: how to play a match (Play, countdown, bots, health and
+- [x] `hack_star_godot/README.md`: how to play a match (Play, countdown, bots, health and
       healing, bushes, timer, results, Play again) and Training, and where the match settings
       are (`game/match_settings.gd`).
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); `git diff --stat` of this spec shows nothing in `server/` or `ui/`.
-- [ ] Note in Notes that the device play-test (iPad and phone: a full match with 3 bots at
+- [x] Note in Notes that the device play-test (iPad and phone: a full match with 3 bots at
       ≥ 30 frames per second, both sticks) and the browser check stay with the author (spec 03,
       D6, Deferred Items).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 21:24
 
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+**Done (2026-11-21 · ~3 min · Claude Haiku 5.5)** — `docs/architecture.md` (Screens: `arena.tscn` as Training, `match.tscn`/`MatchArena` with its HUD, `result_screen`, `health_bar`, `damage_number`, the fighter's health and the target dummy; Home with **Play** and **Training**; Game rules: `combat.gd` health functions, `ArenaLayout.STARTS`, `match_settings.gd`, `match.gd`, `bot_brain.gd`; UI foundation: `Screens.MATCH`/`RESULT`, `GameState.match_settings` and `last_result`; physics layers: shots hit fighters, the shooter excluded; tests of the match) and `README.md` (intro, **Play** → "How to play a match" with countdown, bots, health and healing, bushes, knock-out, timer, results, Play again, Back; **Training**; the controls in a match). Checks: `check_tools.ps1`, `test.ps1` (298 tests pass), `lint.ps1` (87 files unchanged), `export_web.ps1` all exit 0; no change in `server/` or `ui/`. The device play-test (iPad and phone: a full match with 3 bots at ≥ 30 frames per second, both sticks) and the browser check stay with the author (spec 03, D6, Deferred Items).
+suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.06
+
 
 ---
 
@@ -444,7 +447,7 @@ _Add the `Done` line here when the Step is finished._
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
+- [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [ ] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

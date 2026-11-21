@@ -5,7 +5,7 @@ This folder holds the Godot version of Hack star: a re-implementation with the
 It is the first basic game so far: a home screen, a fighter list with six fighters (each with
 its skins), a fighter screen, an info page with the words of the game, a 3D canyon arena where
 your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
-codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the canyon against bots, with health, healing, a timer and a result. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -93,11 +93,37 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    skips it) and then shows your fighter, trophies, credits, **Hack star**, **Play**,
    **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
    [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
-3. **Play** opens the arena. **Fighters** lists the six fighters with their trophies, power
+3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
+   arena with three target dummies. **Fighters** lists the six fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
    the home fighter. **Info** explains the words of the game. **Hack** opens the hack screen
    (see [Hack codes](#hack-codes)). Every screen has **Back** (top-left) that returns to the home
    screen.
+
+## How to play a match
+
+Press **Play** on the home screen. The match is in the same canyon as Training, without the
+dummies: your fighter and three bots, each at its own start point.
+
+1. **Countdown:** "3", "2", "1", then "FIGHT!". Nobody moves or shoots during the countdown.
+2. **Fight:** shoot the bots (controls below). Every fighter has a health bar above it: green
+   for you, red for the bots. A shot takes off part of the health bar and shows the damage
+   number. A fighter that is not hit and does not shoot for 3 seconds slowly gets its health back.
+3. **Bots:** they walk around, go for the nearest opponent they can see and shoot at it. They
+   fight each other too. On "easy" they react late, miss more often and shoot more slowly. A bot
+   in a bush is hard to see: it is only seen from 2.5 m away, and it turns see-through, like you.
+4. **Knock-out:** a fighter with no health left is knocked out and leaves the arena. The label
+   top-right shows "Fighters left".
+5. **Timer:** 2:00 at the top of the screen, red in the last 10 seconds.
+6. **Result:** after the match the result screen shows **Victory!** (you are the last one
+   standing), **Defeat** with your place (for example "You finished 3rd") when you are knocked
+   out, or **Time's up!** (a draw) when the time runs out with bots still in. **Play again**
+   starts a new match; **Home** goes home. **Back** in a match goes home at any time, with no
+   result.
+
+A match changes no trophies, credits or unlocks, and the hacks change nothing in a match. The
+match settings (match length, number of bots, bot level, health, healing, bush sight) are the
+values at the top of `game/match_settings.gd`; change a value there and the next match uses it.
 
 ## Commands
 
@@ -192,12 +218,12 @@ game is closed.
   with a short cool-down).
 - **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
   (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
-  the nearest dummy in range (straight ahead when none is in range). A thin line on the ground
-  shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
-- **Dummies:** three straw dummies stand in the arena. A shot takes off part of the health bar
+  the nearest dummy in range (straight ahead when none is in range; in a match, the nearest bot).
+  A thin line on the ground shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
+- **Dummies:** in Training three straw dummies stand in the arena. A shot takes off part of the health bar
   and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.
 - **Bushes:** in a cactus patch the fighter turns see-through, so you can look at the ground
-  and the cacti behind it. Shots stop at the rocks and walls, and at the dummies.
+  and the cacti behind it. Shots stop at the rocks and walls, and at the dummies and fighters.
 - **Back** (top-left) returns to the home screen.
 - **Entrance:** a click, a touch or a key (for example Space) skips the entrance of the home screen.
 - **Frame rate:** the label top-right shows the frames per second of the arena.
