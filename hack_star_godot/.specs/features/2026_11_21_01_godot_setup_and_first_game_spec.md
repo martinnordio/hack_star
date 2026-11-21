@@ -1,7 +1,7 @@
 # Godot Setup and First Game Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-setup-and-first-game`
@@ -13,6 +13,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.93 M (191 k in · 1.72 M cached · 20 k out) | CHF 1.42 (169 credits) | Part 1 written, together with spec 02 (measured from the Copilot CLI session log) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.66 M (12 k in · 1.64 M cached · 7 k out) | CHF 0.45 (53 credits) | Part 1 revised: open questions answered — GDScript, pinned latest stable Godot 4, browser only, no server yet; no own kit, the root kit with Godot specs in `hack_star_godot/.specs/` (S3 removed, S15–S19 added) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.07 M (34 k in · 2.02 M cached · 18 k out) | CHF 0.78 (93 credits) | Part 2 written |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.12 M (54 k in · 1.06 M cached · 10 k out) | CHF 0.36 (43 credits) | Step 1 done |
 
 ---
 
@@ -135,7 +136,7 @@ _None._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Folder, rule for Godot specs, pinned tools | standard (Claude Sonnet 5.5) — files and scripts a clear plan describes | ⬜ Not started | [→ Step 1](#step-1--folder-rule-for-godot-specs-pinned-tools) |
+| **1** | Folder, rule for Godot specs, pinned tools | standard (Claude Sonnet 5.5) — files and scripts a clear plan describes | ✅ Done | [→ Step 1](#step-1--folder-rule-for-godot-specs-pinned-tools) |
 | **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ⬜ Not started | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
 | **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
 | **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | ⬜ Not started | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
@@ -187,35 +188,43 @@ The Godot folder with its spec folders, the written rule for Godot specs, and a 
 pinned tools exist; nothing of the root game changes (S1, S2, S4, S5, S6, S13, S15, S16, S17).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Create `hack_star_godot/.specs/` sub-folders `features/done/`, `changes/`, `review/`
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Create `hack_star_godot/.specs/` sub-folders `features/done/`, `changes/`, `review/`
       (with `.gitkeep`), and `hack_star_godot/.specs/spec-nx.json` with only the root `cost`
       block (D9).
-- [ ] `hack_star_godot/.specs/guidelines/gdscript.md`: static types, naming (snake_case files
+- [x] `hack_star_godot/.specs/guidelines/gdscript.md`: static types, naming (snake_case files
       and functions, PascalCase classes and nodes), rules in `game/` without scene access,
       one scene per screen, tests next to the rule they check in `tests/`, `gdformat` style.
-- [ ] `AGENTS.md` at the repository root (D8): which game lives where; for a Godot spec —
+- [x] `AGENTS.md` at the repository root (D8): which game lives where; for a Godot spec —
       create and keep it in `hack_star_godot/.specs/features/`, write `changes/`, `review/`,
       `costs.md` and `done/` under `hack_star_godot/.specs/`, use the root kit's prompts,
       the GDScript guideline and the Godot checks (`tools/test.ps1`, `tools/lint.ps1`,
       `tools/export_web.ps1`) instead of `pytest` / `npm`, run `usage.ps1` from the root and
       `costs_ledger.ps1` as in D9; for a Python + Svelte spec — as today.
-- [ ] `hack_star_godot/.gitignore`: `.godot/`, `build/`, `assets/music/`, `*.tmp`.
-- [ ] `hack_star_godot/tools/versions.json` (Godot `4.7.2`, GUT `9.7.1`, gdtoolkit `4.5.0`)
+- [x] `hack_star_godot/.gitignore`: `.godot/`, `build/`, `assets/music/`, `*.tmp`.
+- [x] `hack_star_godot/tools/versions.json` (Godot `4.7.2`, GUT `9.7.1`, gdtoolkit `4.5.0`)
       and `tools/check_tools.ps1`: finds Godot (D1), compares `godot --version`, the GUT
       version in `addons/gut/plugin.cfg` (once Step 2 added it), `gdlint --version`, and the
       web export templates (`%APPDATA%\Godot\export_templates\4.7.2.stable\web_nothreads_release.zip`);
       prints OK or what to install for each, exit code 1 if anything is missing.
-- [ ] Install the tools on this computer as the README will say (winget, export templates
+- [x] Install the tools on this computer as the README will say (winget, export templates
       from the editor's *Manage Export Templates*, `uv tool install gdtoolkit==4.5.0`).
-- [ ] Check: `tools/check_tools.ps1` reports Godot, gdtoolkit and the templates OK (GUT
+- [x] Check: `tools/check_tools.ps1` reports Godot, gdtoolkit and the templates OK (GUT
       pending until Step 2); a new chat asked "where does a new Godot spec go?" answers
       `hack_star_godot/.specs/features/` (else add `.github/copilot-instructions.md`, D8);
       `git status` shows no change outside `hack_star_godot/` and `AGENTS.md`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 13:59
 
+- Godot: winget installed 4.7.2 but created no alias (no admin; `WinGet\Links` is empty and not on PATH). `check_tools.ps1` finds it via `$env:GODOT`, else `godot` on the PATH, else `Godot_v*_win64_console.exe` under `%LOCALAPPDATA%\Microsoft\WinGet\Packages`.
+- Export templates: extracted `version.txt`, `web_nothreads_debug.zip`, `web_nothreads_release.zip` from the `.tpz` (names as expected) into `%APPDATA%\Godot\export_templates\4.7.2.stable\`; download deleted.
+- gdtoolkit 4.5.0 installed with `uv tool install` (`gdlint --version` = 4.5.0).
+- GUT: reported "pending" while `project.godot` does not exist; once it exists a missing or wrong GUT fails (exit 1).
+- The Check task stays unticked: its "new chat asked where a new Godot spec goes" part is run by the orchestrator, who ticks it. The tool part passed.
+- New-chat check (orchestrator, Claude Opus 5.5): a fresh agent asked, with no hints, where a new Godot spec, its review page and cost list go and which test command replaces `npm test` answered `hack_star_godot/.specs/features/`, `hack_star_godot/.specs/review/`, `hack_star_godot/.specs/costs.md`, `hack_star_godot/tools/test.ps1`, citing `AGENTS.md` — passed; `.github/copilot-instructions.md` not needed.
+
+**Done (2026-11-21 · ~15m · Claude Sonnet 5.5)** — Created `hack_star_godot/.specs/` (features/done, changes, review, guidelines/gdscript.md, spec-nx.json), `.gitignore`, `tools/versions.json`, `tools/check_tools.ps1`, root `AGENTS.md`; installed Godot 4.7.2, web templates, gdtoolkit 4.5.0. `tools/check_tools.ps1` parses cleanly, exit 0: Godot, templates and gdtoolkit OK, GUT pending; `git status` shows changes only in `hack_star_godot/` and `AGENTS.md`; the new-chat check is done by the orchestrator. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.12 M (54 k in · 1.06 M cached · 10 k out) · CHF 0.36 (43 credits)
 ---
 
 ## Step 2 — Godot project, start screen, test and lint
