@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 03 on feature/godot-mvp (written by REVIEW:, 2026-11-21).
+# Range: this spec's commits only, 89ada86..d0c9ac2 (the branch carries specs 03-08 and 16).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/".
+version: 1
+branch: feature/godot-mvp
+base: 89ada86
+why: |
+  The Godot game had a first playable scene but no architecture document, no checked MVP scope
+  and no proof that its screens fit phone sizes. Spec 03 writes the architecture (screens,
+  rules, 3D models, saved progress, the existing FastAPI server for rooms and hack codes),
+  fixes the MVP to specs 03-08, and adds tests that put every screen into desktop, iPad and
+  phone sizes and press Play and Back.
+spec:
+  path: .specs/features/2026_11_12_03_mvp_and_architecture_spec.md
+  statements: [S2, S3, S8, S10, S11, S13, S14, S15]
+changes:
+  - id: start-screen
+    kind: ui
+    change: modified
+    object: Start screen title (scenes/start_screen.tscn, Title font size 96 -> 72)
+    note: Step 2 shrank the title because it was cut off in a 390 px SubViewport; in the real window the project's canvas_items stretch lays the screen out at 1280 x 2770, where the 96 px title already fitted (finding 2).
+    statements: [S2]
+    examples:
+      - name: phone-portrait-390x844
+        input: |
+          godot --path hack_star_godot --resolution 390x844 -s <temporary capture script>
+          (start_screen.tscn added to the root window, 30 frames, root texture saved;
+          prints the visible rect and the title's global rect)
+        views: [phone-portrait]
+  - id: screen-size-checks
+    kind: output
+    change: added
+    object: GUT checks of screen sizes and button input (tests/test_screen_sizes.gd)
+    note: Five sizes of D5 for the start screen and the arena (controls inside, four arena corners in view); Play and Back pressed by a left click. The "touch" cases send the same mouse event as the click cases (finding 1).
+    statements: [S2, S3, S11]
+    examples:
+      - name: gut-test-screen-sizes
+        input: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\test.ps1
+          (section res://tests/test_screen_sizes.gd and the totals)
+breaking: none
+review:
+  - question: Why no block for docs/architecture.md and the README?
+    answer: |
+      They are documents, not objects the game delivers; they are shown as highlights on the
+      review page. The server (server/) and the Svelte game (ui/) are unchanged (S15).
+  - question: Do the size tests match what a player sees?
+    answer: |
+      Not exactly: a SubViewport does not apply the project's canvas_items stretch, so the
+      tests check the screens at physical pixels, which is stricter than the game (finding 2).

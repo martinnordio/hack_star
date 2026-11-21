@@ -19,7 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.33 M (80 k in · 1.23 M cached · 19 k out) | CHF 0.57 (68 credits) | Step 1 done (`usage.ps1 -Agent subagents` from 15:51) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 839 k (41 k in · 785 k cached · 12 k out) | CHF 0.26 (30 credits) | Step 2 done (`usage.ps1 -Agent subagents` from 15:53) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 651 k (54 k in · 590 k cached · 7 k out) | CHF 0.01 (2 credits) | Step 3 done (`usage.ps1 -Agent subagents` from 15:56) |
-
+| 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 2.16 M (106 k in · 2.03 M cached · 29 k out) | CHF 1.12 (134 credits) | semantic diff written (2 blocks, checks 6 pass · 3 n/a); code review: Approve (0 blocking, 4 should-fix, 3 nit) (`usage.ps1 -Agent subagents` from 15:57) |
 ---
 
 # Part 1 · Requirements
@@ -321,6 +321,29 @@ Started: 2026-11-21 15:56
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-03-mvp-and-architecture.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 blocking, 4 should-fix, 3 nit |
+
+### Code review 2026-11-21
+
+Range `89ada86..d0c9ac2` (this spec's commits only). Ran: `tools/test.ps1` (25 of 25 passed),
+`tools/lint.ps1` (OK); record checked with `change_record.schema.json`; Before | After of the
+start screen captured at 390×844 from the base (temporary worktree) and the head. Good: the
+arena check reuses the real camera framing; buttons are pressed through real input events, not
+by emitting the signal; the architecture marks every unbuilt part with its spec and its server
+section matches `server/`; `server/` and `ui/` are unchanged (S15).
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | The "touch" cases (`test_play_reacts_to_touch`, second press in `test_back_reacts_to_mouse_click_and_touch`) push the same `InputEventMouseButton` as the click cases; no touch event is sent, only the `emulate_mouse_from_touch` setting is read — the touch half of S3 is not exercised | code | test | Should-fix | fix now |
+| 2 | D5's SubViewports do not apply the project's `canvas_items` stretch: at 390×844 the test lays out 390 logical px, the game window 1280×2770 (measured). The tests are stricter than reality, and the title 96 → 72 fixes a cut-off no player sees, making the title smaller on every device | spec | spec | Should-fix | plan decision |
+| 3 | `docs/architecture.md` still says the sub-viewport tests are "planned — this spec, Step 2" (line 48) and its Tests section omits `test_screen_sizes.gd` (S13: kept up to date) | spec | docs | Should-fix | fix now |
+| 4 | Definition of Done: the *Implementation* line is not ticked although all three Steps are ✅ and the checks pass | spec | spec | Should-fix | fix now |
+| 5 | Spec Overview row 3 has its Detail cell twice; Step 3 Notes end with a broken template fragment (", append: **Done (…)** — summary + verifying result. -->") | spec | docs | Nit | fix now |
+| 6 | `.specs/features/README.md`: spec 03's status is *planned*; the legend has *implemented* for a spec whose Steps are done | spec | docs | Nit | fix now |
+| 7 | `ARENA_CORNERS` in `tests/test_screen_sizes.gd` is a copy of `scenes/arena.gd`'s constant; reading it from the arena script keeps them from drifting | code | guideline | Nit | fix now |
+
+**Outcome:** Approve (no Blocking) — with follow-ups: findings 1, 3–7 to fix, a decision on 2.
 
 ---
 
@@ -329,6 +352,6 @@ Started: 2026-11-21 15:56
 - [x] Requirements · Part 1 agreed (S1..S15 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` and `hack_star_godot/docs/architecture.md` updated
-- [ ] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
+- [x] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

@@ -1,0 +1,424 @@
+<!doctype html>
+<!-- Review page of spec 03 on feature/godot-mvp, written by REVIEW: from .specs/kit/review/review_page.html. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec 03 Â· MVP and Architecture (Godot) â€” semantic diff</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --surface: #ffffff; --border: #d5d9e0; --text: #1a1d21; --text-dim: #4b5563;
+    --primary: #2563eb; --add: #dcfce7; --add-text: #14532d; --del: #fee2e2; --del-text: #7f1d1d;
+    --warn: #b45309; --tip-bg: #1a1d21; --tip-text: #f7f8fa;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111418; --surface: #1a1e24; --border: #343a44; --text: #e6e8eb; --text-dim: #a8afb9;
+      --primary: #6ea2ff; --add: #12301f; --add-text: #bbf7d0; --del: #3a1717; --del-text: #fecaca;
+      --warn: #fbbf24; --tip-bg: #e6e8eb; --tip-text: #111418;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 var(--font-sans); }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1100px); gap: 24px; padding: 24px; }
+  nav.toc { position: sticky; top: 24px; align-self: start; font-size: 14px; }
+  nav.toc ol { margin: 4px 0; padding-left: 18px; }
+  nav.toc a { color: var(--text-dim); text-decoration: none; }
+  nav.toc a:hover, nav.toc a:focus { color: var(--primary); }
+  header.page .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--text-dim); font-size: 14px; }
+  .recommendation { border-left: 4px solid var(--primary); padding: 8px 12px; background: var(--surface); }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } nav.toc { position: static; } }
+  h1 { font-size: 24px; margin: 0 0 8px; } h2 { font-size: 19px; margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  h3 { font-size: 16px; margin: 0 0 8px; } h4 { font-size: 13px; margin: 0 0 4px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+  a { color: var(--primary); }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: var(--surface); }
+  code, pre { font-family: var(--font-mono); font-variant-ligatures: none; font-size: 13px; }
+  pre { margin: 0; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; white-space: pre; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--border); text-transform: uppercase; }
+  .added { color: var(--add-text); background: var(--add); } .removed { color: var(--del-text); background: var(--del); }
+  .modified { color: var(--warn); }
+  .note { color: var(--text-dim); margin: 4px 0 8px; }
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  main, .ba > div { min-width: 0; }
+  @media (max-width: 700px) { .ba { grid-template-columns: 1fr; } }
+  .ba pre > span { display: block; min-height: 1.5em; }
+  .ba pre .add { background: var(--add); color: var(--add-text); }
+  .ba pre .del { background: var(--del); color: var(--del-text); }
+  .absent { padding: 24px; text-align: center; color: var(--text-dim); border: 1px dashed var(--border); border-radius: 4px;
+    background: repeating-linear-gradient(45deg, transparent, transparent 6px, var(--bg) 6px, var(--bg) 12px); }
+  table.diff { font-family: var(--font-mono); font-variant-ligatures: none; font-size: 13px; border: 1px solid var(--border); display: block; overflow-x: auto; }
+  table.diff td { border: none; padding: 0 8px; white-space: pre; }
+  table.diff td.ln { color: var(--text-dim); text-align: right; width: 1%; user-select: none; }
+  table.diff tr.add td { background: var(--add); color: var(--add-text); }
+  table.diff tr.del td { background: var(--del); color: var(--del-text); }
+  .concept { border-bottom: 1px dotted var(--primary); position: relative; cursor: help; }
+  .concept .tip { display: none; position: absolute; left: 0; top: 1.6em; z-index: 10; width: 320px; padding: 8px;
+    background: var(--tip-bg); color: var(--tip-text); border-radius: 4px; font: 13px/1.4 var(--font-sans); white-space: normal; }
+  .concept:hover .tip, .concept:focus .tip { display: block; }
+  .sev-blocking { color: var(--del-text); background: var(--del); } .sev-should-fix { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Table of contents">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#spec-context">Spec context</a></li>
+    <li><a href="#semantic-diff">Semantic diff</a>
+      <ol><li><a href="#sd-start-screen">Start-screen title</a></li><li><a href="#sd-screen-size-checks">Screen-size checks</a></li><li><a href="#sd-qa">Author Q&amp;A</a></li></ol></li>
+    <li><a href="#previous">Previously reviewed</a></li>
+    <li><a href="#highlights">Highlights</a>
+      <ol><li><a href="#c1">Start-screen title 96 â†’ 72</a></li><li><a href="#c2">Screens are put into a SubViewport</a></li><li><a href="#c3">The touch test sends a mouse click</a></li><li><a href="#c4">Arena corners in view at every size</a></li><li><a href="#c5">Server, hack codes and rooms (D2, D3)</a></li><li><a href="#c6">Architecture still says Step 2 is planned</a></li><li><a href="#c7">README: docs/ and the server</a></li><li><a href="#c8">Ordered list: MVP line and status</a></li></ol></li>
+    <li><a href="#findings">Findings</a></li>
+    <li><a href="#not-covered">Not covered</a></li>
+    <li><a href="#glossary">Concepts glossary</a></li>
+    <li><a href="#checklist">Reviewer checklist</a></li>
+  </ol>
+</nav>
+<main>
+<header class="page">
+  <h1>Spec 03 Â· MVP and Architecture (Godot) â€” semantic diff</h1>
+  <div class="meta">
+    <span><b>Branch</b> feature/godot-mvp</span><span><b>Base</b> 89ada86</span><span><b>Head</b> d0c9ac2</span>
+    <span><b>Target</b> main</span><span><b>Date</b> 2026-11-21</span>
+    <span><b>Commits</b> 4 (this spec only)</span><span><b>Files</b> 7 Â· +493 / âˆ’34</span>
+    <span><b>Written by</b> REVIEW: Â· Claude Opus 5.5</span>
+  </div>
+</header>
+
+<section id="summary"><h2>Summary</h2>
+  <p>Spec 03 gives the Godot game its architecture document, fixes the MVP to specs 03â€“08 and adds automatic checks that both screens fit five desktop, iPad and phone sizes. The server and the Svelte game are untouched. The only change a player sees is a smaller start-screen title.</p>
+  <ul>
+    <li>New <code>docs/architecture.md</code>: screens, rules, 3D models, saved progress (planned), the existing FastAPI server for rooms and hack codes, tests, spec order.</li>
+    <li>New <code>tests/test_screen_sizes.gd</code>: 5 tests, 25 of 25 pass; lint OK.</li>
+    <li>The start-screen title shrank from 96 to 72 for a cut-off that only the test's un-stretched SubViewport had.</li>
+    <li>The â€œtouchâ€ tests send a mouse click; touch is not really exercised.</li>
+    <li>Small spec and doc drift: architecture still says Step 2 is planned; DoD and the list status are behind.</li>
+  </ul>
+  <p class="recommendation"><strong>Recommendation:</strong> Approve with follow-ups â€” nothing Blocking; fix findings 1 and 3â€“7 and take a decision on finding 2.</p>
+</section>
+
+<section id="spec-context"><h2>Spec context</h2>
+  <p><a href="../features/2026_11_12_03_mvp_and_architecture_spec.md">2026_11_12_03_mvp_and_architecture_spec.md</a> (#27) â€” statements S2, S3, S8, S10, S11, S13, S14, S15 (S1, S6 device parts deferred, D6); Steps 1 Architecture document, 2 Screen sizes and input checked by tests, 3 README, ordered list, final check.</p>
+</section>
+
+<section id="semantic-diff"><h2>Semantic diff</h2>
+  <div class="card" data-card="0-record">
+    <p><strong>Why:</strong> The Godot game had a first playable scene but no architecture document, no checked MVP scope and no proof that its screens fit phone sizes.</p>
+    <p><strong>Breaking:</strong> none Â· <strong>Checks:</strong> 6 pass Â· 3 n/a Â· 0 fail</p>
+    <table><tr><th>#</th><th>Check</th><th>Result</th></tr><tr><td>C1</td><td>A record exists when it is required (code and tests changed)</td><td>pass</td></tr><tr><td>C2</td><td>The record passes change_record.schema.json (uv run â€¦ jsonschema)</td><td>pass</td></tr><tr><td>C3</td><td>Every S&lt;n&gt; exists in the spec (S2, S3, S8, S10, S11, S13, S14, S15)</td><td>pass</td></tr><tr><td>C4</td><td>Every block&#x27;s object differs Before / After (title rect 437Ã—132 â†’ 328Ã—99; test file added)</td><td>pass</td></tr><tr><td>C5</td><td>Tool-detectable changes have a block (no command, endpoint, setting or dependency changed; the scene property has the ui block)</td><td>pass</td></tr><tr><td>C6</td><td>api / schema changes with contracts</td><td>n/a</td></tr><tr><td>C7</td><td>output changes come with tests (the output block is the new tests)</td><td>pass</td></tr><tr><td>C8</td><td>ui changes with a UI catalog (the Godot game has none)</td><td>n/a</td></tr><tr><td>C9</td><td>Added dependencies have a decision (none added)</td><td>n/a</td></tr></table>
+    <p class="note">Record: <a href="../changes/godot-mvp-03-mvp-and-architecture/change_record.yaml">changes/godot-mvp-03-mvp-and-architecture/change_record.yaml</a></p>
+  </div>
+
+  <article class="card" id="sd-start-screen" data-card="1-start-screen">
+    <h3><span class="badge">ui</span> Start screen title (scenes/start_screen.tscn) <span class="badge modified">modified</span></h3>
+    <p class="note">Title font 96 â†’ 72 (Step 2). In the real window the project's canvas_items stretch lays the screen out at 1280Ã—2770, where the 96 px title already fitted (finding 2) Â· S2</p>
+    <pre class="input">godot --path hack_star_godot --resolution 390x844 -s &lt;temporary capture script&gt;
+start_screen.tscn added to the root window, 30 frames, root texture saved (base 89ada86 in a temporary worktree | HEAD)</pre>
+    <div class="ba">
+      <div><h4>Before</h4><img style="max-width:100%;border:1px solid var(--border)" alt="Start screen at 390x844 before: title at font size 96" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAANMCAYAAABYbAoeAAAAAXNSR0IArs4c6QAAIABJREFUeJzt3WeQXed95/nf7YTuRs6JAAiBIAGCBEECYs4SJZqUKFGUZGVLmrAl78y4Zuyp2tq8W1s1NTW7O55dl+XxmMrZsiRTpEYUKeYoJoAZJHLOGQ10vPsCNMy/BJDUDmhowM/nXQOnTz+n0Tjfe57n3NONyVPnNwMAr2k52QMA4HeLMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQCAMAhTAAUAgDAIUwAFAIAwCFMABQ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7R3tOW36tMyYMS3jxo5NV3dn2tvb02g0kiRTp005um3HsI60trYe/XjOu07P2LFj0mg00t/fn6eeWpotW7b/1sczODCYsWNG5+YP35CbP3xjOjuHZfnyFfnGN3+QX9x9X4YGh958J6/THGrmscefyhc+/6mMGDE8886amz/543+WX9x1b1544eUsX74iO3bs+q1i80YajUa6ujsz512nZ+rUyRk1alQ6h3Wkte3If+GO9vajV2KNRtLV1XXcffX29ubZ517M3fc8IAockzBwTPfe91BWrlyTN1rIPeusM7L4gvMyduyY424zceL4XHbpRbn88ouyYMG8TJ925DbTjo6OYwalkcbRYCTJhInj09U5LEmyb9+B7Ny5u0yjvFWdncNy0YWLc9a8uRk7dkz6+vry6opVufvu+487F/9GhppDeeyxJ/P9H/wkN954XaZMnpTLLr0wF777/Cxb9kIeffzJPPP0s1m67Pls3rL1DW/DfTOtba2ZNWtG3vueK3PxRYsz94w5mThpQoZ3d6W9vf2Yn9Pyuu/hr9u3/0DWrFmXgwd6jrsN72zCwDH96Ee356d33PmGJ7SPffSmzJo547hh6O7uys0fvjH/6IufzowZ09PX159XV6zKk08ty4EDBzMwMJBms5krLr84M2ZML0H4O8NedwXRc+hQ+gd++5N4kkycOCGjRo08OiXV1taWGTOm59xz5x+ZRvptT9zN5GBPT/7P/+vPsmHjplx+2UWZd9bcTJs2JUuWLMqSJYuydt2G3HnnPfnb236WZcteeNNF8WNptDQyedLEfOm/+Xw+9tEPZdiwjuzbtz/Pv/Bytm/bkcO9hzM4OJS2trbc8pEPpq2t9U332dfbl3379//WY+GdQxh425x99ln5xCduzsyZp6XZbOaBBx/JD37wt3lm6XPZuXNXevv60hxq5j/95b/P9OlTyxTS3xkYGDg6RdLR3p6Wljc/8R1LV1dnWloaWblydQ739uXs+Wdm/ry5+cynPpYNGza9dnX0W2omu3fvzZe//NXcc8+DueLyi7NkyfmZP29u5pwxO7NmnpZ/8o8/mzlzTs//9D//m6xZs74svL8VncOG5fLLL8onP/GRtLW15eDBg/nrH96WH/349qxavTYH9h/IwMBgurq7ctNN17+lMAw1hzL4W06d8c7ikRi8bS6+eEkmThifRqORXbt2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CmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYGR4ZiAAACtklEQVQACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgAKYQCgEAYACmEAoBAGAAphAKAQBgCK/w9ntqJD1FaqAAAAAABJRU5ErkJggg=="><pre><span class="del">visible_rect=[P: (0.0, 0.0), S: (1280.0, 2770.0)] title_rect=[P: (421.0, 1235.0), S: (437.0, 132.0)]</span></pre></div>
+      <div><h4>After</h4><img style="max-width:100%;border:1px solid var(--border)" alt="Start screen at 390x844 after: title at font size 72" src="data:image/png;base64,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+pnVWbNm3dvOY+JZE/Kbv3FrFi9elE2btuQv//sXsnnLq+ns7Ep/f3/+3b/5lxkzevRbbt/f35+jx3zfEyefMHDaNTU3Zfq0qTn3nOnZsWNXHlr+aO791v2vfwlf4/XLT4MGDTphu127XsvBg4dy1oTxmTplUgYPGZzOI51vu7+nnno2X/ry1zJ48OC0tbXlyit+KTfffGM2btqcxx9f+Y7m3NXVnfXrN2bjpi155pk12bZ1Rz7/7z+XqVMnZf68OcfDcOzYsfT396elpSXNzf+4yK3R1MiYMaOycOG8dHV15fEVT+Rrd9+bvjfC1GhqpLml5U0vIcG7TRh4T2g0Gmk0mtLXdzRdXV05evRoGo1GRowYnisuvyQTJ44/YZvn1v44O3bsyqJF83LttVdm67Ydefrp1enq7s6I4cMyZszoHDnSmeeff6Fst3Xr9ry6dUcOHzqce795f6ZOnZR5c2fn4796c17duj1bNm99y3lOn352pk6ZlFc2bMru3e3p6+vLno692fLqtvzDha6ffDE/fPhIent7M2XKpJx99pRs2LD5+NqHpJHm5qb09vans7MrfW9cDmtqbspVV16aGdPPTktL85vMAt5dwsBpd+zosWzfsStbt27P2HFjsnTJVenu7klfX1+mT5uaa665PO17OjJhfI3DmufW5fEVKzN16uQsXrwwbW1D8txz69LV1Z0RI4Zn8OBBWbnymRPC8A8OHz6Sxx77UaZPn5rf/MytuerKS7Nh4+Z84Qt35PDhI2+6zfx5s/PpT308r2zYmO3bd6WrqyttQ9uycMGcNDU1snt3e1avWXt8/Pr1G9Oxd1/OPWdGPvnxX8mcCy9Ib29fnnr62eze3Z4XXng5F1xwXi679OJ86taP5dChwxk3dkyuv35JjnR2vvFZCJxawsB7wurVa3PP39+XG29clksWL8qFs8/P/gMH093VnZdeWp+nnno2n/3t28o2HXv25p6//3YajUauvvqyzJwxLfPnXZhGo5FDhw5n3boXs3//gbfY4+u2bd+R++9/KOeeMyM3XL80N3/4A3nppVfy3e99/03vLurp7cuoUSPyKzf/cgYPHpxjb1zjP3TocFY+uSoPPPhwnv+J1cfLH34sM2ZMy1VXXpqrr748V199ebZt25729j1Zs+b53PHlu3LrLR/N9GlT86d/8odp39ORRqORl156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AEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBAIQwAFMIAQCEMABTCAEAhDAAUwgBA8X8BcDdDfXiXaLQAAAAASUVORK5CYII="><pre><span class="add">visible_rect=[P: (0.0, 0.0), S: (1280.0, 2770.0)] title_rect=[P: (476.0, 1251.0), S: (328.0, 99.0)]</span></pre></div>
+    </div>
+  </article>
+  <article class="card" id="sd-screen-size-checks" data-card="2-screen-size-checks">
+    <h3><span class="badge">output</span> GUT checks of screen sizes and button input (tests/test_screen_sizes.gd) <span class="badge added">added</span></h3>
+    <p class="note">Five sizes of D5 for both screens; Play and Back pressed by a click. The â€œtouchâ€ cases send the same mouse event (finding 1) Â· S2, S3, S11</p>
+    <pre class="input">powershell -NoProfile -ExecutionPolicy Bypass -File tools\test.ps1</pre>
+    <div class="ba">
+      <div><h4>Before</h4><div class="absent">absent (20 tests, no screen-size checks)</div></div>
+      <div><h4>After</h4><pre><span class="add">res://tests/test_screen_sizes.gd</span><span class="add">[0m* test_start_screen_fits_every_size</span><span class="add">* test_arena_fits_every_size</span><span class="add">* test_play_reacts_to_mouse_click</span><span class="add">* test_play_reacts_to_touch</span><span class="add">* test_back_reacts_to_mouse_click_and_touch</span><span class="add">[1m5/5 passed.</span><span class="add">[0m[4m</span><span class="add"></span><span class="add">Tests                25</span><span class="add">Passing Tests        25</span><span class="add">[32m---- All tests passed! ----</span><span class="add">Tests passed: 25.</span></pre></div>
+    </div>
+  </article>
+  <div class="card" id="sd-qa" data-card="9-qa"><h3>Author Q&amp;A</h3><dl><dt>Why no block for docs/architecture.md and the README?</dt><dd>They are documents, not objects the game delivers; they are highlights 5â€“8. The server (server/) and the Svelte game (ui/) are unchanged (S15): <code>git diff --stat 89ada86..HEAD -- server ui</code> is empty.</dd>
+<dt>Do the size tests match what a player sees?</dt><dd>Not exactly: a SubViewport does not apply the project's canvas_items stretch, so the tests check the screens at physical pixels, which is stricter than the game (finding 2).</dd></dl></div>
+</section>
+
+<section id="previous"><h2>Previously reviewed</h2>
+  <p>None â€” first review on <code>feature/godot-mvp</code> (the earlier Godot pages are for other branches).</p>
+</section>
+
+<section id="highlights"><h2>Highlights</h2>
+  <article class="card" id="c1">
+    <h3>1 Â· Start-screen title 96 â†’ 72</h3>
+    <p class="note"><code>hack_star_godot/scenes/start_screen.tscn:35-39</code> Â· 1e23bc5 Â· Step 2 Â· S2</p>
+    <table class="diff">
+<tr class="ctx"><td class="ln">35</td><td>[node name=&quot;Title&quot; type=&quot;Label&quot; parent=&quot;Center/Column&quot;]</td></tr>
+<tr class="ctx"><td class="ln">36</td><td>layout_mode = 2</td></tr>
+<tr class="del"><td class="ln">37</td><td><span class="concept" tabindex="0">theme_override_font_sizes<span class="tip" role="tooltip"><b>Theme override</b> â€” a font size stored on this node. Here it is the only layout change of Step 2: it shrinks the title on every device, not only on phones.</span></span>/font_size = 96</td></tr>
+<tr class="add"><td class="ln">37</td><td><span class="concept" tabindex="0">theme_override_font_sizes<span class="tip" role="tooltip"><b>Theme override</b> â€” a font size stored on this node. Here it is the only layout change of Step 2: it shrinks the title on every device, not only on phones.</span></span>/font_size = 72</td></tr>
+<tr class="ctx"><td class="ln">38</td><td>text = &quot;Hack star&quot;</td></tr>
+<tr class="ctx"><td class="ln">39</td><td>horizontal_alignment = 1</td></tr>
+</table>
+    <p><strong>What changed:</strong> The title's font size drops by a quarter. <strong>Why it matters:</strong> It changes the look on desktop, iPad and phone; the real window is laid out at 1280 logical pixels wide, where 96 fitted (see the semantic diff card). <strong>Check:</strong> Whether the shrink is wanted; finding 2.</p>
+  </article>
+  <article class="card" id="c2">
+    <h3>2 Â· Screens are put into a SubViewport</h3>
+    <p class="note"><code>hack_star_godot/tests/test_screen_sizes.gd:22-34</code> Â· 1e23bc5 Â· Step 2 Â· D5 Â· S2</p>
+    <table class="diff">
+<tr class="add"><td class="ln">22</td><td>func _show_in_viewport(scene: PackedScene, size: Vector2i) -&gt; Array:</td></tr>
+<tr class="add"><td class="ln">23</td><td>    var viewport: SubViewport = <span class="concept" tabindex="0">SubViewport.new()<span class="tip" role="tooltip"><b>SubViewport</b> â€” an off-screen viewport of a given size. It does not use the project's canvas_items stretch, so the screen is laid out at physical pixels here.</span></span></td></tr>
+<tr class="add"><td class="ln">24</td><td>    viewport.size = size</td></tr>
+<tr class="add"><td class="ln">25</td><td>    add_child_autofree(viewport)</td></tr>
+<tr class="add"><td class="ln">26</td><td>    var root: Node = scene.instantiate()</td></tr>
+<tr class="add"><td class="ln">27</td><td>    viewport.add_child(root)</td></tr>
+<tr class="add"><td class="ln">28</td><td>    await wait_process_frames(2)</td></tr>
+<tr class="add"><td class="ln">29</td><td>    return [viewport, root]</td></tr>
+<tr class="add"><td class="ln">30</td><td></td></tr>
+<tr class="add"><td class="ln">31</td><td></td></tr>
+<tr class="add"><td class="ln">32</td><td>func _assert_inside(control: Control, visible_rect: Rect2, label: String) -&gt; void:</td></tr>
+<tr class="add"><td class="ln">33</td><td>    var rect: Rect2 = control.get_global_rect()</td></tr>
+<tr class="add"><td class="ln">34</td><td>    assert_true(visible_rect.<span class="concept" tabindex="0">encloses<span class="tip" role="tooltip"><b>Rect2.encloses</b> â€” true when the whole control rectangle lies inside the visible one; this is the D5 check for â€œnot cut offâ€.</span></span>(rect), &quot;%s %s is inside %s&quot; % [label, rect, visible_rect])</td></tr>
+</table>
+    <p><strong>What changed:</strong> Each screen is laid out in a SubViewport of the D5 size and every control must lie inside it. <strong>Why it matters:</strong> It turns S2 into an automatic check without a device. <strong>Check:</strong> The SubViewport has no stretch: 390Ã—844 here is 390 logical pixels, while the game window shows 1280Ã—2770 (measured). The check is stricter than reality â€” finding 2.</p>
+  </article>
+  <article class="card" id="c3">
+    <h3>3 Â· The touch test sends a mouse click</h3>
+    <p class="note"><code>hack_star_godot/tests/test_screen_sizes.gd:36-103</code> Â· 1e23bc5 Â· Step 2 Â· S3</p>
+    <table class="diff">
+<tr class="add"><td class="ln">36</td><td></td></tr>
+<tr class="add"><td class="ln">37</td><td>func _click(viewport: SubViewport, control: Control) -&gt; void:</td></tr>
+<tr class="add"><td class="ln">38</td><td>    var position: Vector2 = control.get_global_rect().get_center()</td></tr>
+<tr class="add"><td class="ln">39</td><td>    for pressed: bool in [true, false]:</td></tr>
+<tr class="add"><td class="ln">40</td><td>        var event: InputEventMouseButton = InputEventMouseButton.new()</td></tr>
+<tr class="add"><td class="ln">41</td><td>        event.button_index = MOUSE_BUTTON_LEFT</td></tr>
+<tr class="add"><td class="ln">42</td><td>        event.pressed = pressed</td></tr>
+<tr class="add"><td class="ln">43</td><td>        event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0</td></tr>
+<tr class="add"><td class="ln">44</td><td>        event.position = position</td></tr>
+<tr class="add"><td class="ln">45</td><td>        event.global_position = position</td></tr>
+<tr class="add"><td class="ln">46</td><td>        viewport.<span class="concept" tabindex="0">push_input<span class="tip" role="tooltip"><b>Viewport.push_input</b> â€” delivers one event to the viewport's GUI. Touch-to-mouse emulation happens earlier, in <code>Input</code>, so pushing a mouse event skips it.</span></span>(event)</td></tr>
+<tr class="ctx"><td class="ln"></td><td>â€¦</td></tr>
+<tr class="add"><td class="ln">92</td><td></td></tr>
+<tr class="add"><td class="ln">93</td><td></td></tr>
+<tr class="add"><td class="ln">94</td><td>func test_play_reacts_to_touch() -&gt; void:</td></tr>
+<tr class="add"><td class="ln">95</td><td>    assert_true(</td></tr>
+<tr class="add"><td class="ln">96</td><td>        ProjectSettings.get_setting(&quot;input_devices/pointing/<span class="concept" tabindex="0">emulate_mouse_from_touch<span class="tip" role="tooltip"><b>Touch emulation</b> â€” Godot's Input turns a touch into a left click. The test only reads the setting; no touch event is ever sent.</span></span>&quot;, true),</td></tr>
+<tr class="add"><td class="ln">97</td><td>        &quot;a touch becomes a left mouse click&quot;</td></tr>
+<tr class="add"><td class="ln">98</td><td>    )</td></tr>
+<tr class="add"><td class="ln">99</td><td>    var shown: Array = await _show_in_viewport(START_SCREEN, Vector2i(844, 390))</td></tr>
+<tr class="add"><td class="ln">100</td><td>    var button: Button = shown[1].get_node(&quot;Center/Column/PlayButton&quot;)</td></tr>
+<tr class="add"><td class="ln">101</td><td>    _drop_handlers(button)</td></tr>
+<tr class="add"><td class="ln">102</td><td>    watch_signals(button)</td></tr>
+<tr class="add"><td class="ln">103</td><td>    # The touch Godot emulates is the same left-button press and release at that point.</td></tr>
+</table>
+    <p><strong>What changed:</strong> Play and Back are pressed with an InputEventMouseButton pushed into the viewport; the â€œtouchâ€ cases push the same event. <strong>Why it matters:</strong> S3 asks for touch on iPad and phone; the test name claims a touch but checks a click. <strong>Check:</strong> Send an InputEventScreenTouch through Input.parse_input_event (or rename the test and note the gap) â€” finding 1.</p>
+  </article>
+  <article class="card" id="c4">
+    <h3>4 Â· Arena corners in view at every size</h3>
+    <p class="note"><code>hack_star_godot/tests/test_screen_sizes.gd:66-82</code> Â· 1e23bc5 Â· Step 2 Â· S2, S11</p>
+    <table class="diff">
+<tr class="add"><td class="ln">66</td><td>func test_arena_fits_every_size() -&gt; void:</td></tr>
+<tr class="add"><td class="ln">67</td><td>    for label: String in SIZES:</td></tr>
+<tr class="add"><td class="ln">68</td><td>        var size: Vector2i = SIZES[label]</td></tr>
+<tr class="add"><td class="ln">69</td><td>        var shown: Array = await _show_in_viewport(ARENA_SCENE, size)</td></tr>
+<tr class="add"><td class="ln">70</td><td>        var arena: Node3D = shown[1]</td></tr>
+<tr class="add"><td class="ln">71</td><td>        var visible_rect: Rect2 = Rect2(Vector2.ZERO, Vector2(size))</td></tr>
+<tr class="add"><td class="ln">72</td><td>        _assert_inside(arena.get_node(&quot;Hud/BackButton&quot;), visible_rect, &quot;%s Back&quot; % label)</td></tr>
+<tr class="add"><td class="ln">73</td><td>        var joystick: TouchJoystick = arena.get_node(&quot;Hud/TouchJoystick&quot;)</td></tr>
+<tr class="add"><td class="ln">74</td><td>        _assert_inside(joystick, visible_rect, &quot;%s joystick&quot; % label)</td></tr>
+<tr class="add"><td class="ln">75</td><td>        _assert_inside(arena.get_node(&quot;Hud/FpsLabel&quot;), visible_rect, &quot;%s FPS label&quot; % label)</td></tr>
+<tr class="add"><td class="ln">76</td><td>        var camera: Camera3D = arena.get_node(&quot;Camera&quot;)</td></tr>
+<tr class="add"><td class="ln">77</td><td>        for corner: Vector3 in ARENA_CORNERS:</td></tr>
+<tr class="add"><td class="ln">78</td><td>            assert_true(</td></tr>
+<tr class="add"><td class="ln">79</td><td>                visible_rect.has_point(camera.<span class="concept" tabindex="0">unproject_position<span class="tip" role="tooltip"><b>unproject_position</b> â€” the screen point of a 3D point. Used to show each wall corner lands inside the viewport after the arena framed its camera.</span></span>(corner)),</td></tr>
+<tr class="add"><td class="ln">80</td><td>                &quot;%s corner %s in view&quot; % [label, corner]</td></tr>
+<tr class="add"><td class="ln">81</td><td>            )</td></tr>
+<tr class="add"><td class="ln">82</td><td>        shown[0].queue_free()</td></tr>
+</table>
+    <p><strong>What changed:</strong> For the five sizes: Back, joystick and FPS label inside, and the four wall corners on screen. <strong>Why it matters:</strong> It checks the camera framing of spec 01 in portrait and landscape, the core of S2 for the 3D view. <strong>Check:</strong> ARENA_CORNERS is a copy of arena.gd's constant (lines 14-19) â€” finding 7.</p>
+  </article>
+  <article class="card" id="c5">
+    <h3>5 Â· Server, hack codes and rooms (D2, D3)</h3>
+    <p class="note"><code>hack_star_godot/docs/architecture.md:88-106</code> Â· ec028e4 Â· Step 1 Â· S13, S15</p>
+    <table class="diff">
+<tr class="add"><td class="ln">88</td><td>## Server, hack codes and rooms (*planned — spec 05, spec 14*)</td></tr>
+<tr class="add"><td class="ln">89</td><td></td></tr>
+<tr class="add"><td class="ln">90</td><td>Rooms and hack codes come from the **existing FastAPI server** in `server/` (S15), unchanged</td></tr>
+<tr class="add"><td class="ln">91</td><td>and with no Godot-only endpoint, so the Godot game and the Svelte game share the same codes</td></tr>
+<tr class="add"><td class="ln">92</td><td>and rooms. The Godot game calls it with `HTTPRequest` and `<span class="concept" tabindex="0">WebSocketPeer<span class="tip" role="tooltip"><b>HTTPRequest / WebSocketPeer</b> â€” Godot's HTTP and WebSocket clients; with them the game uses the existing FastAPI API without a Godot-only endpoint (D2).</span></span>`:</td></tr>
+<tr class="add"><td class="ln">93</td><td></td></tr>
+<tr class="add"><td class="ln">94</td><td>| Call | What | Spec |</td></tr>
+<tr class="add"><td class="ln">95</td><td>|------|------|------|</td></tr>
+<tr class="add"><td class="ln">96</td><td>| `GET /api/hacks` | The hack codes (for the printable QR page) | 05 |</td></tr>
+<tr class="add"><td class="ln">97</td><td>| `POST /api/hacks/redeem` with `{&quot;code&quot;: &quot;…&quot;}` | The hack for a code (any case, spaces trimmed), or 404 &quot;Unknown code&quot; | 05 |</td></tr>
+<tr class="add"><td class="ln">98</td><td>| WebSocket `/api/rooms` | Rooms with up to 2 friends: the messages `create`, `join`, `start`, `state`, `lobby` and `input` from the client; `room`, `left`, `closed` and `error` from the server (`server/src/hack_star_server/rooms.py`) | 14 |</td></tr>
+<tr class="add"><td class="ln">99</td><td></td></tr>
+<tr class="add"><td class="ln">100</td><td>**Same address (D3).** The web export reaches the server at `/api` on the address the page came</td></tr>
+<tr class="add"><td class="ln">101</td><td>from, as the Svelte game does through the Vite proxy (`ui/vite.config.ts`: `/api` goes to</td></tr>
+<tr class="add"><td class="ln">102</td><td>`127.0.0.1:8180`, WebSockets included). That needs no CORS settings in the server and works</td></tr>
+<tr class="add"><td class="ln">103</td><td>the same on an iPad over Wi-Fi. The local tool that serves `build/web/` and forwards `/api`</td></tr>
+<tr class="add"><td class="ln">104</td><td>(HTTP and WebSocket) to the server is built by spec 05; until then `tools/serve_web.ps1`</td></tr>
+<tr class="add"><td class="ln">105</td><td>only serves the files (port 8060) and the game does not call the server. The server runs with</td></tr>
+<tr class="add"><td class="ln">106</td><td>`uv` from the `server/` folder; its tests stay in `server/tests/`.</td></tr>
+</table>
+    <p><strong>What changed:</strong> The three endpoints, the same-address rule and the deferred proxy tool. <strong>Why it matters:</strong> Specs 05 and 14 build on it; S15 keeps one server for both games. <strong>Check:</strong> The endpoint list matches server/src/hack_star_server (checked: /api/hacks, /api/hacks/redeem, /api/rooms).</p>
+  </article>
+  <article class="card" id="c6">
+    <h3>6 Â· Architecture still says Step 2 is planned</h3>
+    <p class="note"><code>hack_star_godot/docs/architecture.md:42-125</code> Â· ec028e4 Â· Step 1 Â· S13</p>
+    <table class="diff">
+<tr class="add"><td class="ln">42</td><td></td></tr>
+<tr class="add"><td class="ln">43</td><td>**Camera and screen sizes (S2, S11).** The arena camera looks down at 55° from behind and above</td></tr>
+<tr class="add"><td class="ln">44</td><td>(3D, seen from above at an angle) and moves back until the four top corners of the walls are</td></tr>
+<tr class="add"><td class="ln">45</td><td>inside the screen with a margin, so the arena fits landscape and portrait. It does this again</td></tr>
+<tr class="add"><td class="ln">46</td><td>on every `size_changed` of the viewport. The UI uses anchors and containers, not fixed pixel</td></tr>
+<tr class="add"><td class="ln">47</td><td>positions, so it fits a desktop, an iPad and a phone; tests that check this in sub-viewports</td></tr>
+<tr class="add"><td class="ln">48</td><td>of these sizes are *planned — this spec, Step 2*.</td></tr>
+<tr class="ctx"><td class="ln"></td><td>â€¦</td></tr>
+<tr class="add"><td class="ln">121</td><td>## Tests and checks</td></tr>
+<tr class="add"><td class="ln">122</td><td></td></tr>
+<tr class="add"><td class="ln">123</td><td>Tests are GUT 9.7.1 files in `tests/` (`test_movement.gd` checks `game/movement.gd`;</td></tr>
+<tr class="add"><td class="ln">124</td><td>`test_start_screen.gd`, `test_arena.gd` and `test_touch_joystick.gd` check the scenes). Run</td></tr>
+<tr class="add"><td class="ln">125</td><td>them headless, from the `hack_star_godot` folder:</td></tr>
+</table>
+    <p><strong>What changed:</strong> Written in Step 1, before the tests existed. <strong>Why it matters:</strong> S13 says the document is kept up to date; after Step 2 these two places are wrong. <strong>Check:</strong> Finding 3.</p>
+  </article>
+  <article class="card" id="c7">
+    <h3>7 Â· README: docs/ and the server</h3>
+    <p class="note"><code>hack_star_godot/README.md:14-28</code> Â· d0c9ac2 Â· Step 3 Â· S8, S10, S14, S15</p>
+    <table class="diff">
+<tr class="ctx"><td class="ln">14</td><td>| `game/` | Pure rules (movement) without scenes |</td></tr>
+<tr class="ctx"><td class="ln">15</td><td>| `tests/` | Automated tests (GUT) |</td></tr>
+<tr class="add"><td class="ln">16</td><td>| `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |</td></tr>
+<tr class="ctx"><td class="ln">17</td><td>| `addons/gut/` | GUT 9.7.1, the test tool, with its licence |</td></tr>
+<tr class="ctx"><td class="ln">18</td><td>| `tools/` | PowerShell scripts for the checks, export and serving |</td></tr>
+<tr class="ctx"><td class="ln"></td><td>â€¦</td></tr>
+<tr class="ctx"><td class="ln">20</td><td>| `.specs/` | Specs of this game (see [Specs](#specs)) |</td></tr>
+<tr class="ctx"><td class="ln">21</td><td></td></tr>
+<tr class="add"><td class="ln">22</td><td>Read [docs/architecture.md](docs/architecture.md) before you work on a spec, and keep it up to</td></tr>
+<tr class="add"><td class="ln">23</td><td>date in the spec that changes it. Rooms and hack codes will come from the FastAPI server in</td></tr>
+<tr class="add"><td class="ln">24</td><td>`server/` of the repository, the same server as the Svelte game; the Godot game does not have</td></tr>
+<tr class="add"><td class="ln">25</td><td>its own.</td></tr>
+<tr class="add"><td class="ln">26</td><td></td></tr>
+<tr class="ctx"><td class="ln">27</td><td>## Install on Windows</td></tr>
+<tr class="ctx"><td class="ln">28</td><td></td></tr>
+<tr class="ctx"><td class="ln"></td><td>â€¦</td></tr>
+</table>
+    <p><strong>What changed:</strong> docs/ in the Layout table, a pointer to the architecture, one line on the FastAPI server. <strong>Why it matters:</strong> Developers find the architecture from the README (S14). <strong>Check:</strong> Links resolve (checked).</p>
+  </article>
+  <article class="card" id="c8">
+    <h3>8 Â· Ordered list: MVP line and status</h3>
+    <p class="note"><code>hack_star_godot/.specs/features/README.md:7-28</code> Â· 06c088c, d0c9ac2 Â· Step 3 Â· S8, S10</p>
+    <table class="diff">
+<tr class="ctx"><td class="ln">7</td><td>Each spec only needs features of specs with a lower number.</td></tr>
+<tr class="ctx"><td class="ln">8</td><td></td></tr>
+<tr class="add"><td class="ln">9</td><td>The MVP is specs 03–08 (features F0–F5, statement S8); the order follows the feature list.</td></tr>
+<tr class="add"><td class="ln">10</td><td></td></tr>
+<tr class="ctx"><td class="ln">11</td><td>**How to work through it:** take the first spec that is not *closed*, then</td></tr>
+<tr class="ctx"><td class="ln">12</td><td>1. **S0** — check each statement against the Godot game as built so far and the Godot</td></tr>
+<tr class="ctx"><td class="ln"></td><td>â€¦</td></tr>
+<tr class="ctx"><td class="ln">24</td><td>| 01 | [Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | — (Godot spec) | closed |</td></tr>
+<tr class="ctx"><td class="ln">25</td><td>| 02 | [Move Specs to Godot](done/2026_11_21_02_move_specs_to_godot_spec.md) | — (Godot spec) | closed |</td></tr>
+<tr class="del"><td class="ln">24</td><td>| 03 | [MVP and Architecture](2026_11_12_03_mvp_and_architecture_spec.md) | [2026_11_12_mvp_and_architecture_spec.md](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1) | requirements |</td></tr>
+<tr class="add"><td class="ln">26</td><td>| 03 | [MVP and Architecture](2026_11_12_03_mvp_and_architecture_spec.md) | [2026_11_12_mvp_and_architecture_spec.md](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1) | planned |</td></tr>
+<tr class="ctx"><td class="ln">27</td><td>| 04 | [Basic UI](2026_11_12_04_basic_ui_spec.md) | [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2) | requirements |</td></tr>
+<tr class="ctx"><td class="ln">28</td><td>| 05 | [Hack Codes](2026_11_12_05_hack_codes_spec.md) | [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3) | requirements |</td></tr>
+</table>
+    <p><strong>What changed:</strong> One MVP line; spec 03 from requirements to planned. <strong>Why it matters:</strong> The list is how the next spec is picked. <strong>Check:</strong> All Steps are done: the legend's status is <em>implemented</em> â€” finding 6.</p>
+  </article>
+</section>
+
+<section id="findings"><h2>Findings</h2>
+  <p>Ran: <code>tools/test.ps1</code> (25 of 25 pass), <code>tools/lint.ps1</code> (OK). Good: the arena check reuses the real camera framing; buttons are pressed through real input events, not by emitting the signal; the architecture marks every unbuilt part with its spec, and its server section matches the server's code; Step Notes say what was checked.</p>
+  <table><tr><th>#</th><th>Finding</th><th>Layer</th><th>Class</th><th>Severity</th><th>Target</th></tr><tr><td>1</td><td>The â€œtouchâ€ cases (<code>test_play_reacts_to_touch</code>, second press in <code>test_back_reacts_to_mouse_click_and_touch</code>) push the same <code>InputEventMouseButton</code> as the click cases; no touch event is sent, only the <code>emulate_mouse_from_touch</code> setting is read â€” the touch half of S3 is not exercised</td><td>code</td><td>test</td><td class="sev-should-fix">Should-fix</td><td>fix now</td></tr><tr><td>2</td><td>D5's SubViewports do not apply the project's <code>canvas_items</code> stretch: at 390Ã—844 the test lays out 390 logical px, the game window 1280Ã—2770 (measured). The tests are stricter than reality, and the title 96 â†’ 72 fixes a cut-off no player sees, making the title smaller on every device</td><td>spec</td><td>spec</td><td class="sev-should-fix">Should-fix</td><td>plan decision</td></tr><tr><td>3</td><td><code>docs/architecture.md</code> still says the sub-viewport tests are â€œplanned â€” this spec, Step 2â€ (line 48) and its Tests section omits <code>test_screen_sizes.gd</code> (S13: kept up to date)</td><td>spec</td><td>docs</td><td class="sev-should-fix">Should-fix</td><td>fix now</td></tr><tr><td>4</td><td>Definition of Done: the <em>Implementation</em> line is not ticked although all three Steps are âœ… and the checks pass</td><td>spec</td><td>spec</td><td class="sev-should-fix">Should-fix</td><td>fix now</td></tr><tr><td>5</td><td>Spec Overview row 3 has its Detail cell twice; Step 3 Notes end with a broken template fragment (â€œ, append: **Done (â€¦)** â€” summary + verifying result. --&gt;â€)</td><td>spec</td><td>docs</td><td class="">Nit</td><td>fix now</td></tr><tr><td>6</td><td><code>.specs/features/README.md</code>: spec 03's status is <em>planned</em>, the legend has <em>implemented</em> for a spec whose Steps are done</td><td>spec</td><td>docs</td><td class="">Nit</td><td>fix now</td></tr><tr><td>7</td><td><code>ARENA_CORNERS</code> in the test is a copy of <code>scenes/arena.gd</code>'s constant; reading it from the arena script keeps them from drifting</td><td>code</td><td>guideline</td><td class="">Nit</td><td>fix now</td></tr></table>
+</section>
+
+<section id="not-covered"><h2>Not covered</h2><ul>
+  <li><code>tests/test_screen_sizes.gd.uid</code> â€” generated by Godot.</li>
+  <li>The spec file itself (Stage log, Notes) â€” reviewed under Layer 1, not as hunks.</li>
+  <li>Commits of the other specs on <code>feature/godot-mvp</code> â€” out of this range.</li>
+  <li>The play-test on a real iPad and phone (S1, S3, S6, S11 device parts) â€” deferred by D6 to the author.</li>
+</ul></section>
+
+<section id="glossary"><h2>Concepts glossary</h2><dl><dt>SubViewport</dt><dd>A Godot node that renders its children into its own off-screen area of a given size.</dd><dt>canvas_items stretch</dt><dd>Project setting: the 2D UI is laid out at the base size (1280Ã—720) and scaled to the window; with aspect <code>expand</code> the short side grows.</dd><dt>push_input</dt><dd><code>Viewport.push_input</code> hands an input event to one viewport, as if the player had sent it there.</dd><dt>emulate_mouse_from_touch</dt><dd>Project setting (default on): Godot's <code>Input</code> turns a screen touch into a left mouse press and release.</dd><dt>unproject_position</dt><dd><code>Camera3D.unproject_position</code> gives the 2D screen point where a 3D point appears.</dd><dt>theme_override_font_sizes</dt><dd>A per-node override of the theme's font size, stored in the scene file.</dd><dt>HTTPRequest / WebSocketPeer</dt><dd>Godot's built-in HTTP client node and WebSocket client; both work in the web export.</dd></dl></section>
+
+<section id="checklist"><h2>Reviewer checklist</h2>
+  <ul>
+    <li><input type="checkbox" id="chk1"> <label for="chk1">Every statement the change claims is met</label></li>
+    <li><input type="checkbox" id="chk2"> <label for="chk2">Each Before | After is what I expect</label></li>
+    <li><input type="checkbox" id="chk3"> <label for="chk3">The findings are acceptable or have a target</label></li>
+  </ul>
+</section>
+
+<script type="application/json" id="review-meta">
+{
+ "version": 1,
+ "date": "2026-11-21",
+ "branch": "feature/godot-mvp",
+ "base": "89ada86",
+ "head": "d0c9ac2",
+ "record": "../changes/godot-mvp-03-mvp-and-architecture/change_record.yaml",
+ "commits": [
+  "d0c9ac2",
+  "1e23bc5",
+  "ec028e4",
+  "06c088c"
+ ],
+ "covered": [
+  "hack_star_godot/scenes/start_screen.tscn:35-39",
+  "hack_star_godot/tests/test_screen_sizes.gd:22-34",
+  "hack_star_godot/tests/test_screen_sizes.gd:36-103",
+  "hack_star_godot/tests/test_screen_sizes.gd:66-82",
+  "hack_star_godot/docs/architecture.md:88-106",
+  "hack_star_godot/docs/architecture.md:42-125",
+  "hack_star_godot/README.md:14-28",
+  "hack_star_godot/.specs/features/README.md:7-28"
+ ],
+ "findings": [
+  {
+   "n": 1,
+   "severity": "Should-fix",
+   "target": "fix now",
+   "status": "open"
+  },
+  {
+   "n": 2,
+   "severity": "Should-fix",
+   "target": "plan decision",
+   "status": "open"
+  },
+  {
+   "n": 3,
+   "severity": "Should-fix",
+   "target": "fix now",
+   "status": "open"
+  },
+  {
+   "n": 4,
+   "severity": "Should-fix",
+   "target": "fix now",
+   "status": "open"
+  },
+  {
+   "n": 5,
+   "severity": "Nit",
+   "target": "fix now",
+   "status": "open"
+  },
+  {
+   "n": 6,
+   "severity": "Nit",
+   "target": "fix now",
+   "status": "open"
+  },
+  {
+   "n": 7,
+   "severity": "Nit",
+   "target": "fix now",
+   "status": "open"
+  }
+ ],
+ "specs": [
+  "features/2026_11_12_03_mvp_and_architecture_spec.md"
+ ]
+}
+</script>
+</main>
+</div>
+</body>
+</html>
