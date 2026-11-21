@@ -7,6 +7,8 @@ const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
 const RESULT_PATHS: Array[String] = [
 	"Margin/Column/Heading",
 	"Margin/Column/Line",
+	"Margin/Column/TrophyPanel",
+	"Margin/Column/TrophyPanel/Trophies/Celebration",
 	"Margin/Column/Body/FighterStage",
 	"Margin/Column/Body/Controls/PlayAgainButton",
 	"Margin/Column/Body/Controls/HomeButton",
@@ -82,22 +84,32 @@ func test_the_match_hud_fits_every_size() -> void:
 		shown[0].queue_free()
 
 
-func _set_result(outcome: Match.Result, place: int) -> void:
+func _set_result(outcome: Match.Result, place: int, before: int = 1240) -> void:
 	GameState.last_result = {
-		"outcome": outcome, "place": place, "fighter": "blaze", "skin": "default"
+		"outcome": outcome,
+		"place": place,
+		"fighter": "blaze",
+		"skin": "default",
+		"reward": Trophies.reward(before, outcome, GameState.match_settings),
 	}
 
 
 func test_the_result_screen_fits_every_size() -> void:
 	for label: String in SIZES:
 		var size: Vector2i = SIZES[label]
-		for outcome: Match.Result in [Match.Result.VICTORY, Match.Result.DEFEAT]:
-			_set_result(outcome, 3)
+		for case: Array in [
+			[Match.Result.VICTORY, 1240], [Match.Result.DEFEAT, 1240], [Match.Result.VICTORY, 1990]
+		]:
+			_set_result(case[0], 3, case[1])
 			var shown: Array = await _show_in_viewport(RESULT_SCENE, size)
+			shown[1].finish_count()
+			await wait_process_frames(2)
 			var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
 			for path: String in RESULT_PATHS:
 				var control: Control = shown[1].get_node(path)
-				_assert_inside(control, visible_rect, "%s %s %s" % [label, outcome, path])
+				if not control.is_visible_in_tree():
+					continue
+				_assert_inside(control, visible_rect, "%s %s %s" % [label, case, path])
 			shown[0].queue_free()
 
 

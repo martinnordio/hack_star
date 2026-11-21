@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/result_screen.gd" id="1_result"]
 [ext_resource type="PackedScene" path="res://scenes/ui/fighter_stage.tscn" id="2_stage"]
+[ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="3_badge"]
 
 [node name="Result" type="Control"]
 layout_mode = 3
@@ -50,6 +51,60 @@ theme_type_variation = &"SubheadingLabel"
 text = "You are the last one standing!"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="TrophyPanel" type="PanelContainer" parent="Margin/Column"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="Trophies" type="VBoxContainer" parent="Margin/Column/TrophyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ChangeLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies"]
+layout_mode = 2
+theme_type_variation = &"SubheadingLabel"
+text = "+0 trophies"
+horizontal_alignment = 1
+
+[node name="CountLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies"]
+layout_mode = 2
+text = "0 / 1000"
+horizontal_alignment = 1
+
+[node name="PrestigeBar" type="ProgressBar" parent="Margin/Column/TrophyPanel/Trophies"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+show_percentage = false
+
+[node name="Celebration" type="HBoxContainer" parent="Margin/Column/TrophyPanel/Trophies"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PrestigeLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies/Celebration"]
+layout_mode = 2
+theme_type_variation = &"HeadingLabel"
+text = "PRESTIGE 1!"
+
+[node name="PrestigeBadge" parent="Margin/Column/TrophyPanel/Trophies/Celebration" instance=ExtResource("3_badge")]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Burst" type="CPUParticles2D" parent="Margin/Column/TrophyPanel/Trophies/Celebration"]
+emitting = false
+amount = 48
+lifetime = 1.4
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, 400)
+initial_velocity_min = 220.0
+initial_velocity_max = 420.0
+scale_amount_min = 6.0
+scale_amount_max = 12.0
+color = Color(1, 0.82, 0.2, 1)
 
 [node name="Body" type="BoxContainer" parent="Margin/Column"]
 layout_mode = 2

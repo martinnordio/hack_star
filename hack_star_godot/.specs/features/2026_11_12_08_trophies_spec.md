@@ -20,6 +20,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 862 k (43 k in · 811 k cached · 8 k out) | CHF 0.45 (53 credits) | Step 2 done (`usage.ps1 -AgentName s08-step2` from 21:49:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.04 M (48 k in · 978 k cached · 10 k out) | CHF 0.27 (32 credits) | Step 3 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:01:47" -Until "2026-11-21 22:06:30"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 565 k (14 k in · 545 k cached · 7 k out) | CHF 0.13 (15 credits) | Step 4 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:06:30" -Until "2026-11-21 22:09:00"`) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.58 M (40 k in · 2.52 M cached · 17 k out) | CHF 0.44 (52 credits) | Step 5 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:09:00" -Until "2026-11-21 22:14:00"`) |
 ---
 
 # Part 1 · Requirements
@@ -155,7 +156,7 @@ kept, S11)._
 | **2** | Save file version 2 | reasoning (Claude Opus 5.5) — a new saved format with versioning, migration of the spec 05 file and checks of every field (D3) | ✅ Done | [→ Step 2](#step-2--save-file-version-2) |
 | **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ✅ Done | [→ Step 3](#step-3--progress-loaded-and-saved) |
 | **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ✅ Done | [→ Step 4](#step-4--trophies-after-a-match) |
-| **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ⬜ Not started | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
+| **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ✅ Done | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
 | **6** | MVP flow check | standard (Claude Sonnet 5.5) — one end-to-end test across the screens of specs 04–08 (D9) | ⬜ Not started | [→ Step 6](#step-6--mvp-flow-check) |
 | **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
 
@@ -314,18 +315,27 @@ The result screen shows the trophy change counting up, the new count and the bar
 Prestige, and celebrates a new Prestige; it fits every screen size (S4, S5, S12, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/result_screen.tscn` + `.gd` after D6 (trophy panel, count-up, celebration,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/result_screen.tscn` + `.gd` after D6 (trophy panel, count-up, celebration,
       `finish_count()`, the fighter hidden on short screens).
-- [ ] Tests (D9): `test_result_screen.gd` / new `test_result_trophies.gd`;
+- [x] Tests (D9): `test_result_screen.gd` / new `test_result_trophies.gd`;
       `test_screen_sizes_match.gd`.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844
       and 844×390 of a victory with Blaze at 1240 (+10, "1250 / 2000"), of a defeat (+0) and of
       a win from 1990 ("PRESTIGE 2!" with the badge); the trophy part and both buttons on
       screen.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 22:09
+
+**Done (2026-11-21 · ~5 min · Claude Sonnet 5.5)** — the result screen has a `TrophyPanel`
+(change, count, `PrestigeBar` with theme styles, `Celebration` with the badge, a pop and a gold
+burst), a 1 s count-up and `finish_count()`; the `ProgressBar` styles are in the theme. Differs
+from D6: the content height of a phone on its side is 650 px, not below 520, so `SHORT_HEIGHT`
+is 700 px, and short screens also use a smaller heading and buttons so the buttons fit.
+Screenshots (9: three cases × 1280×720, 390×844, 844×390, capture script removed) show the
+panel and both buttons on screen. `tools/test.ps1` 341 tests passed, `tools/lint.ps1` OK ·
+suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · ~2.58 M · ~CHF 0.44 (52 credits)
 
 ---
 
