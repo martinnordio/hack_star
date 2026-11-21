@@ -15,6 +15,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row below | included in the plan row below | Part 1 revised: open questions answered (Worlds moved now from its branch, Bug Fixes own spec, global numbers, `overall_req.md` linked); S1, S7 changed; S13 requirement 0, S14 Godot architecture, S15 Godot UI, S16, S17 (on `main`) added |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.05 M (26 k in · 3.01 M cached · 16 k out) | CHF 0.88 (105 credits) | Part 2 written (also covers the requirements revision above) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 714 k (84 k in · 613 k cached · 17 k out) | CHF 0.74 (88 credits) | Step 1 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 801 k (74 k in · 706 k cached · 21 k out) | CHF 0.41 (49 credits) | Step 2 done |
 
 ---
 
@@ -160,7 +161,7 @@ linked, not copied (S16)._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Ordered list; move 03 MVP and Architecture and 04 Basic UI for Godot | reasoning (Claude Opus 5.5) — Godot architecture and UI statements | ✅ Done | [→ Step 1](#step-1--ordered-list-move-03-mvp-and-architecture-and-04-basic-ui-for-godot) |
-| **2** | Move 05–10 | standard (Claude Sonnet 5.5) — same rules, applied to six specs | ⬜ Not started | [→ Step 2](#step-2--move-0510) |
+| **2** | Move 05–10 | standard (Claude Sonnet 5.5) — same rules, applied to six specs | ✅ Done | [→ Step 2](#step-2--move-0510) |
 | **3** | Move 11–15 | standard (Claude Sonnet 5.5) — same rules, applied to five specs | ⬜ Not started | [→ Step 3](#step-3--move-1115) |
 | **4** | Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds | standard (Claude Sonnet 5.5) — same rules; S0 variant for bugs; Worlds from its branch | ⬜ Not started | [→ Step 4](#step-4--move-16-bug-fixes-17-fighter-studio-18-worlds) |
 | **5** | Final check of all moved specs | light (Claude Haiku 5.5) — running the checks, fixing links | ⬜ Not started | [→ Step 5](#step-5--final-check-of-all-moved-specs) |
@@ -240,16 +241,28 @@ future targets above; `git status --short .specs` empty. suggested: reasoning (C
 and *Skins Shop* are moved in their order (S1–S10, S13, S16).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Move 05 `hack_codes`, 06 `graphics_demo`, 07 `first_match`, 08 `trophies`, 09
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Move 05 `hack_codes`, 06 `graphics_demo`, 07 `first_match`, 08 `trophies`, 09
       `unlock_and_upgrade`, 10 `skins_shop` (D2–D6), one after another; technology
       statements per S7; update the README row of each.
-- [ ] Check (each file): header of D2, S0 first, statements otherwise word for word
+- [x] Check (each file): header of D2, S0 first, statements otherwise word for word
       (compare with the original), no Part 2 content, every link resolves.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 15:23
 
+Only the documentation statements named the Python + Svelte documents (08 S9, 09 S11, 10 S11):
+each is struck through and replaced at the end of the list (08 S10, 09 S12, 10 S12). Python and
+Svelte file paths were removed from *Already in the repository*; the lists of documents point to
+`hack_star_godot/docs/architecture.md` (not written yet, so not a link) and
+[hack_star_godot/README.md](../../README.md). 06 also lists spec 01's Godot arena. No links to
+not-yet-moved specs.
+
+**Done (2026-11-21 · ~2m · Claude Sonnet 5.5)** — 05–10 moved, README rows 05–10 set to
+*requirements*. Check: header of D2 (no `Issue:`), S0 first, only the Part 2 placeholder below
+the marker, all other statements identical to the originals, every relative link resolves with
+`Test-Path`; `git status --short .specs` empty. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 801 k (74 k in · 706 k cached · 21 k out) · CHF 0.41 (49 credits)
 ---
 
 ## Step 3 — Move 11–15

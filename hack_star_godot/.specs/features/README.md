@@ -23,12 +23,12 @@ Update the status of a spec here whenever it changes.
 | 02 | [Move Specs to Godot](2026_11_21_02_move_specs_to_godot_spec.md) | — (Godot spec) | planned |
 | 03 | [MVP and Architecture](2026_11_12_03_mvp_and_architecture_spec.md) | [2026_11_12_mvp_and_architecture_spec.md](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1) | requirements |
 | 04 | [Basic UI](2026_11_12_04_basic_ui_spec.md) | [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2) | requirements |
-| 05 | Hack Codes — `2026_11_12_05_hack_codes_spec.md` | [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3) | to move |
-| 06 | Graphics Demo — `2026_11_12_06_graphics_demo_spec.md` | [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4) | to move |
-| 07 | First Match — `2026_11_12_07_first_match_spec.md` | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | to move |
-| 08 | Trophies — `2026_11_12_08_trophies_spec.md` | [2026_11_12_trophies_spec.md](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6) | to move |
-| 09 | Unlock and Upgrade — `2026_11_12_09_unlock_and_upgrade_spec.md` | [2026_11_12_unlock_and_upgrade_spec.md](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7) | to move |
-| 10 | Skins Shop — `2026_11_12_10_skins_shop_spec.md` | [2026_11_12_skins_shop_spec.md](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8) | to move |
+| 05 | [Hack Codes](2026_11_12_05_hack_codes_spec.md) | [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3) | requirements |
+| 06 | [Graphics Demo](2026_11_12_06_graphics_demo_spec.md) | [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4) | requirements |
+| 07 | [First Match](2026_11_12_07_first_match_spec.md) | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | requirements |
+| 08 | [Trophies](2026_11_12_08_trophies_spec.md) | [2026_11_12_trophies_spec.md](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6) | requirements |
+| 09 | [Unlock and Upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) | [2026_11_12_unlock_and_upgrade_spec.md](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7) | requirements |
+| 10 | [Skins Shop](2026_11_12_10_skins_shop_spec.md) | [2026_11_12_skins_shop_spec.md](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8) | requirements |
 | 11 | Overtime and Match Options — `2026_11_12_11_overtime_and_match_options_spec.md` | [2026_11_12_overtime_and_match_options_spec.md](../../../.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) (#9) | to move |
 | 12 | Super and Hypercharge — `2026_11_12_12_super_and_hypercharge_spec.md` | [2026_11_12_super_and_hypercharge_spec.md](../../../.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) (#11) | to move |
 | 13 | More Fighters — `2026_11_12_13_more_fighters_spec.md` | [2026_11_12_more_fighters_spec.md](../../../.specs/features/done/2026_11_12_more_fighters_spec.md) (#10) | to move |
