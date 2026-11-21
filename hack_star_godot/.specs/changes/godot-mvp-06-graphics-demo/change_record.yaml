@@ -1,0 +1,124 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 06 on feature/godot-mvp (written by REVIEW:, 2026-11-21).
+# Range: this spec's commits only, 0a05959..c38a544 (the branch carries specs 03-08 and 16).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/".
+# Screens and timings: a windowed Godot 4.7.2 run with a temporary capture script (in the
+# git-ignored build/ and the project root, removed); Before from a temporary worktree at
+# 0a05959 (removed). Outputs: a temporary headless script and a temporary GUT probe (removed).
+version: 1
+branch: feature/godot-mvp
+base: 0a05959
+why: |
+  Before adding rules, Hack star needs a playable demo that looks like a Brawl Stars match.
+  Spec 06 turns the plain box arena of spec 01 into a sunny canyon (rocks, cacti as bushes,
+  decoration), puts the selected fighter in it with run and attack animations and a following
+  camera, and adds aiming and shooting (mouse, a second touch stick, a tap), three target
+  dummies, see-through bushes and small effects. No server, nothing saved.
+spec:
+  path: .specs/features/2026_11_12_06_graphics_demo_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13]
+changes:
+  - id: arena
+    kind: ui
+    change: modified
+    object: Arena (scenes/arena.tscn, Play) - canyon, selected fighter, following camera, aim stick
+    note: The box arena becomes a 20 x 26 m canyon built in code from ArenaLayout; the capsule becomes the selected fighter; the camera follows a +-7 x +-5 m box around the fighter instead of framing the whole arena; a second stick bottom-right. Back and the FPS label stay.
+    statements: [S1, S2, S3, S7, S9, S11, S13]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (arena.tscn, default fighter and skin, 1.5 s after it opened)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          same at --resolution 390x844, the touch sticks made visible for the capture
+        views: [phone-portrait]
+  - id: arena-action
+    kind: ui
+    change: added
+    object: Shots, target dummies, bushes and effects in the arena
+    note: A shot in flight towards a dummy with a lowered bar and "480"; the fighter see-through in a cactus patch; a shot fired point-blank at the east border flies out of the arena (finding 1).
+    statements: [S4, S5, S6, S8, S12]
+    examples:
+      - name: shot-and-dummy-1280x720
+        input: |
+          same script, read_player_input off; fighter at (4, 3.5); fire(UP) three times,
+          0.45 s apart, captured 0.2 s after the third shot (after only)
+        views: [desktop]
+      - name: in-bush-1280x720
+        input: |
+          fighter at (-7, 2.75), inside the west cactus patch, 1.5 s (after only)
+        views: [desktop]
+      - name: point-blank-east-wall-1280x720
+        input: |
+          fighter walked against the east border at (8.3, 9.5); fire(RIGHT); captured 0.25 s
+          later (after only)
+        views: [desktop]
+  - id: combat-rules
+    kind: output
+    change: added
+    object: Combat rules (game/combat.gd, Combat), the layout (ArenaLayout) and Movement.follow
+    note: The original game's numbers (16 m/s, 9 m, 0.35 s, 480, 2400); a drag, a tap or no shot on release; the nearest target in range; the mouse ray on the ground; the camera smoothing never overshoots.
+    statements: [S4, S5, S7, S11]
+    examples:
+      - name: outputs
+        input: |
+          godot --headless --path hack_star_godot -s <temporary script>
+          (can_fire, take_damage x6, health_ratio and health_color, release_aim, nearest_target,
+          ground_point, the layout counts, in_bush, follow)
+  - id: shots
+    kind: output
+    change: added
+    object: Shot (scenes/shot.gd) fired with the muzzle inside a wall, a rock or a dummy
+    note: The ray starts at the muzzle, 0.7 m in front of the fighter; against a wall or a dummy the muzzle is already inside, the ray does not report that shape, and the shot passes through (finding 1). Also the facing after a shot while running (finding 5).
+    statements: [S4, S5]
+    examples:
+      - name: point-blank
+        input: |
+          temporary GUT probe: arena.tscn, read_player_input off, the fighter pushed against
+          the east border, the centre rock and the dummy at (4, -2.5), then arena.fire(direction);
+          the Shot's ended(position, hit) recorded
+  - id: physics-layers
+    kind: config
+    change: modified
+    object: Physics layers (project.godot [layer_names], fighter and dummy layers, D13)
+    note: 1 world, 2 fighter, 3 targets; the fighter (layer 2) collides with world and targets, so it cannot walk through a dummy; shots cast against world + targets.
+    statements: [S3, S4]
+    examples:
+      - name: settings
+        input: |
+          git show <rev>:hack_star_godot/project.godot ([layer_names]) and the collision_layer /
+          collision_mask of scenes/fighter.tscn and scenes/target_dummy.tscn
+  - id: arena-performance
+    kind: performance
+    change: modified
+    object: Arena load and frame rate (windowed desktop, 1280x720)
+    note: The arena is ready about 170 ms later (canyon built in code at _ready) and still runs at the 60 fps vsync cap while running and firing. Not a browser or device number (S10 stays with the author).
+    statements: [S10]
+    examples:
+      - name: windowed-1280x720
+        input: |
+          same script, 3 runs per side: ms from instantiate to the second frame; frames per
+          second over 6 s walking a square (after: also fire(UP) every 0.1 s)
+breaking: none
+review:
+  - question: Why build the canyon in code instead of a .tscn?
+    answer: |
+      D2: the layout is data (ArenaLayout), so tests check the start, the dummies and the bushes
+      against the walls without a scene, and Canyon builds walls, cacti and decoration from the
+      same data. MultiMeshes keep the draw calls low (S10); all art is own art (spec 03, S7).
+  - question: How does a touch never fire twice?
+    answer: |
+      D7: the arena reads the mouse in _unhandled_input (Back takes its click first) and ignores
+      mouse events with DEVICE_ID_EMULATION, which Godot makes from touches; the sticks read
+      InputEventScreenTouch. Tests push real events for both cases.
+  - question: Why is the fighter see-through by swapped materials?
+    answer: |
+      D11's fallback: GeometryInstance3D.transparency did nothing in the Compatibility renderer
+      (Step 7 screenshot), so FighterModel swaps each mesh's material for a cached alpha copy.
+  - question: Does the arena change anything outside it?
+    answer: |
+      No server call and no save (D12); server/ and ui/ are unchanged. The home, list, fighter,
+      info, hack and QR screens are untouched; their tests pass (224 in total).

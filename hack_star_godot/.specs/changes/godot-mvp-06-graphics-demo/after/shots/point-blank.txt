@@ -1,0 +1,6 @@
+# Arena.fire(direction) with the fighter pushed against a wall, a rock or a dummy (GUT probe)
+east border (x 9..10), fire east:  fighter x 8.33, muzzle x 9.03 -> ended at (18.03, 0.6, 9.5), hit false
+centre rock (z -0.75..0.75), fire north: fighter z 1.17, muzzle z 0.47 -> ended at (0.0, 0.6, -8.5), hit true (the far dummy at z -9)
+dummy at (4, -2.5), fire north: fighter z -1.53, muzzle z -2.23 -> ended at (4.0, 0.6, -8.0), hit true (a rock); dummy health 2400
+# facing after fire(UP) while running east
+aim yaw 0.0, right after fire 0.0, 2 physics frames later -1.5708 (the run direction)

@@ -1,0 +1,7 @@
+# project.godot [layer_names]
+(none)
+# scenes/fighter.tscn Fighter
+collision_layer = 1 (default)
+collision_mask = 1 (default)
+# scenes/target_dummy.tscn
+(no file)

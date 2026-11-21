@@ -24,6 +24,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (101 k in · 2.70 M cached · 25 k out) | CHF 0.65 (77 credits) | Step 6 done (`usage.ps1 -AgentName s06-steps6-7` from 19:21:59 to 19:36:40) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.15 M (56 k in · 4.07 M cached · 26 k out) | CHF 0.67 (80 credits) | Step 7 done (`usage.ps1 -AgentName s06-steps6-7` from 19:36:40 to 19:45:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.61 M (93 k in · 1.49 M cached · 18 k out) | CHF 0.03 (4 credits) | Step 8 done (`usage.ps1 -AgentName s06-step8` from 18:42:18); the windowed FPS and browser check moved to Deferred Items |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 7.43 M (218 k in · 7.16 M cached · 55 k out) | CHF 3.04 (363 credits) | semantic diff written (6 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-06-graphics-demo.html)); code review: Request changes, 1 Blocking · 2 Should-fix · 3 Nit (`usage.ps1 -AgentName s06-review` from 18:42:18) |
 ---
 
 # Part 1 · Requirements
@@ -526,6 +527,35 @@ Started: 2026-11-21 19:46
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-06-graphics-demo.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Request changes | 1 Blocking · 2 Should-fix · 3 Nit |
+
+### Code review 2026-11-21
+
+Range `0a05959..c38a544` (this spec's commits only). Ran: `tools/test.ps1` (224 of 224 passed),
+`tools/lint.ps1` (OK); record checked with `change_record.schema.json` (checks 6 pass · 3 n/a ·
+0 fail). Before | After: real screenshots from a windowed Godot 4.7.2 run (temporary capture
+script, removed), the before side from a temporary worktree at `0a05959`; the combat outputs
+from a temporary headless script; a temporary GUT probe fired point-blank at a wall, a rock and
+a dummy; the arena's load time and frame rate measured three times per side (windowed desktop
+1280×720: ready in 81 → 249 ms, 60.0 → 59.8 fps while running and firing). Good: the rules are
+pure and follow the decisions (`Combat`, `ArenaLayout`, `Movement.follow`); one `fire()` serves
+the mouse, the stick and the tap; touch and mouse are kept apart in one place
+(`DEVICE_ID_EMULATION`, `_unhandled_input`) with tests that push real events; meshes and
+materials of shots are shared, effects are pools and the canyon's many pieces are MultiMeshes;
+the D11 fallback was found on a screenshot and written down. `server/` and `ui/` are unchanged;
+no debug output, no TODO.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | Shots fired point-blank pass through walls, rocks and dummies. The first ray starts at the muzzle (`scenes/shot.gd:38-43`), 0.7 m in front of the fighter (`fighter.tscn` `Muzzle`); when the fighter touches a wall or a dummy the muzzle is already inside it, and `intersect_ray` does not report a shape the ray starts in. Probe (record block *shots*, screenshot *point-blank-east-wall*): at the east border the shot leaves the arena (ends at x 18); at the centre rock it passes and hits the dummy behind; next to a dummy it passes and the dummy keeps 2400 health. S4 (shots stop at walls, rocks and targets) and S5 are not met there. Fix: cast the first segment from the fighter's centre at muzzle height to the muzzle (or start the shot there), with a test at a wall and at a dummy | spec | spec | Blocking | fix now |
+| 2 | Steps 3 and 4 have no `Started:` and no **Done** line in their Notes (Step completion protocol), and their screenshot checks (Step 3: 1280×720, 390×844, 844×390 with two fighters; Step 4: running and recoil of two fighters) are not recorded, although both are ✅ and the Stage log has their cost rows. Add the Done lines (from the Stage log) and what was checked, or take the screenshots | spec | spec | Should-fix | fix now |
+| 3 | Step 8 is ✅ and the Definition of Done says "every Step's tasks checked", but its browser task is unchecked: S10's "playable within 5 s after Play" and S13's browser check have no measurement in the spec (this review measured only a windowed desktop run: arena ready in 249 ms, 59.8 fps, record block *arena-performance*). Decide: the browser check moves to the author's play-test (a `D<n>`, the task marked as moved), or `tools/serve_web.ps1` and a browser run at CLOSE | spec | spec | Should-fix | plan decision |
+| 4 | D4 says the `Muzzle` is 0.9 m up; `scenes/fighter.tscn` has 0.6 m. Step 5's Notes explain it (the 0.7 m camera-side wall), but D4 was not updated | spec | docs | Nit | fix now |
+| 5 | The fighter faces the aim only for one frame while it moves: `scenes/fighter.gd:26-27` sets `rotation.y` from `input_direction` every physics frame, so after `fire` turned it (`scenes/arena.gd:120`) it faces the run direction again (probe: yaw 0 → −1.571 two physics frames later) and the recoil plays sideways; D7 says the fighter "turns towards it while firing". Decide whether the aim facing holds for the attack time (e.g. while `attack_left` > 0) | code | spec | Nit | plan decision |
+| 6 | Docs: `docs/architecture.md:82` calls `Combat` "the arena's combat rules of spec 07 (D3)" (it is spec 06); `scenes/target_dummy.gd:29` says "Meshes and materials are shared by all dummies", but `_cylinder`, `_box` and `_sphere` make new meshes per dummy (only materials are cached) | spec | docs | Nit | fix now |
+
+**Outcome:** Request changes. Finding 1 is Blocking (S4, S5); it is a small fix in `scenes/shot.gd` with a test. Findings 1, 2, 4 and 6 are fix now; findings 3 and 5 need a plan decision (`PLAN:`).
 
 ---
 
