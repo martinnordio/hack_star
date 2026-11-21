@@ -27,7 +27,7 @@ Update the status of a spec here whenever it changes.
 | 04 | [Basic UI](done/2026_11_12_04_basic_ui_spec.md) | [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2) | closed |
 | 05 | [Hack Codes](done/2026_11_12_05_hack_codes_spec.md) | [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3) | closed |
 | 06 | [Graphics Demo](done/2026_11_12_06_graphics_demo_spec.md) | [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4) | closed |
-| 07 | [First Match](2026_11_12_07_first_match_spec.md) | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | requirements |
+| 07 | [First Match](2026_11_12_07_first_match_spec.md) | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | planned |
 | 08 | [Trophies](2026_11_12_08_trophies_spec.md) | [2026_11_12_trophies_spec.md](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6) | requirements |
 | 09 | [Unlock and Upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) | [2026_11_12_unlock_and_upgrade_spec.md](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7) | requirements |
 | 10 | [Skins Shop](2026_11_12_10_skins_shop_spec.md) | [2026_11_12_skins_shop_spec.md](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8) | requirements |
