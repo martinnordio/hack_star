@@ -10,7 +10,11 @@ ambient_light_source = 2
 ambient_light_color = Color(0.8, 0.82, 1, 1)
 ambient_light_energy = 0.55
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_premult"]
+blend_mode = 4
+
 [node name="FighterStage" type="SubViewportContainer"]
+material = SubResource("CanvasItemMaterial_premult")
 custom_minimum_size = Vector2(240, 300)
 stretch = true
 script = ExtResource("1_stage")

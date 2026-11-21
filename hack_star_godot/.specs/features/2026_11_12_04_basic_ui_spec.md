@@ -19,6 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.97 M (91 k in · 1.86 M cached · 20 k out) | CHF 0.58 (69 credits) | Step 1 done (`usage.ps1 -Agent subagents` 16:14–16:17) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 717 k (15 k in · 692 k cached · 10 k out) | CHF 0.17 (21 credits) | Step 2 done (`usage.ps1 -Agent subagents` 16:17–16:19) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.57 M (135 k in · 3.40 M cached · 38 k out) | CHF 1.78 (213 credits) | Step 3 done (`usage.ps1 -Agent subagents` 16:19–16:26) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.36 M (52 k in · 4.28 M cached · 31 k out) | CHF 1.45 (173 credits) | Step 4 done (`usage.ps1 -Agent subagents` 16:27–16:32) |
 
 ---
 
@@ -181,7 +182,7 @@ of this spec (see Deferred Items in the plan of the
 | **1** | UI foundation: shared theme, screen navigation, Back button | standard (Claude Sonnet 5.5) — a theme, an autoload and a small scene, fixed by D1–D3 | ✅ Done | [→ Step 1](#step-1--ui-foundation-shared-theme-screen-navigation-back-button) |
 | **2** | Fighter catalogue, Prestige and sample progress | standard (Claude Sonnet 5.5) — data and pure rules with tests, all values given by S8, S11 and D5 | ✅ Done | [→ Step 2](#step-2--fighter-catalogue-prestige-and-sample-progress) |
 | **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ✅ Done | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
-| **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ⬜ Not started | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
+| **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ✅ Done | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
 | **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ⬜ Not started | [→ Step 5](#step-5--home-screen) |
 | **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ⬜ Not started | [→ Step 6](#step-6--wow-entrance) |
 | **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ⬜ Not started | [→ Step 7](#step-7--fighter-list) |
@@ -315,16 +316,18 @@ Started: 2026-11-21 16:19
 All 14 skins have their own look, and Legendary skins glow (S7, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `FighterModel.setup(fighter_id, skin_id)`: skin colours and details for Lava, Phoenix,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `FighterModel.setup(fighter_id, skin_id)`: skin colours and details for Lava, Phoenix,
       Crystal, Neon, Snow King, Galaxy, Supernova, Glitch; Legendary skins add the halo and
       `CPUParticles3D` sparkles (D6).
-- [ ] Tests: every fighter × skin combination (14) builds; a skin's main colour differs from
+- [x] Tests: every fighter × skin combination (14) builds; a skin's main colour differs from
       its Default; only Legendary skins have the glow nodes.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the 14 combinations
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the 14 combinations
       (D10) checked by eye.
 
 ### Notes
+Started: 2026-11-21 16:27
+**Done (2026-11-21 · ~5m · Claude Opus 5.5)** — `FighterModel.LOOKS` has all 14 skins; details per skin: Lava glowing cracks on a dark top, Phoenix wings, Crystal icy glowing blocks with gems, Neon glowing helmet, visor, scarf and strips, Snow King icy fur, gold crown and blue cape, Galaxy stars on a dark suit, Supernova a glowing ring, Glitch magenta/cyan ghost copies of the head. Legendary skins (Phoenix, Snow King, Supernova, Glitch) get `LegendaryGlow`: a soft radial-gradient billboard halo behind the fighter (built in code, no texture file), a turning ring of sparkles and 24 rising `CPUParticles3D` sparkles. `FighterStage` now draws its sub-viewport with premultiplied alpha, so glows and see-through parts (Luna's helmet) show over the screen behind it instead of turning dark. 3 new tests in `tests/test_fighter_model.gd`. `tools/test.ps1`: 63 tests passed; `tools/lint.ps1`: exit 0; screenshots of the 14 combinations from a windowed run: every skin clearly different from its Default, only the four Legendary skins glow. Note for Step 7: a picture rendered from the stage keeps premultiplied colours, so the card should draw it with the same premultiplied blend. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 4.36 M tokens · CHF 1.45 (173 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

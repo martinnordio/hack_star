@@ -27,6 +27,55 @@ func _meshes(node: Node) -> int:
 	return count
 
 
+func _distance(a: Color, b: Color) -> float:
+	return Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()
+
+
+func test_every_fighter_and_skin_builds() -> void:
+	var built: int = 0
+	for fighter: Dictionary in Fighters.LIST:
+		for skin: Dictionary in fighter["skins"]:
+			var model: FighterModel = _model(fighter["id"])
+			model.setup(fighter["id"], skin["id"])
+			assert_eq(model.fighter_id, fighter["id"])
+			assert_eq(model.skin_id, skin["id"], "%s has its own look" % skin["name"])
+			assert_gt(_meshes(model), 10, "%s %s is built" % [fighter["name"], skin["name"]])
+			built += 1
+	assert_eq(built, 14, "all 14 combinations")
+
+
+func test_a_skin_changes_the_main_colour() -> void:
+	for fighter: Dictionary in Fighters.LIST:
+		var default_color: Color = _model(fighter["id"]).main_color
+		for skin: Dictionary in fighter["skins"]:
+			if skin["id"] == Fighters.DEFAULT_SKIN:
+				continue
+			var model: FighterModel = _model(fighter["id"])
+			model.setup(fighter["id"], skin["id"])
+			assert_gt(
+				_distance(model.main_color, default_color),
+				0.1,
+				"%s differs from %s's Default" % [skin["name"], fighter["name"]]
+			)
+
+
+func test_only_legendary_skins_glow() -> void:
+	for fighter: Dictionary in Fighters.LIST:
+		for skin: Dictionary in fighter["skins"]:
+			var model: FighterModel = _model(fighter["id"])
+			model.setup(fighter["id"], skin["id"])
+			var legendary: bool = skin["rarity"] == "Legendary"
+			var halo: Node = model.find_child("LegendaryHalo", true, false)
+			var sparkles: Node = model.find_child("Sparkles", true, false)
+			var label: String = "%s %s" % [fighter["name"], skin["name"]]
+			assert_eq(halo != null, legendary, "%s: halo only when Legendary" % label)
+			assert_eq(
+				sparkles is CPUParticles3D, legendary, "%s: sparkles only when Legendary" % label
+			)
+			if legendary:
+				assert_true((sparkles as CPUParticles3D).emitting, "%s sparkles" % label)
+
+
 func test_every_fighter_builds_with_the_parts_of_its_idea() -> void:
 	assert_eq(IDEA_PARTS.keys(), Fighters.ids(), "every fighter is checked")
 	for fighter_id: String in Fighters.ids():
@@ -45,11 +94,10 @@ func test_no_two_fighters_share_a_main_colour() -> void:
 		colors.append(_model(fighter_id).main_color)
 	for first: int in colors.size():
 		for second: int in range(first + 1, colors.size()):
-			var a: Color = colors[first]
-			var b: Color = colors[second]
-			var distance: float = Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()
 			assert_gt(
-				distance, 0.1, "%s and %s differ" % [Fighters.ids()[first], Fighters.ids()[second]]
+				_distance(colors[first], colors[second]),
+				0.1,
+				"%s and %s differ" % [Fighters.ids()[first], Fighters.ids()[second]]
 			)
 
 
