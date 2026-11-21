@@ -16,6 +16,8 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 |------|------|
 | `project.godot` | The project: main scene `scenes/home.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
 | `scenes/` | Screens and objects: each `.tscn` with the script of the same name |
+| `scenes/ui/` | Shared UI parts: the theme (`hack_star_theme.tres`), the Back button, the fighter stage and pictures, the fighter card and skin button, the Prestige badge |
+| `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen) and `GameState` (what the player has and has chosen) |
 | `game/` | Game rules: plain scripts without scene access |
 | `tests/` | GUT tests, `test_<name>.gd` |
 | `tools/` | PowerShell scripts: `check_tools.ps1`, `test.ps1`, `lint.ps1`, `export_web.ps1`, `serve_web.ps1`, `godot.ps1` (finds Godot), the pinned versions in `versions.json` |
@@ -30,13 +32,16 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 ## Screens (`scenes/`)
 
 A screen is a scene with a script of the same name. A screen reads the input and calls the
-rules of `game/`; it holds no rules itself. A screen opens the next one with
-`get_tree().change_scene_to_file(path)`; there is no scene manager yet.
+rules of `game/`; it holds no rules itself. A screen opens the next one with `Screens.go_to(path)`, with the path from the constants of
+`Screens` (see *UI foundation*); every Back goes home.
 
 | Scene | Script | What |
 |-------|--------|------|
-| `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the arena) and **Fighters** (opens `fighter_list.tscn`) and **Info** (disabled until its screen exists). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
+| `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the arena) and **Fighters** (opens `fighter_list.tscn`) and **Info** (opens `info.tscn`). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
 | `arena.tscn` | `arena.gd` | The 3D arena (floor, walls, inner walls), one fighter, the camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick and the FPS label (top-right) |
+| `fighter_list.tscn` | `fighter_list.gd` | The fighter list (**Fighters** on home; Back goes home): a scrolling grid, columns follow the width, of `ui/fighter_card.tscn` cards — picture, name, rarity in its colour, trophies, power level, Prestige badge; locked fighters greyed out with "Locked". A card opens the fighter screen |
+| `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (opened from a card; the fighter comes from `GameState.viewed_fighter`): the fighter in a `FighterStage`, name, rarity, trophies, power level, Prestige badge and one `ui/skin_button.tscn` per skin (Legendary skins with a gold frame); choosing a skin previews it; **Select** (`GameState.select`) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked". Back goes home |
+| `info.tscn` | `info.gd` | The info page (**Info** on home; Back goes home): a title and a scrolling list with one row per word of `Vocabulary`, the word in a bold font and its meaning wrapped |
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame |
 | `touch_joystick.tscn` | `touch_joystick.gd` (`TouchJoystick`) | On-screen joystick, visible only on a touch screen; its `direction` has length ≤ 1 |
 
@@ -59,20 +64,58 @@ without a scene.
 
 | Script | What |
 |--------|------|
-| `fighter_list.tscn` | `fighter_list.gd` | The fighter list: a scrolling grid (columns follow the width) of `ui/fighter_card.tscn` cards — picture, name, rarity in its colour, trophies, power level, Prestige badge; locked fighters greyed out with "Locked". The pictures are rendered once per game start by off-screen `FighterStage`s (`ui/fighter_pictures.gd`) and cached in `GameState.pictures`; a card draws them with the premultiplied blend of the stage. Back goes home |
-| `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (the fighter comes from `GameState.viewed_fighter`, set by the list when a card is pressed): the fighter in a `FighterStage`, name, rarity, trophies, power level, Prestige badge and one `ui/skin_button.tscn` per skin (name and rarity in its colour, Legendary skins with a gold frame); choosing a skin previews it; **Select** (`GameState.select`) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked". Back goes home |
 | `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`) |
+| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
+| `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
+| `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies |
+| `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, unlocks, 500 credits, the Default skins) until matches exist |
+| `vocabulary.gd` (`Vocabulary`) | The 24 words of the info page with their one-sentence meanings (`LIST`); English until spec 15 |
 
 Later specs add their rules here, one script per rule, with a test next to it in `tests/`:
-fighters and trophies (specs 04, 08), hack effects (05), the match (07). The rules of the
+trophies and unlocks (specs 08, 09), hack effects (05), the match (07). The rules of the
 Svelte game in `ui/src/lib/game/` are the model, translated to GDScript.
+
+## UI foundation (S12)
+
+Every screen uses the same parts, so a later spec reuses them and does not build its own:
+
+- **Theme:** `scenes/ui/hack_star_theme.tres` is the project's default theme (`gui/theme/custom`
+  in `project.godot`). It holds the colours, the font sizes (label 28, subheading 40, heading
+  56, button 36), the button styles (rounded, a minimum height for a thumb) and the panel
+  styles. The variations are `BigButton` (the **Play** button), `HeadingLabel`,
+  `SubheadingLabel`, `BackgroundPanel` and `CardPanel`. Screens set no colours or font sizes of
+  their own, except the title's size. Colours that code needs (the rarity colours, Legendary
+  gold) are the constants of `Rarity`.
+- **Screens:** the autoload `Screens` (`scenes/autoload/screens.gd`) has one constant per screen
+  path (`HOME`, `ARENA`, `FIGHTERS`, `FIGHTER`, `INFO`), `go_to(path)` and `go_home()`. There is
+  no scene stack: every Back goes home.
+- **Back:** `scenes/ui/back_button.tscn` (`BackButton`) is top-left on every screen except home
+  and calls `Screens.go_home()`.
+- **Session state:** the autoload `GameState` (`scenes/autoload/game_state.gd`) holds trophies,
+  power levels, unlocked fighters, credits, the selected fighter and skins, `viewed_fighter`,
+  `entrance_played` and the cached `pictures`. It starts from `SampleProgress` at every game
+  start and writes no file (see *Saved progress*). `select(fighter_id, skin_id)` refuses a
+  locked fighter or an unknown skin.
+- **Fighter in 3D:** `scenes/ui/fighter_stage.tscn` (`FighterStage`) shows one `FighterModel` in
+  a sub-viewport with its own camera and lights; it keeps the fighter in view on a wide or a tall
+  stage. `scenes/ui/fighter_pictures.gd` (`FighterPictures`) renders each fighter once per game
+  start into `GameState.pictures`, for the cards of the list.
+- **Small parts:** `scenes/ui/prestige_badge.tscn` (`PrestigeBadge`, hidden below 1000
+  trophies), `scenes/ui/fighter_card.tscn` (`FighterCard`), `scenes/ui/skin_button.tscn`
+  (`SkinButton`).
+
+Screen sizes: the layouts use anchors and containers; `tests/test_screen_sizes.gd` checks every
+screen at the five sizes.
 
 ## 3D models
 
 There are no imported models, textures or fonts. The arena, walls and fighter are built from
 Godot's primitive meshes (box, capsule, sphere) and plain materials, in the scene files (S7,
-S11). Fighters get their looks built the same way (*planned — spec 04*, as the Svelte game's
-`ui/src/lib/models/`).
+S11). Fighters are built the same way by `FighterModel` (`scenes/fighter_model.tscn` + `.gd`):
+the six fighters with their own shapes and idea parts (named nodes, e.g. Luna's `RayGun`), and
+the 14 skins in `FighterModel.LOOKS`. The four Legendary skins add a halo and sparkles
+(`LegendaryGlow`). The idle animation (breathing, sway, flicker) can be switched off for still
+pictures. Like the Svelte game's `ui/src/lib/models/`, but in code.
 
 If a later spec imports art, it goes to `assets/` with its licence written in
 [LICENSES.md](../LICENSES.md) (the packs of the Python + Svelte game, Quaternius and Kenney,
@@ -80,7 +123,8 @@ are CC0). No Supercell art, names or logos are used (S7).
 
 ## Saved progress (*planned — spec 05 / spec 08*)
 
-Nothing is saved yet. The plan (S9): one JSON file in `user://`, with a `version` number for
+Nothing is saved yet. The session is held by `GameState` (see *UI foundation*), which starts from
+`SampleProgress` at every game start. The plan (S9): one JSON file in `user://`, with a `version` number for
 later migrations, read and written by **one autoload** (a script registered in
 `project.godot`), so no screen touches the file. In the browser, Godot keeps `user://` in the
 browser's IndexedDB, so progress stays on the same device and in the same browser; there is
@@ -122,10 +166,14 @@ that adds an asset.
 
 ## Tests and checks
 
-Tests are GUT 9.7.1 files in `tests/` (`test_movement.gd` checks `game/movement.gd`;
-`test_home.gd`, `test_arena.gd` and `test_touch_joystick.gd` check the scenes;
-`test_screen_sizes.gd` checks that the screens fit five screen sizes and that Play and Back
-react to a mouse click and a touch). Run
+Tests are GUT 9.7.1 files in `tests/`: `test_movement.gd` checks `game/movement.gd`;
+`test_fighters.gd`, `test_prestige.gd`, `test_rarity.gd`, `test_sample_progress.gd`,
+`test_vocabulary.gd` and `test_game_state.gd` check the rules and the session;
+`test_fighter_model.gd` checks the 3D fighters; `test_home.gd`, `test_fighter_list.gd`,
+`test_fighter_screen.gd`, `test_info.gd`, `test_back_button.gd`, `test_arena.gd` and
+`test_touch_joystick.gd` check the scenes; `test_screens.gd` checks the screen constants and
+`go_to`; `test_screen_sizes.gd` checks that every screen fits five screen sizes and that Play,
+Info, Back and the cards react to a mouse click and a touch. Run
 them headless, from the `hack_star_godot` folder:
 
 | Command | What |
@@ -153,9 +201,10 @@ specs 03–08, which bring F0–F5 of the feature list; the later specs follow t
 ## How to…
 
 **Add a screen.** Create `scenes/<name>.tscn` and `scenes/<name>.gd` (same name); build the UI
-with anchors and containers; open it with `change_scene_to_file`; write
-`tests/test_<name>.gd` that loads the scene and checks its controls; add a row to *Screens*
-above.
+with anchors and containers and the shared parts of *UI foundation* (the theme, a Back button
+from `scenes/ui/back_button.tscn`); add its path as a constant of `Screens`, open it with
+`Screens.go_to(...)`; write `tests/test_<name>.gd` that loads the scene and checks its controls,
+and add its size checks to `tests/test_screen_sizes.gd`; add a row to *Screens* above.
 
 **Add a game rule.** Create `game/<name>.gd` (`extends RefCounted`, `class_name`, static
 functions, typed, no scene access), call it from the scene, and write `tests/test_<name>.gd`

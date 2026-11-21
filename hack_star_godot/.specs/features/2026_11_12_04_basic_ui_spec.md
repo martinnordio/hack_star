@@ -25,6 +25,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.69 M (88 k in · 2.57 M cached · 26 k out) | CHF 0.62 (74 credits) | Step 7 done (`usage.ps1 -Agent subagents` 16:46–16:53) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.35 M (34 k in · 2.29 M cached · 22 k out) | CHF 0.45 (54 credits) | Step 8 done (`usage.ps1 -Agent subagents` 16:53–16:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.36 M (121 k in · 2.22 M cached · 21 k out) | CHF 0.16 (19 credits) | Step 9 done (`usage.ps1 -Agent subagents` 16:57–17:00) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.45 M (20 k in · 1.42 M cached · 7 k out) | CHF 0.09 (10 credits) | Step 10 done (`usage.ps1 -Agent subagents` 17:01–17:02) |
 
 ---
 
@@ -193,7 +194,7 @@ of this spec (see Deferred Items in the plan of the
 | **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ✅ Done | [→ Step 7](#step-7--fighter-list) |
 | **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ✅ Done | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
 | **9** | Info page | light (Claude Haiku 5.5) — a word list and a scrolling page | ✅ Done | [→ Step 9](#step-9--info-page) |
-| **10** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture) |
+| **10** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 10](#step-10--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -467,24 +468,26 @@ Everything that worked before still works, all Godot checks pass, and the README
 architecture describe the new screens and the UI foundation (S12, all statements).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/docs/architecture.md`: Layout (`scenes/ui/`, `scenes/autoload/`), the
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/docs/architecture.md`: Layout (`scenes/ui/`, `scenes/autoload/`), the
       *UI foundation* (theme, `Screens`, Back button, `FighterStage`, how a later spec adds a
       screen), Screens table (home, fighter list, fighter screen, info, arena Back → home),
       Game rules (`Fighters`, `Rarity`, `Prestige`, `SampleProgress`, `Vocabulary`), 3D models
       (`FighterModel`), Saved progress (`GameState` holds the session; the file still planned,
       spec 05/08), Tests; *How to add a screen* updated.
-- [ ] `hack_star_godot/README.md`: the screens (home, Fighters, Info), the controls (skip the
+- [x] `hack_star_godot/README.md`: the screens (home, Fighters, Info), the controls (skip the
       entrance), the run steps ("the home screen shows …").
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); parse every changed `.ps1` with
       `[System.Management.Automation.Language.Parser]::ParseFile` (if any).
-- [ ] `git diff --stat` of this spec shows nothing in `server/` or `ui/`; `LICENSES.md`
+- [x] `git diff --stat` of this spec shows nothing in `server/` or `ui/`; `LICENSES.md`
       unchanged (no asset added).
-- [ ] Note in Notes that the device play-test (iPad and phone, ≥ 30 fps on home and the list)
+- [x] Note in Notes that the device play-test (iPad and phone, ≥ 30 fps on home and the list)
       stays with the author (spec 03, D6, Deferred Items).
 
 ### Notes
+Started: 2026-11-21 17:01
+**Done (2026-11-21 · ~2m · Claude Haiku 5.5)** — `docs/architecture.md`: Layout (`scenes/ui/`, `scenes/autoload/`), Screens table (home, fighter list, fighter screen, info, arena Back → home; the misplaced screen rows moved out of *Game rules*), *UI foundation* section (theme, `Screens`, Back button, `GameState`, `FighterStage`/`FighterPictures`, small parts), Game rules (`Fighters`, `Rarity`, `Prestige`, `SampleProgress`, `Vocabulary`), 3D models (`FighterModel`), Saved progress (`GameState` holds the session; file still planned), Tests, *Add a screen*. `README.md`: the screens, the Run steps (entrance, Fighters, Info, Back), the entrance skip in Controls. Checks: `check_tools.ps1` all OK; `test.ps1`: 104 tests passed; `lint.ps1`: exit 0; `export_web.ps1`: web export OK (`build\web`). `git diff` touches nothing in `server/`, `ui/` or `LICENSES.md`; no `.ps1` changed. The device play-test (iPad and phone, ≥ 30 fps on home and the list) stays with the author (spec 03, D6, Deferred Items). suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 1.45 M tokens · CHF 0.09 (10 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

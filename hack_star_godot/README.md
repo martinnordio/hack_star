@@ -2,8 +2,9 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a home screen and a 3D arena with one fighter. The
-Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+It is the first basic game so far: a home screen, a fighter list with six fighters (each with
+its skins), a fighter screen, an info page with the words of the game and a 3D arena with one
+fighter. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -11,7 +12,7 @@ Python + Svelte game in the rest of the repository is unchanged; see the [root R
 |--------|------|
 | `project.godot` | The Godot project (open this file in the editor) |
 | `scenes/` | Screens and objects (`.tscn`) with their scripts |
-| `game/` | Pure rules (movement) without scenes |
+| `game/` | Pure rules (movement, fighters, Prestige, rarity, sample progress, vocabulary) without scenes |
 | `tests/` | Automated tests (GUT) |
 | `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |
 | `addons/gut/` | GUT 9.7.1, the test tool, with its licence |
@@ -86,8 +87,13 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
 ## Run in the editor
 
 1. Start Godot and choose **Import**; select `hack_star_godot\project.godot`; then **Import & Edit**.
-2. Press **F5** (Run Project). The home screen shows your fighter, trophies, credits, **Hack star** and **Play**.
-3. **Play** opens the arena. Press **Back** (top-left) to return to the home screen.
+2. Press **F5** (Run Project). The home screen plays a short entrance (a click, a touch or a key
+   skips it) and then shows your fighter, trophies, credits, **Hack star**, **Play**,
+   **Fighters** and **Info**.
+3. **Play** opens the arena. **Fighters** lists the six fighters with their trophies, power
+   level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
+   the home fighter. **Info** explains the words of the game. Every screen has **Back**
+   (top-left) that returns to the home screen.
 
 ## Commands
 
@@ -123,6 +129,7 @@ Run them from the `hack_star_godot` folder.
 - **iPad and phone:** the touch joystick (bottom-left) moves the fighter. It appears only on a
   touch screen.
 - **Back** (top-left) returns to the home screen.
+- **Entrance:** a click, a touch or a key (for example Space) skips the entrance of the home screen.
 
 ## Resources outside the folder
 
