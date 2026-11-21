@@ -18,6 +18,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 801 k (74 k in · 706 k cached · 21 k out) | CHF 0.41 (49 credits) | Step 2 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 653 k (61 k in · 572 k cached · 20 k out) | CHF 0.35 (41 credits) | Step 3 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.69 M (72 k in · 1.59 M cached · 26 k out) | CHF 0.50 (60 credits) | Step 4 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 946 k (85 k in · 839 k cached · 22 k out) | CHF 0.03 (3 credits) | Step 5 done |
 ---
 
 # Part 1 · Requirements
@@ -165,7 +166,7 @@ linked, not copied (S16)._
 | **2** | Move 05–10 | standard (Claude Sonnet 5.5) — same rules, applied to six specs | ✅ Done | [→ Step 2](#step-2--move-0510) |
 | **3** | Move 11–15 | standard (Claude Sonnet 5.5) — same rules, applied to five specs | ✅ Done | [→ Step 3](#step-3--move-1115) |
 | **4** | Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds | standard (Claude Sonnet 5.5) — same rules; S0 variant for bugs; Worlds from its branch | ✅ Done | [→ Step 4](#step-4--move-16-bug-fixes-17-fighter-studio-18-worlds) |
-| **5** | Final check of all moved specs | light (Claude Haiku 5.5) — running the checks, fixing links | ⬜ Not started | [→ Step 5](#step-5--final-check-of-all-moved-specs) |
+| **5** | Final check of all moved specs | light (Claude Haiku 5.5) — running the checks, fixing links | ✅ Done | [→ Step 5](#step-5--final-check-of-all-moved-specs) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -338,18 +339,21 @@ All 16 moved specs and the list are consistent, the originals are unchanged, and
 work on the moved specs (S1–S13, S16, S17).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Script-free check over all 16 files: name pattern `<date>_<NN>_<name>_spec.md` with
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Script-free check over all 16 files: name pattern `<date>_<NN>_<name>_spec.md` with
       03–18 once each; header of D2; first statement `S0`; the marker followed only by the
       Part 2 placeholder; no `### Notes`, `**Done (`, `## Cost summary`; every relative link
       resolves; struck statements have a replacement or reason.
-- [ ] `git diff --stat HEAD~4 -- .specs/` shows no change in the root `.specs/` (S9).
-- [ ] `.specs/kit/tools/costs_ledger.ps1 -Root hack_star_godot -CostsLink ../../.specs/kit/COSTS.md`
+- [x] `git diff --stat HEAD~4 -- .specs/` shows no change in the root `.specs/` (S9).
+- [x] `.specs/kit/tools/costs_ledger.ps1 -Root hack_star_godot -CostsLink ../../.specs/kit/COSTS.md`
       lists all 18 specs (S12); the README list matches the files (S11).
-- [ ] `hack_star_godot/README.md`: a short section *Specs* pointing to the ordered list.
+- [x] `hack_star_godot/README.md`: a short section *Specs* pointing to the ordered list.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 15:32
+
+**Done (2026-11-21 · ~3m · Claude Haiku 5.5)** — check script over the 16 moved files (name and original date, D2 header, Stage log first row, first statement S0, only the Part 2 placeholder below the marker, no `### Notes`, `**Done (`, `## Cost summary`, every relative link resolves, every struck statement followed by a reason): all PASS, no fix needed. Root `.specs/`: `git diff --stat c2ff04c -- .specs/` empty, `git status --short .specs` empty. `costs_ledger.ps1` lists 18 specs (01 closed, 02, 03–18); README list: 18 rows, links resolve, statuses 01 closed, 02 planned, 03–18 requirements. `hack_star_godot/README.md`: the existing *Specs* section (linked from the layout table) got the pointer to `.specs/features/README.md`, the work-through order and the `hack_star_godot/.specs/` rule. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 946 k (85 k in · 839 k cached · 22 k out) · CHF 0.03 (3 credits)
 
 ---
 

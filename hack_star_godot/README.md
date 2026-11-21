@@ -132,6 +132,12 @@ is listed in [LICENSES.md](LICENSES.md).
 
 ## Specs
 
+The ordered list of the specs is [.specs/features/README.md](.specs/features/README.md). Work
+through it from the first spec that is not closed: **S0** (check each statement against the game
+as built so far), `REQUIREMENTS:` if a statement does not fit, then `PLAN:` → `IMPLEMENT:` →
+`REVIEW:` → `CLOSE:` with the root kit's commands. The Godot specs live in
+`hack_star_godot/.specs/`, not in the root `.specs/` (see [AGENTS.md](../AGENTS.md)).
+
 Specs of this game are in `hack_star_godot/.specs/features/`. The rule for them is in
 [AGENTS.md](../AGENTS.md): a new Godot spec goes into `hack_star_godot/.specs/features/`, and
 its reviews, changes and costs go into `hack_star_godot/.specs/`, never into the root `.specs/`.
