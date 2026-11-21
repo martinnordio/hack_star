@@ -25,17 +25,19 @@
 | 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 5.47 M (180 k in · 5.23 M cached · 61 k out) | CHF 2.65 (317 credits) | semantic diff written; code review: Approve (0 blocking, 4 should-fix, 6 nit) |
 | 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 762 k (26 k in · 729 k cached · 7 k out) | CHF 0.18 (21 credits) | spec closed |
 | 2026-11-21 | pr | `PR:` | Claude Haiku 5.5 | 473 k (54 k in · 410 k cached · 10 k out) | CHF 0.03 (3 credits) | pull request opened |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.80 M (415 k in · 4.37 M cached · 12 k out) | CHF 2.68 (319 credits) | orchestrator of CREATE ISSUE → REVIEW → review fixes → CLOSE → PR: starting the sub-agents, checks, commits, push (`usage.ps1 -Agent main` from 14:47) |
 ## Cost summary
 
-This feature used 35.27 M tokens, CHF 15.01 (1788 credits) — measured from the Copilot CLI session log, see [COSTS.md](../../../../.specs/kit/COSTS.md). CHF is the sum of the Stage log cost cells; credits and tokens are sums of the rows; shares are credits ÷ 1900 (Copilot Business).
+This feature used 40.54 M tokens, CHF 17.72 (2110 credits) — measured from the Copilot CLI session log, see [COSTS.md](../../../../.specs/kit/COSTS.md). CHF is the sum of the Stage log cost cells; credits and tokens are sums of the rows; shares are credits ÷ 1900 (Copilot Business).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
 |-------|--------|--------|------------|---------------------------|
 | requirements | Claude Opus 5.5 | 7.75 M | CHF 4.23 (504 credits) | 26.5 % |
 | plan | Claude Opus 5.5 | 2.07 M | CHF 0.78 (93 credits) | 4.9 % |
-| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 19.98 M | CHF 7.35 (874 credits) | 46.0 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 24.78 M | CHF 10.03 (1193 credits) | 62.8 % |
 | review | Claude Opus 5.5 | 5.47 M | CHF 2.65 (317 credits) | 16.7 % |
-| **Total** | | **35.27 M** | **CHF 15.01 (1788 credits)** | **94.1 %** |
+| pr | Claude Haiku 5.5 | 473 k | CHF 0.03 (3 credits) | 0.2 % |
+| **Total** | | **40.54 M** | **CHF 17.72 (2110 credits)** | **111.1 %** |
 
 **Implementation by Step**
 
@@ -49,7 +51,8 @@ This feature used 35.27 M tokens, CHF 15.01 (1788 credits) — measured from the
 | Orchestrator (per-Step run) | Claude Opus 5.5 | 7.51 M | CHF 4.18 (498 credits) | 26.2 % |
 | Review fixes | Claude Sonnet 5.5 | 735 k | CHF 0.25 (30 credits) | 1.6 % |
 | CLOSE | Claude Sonnet 5.5 | 762 k | CHF 0.18 (21 credits) | 1.1 % |
-| **Total implementation** | | **19.98 M** | **CHF 7.35 (874 credits)** | **46.0 %** |
+| Orchestrator (issue → review → close → PR) | Claude Opus 5.5 | 4.80 M | CHF 2.68 (319 credits) | 16.8 % |
+| **Total implementation** | | **24.78 M** | **CHF 10.03 (1193 credits)** | **62.8 %** |
 
 ---
 
