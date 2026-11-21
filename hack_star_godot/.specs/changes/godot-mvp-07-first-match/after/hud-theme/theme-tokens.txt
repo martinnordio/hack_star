@@ -1,0 +1,4 @@
+﻿# git show ec6f78d:hack_star_godot/scenes/ui/hack_star_theme.tres (HudLabel)
+HudLabel/base_type = &"Label"
+HudLabel/colors/font_outline_color = Color(0.1, 0.06, 0.2, 1)
+HudLabel/constants/outline_size = 10

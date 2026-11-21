@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 07 on feature/godot-mvp (written by REVIEW:, 2026-11-21).
+# Range: this spec's commits only, 369a9f2..ec6f78d (the branch carries specs 03-08 and 16).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/".
+# Screens and timings: a windowed Godot 4.7.2 run with a temporary capture script (in the
+# git-ignored build/, removed); Before from a temporary worktree at 369a9f2 (removed).
+# Outputs: a temporary headless script (removed). Settings and tokens: git show of both revisions.
+version: 1
+branch: feature/godot-mvp
+base: 369a9f2
+why: |
+  Hack star can be played, but nothing shoots back and nobody wins. Spec 07 adds the first real
+  match, a "last fighter standing" fight against bots like Showdown in Brawl Stars: health,
+  healing, knock-outs, a countdown, a timer, a result screen, and Training on home for the
+  dummy arena of spec 06. The numbers Mattia still has to choose are settings in one place.
+spec:
+  path: .specs/features/2026_11_12_07_first_match_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16]
+changes:
+  - id: home-screen
+    kind: ui
+    change: modified
+    object: Home screen - a Training button next to Fighters, Info and Hack
+    note: MoreRow gets Training first; on a phone the four buttons wrap into two rows of two. Play now starts a match, Training opens the dummy arena (D11).
+    statements: [S1, S12, S16]
+    examples:
+      - name: home-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (home.tscn, GameState.entrance_played = true, captured 1.2 s after it opened)
+        views: [desktop]
+      - name: home-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: play
+    kind: ui
+    change: modified
+    object: What Play opens - the dummy arena before, a match after
+    note: 'Before, Play opened the Training arena (three dummies). After, the match - the same canyon without dummies, four fighters with bars, the countdown "2", the timer 2:00 and "Fighters left: 4".'
+    statements: [S1, S2, S3, S5, S7, S14, S15]
+    examples:
+      - name: play-1280x720
+        input: |
+          same script: home.tscn, PlayButton.pressed emitted after 0.6 s, captured 1.5 s later
+        views: [desktop]
+      - name: play-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: match-fight
+    kind: ui
+    change: added
+    object: A match during the fight - bots, shots, bars, damage numbers, red timer
+    note: Three bots in their own 3D looks with red bars, the player with a green bar and a red damage number (hit by a bot), a white number over a bot hit by the player; with 12 s the timer is red at 0:09 (low contrast on the red rock at 844x390, finding 7).
+    statements: [S2, S3, S5, S7, S11, S15]
+    examples:
+      - name: fight-1280x720
+        input: |
+          same script: GameState.match_settings.countdown_seconds = 0, match.tscn,
+          read_player_input off, the three bots placed at (2.5, 5), (-3, 6), (4, 1);
+          the player fires at the first bot four times 0.4 s apart; captured 0.1 s later
+        views: [desktop]
+      - name: red-timer-1280x720
+        input: |
+          countdown_seconds = 0, match_seconds = 12; match.tscn; captured after 3.2 s
+        views: [desktop]
+      - name: red-timer-844x390
+        input: |
+          same at --resolution 844x390
+        views: [phone-landscape]
+  - id: result-screen
+    kind: ui
+    change: added
+    object: Result screen (scenes/result_screen.tscn) - Victory, Defeat with the place, Time's up
+    note: Heading and line per result, the player's fighter in a FighterStage, Play again and Home; wide screens put the fighter left, tall ones one column.
+    statements: [S8, S9, S15]
+    examples:
+      - name: result-victory-1280x720
+        input: |
+          GameState.last_result = {outcome: Match.Result.VICTORY, place: 3, fighter and skin
+          selected}; result_screen.tscn; captured after 1.2 s
+        views: [desktop]
+      - name: result-defeat-1280x720
+        input: |
+          same with outcome DEFEAT, place 3
+        views: [desktop]
+      - name: result-time-up-1280x720
+        input: |
+          same with outcome TIME_UP
+        views: [desktop]
+      - name: result-defeat-390x844
+        input: |
+          outcome DEFEAT, place 3, at --resolution 390x844
+        views: [phone-portrait]
+  - id: match-rules
+    kind: output
+    change: modified
+    object: Match rules - Combat (fighter health, healing, cool-down), MatchSettings, Match, BotBrain, ArenaLayout.STARTS
+    note: The old Combat calls give the same results; new are the fighter health and healing, the settings with their clamps and levels, the countdown, timer, knock-out order, results and places, ordinals, the bots' sight, reaction, chase, back-off, aim and wander, and the nine start points. Time up with time_up_result "defeat" gives place 4 with nobody out (finding 6).
+    statements: [S1, S2, S4, S5, S6, S7, S8, S10, S11]
+    examples:
+      - name: outputs
+        input: |
+          godot --headless --path hack_star_godot -s <temporary script>
+          (both sides: can_fire(1.0, 0.7), health_ratio(1200); after only: the new Combat calls,
+          MatchSettings, a Match with 3 bots advanced 0-3 s and to 113.5 s, knock-outs,
+          victory, time up, ordinal; BotBrain seed 7, easy; ArenaLayout.STARTS)
+  - id: settings
+    kind: config
+    change: modified
+    object: Shot mask, screen constants, session-only match state and the home buttons
+    note: Shot.COLLISION_MASK 0b101 -> 0b111 (shots hit fighters; the shooter's RID is excluded, D6); Screens.MATCH and RESULT; GameState.match_settings and last_result (session only, not saved, D12); TrainingButton in MoreRow.
+    statements: [S3, S10, S12, S16]
+    examples:
+      - name: settings
+        input: |
+          git show <rev>:hack_star_godot/scenes/shot.gd (COLLISION_MASK),
+          scenes/autoload/screens.gd (const lines), scenes/autoload/game_state.gd
+          (match_settings, last_result) and scenes/home.tscn (MoreRow buttons)
+  - id: hud-theme
+    kind: tokens
+    change: added
+    object: Theme variation HudLabel (scenes/ui/hack_star_theme.tres)
+    note: A dark outline (outline_size 10) so the white HUD text stays readable on the yellow floor; used by the countdown, the timer and fighters left (Step 5).
+    statements: [S1, S5, S7]
+    examples:
+      - name: theme-tokens
+        input: |
+          git show ec6f78d:hack_star_godot/scenes/ui/hack_star_theme.tres (HudLabel lines)
+  - id: play-performance
+    kind: performance
+    change: modified
+    object: Frame rate after Play (windowed desktop, 1280x720)
+    note: The match with three easy bots fighting stays at the 60 fps vsync cap, as the dummy arena did. Not an iPad or phone number (S13 stays with the author, spec 03 D6).
+    statements: [S13]
+    examples:
+      - name: windowed-1280x720
+        input: |
+          same script, 3 runs per side: PlayButton pressed, 3 s wait (the countdown), then frames
+          drawn over 6 s
+breaking: |
+  Play no longer opens the dummy arena: it starts a match; the dummy arena is now Training.
+  Nothing saved changes; no server call.
+review:
+  - question: Why does the match inherit arena.tscn instead of copying it?
+    answer: |
+      D1: the canyon, the player, the camera, the sticks, Back and the FPS label stay one scene;
+      Arena gets class_name and training (only then dummies); MatchArena adds bots, Match and the
+      HUD. Training stays the spec 06 demo with its tests.
+  - question: How are the bots tested without flaky randomness?
+    answer: |
+      D5, D8: BotBrain and MatchArena take a RandomNumberGenerator that tests seed; the brain is
+      pure (positions in, {move, aim} out), so sight, reaction, aim error and wandering are
+      checked without a scene (16 tests), and the arena tests seed the match.
+  - question: Can a fighter hit itself with its own shot?
+    answer: |
+      No: Shot.launch takes the shooter and excludes its RID from every ray (D6); tested
+      point-blank in test_fighter_health.gd. Fighters still do not block each other.
+  - question: Does a match change saved progress or call the server?
+    answer: |
+      No (D12, S16): match_settings and last_result are session only; trophies come with spec 08;
+      server/ and ui/ are unchanged (git diff --stat 369a9f2..ec6f78d -- server ui is empty).

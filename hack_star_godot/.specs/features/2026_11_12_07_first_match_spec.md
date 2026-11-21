@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — all 7 Steps done; review and close next
+> **Status:** 🔄 In progress — all 7 Steps done; reviewed (Approve, 3 Should-fix · 6 Nit); close next
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -23,6 +23,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (107 k in · 2.70 M cached · 18 k out) | CHF 0.60 (71 credits) | Step 5 done (`usage.ps1 -AgentName s07-steps5-6 -Until 20:59:30` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.97 M (194 k in · 4.75 M cached · 25 k out) | CHF 1.02 (121 credits) | Step 6 done (`usage.ps1 -AgentName s07-steps5-6 -Since 20:59:30 -Until 21:24:18`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.18 M (106 k in · 2.05 M cached · 21 k out) | CHF 0.06 (8 credits) | Step 7 done (`usage.ps1 -AgentName s07-step7` from 20:14:28); checks: `check_tools`, `test` (298 pass), `lint`, `export_web` all exit 0 |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.22 M (190 k in · 7.97 M cached · 55 k out) | CHF 3.06 (365 credits) | semantic diff written (8 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-07-first-match.html)); code review: Approve, 0 Blocking · 3 Should-fix · 6 Nit (`usage.ps1 -AgentName s07-review` from 20:14:28) |
 ---
 
 # Part 1 · Requirements
@@ -440,6 +441,36 @@ suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-07-first-match.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 3 Should-fix · 6 Nit |
+
+### Code review 2026-11-21
+
+Range `369a9f2..ec6f78d` (this spec's commits only). Ran: `tools/test.ps1` (298 of 298 passed),
+`tools/lint.ps1` (OK); record checked with `change_record.schema.json` (checks 6 pass · 3 n/a ·
+0 fail). Before | After: real screenshots from a windowed Godot 4.7.2 run (temporary capture
+script, removed), the before side from a temporary worktree at `369a9f2`; the rule outputs from
+a temporary headless script; the frame rate after **Play** measured three times per side
+(windowed desktop 1280×720: 60.0 → 60.0 fps, the match with three easy bots fighting). Good:
+every rule is pure and seeded (`Match`, `BotBrain`, `MatchSettings`, `Combat.heal`); the match
+inherits the arena (D1), so Training keeps its scene and tests; one fire path serves the player
+and the bots; a shot never hits its shooter; every statement has a test or a screenshot; nothing
+in `server/` or `ui/` changed.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | `README.md:114` says a bot in a bush "is only seen from 2.5 m away". S6 and D5 say the other direction: bots do not see a fighter in a bush beyond 2.5 m; a bot in a bush stays visible to the player, only see-through (`BotBrain.can_see`, `MatchArena._drive_bot`). Fix: "Bots see you in a bush only within 2.5 m; a bot in a bush turns see-through, like you." | spec | docs | Should-fix | fix now |
+| 2 | `docs/architecture.md:91-93`: a blank line after the new `bot_brain.gd` row splits the Game rules table; the rows `fighters.gd` … `qr_code.gd` lose their header and render as plain text. Remove the blank line | architecture | docs | Should-fix | fix now |
+| 3 | `docs/architecture.md` Screens table: the `target_dummy.tscn` row is there twice (lines 48 and 55); the `match.tscn` row (43) says "1.5 s after the end it stores `GameState.last_result`" (stored at once, leaves after 1.5 s, `match_arena.gd:159-175`); the `arena_effects.gd` row (49) does not name the `KNOCKOUT` pool (D7) | architecture | docs | Nit | fix now |
+| 4 | Edited sentences: `scenes/home.gd:3` starts "## The fighter's Prestige" mid-description; `docs/architecture.md:41` has "the title "Hack star", The chosen fighter"; `README.md:93-94` lists the home buttons without **Training** | code | docs | Nit | fix now |
+| 5 | Hits after the end: once `Match` is `OVER`, `Fighter.hit` still applies damage (`fighter.gd:83-92`), so a bot shot already in flight can knock out the player during the 1.5 s wait after a Victory (puff, the player vanishes) while the result screen says Victory; `Match.knock_out` ignores it, so the result is right. Decide whether fighters stop taking hits (or shots are cleared) when the match is over, with a test | code | spec | Should-fix | plan decision |
+| 6 | With `time_up_result` "defeat" (not the default) the place is `fighters_left()` with the player counted (`match.gd:108-112`): time up with nobody out gives "You finished 4th" (record block *match-rules*). D4 says only "a defeat with the place"; decide the place at time up and write it into D4 | spec | spec | Nit | plan decision |
+| 7 | The red timer (`Combat.COLOR_RED` with the `HudLabel` outline) sits over the red-orange rock at the top centre and is hard to read in the last 10 s, most at 844×390 (record block *match-fight*). D9 fixes the red; decide a backdrop (dark panel) or a lighter red | code | spec | Nit | plan decision |
+| 8 | Spec Overview table, Step 7 row: the Detail cell is written twice (seven cells in a six-column table) | spec | docs | Nit | fix now |
+| 9 | `scenes/target_dummy.tscn:4`: the blank line between the `ext_resource` lines and the first `sub_resource` was removed by hand; Godot writes it back on the next save (a noise diff later) | scan | guideline | Nit | fix now |
+
+**Outcome:** Approve — no Blocking finding; findings 1–4, 8, 9 to fix now, 5–7 need a plan
+decision (runner) before `CLOSE:`.
 
 ---
 
@@ -448,6 +479,6 @@ suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)
