@@ -17,6 +17,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #32 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.40 M (119 k in · 2.25 M cached · 26 k out) | CHF 1.32 (157 credits) | Part 2 written (7 Steps: standard, reasoning, standard, standard, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s08-lead` from 21:49:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 392 k (52 k in · 335 k cached · 5 k out) | CHF 0.18 (21 credits) | Step 1 done (`usage.ps1 -AgentName s08-step1` from 21:49:57) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 862 k (43 k in · 811 k cached · 8 k out) | CHF 0.45 (53 credits) | Step 2 done (`usage.ps1 -AgentName s08-step2` from 21:49:57) |
 ---
 
 # Part 1 · Requirements
@@ -149,7 +150,7 @@ kept, S11)._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Trophy rules and settings | standard (Claude Sonnet 5.5) — pure rules and tests, numbers fixed by D1 and D2 | ✅ Done | [→ Step 1](#step-1--trophy-rules-and-settings) |
-| **2** | Save file version 2 | reasoning (Claude Opus 5.5) — a new saved format with versioning, migration of the spec 05 file and checks of every field (D3) | ⬜ Not started | [→ Step 2](#step-2--save-file-version-2) |
+| **2** | Save file version 2 | reasoning (Claude Opus 5.5) — a new saved format with versioning, migration of the spec 05 file and checks of every field (D3) | ✅ Done | [→ Step 2](#step-2--save-file-version-2) |
 | **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ⬜ Not started | [→ Step 3](#step-3--progress-loaded-and-saved) |
 | **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ⬜ Not started | [→ Step 4](#step-4--trophies-after-a-match) |
 | **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ⬜ Not started | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
@@ -230,16 +231,23 @@ The save file holds the whole progress next to the hacks, with `version` 2; a sp
 keeps its hacks, a damaged or newer file gives nothing, and every field is checked (S3, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/save_data.gd` after D3 (`VERSION` 2, `to_json(hacks, progress)`, `from_json` →
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/save_data.gd` after D3 (`VERSION` 2, `to_json(hacks, progress)`, `from_json` →
       `{hacks, progress}`, version 1 migration, field checks); update its callers in
       `GameState` so the game behaves as before (hacks only) until Step 3.
-- [ ] Tests (D9): `test_save_data.gd` adapted to the new return value, new
+- [x] Tests (D9): `test_save_data.gd` adapted to the new return value, new
       `test_save_data_v2.gd` (round trip, version 1, newer, broken, non-object, bad fields).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 21:58
+
+**Done (2026-11-21 · ~4 min · Claude Opus 5.5)** — `SaveData` version 2: `to_json(hacks, progress)`,
+`from_json` → `{hacks, progress}`, version 1 kept as hacks with an empty progress, newer/broken/non-object
+files give nothing, every progress field checked (unknown fighters, skins and selection, non-whole
+or out-of-range numbers left out); `GameState` still saves and loads only the hacks (empty
+progress) until Step 3. `tools/test.ps1` 314 tests passed, `tools/lint.ps1` OK · suggested:
+reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · ~862 k · ~CHF 0.45 (53 credits)
 
 ---
 

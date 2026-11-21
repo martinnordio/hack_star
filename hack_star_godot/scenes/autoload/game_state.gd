@@ -112,7 +112,7 @@ func reset_hacks() -> void:
 func _load_hacks() -> Array[String]:
 	if not FileAccess.file_exists(save_path):
 		return []
-	return SaveData.from_json(FileAccess.get_file_as_string(save_path))
+	return SaveData.from_json(FileAccess.get_file_as_string(save_path))["hacks"]
 
 
 func _save_hacks() -> void:
@@ -121,7 +121,7 @@ func _save_hacks() -> void:
 	if file == null:
 		push_warning("Could not save %s (error %d)" % [save_path, FileAccess.get_open_error()])
 		return
-	file.store_string(SaveData.to_json(active_hacks))
+	file.store_string(SaveData.to_json(active_hacks, {}))
 
 
 # Reads `?hack=` from the page address and removes it, so a reload does not redeem it again.
