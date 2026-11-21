@@ -1,7 +1,7 @@
 # Hack Codes Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -16,6 +16,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S3, S4, S6, S10, S11, S12 revised; S13 (no server), S14 (English), S15 (web game reaches the server) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #29 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.39 M (129 k in · 3.23 M cached · 37 k out) | CHF 1.70 (202 credits) | Part 2 written (9 Steps: standard, standard, standard, standard, reasoning, standard, standard, reasoning, light); also the requirements revision and the issue (`usage.ps1 -AgentName s05-lead` from 17:25:44) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 914 k (88 k in · 816 k cached · 10 k out) | CHF 0.33 (40 credits) | Step 1 done (`usage.ps1 -AgentName s05-steps1-4` 17:25:44–17:35:03) |
 
 ---
 
@@ -148,7 +149,7 @@ simplest reading that fits the Godot game._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Hack rules and the saved active hacks | standard (Claude Sonnet 5.5) — pure rules, a small JSON file and tests, fixed by D4 and D5 | ⬜ Not started | [→ Step 1](#step-1--hack-rules-and-the-saved-active-hacks) |
+| **1** | Hack rules and the saved active hacks | standard (Claude Sonnet 5.5) — pure rules, a small JSON file and tests, fixed by D4 and D5 | ✅ Done | [→ Step 1](#step-1--hack-rules-and-the-saved-active-hacks) |
 | **2** | Server connection | standard (Claude Sonnet 5.5) — one autoload with `HTTPRequest` and a test seam, fixed by D1–D3 | ⬜ Not started | [→ Step 2](#step-2--server-connection) |
 | **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ⬜ Not started | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
 | **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ⬜ Not started | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
@@ -207,28 +208,31 @@ The game knows the three hacks, computes their effects from the active hacks and
 active hacks in a save file (S2, S4, S5, S6, S8, S9, S11, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/hacks.gd` (`Hacks`) after D4 and `game/save_data.gd` (`SaveData`) after D5.
-- [ ] `GameState`: `active_hacks`, `activate_hack(id)` (ignores unknown or already active ids),
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/hacks.gd` (`Hacks`) after D4 and `game/save_data.gd` (`SaveData`) after D5.
+- [x] `GameState`: `active_hacks`, `activate_hack(id)` (ignores unknown or already active ids),
       `reset_hacks()`, `has_hack(id)`, `save_path`, load in `_ready`, save after each change;
       `is_unlocked` and `select` follow `Hacks.is_fighter_unlocked`; `reset()` also empties
       `active_hacks` in memory without saving (so the tests of spec 04 start from the normal
       rules even if the developer's own file has hacks), and `_ready` loads the file after it.
-- [ ] Tests: `tests/test_hacks.gd` (normalize " infinity " → "INFINITY"; `code_from_scan` of a
+- [x] Tests: `tests/test_hacks.gd` (normalize " infinity " → "INFINITY"; `code_from_scan` of a
       code and of a link; ∞ text; `spend` with and without the hack; unlock and max power
       with and without hacks; power text), `tests/test_save_data.gd` (round trip; missing,
       broken, newer and unknown ids), `tests/test_game_state.gd` additions (activate, save,
       load again from the test file, reset hacks → normal rules; a locked fighter selectable
       only with `unlock_all`). Every test that changes hacks points `GameState.save_path` to a
       file under `user://test/` and restores it, so the tests never touch the player's file.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 17:33
+
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — `Hacks` (rules), `SaveData` (save file) and `GameState` (`active_hacks`, `activate_hack`, `reset_hacks`, `has_hack`, `save_path`, load in `_ready`, save after each change; `reset()` clears the hacks in memory only); `is_unlocked` follows `Hacks.is_fighter_unlocked`. 15 new tests; `tools/test.ps1` 126 passing, exit 0; `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 914 k · CHF 0.33
 
 ---
 
 ## Step 2 — Server connection
+
 
 ### Goal
 The game asks the existing server for a hack code and the list of hacks, and tells a correct
