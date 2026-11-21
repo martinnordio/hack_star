@@ -1,7 +1,7 @@
 # Graphics Demo Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -16,6 +16,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S2, S3, S4, S7, S9, S10 revised; S12 (English) and S13 (what worked before) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #30 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.35 M (144 k in · 3.16 M cached · 37 k out) | CHF 1.76 (210 credits) | Part 2 written (8 Steps: standard, reasoning, standard, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s06-lead` from 18:42:18) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 269 k (50 k in · 213 k cached · 5 k out) | CHF 0.17 (20 credits) | Step 1 done (`usage.ps1 -AgentName s06-step1`) |
 
 ---
 
@@ -137,7 +138,7 @@ right joystick)._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Combat rules | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D3 | ⬜ Not started | [→ Step 1](#step-1--combat-rules) |
+| **1** | Combat rules | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D3 | ✅ Done | [→ Step 1](#step-1--combat-rules) |
 | **2** | Canyon arena | reasoning (Claude Opus 5.5) — graphics-heavy: a bigger arena built in code (rocks, cacti, decoration, light) that must look good and stay fast (D1, D2, D10) | ⬜ Not started | [→ Step 2](#step-2--canyon-arena) |
 | **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ⬜ Not started | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
 | **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ⬜ Not started | [→ Step 4](#step-4--run-and-attack-animations) |
@@ -197,19 +198,21 @@ right joystick)._
 The rules of shooting and targets exist and are tested without a scene (S4, S5).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/combat.gd` (`Combat`) after D3.
-- [ ] `Movement.follow(current, target, delta, rate)` (exponential smoothing for the camera, D5).
-- [ ] Tests: `tests/test_combat.gd` (cool-down; 5 hits break a dummy, health never below 0;
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/combat.gd` (`Combat`) after D3.
+- [x] `Movement.follow(current, target, delta, rate)` (exponential smoothing for the camera, D5).
+- [x] Tests: `tests/test_combat.gd` (cool-down; 5 hits break a dummy, health never below 0;
       ratio and colours at 1, 0.4, 0.2; `release_aim`: a drag past the dead zone, a quick tap,
       a short drag inside the dead zone held long; `nearest_target` with none in range, two
       targets; `ground_point` of a ray looking down at 55°) and `follow` in
       `tests/test_movement.gd` (moves part of the way, reaches the target after a long time,
       no overshoot).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 18:49
+
+**Done (2026-11-21 · ~2 min · Claude Sonnet 5.5)** — `game/combat.gd` (`Combat`, D3; `release_aim` returns `Combat.NO_SHOT` = `Vector2.INF` for no shot, `ground_point` returns `Vector3.INF` when the ray never meets the plane; positions are ground-plane `Vector2`), `Movement.follow`, tests in `tests/test_combat.gd` and `tests/test_movement.gd`. `tools/test.ps1` 185 tests passed, `tools/lint.ps1` exit 0; suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · ~269 k tokens · ~CHF 0.17
 
 ---
 
