@@ -54,10 +54,28 @@ func test_fighter_under_1000_trophies_shows_no_badge() -> void:
 	assert_false(screen.get_node("Margin/Column/Body/Controls/NameRow/PrestigeBadge").visible)
 
 
-func test_fighters_and_info_wait_for_their_steps() -> void:
+func test_info_waits_for_its_step() -> void:
 	var screen: Control = _show_home()
-	assert_true(screen.get_node("Margin/Column/Body/Controls/MoreRow/FightersButton").disabled)
 	assert_true(screen.get_node("Margin/Column/Body/Controls/MoreRow/InfoButton").disabled)
+
+
+func test_fighters_opens_the_fighter_list() -> void:
+	var tree: SceneTree = get_tree()
+	var previous: Node = tree.current_scene
+	var placeholder: Node = Node.new()
+	tree.root.add_child(placeholder)
+	tree.current_scene = placeholder
+	var screen: Control = HOME.instantiate()
+	placeholder.add_child(screen)
+	var button: Button = screen.get_node("Margin/Column/Body/Controls/MoreRow/FightersButton")
+	assert_false(button.disabled)
+	button.pressed.emit()
+	await wait_process_frames(2)
+	var shown: Node = tree.current_scene
+	assert_eq(shown.scene_file_path, Screens.FIGHTERS, "Fighters opens the list")
+	shown.queue_free()
+	await wait_process_frames(1)
+	tree.current_scene = previous
 
 
 func test_play_opens_the_arena() -> void:

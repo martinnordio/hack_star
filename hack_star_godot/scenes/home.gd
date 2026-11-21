@@ -1,6 +1,6 @@
 extends Control
 ## The home screen: the chosen fighter and skin, the player's trophies and credits, the
-## fighter's Prestige and **Play**. Fighters and Info open with Steps 7 and 9.
+## fighter's Prestige, **Play** and **Fighters**. Info opens with Step 9.
 ## At each game start it first plays the entrance: the fighter drops in with a bounce, a light
 ## burst and sparkles, the title pops in; a click, a touch or a key skips to the end state.
 
@@ -30,12 +30,14 @@ var _effects: Node3D
 @onready var _body: BoxContainer = $Margin/Column/Body
 @onready var _controls: Control = $Margin/Column/Body/Controls
 @onready var _play_button: Button = $Margin/Column/Body/Controls/PlayButton
+@onready var _fighters_button: Button = $Margin/Column/Body/Controls/MoreRow/FightersButton
 @onready var _flash: ColorRect = $Flash
 @onready var _skip_hint: Label = $SkipHint
 
 
 func _ready() -> void:
 	_play_button.pressed.connect(_on_play_pressed)
+	_fighters_button.pressed.connect(_on_fighters_pressed)
 	resized.connect(_arrange)
 	_title.resized.connect(_center_title_pivot)
 	_arrange()
@@ -82,6 +84,10 @@ func _center_title_pivot() -> void:
 
 func _on_play_pressed() -> void:
 	Screens.go_to(Screens.ARENA)
+
+
+func _on_fighters_pressed() -> void:
+	Screens.go_to(Screens.FIGHTERS)
 
 
 static func _is_skip(event: InputEvent) -> bool:

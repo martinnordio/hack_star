@@ -10,6 +10,8 @@ var credits: int = 0
 var selected_fighter: String = ""
 var selected_skins: Dictionary[String, String] = {}
 var entrance_played: bool = false
+## The fighter pictures of the list, rendered once per game start (see `FighterPictures`).
+var pictures: Dictionary[String, Texture2D] = {}
 
 
 func _ready() -> void:
@@ -27,6 +29,7 @@ func reset() -> void:
 	for fighter_id: String in Fighters.ids():
 		selected_skins[fighter_id] = Fighters.DEFAULT_SKIN
 	entrance_played = false
+	pictures = {}
 
 
 func is_unlocked(fighter_id: String) -> bool:

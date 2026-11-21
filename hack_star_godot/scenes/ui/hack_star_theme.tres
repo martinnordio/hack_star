@@ -64,6 +64,22 @@ border_width_right = 3
 border_width_bottom = 3
 border_color = Color(0.3, 0.34, 0.5, 1)
 
+[sub_resource type="StyleBoxFlat" id="CardPanel_panel"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.15, 0.17, 0.26, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 0.34, 0.5, 1)
+
 [sub_resource type="StyleBoxFlat" id="Panel_background"]
 bg_color = Color(0.09, 0.1, 0.16, 1)
 
@@ -71,6 +87,8 @@ bg_color = Color(0.09, 0.1, 0.16, 1)
 default_font_size = 28
 BackgroundPanel/base_type = &"Panel"
 BackgroundPanel/styles/panel = SubResource("Panel_background")
+CardPanel/base_type = &"PanelContainer"
+CardPanel/styles/panel = SubResource("CardPanel_panel")
 BigButton/base_type = &"Button"
 BigButton/font_sizes/font_size = 48
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -85,6 +103,8 @@ Button/styles/normal = SubResource("Button_normal")
 Button/styles/pressed = SubResource("Button_pressed")
 HeadingLabel/base_type = &"Label"
 HeadingLabel/font_sizes/font_size = 56
+SubheadingLabel/base_type = &"Label"
+SubheadingLabel/font_sizes/font_size = 40
 Label/colors/font_color = Color(0.94, 0.95, 1, 1)
 Label/font_sizes/font_size = 28
 Panel/styles/panel = SubResource("Panel_card")

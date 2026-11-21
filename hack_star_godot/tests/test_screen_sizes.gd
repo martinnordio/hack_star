@@ -3,6 +3,7 @@ extends GutTest
 ## and Play and Back react to a mouse click and to a touch.
 
 const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
+const LIST_SCENE: PackedScene = preload("res://scenes/fighter_list.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const SIZES: Dictionary = {
@@ -94,6 +95,34 @@ func test_home_fits_every_size() -> void:
 		for path: String in paths:
 			_assert_inside(screen.get_node(path), visible_rect, "%s %s" % [label, path])
 		shown[0].queue_free()
+
+
+func test_fighter_list_fits_every_size() -> void:
+	for label: String in SIZES:
+		var size: Vector2i = SIZES[label]
+		var shown: Array = await _show_in_viewport(LIST_SCENE, size)
+		var screen: Control = shown[1]
+		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
+		_assert_inside(screen.get_node("Margin/Column/Header/BackButton"), visible_rect, label)
+		_assert_inside(screen.get_node("Margin/Column/Header/Title"), visible_rect, label)
+		var scroll: ScrollContainer = screen.get_node("Margin/Column/Scroll")
+		_assert_inside(scroll, visible_rect, "%s scroll" % label)
+		var grid: GridContainer = scroll.get_node("Grid")
+		assert_lte(grid.size.x, scroll.size.x + 0.5, "%s grid is not wider than the screen" % label)
+		var first: Control = grid.get_child(0)
+		_assert_inside(first, visible_rect, "%s first card" % label)
+		shown[0].queue_free()
+
+
+func test_back_on_the_list_reacts_to_mouse_click_and_touch() -> void:
+	var shown: Array = await _show_in_viewport(LIST_SCENE, Vector2i(844, 390))
+	var button: Button = shown[1].get_node("Margin/Column/Header/BackButton")
+	_drop_handlers(button)
+	watch_signals(button)
+	_click(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
+	_touch(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
 
 
 func test_arena_fits_every_size() -> void:

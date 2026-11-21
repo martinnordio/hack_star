@@ -35,7 +35,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with
 
 | Scene | Script | What |
 |-------|--------|------|
-| `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the arena) and **Fighters** and **Info** (disabled until their screens exist). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
+| `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the arena) and **Fighters** (opens `fighter_list.tscn`) and **Info** (disabled until its screen exists). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
 | `arena.tscn` | `arena.gd` | The 3D arena (floor, walls, inner walls), one fighter, the camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick and the FPS label (top-right) |
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame |
 | `touch_joystick.tscn` | `touch_joystick.gd` (`TouchJoystick`) | On-screen joystick, visible only on a touch screen; its `direction` has length ≤ 1 |
@@ -59,6 +59,7 @@ without a scene.
 
 | Script | What |
 |--------|------|
+| `fighter_list.tscn` | `fighter_list.gd` | The fighter list: a scrolling grid (columns follow the width) of `ui/fighter_card.tscn` cards — picture, name, rarity in its colour, trophies, power level, Prestige badge; locked fighters greyed out with "Locked". The pictures are rendered once per game start by off-screen `FighterStage`s (`ui/fighter_pictures.gd`) and cached in `GameState.pictures`; a card draws them with the premultiplied blend of the stage. Back goes home |
 | `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`) |
 
 Later specs add their rules here, one script per rule, with a test next to it in `tests/`:

@@ -22,6 +22,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.36 M (52 k in · 4.28 M cached · 31 k out) | CHF 1.45 (173 credits) | Step 4 done (`usage.ps1 -Agent subagents` 16:27–16:32) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.04 M (93 k in · 1.93 M cached · 19 k out) | CHF 0.52 (62 credits) | Step 5 done (`usage.ps1 -Agent subagents` 16:33–16:38) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.50 M (124 k in · 3.35 M cached · 32 k out) | CHF 1.60 (191 credits) | Step 6 done (`usage.ps1 -Agent subagents` 16:39–16:45) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.69 M (88 k in · 2.57 M cached · 26 k out) | CHF 0.62 (74 credits) | Step 7 done (`usage.ps1 -Agent subagents` 16:46–16:53) |
 
 ---
 
@@ -187,7 +188,7 @@ of this spec (see Deferred Items in the plan of the
 | **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ✅ Done | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
 | **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ✅ Done | [→ Step 5](#step-5--home-screen) |
 | **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ✅ Done | [→ Step 6](#step-6--wow-entrance) |
-| **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ⬜ Not started | [→ Step 7](#step-7--fighter-list) |
+| **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ✅ Done | [→ Step 7](#step-7--fighter-list) |
 | **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
 | **9** | Info page | light (Claude Haiku 5.5) — a word list and a scrolling page | ⬜ Not started | [→ Step 9](#step-9--info-page) |
 | **10** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture) |
@@ -391,17 +392,19 @@ Started: 2026-11-21 16:39
 and Prestige; locked fighters are greyed out with a lock (S4, S6, S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/fighter_list.tscn` + `.gd` (`Screens.FIGHTERS`): a scrolling grid of cards
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/fighter_list.tscn` + `.gd` (`Screens.FIGHTERS`): a scrolling grid of cards
       (`scenes/ui/fighter_card.tscn`) whose column count follows the width; picture from the
       cache (D7), name, rarity in its colour, trophies, power level, Prestige badge; locked
       cards greyed (modulate) with a lock label; Back button (D3); **Fighters** on home enabled.
-- [ ] Tests: `tests/test_fighter_list.gd` (6 cards in catalogue order; Blaze's card shows
+- [x] Tests: `tests/test_fighter_list.gd` (6 cards in catalogue order; Blaze's card shows
       Prestige 1; Frosty, Luna and Pixel are greyed and show the lock; Back goes home);
       `test_screen_sizes.gd` adds the list (D10).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 16:46
+**Done (2026-11-21 · ~7m · Claude Sonnet 5.5)** — `scenes/fighter_list.tscn` + `.gd` (`Screens.FIGHTERS`): a scrolling grid of `scenes/ui/fighter_card.tscn` cards (picture, name, rarity in its colour, trophies, power level, Prestige badge, "Locked" label and a grey tint for locked fighters), columns = width / 300; pictures by `FighterPictures` (`scenes/ui/fighter_pictures.gd`): off-screen `FighterStage`s render each fighter in its chosen skin once, cached as `ImageTexture` in `GameState.pictures` (premultiplied blend on the card, as Step 4 noted; skipped headless); theme gets `CardPanel` and `SubheadingLabel`; **Fighters** on home is enabled; `docs/architecture.md` has the list row. Tests: `tests/test_fighter_list.gd` (8) + home Fighters test + list in `test_screen_sizes.gd` (5 sizes, Back click and touch). `tools/test.ps1`: 86 tests passed; `tools/lint.ps1`: exit 0; screenshots from a windowed run (desktop 1280×720, phone portrait 390×844, iPad portrait): six cards, equal columns, Blaze with Prestige 1, Frosty/Luna/Pixel greyed with Locked. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.69 M tokens · CHF 0.62 (74 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

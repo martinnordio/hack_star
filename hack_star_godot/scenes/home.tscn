@@ -104,7 +104,6 @@ alignment = 1
 [node name="FightersButton" type="Button" parent="Margin/Column/Body/Controls/MoreRow"]
 custom_minimum_size = Vector2(260, 80)
 layout_mode = 2
-disabled = true
 text = "Fighters"
 
 [node name="InfoButton" type="Button" parent="Margin/Column/Body/Controls/MoreRow"]

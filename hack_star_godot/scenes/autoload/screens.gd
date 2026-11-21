@@ -4,6 +4,7 @@ extends Node
 
 const HOME: String = "res://scenes/home.tscn"
 const ARENA: String = "res://scenes/arena.tscn"
+const FIGHTERS: String = "res://scenes/fighter_list.tscn"
 
 
 func go_to(path: String) -> Error:

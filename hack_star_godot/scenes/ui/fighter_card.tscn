@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/fighter_card.gd" id="1_card"]
+[ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="2_badge"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_premult"]
+blend_mode = 4
+
+[node name="FighterCard" type="PanelContainer"]
+custom_minimum_size = Vector2(280, 0)
+theme_type_variation = &"CardPanel"
+script = ExtResource("1_card")
+
+[node name="Column" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Picture" type="TextureRect" parent="Column"]
+material = SubResource("CanvasItemMaterial_premult")
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="Column"]
+layout_mode = 2
+theme_type_variation = &"SubheadingLabel"
+text = "Fighter"
+horizontal_alignment = 1
+
+[node name="PrestigeBadge" parent="Column" instance=ExtResource("2_badge")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="RarityLabel" type="Label" parent="Column"]
+layout_mode = 2
+text = "Rare"
+horizontal_alignment = 1
+
+[node name="TrophiesLabel" type="Label" parent="Column"]
+layout_mode = 2
+text = "Trophies: 0"
+horizontal_alignment = 1
+
+[node name="PowerLabel" type="Label" parent="Column"]
+layout_mode = 2
+text = "Power: 1"
+horizontal_alignment = 1
+
+[node name="LockLabel" type="Label" parent="Column"]
+visible = false
+layout_mode = 2
+text = "Locked"
+horizontal_alignment = 1
