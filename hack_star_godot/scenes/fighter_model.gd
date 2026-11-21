@@ -27,6 +27,9 @@ const RUN_HEAD_SPEED: float = 2.4
 const ATTACK_SECONDS: float = 0.25
 const ATTACK_KICK: float = 0.18
 const ATTACK_SQUASH: float = 0.14
+## How opaque a fighter stays in a cactus patch (1 solid, 0 invisible).
+const SEE_THROUGH_ALPHA: float = 0.45
+const SOLID_META: String = "solid_material"
 
 ## Colours of each fighter's look, per skin. `main` is the colour a player sees most.
 const LOOKS: Dictionary = {
@@ -189,7 +192,8 @@ var time_seconds: float = 0.0
 var running: bool = false
 ## Seconds left of the attack recoil; 0 when none plays.
 var attack_left: float = 0.0
-
+## True while the whole fighter is see-through.
+var see_through: bool = false
 var _rig: Node3D
 var _body: Node3D
 var _head: Node3D
@@ -197,6 +201,7 @@ var _flickers: Array[Node3D] = []
 var _flicker_scales: Array[Vector3] = []
 var _spinners: Array[Node3D] = []
 var _outline: StandardMaterial3D
+var _faded_materials: Dictionary = {}
 
 
 func _ready() -> void:
@@ -234,6 +239,44 @@ func setup(new_fighter_id: String, new_skin_id: String = Fighters.DEFAULT_SKIN) 
 		_:
 			_build_blaze(look)
 	animate(time_seconds)
+	_apply_see_through(_rig)
+
+
+## Makes the whole fighter see-through (in a cactus patch) or solid again.
+func set_see_through(on: bool) -> void:
+	if on == see_through:
+		return
+	see_through = on
+	if _rig != null:
+		_apply_see_through(_rig)
+
+
+## The Compatibility renderer ignores `GeometryInstance3D.transparency`, so the fighter's
+## materials are swapped for see-through copies (D11), and back.
+func _apply_see_through(node: Node) -> void:
+	for child: Node in node.get_children():
+		if child is MeshInstance3D:
+			_swap_material(child)
+		_apply_see_through(child)
+
+
+func _swap_material(mesh: MeshInstance3D) -> void:
+	if not mesh.has_meta(SOLID_META):
+		mesh.set_meta(SOLID_META, mesh.material_override)
+	var solid: Material = mesh.get_meta(SOLID_META)
+	mesh.material_override = _faded(solid) if see_through else solid
+
+
+func _faded(material: Material) -> Material:
+	if not material is StandardMaterial3D:
+		return material
+	if not _faded_materials.has(material):
+		var copy: StandardMaterial3D = material.duplicate() as StandardMaterial3D
+		copy.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		copy.albedo_color.a *= SEE_THROUGH_ALPHA
+		copy.next_pass = _faded(copy.next_pass) if copy.next_pass != null else null
+		_faded_materials[material] = copy
+	return _faded_materials[material]
 
 
 ## Starts the short recoil of a shot: the body kicks back and squashes, then springs back.
@@ -272,6 +315,7 @@ func _clear() -> void:
 	_flickers.clear()
 	_flicker_scales.clear()
 	_spinners.clear()
+	_faded_materials.clear()
 	_rig = Node3D.new()
 	_rig.name = "Rig"
 	add_child(_rig)

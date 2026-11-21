@@ -24,6 +24,10 @@ const FRAME_TOP_MARGIN: float = 0.12
 const FPS_LABEL_INTERVAL: float = 0.25
 
 const DUMMY_SCENE: PackedScene = preload("res://scenes/target_dummy.tscn")
+## Dust puffs under a running fighter come this often, in this colour.
+const DUST_INTERVAL: float = 0.25
+const DUST_COLOR: Color = Color(1.0, 0.98, 0.9, 0.85)
+const SPARK_COLOR: Color = Color(1.0, 0.95, 0.7)
 
 ## When false, the fighter keeps the `input_direction` set from outside (tests).
 var read_player_input: bool = true
@@ -34,6 +38,7 @@ var _camera_distance: float = CAMERA_MIN_DISTANCE
 var _last_fire_seconds: float = -INF
 var _mouse_held: bool = false
 var _mouse_position: Vector2 = Vector2.ZERO
+var _dust_left: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
 @onready var _camera: Camera3D = $Camera
@@ -42,6 +47,7 @@ var _mouse_position: Vector2 = Vector2.ZERO
 @onready var _aim_line: MeshInstance3D = $AimLine
 @onready var _shots: Node3D = $Shots
 @onready var _dummies: Node3D = $Dummies
+@onready var _effects: ArenaEffects = $Effects
 @onready var _fps_label: Label = $Hud/FpsLabel
 
 
@@ -67,6 +73,10 @@ func _process(delta: float) -> void:
 	if _mouse_held:
 		_fire_at_mouse()
 	_update_aim_line()
+	_dust_left -= delta
+	if _fighter.model.running and _dust_left <= 0.0:
+		_dust_left = DUST_INTERVAL
+		_effects.play(ArenaEffects.DUST, _fighter.global_position + Vector3.UP * 0.1, DUST_COLOR)
 	_fps_timer += delta
 	if _fps_timer >= FPS_LABEL_INTERVAL:
 		_fps_timer = 0.0
@@ -74,6 +84,9 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	_fighter.model.set_see_through(
+		ArenaLayout.in_bush(Vector2(_fighter.position.x, _fighter.position.z))
+	)
 	if not read_player_input:
 		return
 	var keys: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -113,7 +126,13 @@ func fire(direction: Vector2) -> bool:
 		_fighter.model.main_color
 	)
 	_shots.add_child(shot)
+	shot.ended.connect(_on_shot_ended.bind(_fighter.model.main_color))
+	_effects.play(ArenaEffects.FLASH, _fighter.muzzle.global_position, Color(1.0, 0.95, 0.7))
 	return true
+
+
+func _on_shot_ended(end_position: Vector3, _hit: bool, color: Color) -> void:
+	_effects.play(ArenaEffects.SPARKS, end_position, color.lerp(SPARK_COLOR, 0.4))
 
 
 func _fire_at_mouse() -> void:

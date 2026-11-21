@@ -22,6 +22,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.28 M (30 k in · 1.24 M cached · 10 k out) | CHF 0.25 (30 credits) | Step 4 done (`usage.ps1 -AgentName s06-steps3-4` from 19:04:19 to 19:07:10) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.31 M (135 k in · 4.14 M cached · 40 k out) | CHF 1.94 (231 credits) | Step 5 done (`usage.ps1 -AgentName s06-step5`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (101 k in · 2.70 M cached · 25 k out) | CHF 0.65 (77 credits) | Step 6 done (`usage.ps1 -AgentName s06-steps6-7` from 19:21:59 to 19:36:40) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.15 M (56 k in · 4.07 M cached · 26 k out) | CHF 0.67 (80 credits) | Step 7 done (`usage.ps1 -AgentName s06-steps6-7` from 19:36:40 to 19:45:28) |
 ---
 
 # Part 1 · Requirements
@@ -148,7 +149,7 @@ right joystick)._
 | **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ✅ Done | [→ Step 4](#step-4--run-and-attack-animations) |
 | **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ✅ Done | [→ Step 5](#step-5--aiming-and-shooting) |
 | **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ✅ Done | [→ Step 6](#step-6--target-dummies) |
-| **7** | Bushes and effects | standard (Claude Sonnet 5.5) — see-through in a bush and small particle pools, fixed by D10 and D11 | ⬜ Not started | [→ Step 7](#step-7--bushes-and-effects) |
+| **7** | Bushes and effects | standard (Claude Sonnet 5.5) — see-through in a bush and small particle pools, fixed by D10 and D11 | ✅ Done | [→ Step 7](#step-7--bushes-and-effects) |
 | **8** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks, measuring the frame rate and updating two documents | ⬜ Not started | [→ Step 8](#step-8--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -419,19 +420,41 @@ The fighter is see-through in a cactus patch, and running and shooting have dust
 flash and hit sparks (S6, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `FighterModel.set_see_through(on)` and the bush check in `arena.gd` after D11.
-- [ ] `scenes/arena_effects.gd` (`ArenaEffects`) after D10; dust while running, flash on every
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `FighterModel.set_see_through(on)` and the bush check in `arena.gd` after D11.
+- [x] `scenes/arena_effects.gd` (`ArenaEffects`) after D10; dust while running, flash on every
       shot, sparks where a shot ends (also on a dummy).
-- [ ] Tests: `tests/test_arena.gd` (standing in a bush makes the model see-through, leaving
+- [x] Tests: `tests/test_arena.gd` (standing in a bush makes the model see-through, leaving
       it makes it solid; a shot plays a flash; a shot that ends plays sparks; running plays
       dust; the pools never grow beyond their size).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the fighter in a
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the fighter in a
       cactus patch (see-through, D11 fallback noted if needed), of dust while running, of a
       muzzle flash and of sparks on a dummy.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 19:37
+
+- **D11 fallback used:** on a screenshot `GeometryInstance3D.transparency` did nothing in the
+  Compatibility renderer (the fighter stayed solid). `FighterModel.set_see_through` now swaps
+  every mesh's material for an alpha copy (alpha 0.45, the outline pass faded too; copies are
+  cached per material and the solid one is kept in the mesh's meta `solid_material`), and
+  back. `setup` applies the current state, so a new look in a bush is see-through too.
+  `arena.gd` calls it every physics frame with `ArenaLayout.in_bush`; it only does work when
+  the state changes.
+- `ArenaEffects` (`Effects` in `arena.tscn`): pools of `CPUParticles3D` — dust 4, flash 3,
+  sparks 4 — built once, one shared unshaded alpha material that takes the particle colour;
+  `play(kind, at, color)` restarts the next one. `arena.gd`: dust every 0.25 s while running,
+  the flash at `Muzzle` in `fire`, sparks from `Shot.ended` (in a wall, a rock, a dummy or at
+  the end of the range).
+- The tests are in `tests/test_arena_effects.gd` (not `test_arena.gd`): `gdlint` allows at most
+  20 public test functions per file and `test_arena.gd` was full.
+- Screenshots (windowed run at 1280×720, temporary capture script under `%TEMP%`, removed):
+  the fighter in the cactus patch is see-through (cacti and the ground show through); the
+  first dust (sand colour) was invisible on the sand → cream colour and bigger puffs; a muzzle
+  flash at the muzzle; sparks on a hit dummy next to the "480". FPS 48–60 while running and
+  shooting.
+
+**Done (2026-11-21 · ~8 min · Claude Sonnet 5.5)** — `FighterModel.set_see_through`, `scenes/arena_effects.gd` + `Effects` in `arena.tscn`, bush check, dust, flash and sparks in `arena.gd`; tests `tests/test_arena_effects.gd` (6). `tools/test.ps1` 224 tests passed, `tools/lint.ps1` exit 0, screenshots checked; suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 4.15 M tokens · CHF 0.67 (80 credits)
 
 ---
 
