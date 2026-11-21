@@ -1,10 +1,10 @@
 # Move Specs to Godot Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Requirements in progress
+> **Status:** ⬜ Not started — plan ready
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
-> **Branch:** `feature/move-specs-to-godot`
+> **Branch:** `main` (worked on directly, no pull request)
 
 ## Stage log
 
@@ -12,6 +12,8 @@
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 written, in the same run as spec 01 |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 revised: the root kit is used, no Godot kit (Context, S12) |
+| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row below | included in the plan row below | Part 1 revised: open questions answered (Worlds moved now from its branch, Bug Fixes own spec, global numbers, `overall_req.md` linked); S1, S7 changed; S13 requirement 0, S14 Godot architecture, S15 Godot UI, S16, S17 (on `main`) added |
+| 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.05 M (26 k in · 3.01 M cached · 16 k out) | CHF 0.88 (105 credits) | Part 2 written (also covers the requirements revision above) |
 
 ---
 
@@ -71,9 +73,11 @@ after the other. It needs the folder, and the rule for Godot specs with the root
 
 ## 1 · Specs
 
-- **S1 — Which specs:** Every finished game spec of the root `.specs/features/done/` is
-  moved — the 16 listed above (03–18). Specs about the kit or tools, and specs that are not
-  finished, are not moved.
+- **S1 — Which specs:** Every finished game spec is moved — the 16 listed above (03–18).
+  Specs about the kit or tools, and specs that are not finished, are not moved. 03–17 come
+  from the root `.specs/features/done/` on `main`; 18 (*Worlds and World Coins*) is finished
+  only on the branch `feature/worlds-and-world-coins`, so its closed copy is taken from that
+  branch (`.specs/features/done/2026_11_16_worlds_and_world_coins_spec.md`).
 - **S2 — Order:** The specs are numbered in the order the features were built (the table
   above), so that each one only needs features of specs with a lower number. The two Godot
   specs of this folder are 01 and 02, and the moved specs continue with 03.
@@ -92,10 +96,13 @@ after the other. It needs the folder, and the rule for Godot specs with the root
   spec no longer lists Python or Svelte files as if they were in the Godot game: it points to
   the original spec for how the Python game did it and lists what the Godot folder already
   has (the lower-numbered specs).
-- **S7 — Technology statements flagged:** A statement that names the Python + Svelte
-  technology or tools (for example *MVP and Architecture* S4 and S5) is not silently
-  changed: it is listed under **Open questions** with a suggestion for the Godot game, so the
-  author decides it before the spec is planned.
+- **S7 — Technology statements replaced, not hidden:** A statement that names the Python +
+  Svelte technology or tools is not silently changed or deleted: it is struck through with
+  the reason (`~~S4 — …~~ (replaced for the Godot game by S<n>)`) and a Godot statement is
+  added at the end of the list (S13, S14). Where the Godot answer is not decided yet (for
+  example whether rooms and hack codes use the existing FastAPI server), it goes under
+  **Open questions** with a suggestion, so the author decides it before the spec is
+  planned.
 - **S8 — Links work:** Every link in a moved spec opens the right file from its new place
   (the overall game idea, the original spec, other moved specs, images).
 - **S9 — Originals unchanged:** The specs in the root `.specs/` are not changed, moved or
@@ -109,21 +116,37 @@ after the other. It needs the folder, and the rule for Godot specs with the root
 - **S12 — Ready for the tools:** After the move, `PLAN:` of the root kit can run on the first
   moved spec whose open questions are answered, then `IMPLEMENT:`, `REVIEW:` and `CLOSE:` as
   for any spec, and the cost list `hack_star_godot/.specs/costs.md` lists every moved spec.
+- **S13 — Requirement 0 in every moved spec:** Every moved spec starts its statements with
+  **S0 — Check with the Godot game**: before the spec is planned, each of its statements is
+  checked against the Godot game as built so far (the lower-numbered specs) and the Godot
+  architecture (S14); a statement that does not fit — it names the Python + Svelte game, the
+  behaviour was changed by a later spec, or it no longer makes sense — is revised with
+  `REQUIREMENTS: <spec file> — …` before `PLAN:`. In *Bug Fixes* (16), S0 also asks for
+  each bug whether it can happen in the Godot game at all, and a bug that cannot is turned
+  into a statement of the correct behaviour (so it is still tested) instead of a fix.
+- **S14 — Godot architecture (*MVP and Architecture*, 03):** The moved spec 03 describes the
+  architecture of the Godot game instead of the Python + Svelte one: its technology and
+  run-locally statements (S4, S5) are replaced (S7) by statements for Godot 4.7 with
+  GDScript, exported for the web and played in the browser (from spec 01), and by a
+  statement that the Godot game has an architecture document,
+  `hack_star_godot/docs/architecture.md`, describing how screens, game rules, 3D models,
+  saved progress, rooms and tests are organised, which every later spec reads and keeps up
+  to date. The server question (rooms and hack codes) is an open question of spec 03.
+- **S15 — Godot UI (*Basic UI*, 04):** The moved spec 04 asks for the user interface of the
+  Godot game as its foundation: one look shared by all screens (colours, text styles,
+  buttons, the Back button), one way to go from screen to screen that later specs reuse, and
+  layouts that fit desktop, iPad and phone in landscape and portrait — in addition to its
+  screens (home, fighters, skins, info).
+- **S16 — Links to the overall game idea:** Links to `overall_req.md` point to the root
+  [.specs/overall_req.md](../../../.specs/overall_req.md); it is not copied.
+- **S17 — On `main`:** The move is done on `main`, committed after each Step, without a pull
+  request; the moved specs have no issue yet.
 
 ### Open questions
 
-- **Worlds and World Coins:** it is finished only on the branch
-  `feature/worlds-and-world-coins` and not yet merged into `main`. Suggestion: move it (18)
-  once that branch is merged; until then the move stops after 17.
-- **Bug Fixes:** move it as its own spec (16) or fold its statements into the specs it
-  fixes? Suggestion: move it as its own spec — the order already puts it after the features
-  it fixes, and nothing is lost.
-- **Numbering:** global numbers 01–18 (the two Godot specs first, as in S2), or 01–16 for the
-  moved specs only? Suggestion: global, so one number gives the place of every spec in the
-  Godot folder.
-- **Overall game idea:** link to the root `.specs/overall_req.md` or copy it into
-  `hack_star_godot/.specs/`? Suggestion: link to it — it is the author's own document and
-  describes both games.
+_None. Answered 2026-11-21: Worlds and World Coins is moved now as 18 from its branch (S1);
+Bug Fixes is moved as its own spec (16, S13); global numbers 01–18 (S2); `overall_req.md` is
+linked, not copied (S16)._
 
 <!-- spec-nx:plan -->
 
@@ -131,4 +154,172 @@ after the other. It needs the folder, and the rule for Godot specs with the root
 
 # Part 2 · Plan
 
-_Written by the plan stage once Part 1 is agreed._
+## 2 · Spec Overview
+
+| Step | Description | Model (suggested) | Status | Detail |
+|------|-------------|-------------------|--------|--------|
+| **1** | Ordered list; move 03 MVP and Architecture and 04 Basic UI for Godot | reasoning (Claude Opus 5.5) — Godot architecture and UI statements | ⬜ Not started | [→ Step 1](#step-1--ordered-list-move-03-mvp-and-architecture-and-04-basic-ui-for-godot) |
+| **2** | Move 05–10 | standard (Claude Sonnet 5.5) — same rules, applied to six specs | ⬜ Not started | [→ Step 2](#step-2--move-0510) |
+| **3** | Move 11–15 | standard (Claude Sonnet 5.5) — same rules, applied to five specs | ⬜ Not started | [→ Step 3](#step-3--move-1115) |
+| **4** | Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds | standard (Claude Sonnet 5.5) — same rules; S0 variant for bugs; Worlds from its branch | ⬜ Not started | [→ Step 4](#step-4--move-16-bug-fixes-17-fighter-studio-18-worlds) |
+| **5** | Final check of all moved specs | light (Claude Haiku 5.5) — running the checks, fixing links | ⬜ Not started | [→ Step 5](#step-5--final-check-of-all-moved-specs) |
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration> · <model>)**`** line to that Step's
+>    **Notes**: date, time it took, the AI model that did the work, a one-line summary and
+>    the verifying test/command result. With per-Step models, end it with
+>    `suggested: <tier> (<model>) · ran: <model>`; with cost tracking on, with
+>    `· <tokens> · <currency> <amount>` from the `usage` script (`-Agent subagents` over the
+>    sub-agent's time in a per-Step run; the orchestrator gets its own row, `-Agent main`).
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+> **Godot spec (`AGENTS.md`):** everything this spec writes is under
+> `hack_star_godot/.specs/`; the root `.specs/` is only read (S9). Work and commit on `main` (S17).
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | **By hand, no script:** each spec is moved by reading it and writing the new file; nothing is added to the game or the tools. | The adaptations (Already in the repository, technology statements, S0) need judgement; a change of specs and documents only needs a review page, not a change record (`.specs/kit/review/semantic_diff.md`). |
+| D2 | **Header of a moved spec:** title unchanged; `Author` as in the original; `Status: ⬜ Requirements in progress`; `Created` and `Last updated` 2026-11-21; `Branch: feature/<name>` (name without date and number, `_` → `-`); `> **Moved from:** [<original file>](<link>) (#<original issue>)`; no `Issue:` line; a Stage log (template of `.specs/kit/spec_template.md`) whose first row is `\| 2026-11-21 \| requirements \| move \| <model> \| included in [02](2026_11_21_02_move_specs_to_godot_spec.md) \| included in [02](…) \| moved from <original> (requirements only) \|`. | S5; costs are counted once, in this spec (COSTS.md rule 4). |
+| D3 | **What is copied:** from `# Part 1 · Requirements` down to the marker, word for word, except the changes of S6, S7, S13–S16; the original header, Stage log, Cost summary and Part 2 are dropped; below the marker only the Part 2 placeholder of the requirements stage. | S4; the history stays in the original (the *Moved from* link). |
+| D4 | **S0** is the first statement of `## 1 · Specs`: `- **S0 — Check with the Godot game:** Before this spec is planned, each statement below is checked against the Godot game as built so far (specs 01–<NN−1>) and the Godot architecture (spec 03, `hack_star_godot/docs/architecture.md`); a statement that does not fit — it names the Python + Svelte game, a later spec changed the behaviour, or it no longer makes sense — is revised with `REQUIREMENTS:` before `PLAN:`.` In 16 (*Bug Fixes*) it adds: `For each bug: can it happen in the Godot game? If not, the statement describes the correct behaviour so it is still tested, not a fix.` | S13 — one fixed wording, so every spec asks the same. |
+| D5 | **Already in the repository** of a moved spec: (1) `How the Python + Svelte game did it: [original spec](…)`; (2) the moved specs with a lower number it builds on (links); (3) for 03–04 also spec 01's Godot project. Python and Svelte file paths are removed. | S6. |
+| D6 | **Links** from `hack_star_godot/.specs/features/`: `overall_req.md` → `../../../.specs/overall_req.md` (S16); the original spec → `../../../.specs/features/done/<file>`; another moved spec → its new file name in the same folder; root documents (README, `docs/architecture.md`) → `../../../<path>`, labelled *(Python + Svelte game)*; images → their root path. *Worlds* (18) is not on `main`: its *Moved from* link is `https://github.com/martinnordio/hack_star/blob/feature/worlds-and-world-coins/.specs/features/done/2026_11_16_worlds_and_world_coins_spec.md`. | S8. |
+| D7 | **Spec 03 (S14):** S4 and S5 struck through (`(replaced for the Godot game by S12 / S14)`); new **S12 — Technology:** Godot 4.7 with GDScript, exported for the web, played in the browser (spec 01); **S13 — Architecture document:** `hack_star_godot/docs/architecture.md` describes how screens, game rules, 3D models, saved progress, rooms and tests are organised; every later spec reads it and keeps it up to date; **S14 — Run locally:** a developer opens, runs, tests, exports and serves the game following `hack_star_godot/README.md`, and plays from an iPad or phone on the same Wi-Fi. Open question: *rooms and hack codes — the existing FastAPI server or something in Godot? Suggestion: keep the FastAPI server (same rooms and codes as the Python game).* The *graphics fast* investigation table (Three.js, PixiJS, Phaser) stays as history with a one-line note that Godot replaces those options; the feature list links point to the moved specs. | S14, S7. |
+| D8 | **Spec 04 (S15):** new **S12 — UI foundation:** one look shared by all screens (colours, text styles, buttons, the Back button), one way to go from screen to screen that later specs reuse, layouts that fit desktop, iPad and phone in landscape and portrait, touch and mouse; written down in `hack_star_godot/docs/architecture.md` (spec 03). Its screens (S1–S11) stay. | S15. |
+| D9 | **Ordered list** `hack_star_godot/.specs/features/README.md`: one table — `Order \| Spec \| Moved from \| Status` — with 01 and 02 (Godot specs, `done/` links) and 03–18; status words: *requirements*, *planned*, *implemented*, *closed*; a short paragraph on how to work through it (S0 → `REQUIREMENTS:` if needed → `PLAN:` → `IMPLEMENT:` → `REVIEW:` → `CLOSE:`). | S11. |
+
+---
+
+## Step 1 — Ordered list; move 03 MVP and Architecture and 04 Basic UI for Godot
+
+### Goal
+The ordered list exists and the two foundation specs are moved with the Godot architecture
+and Godot UI statements (S2–S8, S11, S13–S16).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] `hack_star_godot/.specs/features/README.md` (D9) with all 18 rows (03–18 status
+      *to move* until moved).
+- [ ] `2026_11_12_03_mvp_and_architecture_spec.md` from the root original (D2–D7).
+- [ ] `2026_11_12_04_basic_ui_spec.md` from the root original (D2–D6, D8).
+- [ ] Check: both files have the header of D2, S0 first, no Part 2 content, every link
+      resolves (`Test-Path` from the folder; the GitHub link of D6 not needed here); the
+      README lists 03–04 as *requirements*; `git status` shows nothing under the root
+      `.specs/`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 2 — Move 05–10
+
+### Goal
+*Hack Codes*, *Graphics Demo*, *First Match*, *Trophies and Prestige*, *Unlock and Upgrade*
+and *Skins Shop* are moved in their order (S1–S10, S13, S16).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Move 05 `hack_codes`, 06 `graphics_demo`, 07 `first_match`, 08 `trophies`, 09
+      `unlock_and_upgrade`, 10 `skins_shop` (D2–D6), one after another; technology
+      statements per S7; update the README row of each.
+- [ ] Check (each file): header of D2, S0 first, statements otherwise word for word
+      (compare with the original), no Part 2 content, every link resolves.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Move 11–15
+
+### Goal
+*Overtime and Match Options*, *Super and Hypercharge*, *More Fighters*, *Play with Friends*
+and *Accounts, Create a Fighter, New Fighters and Languages* are moved (S1–S10, S13, S16).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Move 11 `overtime_and_match_options`, 12 `super_and_hypercharge`, 13 `more_fighters`,
+      14 `play_with_friends`, 15 `accounts_fighters_and_languages` (D2–D6); technology
+      statements per S7 (14 names the server: open question pointing to spec 03's server
+      question); update the README rows.
+- [ ] Check (each file): as in Step 2.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 4 — Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds
+
+### Goal
+The last three specs are moved, *Bug Fixes* with the bug variant of S0 and *Worlds* from its
+branch (S1–S10, S13, S16).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Move 16 `bug_fixes` (S0 with the bug sentence of D4), 17 `fighter_studio_saves_and_music`
+      (from `2026_11_14_1_…`; the music rules stay: no music in the repository), 18
+      `worlds_and_world_coins` from `git show feature/worlds-and-world-coins:.specs/features/done/2026_11_16_worlds_and_world_coins_spec.md`
+      with the GitHub *Moved from* link (D6); update the README rows.
+- [ ] Check (each file): as in Step 2.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 5 — Final check of all moved specs
+
+### Goal
+All 16 moved specs and the list are consistent, the originals are unchanged, and the tools
+work on the moved specs (S1–S13, S16, S17).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] Script-free check over all 16 files: name pattern `<date>_<NN>_<name>_spec.md` with
+      03–18 once each; header of D2; first statement `S0`; the marker followed only by the
+      Part 2 placeholder; no `### Notes`, `**Done (`, `## Cost summary`; every relative link
+      resolves; struck statements have a replacement or reason.
+- [ ] `git diff --stat HEAD~4 -- .specs/` shows no change in the root `.specs/` (S9).
+- [ ] `.specs/kit/tools/costs_ledger.ps1 -Root hack_star_godot -CostsLink ../../.specs/kit/COSTS.md`
+      lists all 18 specs (S12); the README list matches the files (S11).
+- [ ] `hack_star_godot/README.md`: a short section *Specs* pointing to the ordered list.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| Create GitHub issues for the moved specs | Not needed to move them (S17); each gets its issue when it is planned | each moved spec, at `CREATE ISSUE:` |
+| Run S0 of each moved spec | It belongs to that spec, before its plan | 03 … 18 |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (S1..S17 testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Implementation · every Step's tasks checked; all 16 specs moved and checked; root `.specs/` unchanged
+- [ ] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
+- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Pull request · not used — worked on `main` (S17)
