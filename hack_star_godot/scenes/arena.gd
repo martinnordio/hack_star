@@ -23,6 +23,8 @@ const FRAME_TOP_MARGIN: float = 0.12
 ## The FPS label (only while the first game is being checked) refreshes this often.
 const FPS_LABEL_INTERVAL: float = 0.25
 
+const DUMMY_SCENE: PackedScene = preload("res://scenes/target_dummy.tscn")
+
 ## When false, the fighter keeps the `input_direction` set from outside (tests).
 var read_player_input: bool = true
 
@@ -39,6 +41,7 @@ var _mouse_position: Vector2 = Vector2.ZERO
 @onready var _aim_joystick: TouchJoystick = $Hud/AimJoystick
 @onready var _aim_line: MeshInstance3D = $AimLine
 @onready var _shots: Node3D = $Shots
+@onready var _dummies: Node3D = $Dummies
 @onready var _fps_label: Label = $Hud/FpsLabel
 
 
@@ -46,6 +49,10 @@ func _ready() -> void:
 	_fighter.position = Vector3(ArenaLayout.START.x, 0.0, ArenaLayout.START.y)
 	_fighter.set_look(GameState.selected_fighter, GameState.selected_skin())
 	_aim_joystick.released.connect(_on_aim_released)
+	for spot: Vector2 in ArenaLayout.DUMMIES:
+		var dummy: TargetDummy = DUMMY_SCENE.instantiate()
+		dummy.position = Vector3(spot.x, 0.0, spot.y)
+		_dummies.add_child(dummy)
 	_camera_target = _wanted_camera_target()
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
@@ -129,11 +136,14 @@ func _on_aim_released(direction: Vector2, held_seconds: float) -> void:
 	fire(aim)
 
 
-## A quick tap fires at the nearest target in range, else straight ahead.
+## A quick tap fires at the nearest target (a dummy still standing) in range, else straight
+## ahead.
 func _tap_direction() -> Vector2:
 	var from: Vector2 = Vector2(_fighter.position.x, _fighter.position.z)
 	var targets: Array[Vector2] = []
 	for target: Node in get_tree().get_nodes_in_group("targets"):
+		if target.has_method("is_broken") and target.call("is_broken"):
+			continue
 		var at: Vector3 = (target as Node3D).global_position
 		targets.append(Vector2(at.x, at.z))
 	var nearest: int = Combat.nearest_target(from, targets, Combat.SHOT_RANGE)

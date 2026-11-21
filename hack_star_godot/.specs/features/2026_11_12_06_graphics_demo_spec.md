@@ -21,7 +21,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (101 k in · 1.79 M cached · 16 k out) | CHF 0.49 (59 credits) | Step 3 done (`usage.ps1 -AgentName s06-steps3-4` from 18:59:00 to 19:04:19) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.28 M (30 k in · 1.24 M cached · 10 k out) | CHF 0.25 (30 credits) | Step 4 done (`usage.ps1 -AgentName s06-steps3-4` from 19:04:19 to 19:07:10) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.31 M (135 k in · 4.14 M cached · 40 k out) | CHF 1.94 (231 credits) | Step 5 done (`usage.ps1 -AgentName s06-step5`) |
-
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (101 k in · 2.70 M cached · 25 k out) | CHF 0.65 (77 credits) | Step 6 done (`usage.ps1 -AgentName s06-steps6-7` from 19:21:59 to 19:36:40) |
 ---
 
 # Part 1 · Requirements
@@ -147,7 +147,7 @@ right joystick)._
 | **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ✅ Done | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
 | **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ✅ Done | [→ Step 4](#step-4--run-and-attack-animations) |
 | **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ✅ Done | [→ Step 5](#step-5--aiming-and-shooting) |
-| **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ⬜ Not started | [→ Step 6](#step-6--target-dummies) |
+| **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ✅ Done | [→ Step 6](#step-6--target-dummies) |
 | **7** | Bushes and effects | standard (Claude Sonnet 5.5) — see-through in a bush and small particle pools, fixed by D10 and D11 | ⬜ Not started | [→ Step 7](#step-7--bushes-and-effects) |
 | **8** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks, measuring the frame rate and updating two documents | ⬜ Not started | [→ Step 8](#step-8--final-check-readme-and-architecture) |
 
@@ -380,19 +380,35 @@ Three still target dummies take hits with an effect and a damage number, break a
 health and come back after 5 seconds; the fighter cannot walk through them (S3, S5, S11, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/target_dummy.tscn` + `.gd` (`TargetDummy`) after D9; three in the arena at
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/target_dummy.tscn` + `.gd` (`TargetDummy`) after D9; three in the arena at
       `ArenaLayout.DUMMIES`; `nearest_target` of the tap (Step 5) uses them.
-- [ ] Tests: `tests/test_target_dummy.gd` (`hit` lowers health and the bar, shows a
+- [x] Tests: `tests/test_target_dummy.gd` (`hit` lowers health and the bar, shows a
       "480" label; 5 hits break it and turn its collision off; it is back with full health
       after `respawn_seconds`); `tests/test_arena.gd` (three dummies; a shot fired at a dummy
       lowers its health; the fighter stops at a dummy; a quick tap aims at the nearest one).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of a dummy with a
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of a dummy with a
       lowered (yellow) bar and a damage number, of it breaking apart and of it back after
       5 s.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 19:22
+
+- `TargetDummy` (`StaticBody3D`, layer 3, group `targets` set in the scene) builds its parts
+  in code (post, straw body, arms, head, three painted rings); the bar is two billboard
+  quads (the fill's mesh is resized and coloured by `Combat.health_color`); the damage
+  number is a billboard `Label3D` that rises and fades in 0.8 s; the hit flash is a white
+  `material_overlay` for 0.1 s; at 0 the parts fly out and fall, then after `respawn_seconds`
+  they return, with a pop. Signals `broken` and `respawned`. `arena.gd` spawns the three
+  dummies into `Dummies`; a tap skips a broken dummy.
+- The arena tests are in `tests/test_arena_dummies.gd` (not `test_arena.gd`): `gdlint` allows
+  at most 20 public test functions per file and `test_arena.gd` was full.
+- Screenshots (windowed run, temporary capture script under `%TEMP%`, removed) at 1280×720:
+  one dummy with a yellow bar and "480", the same breaking apart (parts in the air), and back
+  with a full green bar after 5 s. The dummies read as target dummies; the damage number is
+  large enough to read.
+
+**Done (2026-11-21 · ~15 min · Claude Sonnet 5.5)** — `scenes/target_dummy.tscn` + `.gd`, `Dummies` in `arena.tscn` and `arena.gd`; tests `tests/test_target_dummy.gd` (5), `tests/test_arena_dummies.gd` (4). `tools/test.ps1` 218 tests passed, `tools/lint.ps1` exit 0, screenshots checked; suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.83 M tokens · CHF 0.65 (77 credits)
 
 ---
 

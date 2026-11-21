@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/touch_joystick.tscn" id="3_joystick"]
 [ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="4_back"]
 [ext_resource type="Script" path="res://scenes/canyon.gd" id="5_canyon"]
+[ext_resource type="PackedScene" path="res://scenes/target_dummy.tscn" id="6_dummy"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
@@ -52,6 +53,8 @@ walls = NodePath("../Walls")
 
 [node name="Fighter" parent="." instance=ExtResource("2_fighter")]
 rotation = Vector3(0, 3.1416, 0)
+
+[node name="Dummies" type="Node3D" parent="."]
 
 [node name="Shots" type="Node3D" parent="."]
 
