@@ -17,6 +17,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #28 created |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.32 M (130 k in · 2.16 M cached · 30 k out) | CHF 1.34 (160 credits) | Part 2 written (10 Steps: standard, standard, reasoning, reasoning, standard, reasoning, standard, standard, light, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 16:09) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.97 M (91 k in · 1.86 M cached · 20 k out) | CHF 0.58 (69 credits) | Step 1 done (`usage.ps1 -Agent subagents` 16:14–16:17) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 717 k (15 k in · 692 k cached · 10 k out) | CHF 0.17 (21 credits) | Step 2 done (`usage.ps1 -Agent subagents` 16:17–16:19) |
 
 ---
 
@@ -177,7 +178,7 @@ of this spec (see Deferred Items in the plan of the
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | UI foundation: shared theme, screen navigation, Back button | standard (Claude Sonnet 5.5) — a theme, an autoload and a small scene, fixed by D1–D3 | ✅ Done | [→ Step 1](#step-1--ui-foundation-shared-theme-screen-navigation-back-button) |
-| **2** | Fighter catalogue, Prestige and sample progress | standard (Claude Sonnet 5.5) — data and pure rules with tests, all values given by S8, S11 and D5 | ⬜ Not started | [→ Step 2](#step-2--fighter-catalogue-prestige-and-sample-progress) |
+| **2** | Fighter catalogue, Prestige and sample progress | standard (Claude Sonnet 5.5) — data and pure rules with tests, all values given by S8, S11 and D5 | ✅ Done | [→ Step 2](#step-2--fighter-catalogue-prestige-and-sample-progress) |
 | **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ⬜ Not started | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
 | **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ⬜ Not started | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
 | **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ⬜ Not started | [→ Step 5](#step-5--home-screen) |
@@ -264,19 +265,21 @@ The game knows the 6 fighters, their skins and rarities, the Prestige rule and t
 progress, and keeps the player's choices for the session (S6, S8, S11, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/fighters.gd`, `game/prestige.gd`, `game/sample_progress.gd` after D5.
-- [ ] Autoload `GameState` (`scenes/autoload/game_state.gd`) after D4: starts from
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/fighters.gd`, `game/prestige.gd`, `game/sample_progress.gd` after D5.
+- [x] Autoload `GameState` (`scenes/autoload/game_state.gd`) after D4: starts from
       `SampleProgress`; `select(fighter_id, skin_id)` refuses a locked fighter or an unknown
       skin; `total_trophies()`; `entrance_played`.
-- [ ] Tests: `tests/test_fighters.gd` (6 fighters, names and rarities of S11, 2–3 skins each
+- [x] Tests: `tests/test_fighters.gd` (6 fighters, names and rarities of S11, 2–3 skins each
       with one Default, 14 skins in all, Blaze/Rocko/Turbo unlocked), `tests/test_prestige.gd`
       (0 → 0, 999 → 0, 1000 → 1, 1999 → 1, 2500 → 2), `tests/test_sample_progress.gd` (at
       least one fighter with Prestige ≥ 1, credits > 0), `tests/test_game_state.gd` (select an
       unlocked fighter and skin; a locked one is refused; total trophies).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 16:17
+**Done (2026-11-21 · ~2m · Claude Sonnet 5.5)** — `Fighters` (6 fighters, 14 skins), `Prestige`, `SampleProgress` (with 500 credits) in `game/`, autoload `GameState` (`select` refuses a locked fighter or an unknown skin; `total_trophies`; `entrance_played`; `reset`); 18 new tests. `tools/test.ps1`: 53 tests passed; `tools/lint.ps1`: exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 717 k tokens · CHF 0.17 (21 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
