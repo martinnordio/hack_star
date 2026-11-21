@@ -59,3 +59,29 @@ func test_ground_point_of_a_ray_looking_down() -> void:
 
 func test_ground_point_of_a_ray_looking_up_is_infinite() -> void:
 	assert_eq(Combat.ground_point(Vector3(0.0, 10.0, 0.0), Vector3.UP, 0.0), Vector3.INF)
+
+
+func test_fighter_health_ratio() -> void:
+	var full: int = MatchSettings.FIGHTER_HEALTH
+	assert_eq(Combat.health_ratio(full, full), 1.0)
+	assert_eq(Combat.health_ratio(full - Combat.DAMAGE * 7, full), 0.0)
+	assert_almost_eq(Combat.health_ratio(1600, full), 0.5, 0.0001)
+
+
+func test_no_healing_before_three_seconds_then_13_percent_a_second() -> void:
+	var full: float = MatchSettings.FIGHTER_HEALTH
+	var delay: float = MatchSettings.HEAL_DELAY
+	var rate: float = MatchSettings.HEAL_PER_SECOND
+	assert_eq(Combat.heal(1000.0, full, 2.9, 1.0, delay, rate), 1000.0)
+	assert_almost_eq(Combat.heal(1000.0, full, 3.0, 1.0, delay, rate), 1416.0, 0.001)
+
+
+func test_healing_never_goes_above_full_health() -> void:
+	var full: float = MatchSettings.FIGHTER_HEALTH
+	assert_eq(Combat.heal(3150.0, full, 9.0, 1.0, 3.0, 0.13), full)
+
+
+func test_a_longer_cooldown_fires_later() -> void:
+	var slow: float = Combat.COOLDOWN * MatchSettings.level("easy")["cooldown"]
+	assert_false(Combat.can_fire(1.0 + Combat.COOLDOWN, 1.0, slow))
+	assert_true(Combat.can_fire(1.0 + slow + 0.01, 1.0, slow))

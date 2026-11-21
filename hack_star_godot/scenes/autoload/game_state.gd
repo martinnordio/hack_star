@@ -22,6 +22,8 @@ var pictures: Dictionary[String, Texture2D] = {}
 ## The code of a QR link the web game was opened with (`?hack=`, D9 of spec 05); the hack
 ## screen redeems it once and empties it.
 var start_code: String = ""
+## The numbers the next match reads at its start; session only, not saved.
+var match_settings: MatchSettings = MatchSettings.new()
 
 
 func _ready() -> void:
@@ -44,6 +46,7 @@ func reset() -> void:
 		selected_skins[fighter_id] = Fighters.DEFAULT_SKIN
 	entrance_played = false
 	pictures = {}
+	match_settings = MatchSettings.new()
 	# In memory only, so a developer's own save file never changes what a test sees.
 	active_hacks = []
 

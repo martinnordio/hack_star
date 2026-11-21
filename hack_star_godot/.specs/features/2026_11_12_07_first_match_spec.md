@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress — Step 1 of 7 done
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -16,7 +16,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S3, S6, S8, S9, S12, S13 revised; S14 (controls), S15 (English) and S16 (what worked before) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #31 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.48 M (131 k in · 2.32 M cached · 31 k out) | CHF 1.46 (174 credits) | Part 2 written (7 Steps: standard, reasoning, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s07-lead` from 20:14:28) |
-
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 829 k (64 k in · 754 k cached · 12 k out) | CHF 0.30 (35 credits) | Step 1 done (`usage.ps1 -AgentName s07-step1` from 20:14:28) |
 ---
 
 # Part 1 · Requirements
@@ -150,7 +150,7 @@ original game's numbers (2.5 m in a bush, the place)._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Match rules and settings | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D2–D4 | ⬜ Not started | [→ Step 1](#step-1--match-rules-and-settings) |
+| **1** | Match rules and settings | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D2–D4 | ✅ Done | [→ Step 1](#step-1--match-rules-and-settings) |
 | **2** | Bot brain | reasoning (Claude Opus 5.5) — tricky logic: sight and bushes, targets, reaction, aim error, chasing, wandering, all testable without a scene (D5) | ⬜ Not started | [→ Step 2](#step-2--bot-brain) |
 | **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ⬜ Not started | [→ Step 3](#step-3--fighters-that-can-be-hit) |
 | **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ⬜ Not started | [→ Step 4](#step-4--match-arena-with-bots) |
@@ -211,12 +211,12 @@ The settings, fighter health, healing and the match flow (countdown, timer, knoc
 place) exist and are tested without a scene (S1, S3, S4, S5, S7, S8, S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/match_settings.gd` (`MatchSettings`) after D2; `GameState.match_settings` (a new
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/match_settings.gd` (`MatchSettings`) after D2; `GameState.match_settings` (a new
       `MatchSettings` at every game start and in `reset()`), not saved.
-- [ ] `Combat` after D3 (`health_ratio` with `max_health`, `can_fire` with `cooldown`, `heal`).
-- [ ] `game/match.gd` (`Match`) after D4.
-- [ ] Tests: `tests/test_match_settings.gd` (defaults; `bot_count` clamped to 1–8; easy reacts
+- [x] `Combat` after D3 (`health_ratio` with `max_health`, `can_fire` with `cooldown`, `heal`).
+- [x] `game/match.gd` (`Match`) after D4.
+- [x] Tests: `tests/test_match_settings.gd` (defaults; `bot_count` clamped to 1–8; easy reacts
       later, aims worse, fires slower and walks slower than hard; an unknown level gives easy);
       `tests/test_combat.gd` (fighter health ratio; no healing before 3 s; 13 % per second
       after; never above full; cool-down × 2.4); `tests/test_match.gd` (countdown texts "3",
@@ -224,10 +224,15 @@ place) exist and are tested without a scene (S1, S3, S4, S5, S7, S8, S10).
       10 s; knocking out all bots → Victory, place 1; the player out with 2 bots left →
       Defeat, place 3 and "3rd"; time up with bots left → Time's up, or Defeat with
       `time_up_result` "defeat"; `fighters_left`; `ordinal` 1–4, 11, 12, 13, 21, 22).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 20:22
+
+**Done (2026-11-21 · ~6 min · Claude Sonnet 5.5)** — `MatchSettings`, `GameState.match_settings`,
+`Combat` health/heal/cool-down and `Match` with tests (`test_match_settings.gd`, `test_match.gd`,
+4 new tests in `test_combat.gd`). `tools/test.ps1` 247 tests pass, `tools/lint.ps1` exit 0.
+suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 829 k · CHF 0.30
 
 ---
 

@@ -20,9 +20,9 @@ const COLOR_RED: Color = Color(0.9, 0.2, 0.2)
 const NO_SHOT: Vector2 = Vector2.INF
 
 
-## True when the cool-down since the last shot is over.
-static func can_fire(now: float, last_fire: float) -> bool:
-	return now - last_fire >= COOLDOWN
+## True when the cool-down since the last shot is over (bots pass a longer `cooldown`).
+static func can_fire(now: float, last_fire: float, cooldown: float = COOLDOWN) -> bool:
+	return now - last_fire >= cooldown
 
 
 ## Health after a hit; never below 0.
@@ -34,9 +34,24 @@ static func is_broken(health: int) -> bool:
 	return health <= 0
 
 
-## Health as a share of `DUMMY_HEALTH`, from 0 to 1.
-static func health_ratio(health: int) -> float:
-	return clampf(float(health) / float(DUMMY_HEALTH), 0.0, 1.0)
+## Health as a share of `max_health` (a dummy's by default), from 0 to 1.
+static func health_ratio(health: float, max_health: float = DUMMY_HEALTH) -> float:
+	return clampf(health / max_health, 0.0, 1.0)
+
+
+## Health after `delta` seconds of healing: nothing before `quiet_seconds` (since the last hit
+## or shot) reaches `delay`, then `per_second` of `max_health` a second, never above it.
+static func heal(
+	health: float,
+	max_health: float,
+	quiet_seconds: float,
+	delta: float,
+	delay: float,
+	per_second: float
+) -> float:
+	if quiet_seconds < delay:
+		return health
+	return minf(health + max_health * per_second * delta, max_health)
 
 
 ## Green, yellow below 0.5, red below 0.25.
