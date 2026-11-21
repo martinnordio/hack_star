@@ -15,6 +15,8 @@ const FIGHTER_HEALTH: int = 3200
 const HEAL_DELAY: float = 3.0
 const HEAL_PER_SECOND: float = 0.13
 const BUSH_SIGHT: float = 2.5
+const TROPHIES_PER_WIN: int = 10
+const TROPHIES_PER_DEFEAT: int = 0
 
 ## Per level: `reaction` seconds before a bot answers a new target, `aim_error` radians of
 ## the aim, `cooldown` and `speed` factors against the player, `sight` in metres.
@@ -36,6 +38,12 @@ var fighter_health: int = FIGHTER_HEALTH
 var heal_delay: float = HEAL_DELAY
 var heal_per_second: float = HEAL_PER_SECOND
 var bush_sight: float = BUSH_SIGHT
+var trophies_per_win: int = TROPHIES_PER_WIN:
+	set(value):
+		trophies_per_win = maxi(value, 0)
+var trophies_per_defeat: int = TROPHIES_PER_DEFEAT:
+	set(value):
+		trophies_per_defeat = mini(value, 0)
 
 
 ## The numbers of a level; an unknown name gives "easy".

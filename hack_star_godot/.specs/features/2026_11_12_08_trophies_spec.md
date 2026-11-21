@@ -1,7 +1,7 @@
 # Trophies and Prestige Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -16,7 +16,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S2, S3, S4, S5 revised; S11 (progress kept), S12 (English), S13 (what worked before) and S14 (MVP complete) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #32 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.40 M (119 k in · 2.25 M cached · 26 k out) | CHF 1.32 (157 credits) | Part 2 written (7 Steps: standard, reasoning, standard, standard, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s08-lead` from 21:49:57) |
-
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 392 k (52 k in · 335 k cached · 5 k out) | CHF 0.18 (21 credits) | Step 1 done (`usage.ps1 -AgentName s08-step1` from 21:49:57) |
 ---
 
 # Part 1 · Requirements
@@ -148,7 +148,7 @@ kept, S11)._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Trophy rules and settings | standard (Claude Sonnet 5.5) — pure rules and tests, numbers fixed by D1 and D2 | ⬜ Not started | [→ Step 1](#step-1--trophy-rules-and-settings) |
+| **1** | Trophy rules and settings | standard (Claude Sonnet 5.5) — pure rules and tests, numbers fixed by D1 and D2 | ✅ Done | [→ Step 1](#step-1--trophy-rules-and-settings) |
 | **2** | Save file version 2 | reasoning (Claude Opus 5.5) — a new saved format with versioning, migration of the spec 05 file and checks of every field (D3) | ⬜ Not started | [→ Step 2](#step-2--save-file-version-2) |
 | **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ⬜ Not started | [→ Step 3](#step-3--progress-loaded-and-saved) |
 | **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ⬜ Not started | [→ Step 4](#step-4--trophies-after-a-match) |
@@ -206,15 +206,20 @@ The trophies for each result, the Prestige floor and the next Prestige are rules
 and the two trophy numbers are match settings (S1, S2, S5, S6, S8).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `Prestige.floor_of` and `Prestige.next_at` after D1.
-- [ ] `MatchSettings` trophy constants and fields after D2.
-- [ ] `game/trophies.gd` (`Trophies`) after D1.
-- [ ] Tests (D9): `test_prestige.gd`, new `test_trophies.gd`, `test_match_settings.gd`.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `Prestige.floor_of` and `Prestige.next_at` after D1.
+- [x] `MatchSettings` trophy constants and fields after D2.
+- [x] `game/trophies.gd` (`Trophies`) after D1.
+- [x] Tests (D9): `test_prestige.gd`, new `test_trophies.gd`, `test_match_settings.gd`.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 21:55
+
+**Done (2026-11-21 · ~3 min · Claude Sonnet 5.5)** — `Prestige.floor_of`/`next_at`, the
+`MatchSettings` trophy settings (win ≥ 0, defeat ≤ 0) and `Trophies.change_for`/`reward` with
+tests. `tools/test.ps1` 307 tests passed, `tools/lint.ps1` OK · suggested: standard (Claude
+Sonnet 5.5) · ran: Claude Sonnet 5.5 · ~392 k · ~CHF 0.18 (21 credits)
 
 ---
 

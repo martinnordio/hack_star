@@ -39,3 +39,15 @@ func test_game_state_holds_new_settings_after_reset() -> void:
 	GameState.match_settings.bot_count = 6
 	GameState.reset()
 	assert_eq(GameState.match_settings.bot_count, MatchSettings.BOT_COUNT)
+
+
+func test_trophy_settings_are_clamped() -> void:
+	var settings: MatchSettings = MatchSettings.new()
+	assert_eq(settings.trophies_per_win, 10)
+	assert_eq(settings.trophies_per_defeat, 0)
+	settings.trophies_per_win = -4
+	assert_eq(settings.trophies_per_win, 0)
+	settings.trophies_per_defeat = 7
+	assert_eq(settings.trophies_per_defeat, 0)
+	settings.trophies_per_defeat = -7
+	assert_eq(settings.trophies_per_defeat, -7)
