@@ -4,6 +4,7 @@ extends GutTest
 
 const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
 const LIST_SCENE: PackedScene = preload("res://scenes/fighter_list.tscn")
+const FIGHTER_SCENE: PackedScene = preload("res://scenes/fighter_screen.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const SIZES: Dictionary = {
@@ -111,6 +112,30 @@ func test_fighter_list_fits_every_size() -> void:
 		assert_lte(grid.size.x, scroll.size.x + 0.5, "%s grid is not wider than the screen" % label)
 		var first: Control = grid.get_child(0)
 		_assert_inside(first, visible_rect, "%s first card" % label)
+		shown[0].queue_free()
+
+
+func test_fighter_screen_fits_every_size() -> void:
+	var paths: Array[String] = [
+		"Margin/Column/Header/BackButton",
+		"Margin/Column/Header/Title",
+		"Margin/Column/Body/FighterStage",
+		"Margin/Column/Body/Details/RarityLabel",
+		"Margin/Column/Body/Details/TrophiesLabel",
+		"Margin/Column/Body/Details/PowerLabel",
+		"Margin/Column/Body/Details/PrestigeBadge",
+		"Margin/Column/Body/Details/SkinRow/Default",
+		"Margin/Column/Body/Details/SkinRow/Lava",
+		"Margin/Column/Body/Details/SkinRow/Phoenix",
+		"Margin/Column/Body/Details/SelectButton",
+	]
+	GameState.viewed_fighter = "blaze"
+	for label: String in SIZES:
+		var size: Vector2i = SIZES[label]
+		var shown: Array = await _show_in_viewport(FIGHTER_SCENE, size)
+		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
+		for path: String in paths:
+			_assert_inside(shown[1].get_node(path), visible_rect, "%s %s" % [label, path])
 		shown[0].queue_free()
 
 

@@ -4,7 +4,7 @@ const THEME_PATH: String = "res://scenes/ui/hack_star_theme.tres"
 
 
 func test_each_screen_constant_names_an_existing_scene() -> void:
-	for path: String in [Screens.HOME, Screens.ARENA, Screens.FIGHTERS]:
+	for path: String in [Screens.HOME, Screens.ARENA, Screens.FIGHTERS, Screens.FIGHTER]:
 		assert_true(ResourceLoader.exists(path), "%s exists" % path)
 		assert_true(load(path) is PackedScene, "%s is a scene" % path)
 

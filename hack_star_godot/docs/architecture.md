@@ -60,6 +60,7 @@ without a scene.
 | Script | What |
 |--------|------|
 | `fighter_list.tscn` | `fighter_list.gd` | The fighter list: a scrolling grid (columns follow the width) of `ui/fighter_card.tscn` cards — picture, name, rarity in its colour, trophies, power level, Prestige badge; locked fighters greyed out with "Locked". The pictures are rendered once per game start by off-screen `FighterStage`s (`ui/fighter_pictures.gd`) and cached in `GameState.pictures`; a card draws them with the premultiplied blend of the stage. Back goes home |
+| `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (the fighter comes from `GameState.viewed_fighter`, set by the list when a card is pressed): the fighter in a `FighterStage`, name, rarity, trophies, power level, Prestige badge and one `ui/skin_button.tscn` per skin (name and rarity in its colour, Legendary skins with a gold frame); choosing a skin previews it; **Select** (`GameState.select`) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked". Back goes home |
 | `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`) |
 
 Later specs add their rules here, one script per rule, with a test next to it in `tests/`:

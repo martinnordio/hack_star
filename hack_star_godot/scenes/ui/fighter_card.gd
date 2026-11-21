@@ -1,7 +1,10 @@
 class_name FighterCard
 extends PanelContainer
 ## One fighter in the list: picture, name, rarity, trophies, power level and Prestige badge.
-## A locked fighter is greyed out and shows a lock label.
+## A locked fighter is greyed out and shows a lock label. Pressing the card emits `opened`
+## (a button over the card, so a drag that scrolls the list does not open it).
+
+signal opened(fighter_id: String)
 
 const LOCKED_TINT: Color = Color(0.6, 0.6, 0.65)
 
@@ -14,6 +17,11 @@ var fighter_id: String = ""
 @onready var _trophies_label: Label = $Column/TrophiesLabel
 @onready var _power_label: Label = $Column/PowerLabel
 @onready var _lock_label: Label = $Column/LockLabel
+@onready var _open_button: Button = $OpenButton
+
+
+func _ready() -> void:
+	_open_button.pressed.connect(func() -> void: opened.emit(fighter_id))
 
 
 ## Fills the card from the catalogue and `GameState`.

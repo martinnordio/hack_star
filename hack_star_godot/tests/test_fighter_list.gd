@@ -102,3 +102,21 @@ func test_back_goes_home() -> void:
 	shown.queue_free()
 	await wait_process_frames(1)
 	tree.current_scene = previous
+
+
+func test_a_card_opens_its_fighter_screen() -> void:
+	var tree: SceneTree = get_tree()
+	var previous: Node = tree.current_scene
+	var placeholder: Node = Node.new()
+	tree.root.add_child(placeholder)
+	tree.current_scene = placeholder
+	var screen: Control = LIST.instantiate()
+	placeholder.add_child(screen)
+	_card(screen, "pixel").get_node("OpenButton").pressed.emit()
+	await wait_process_frames(2)
+	var shown: Node = tree.current_scene
+	assert_eq(shown.scene_file_path, Screens.FIGHTER, "a locked card can be opened too")
+	assert_eq(GameState.viewed_fighter, "pixel")
+	shown.queue_free()
+	await wait_process_frames(1)
+	tree.current_scene = previous

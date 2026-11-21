@@ -6,6 +6,8 @@
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_premult"]
 blend_mode = 4
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_open"]
+
 [node name="FighterCard" type="PanelContainer"]
 custom_minimum_size = Vector2(280, 0)
 theme_type_variation = &"CardPanel"
@@ -52,3 +54,12 @@ visible = false
 layout_mode = 2
 text = "Locked"
 horizontal_alignment = 1
+
+[node name="OpenButton" type="Button" parent="."]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_open")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_open")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_open")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_open")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_open")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_open")

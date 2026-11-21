@@ -9,6 +9,8 @@ var unlocked: Array[String] = []
 var credits: int = 0
 var selected_fighter: String = ""
 var selected_skins: Dictionary[String, String] = {}
+## The fighter the fighter screen shows (set by the list before it opens the screen).
+var viewed_fighter: String = ""
 var entrance_played: bool = false
 ## The fighter pictures of the list, rendered once per game start (see `FighterPictures`).
 var pictures: Dictionary[String, Texture2D] = {}
@@ -25,6 +27,7 @@ func reset() -> void:
 	unlocked = Fighters.start_unlocked()
 	credits = SampleProgress.CREDITS
 	selected_fighter = SampleProgress.SELECTED_FIGHTER
+	viewed_fighter = selected_fighter
 	selected_skins = {}
 	for fighter_id: String in Fighters.ids():
 		selected_skins[fighter_id] = Fighters.DEFAULT_SKIN

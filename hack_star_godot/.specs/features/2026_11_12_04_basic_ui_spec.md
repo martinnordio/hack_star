@@ -23,6 +23,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.04 M (93 k in · 1.93 M cached · 19 k out) | CHF 0.52 (62 credits) | Step 5 done (`usage.ps1 -Agent subagents` 16:33–16:38) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.50 M (124 k in · 3.35 M cached · 32 k out) | CHF 1.60 (191 credits) | Step 6 done (`usage.ps1 -Agent subagents` 16:39–16:45) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.69 M (88 k in · 2.57 M cached · 26 k out) | CHF 0.62 (74 credits) | Step 7 done (`usage.ps1 -Agent subagents` 16:46–16:53) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.35 M (34 k in · 2.29 M cached · 22 k out) | CHF 0.45 (54 credits) | Step 8 done (`usage.ps1 -Agent subagents` 16:53–16:57) |
 
 ---
 
@@ -189,7 +190,7 @@ of this spec (see Deferred Items in the plan of the
 | **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ✅ Done | [→ Step 5](#step-5--home-screen) |
 | **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ✅ Done | [→ Step 6](#step-6--wow-entrance) |
 | **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ✅ Done | [→ Step 7](#step-7--fighter-list) |
-| **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
+| **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ✅ Done | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
 | **9** | Info page | light (Claude Haiku 5.5) — a word list and a scrolling page | ⬜ Not started | [→ Step 9](#step-9--info-page) |
 | **10** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture) |
 
@@ -417,18 +418,20 @@ unlocked fighter and skin the home fighter, and the choice stays while the game 
 S7, S10, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/fighter_screen.tscn` + `.gd` (`Screens.FIGHTER`, the fighter id passed through
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/fighter_screen.tscn` + `.gd` (`Screens.FIGHTER`, the fighter id passed through
       `GameState`): `FighterStage`, name, rarity, trophies, power level, Prestige; one button
       per skin with its rarity, Legendary skins with a gold frame; choosing a skin previews it;
       **Select** calls `GameState.select` and goes home; for a locked fighter **Select** is
       disabled and shows "Locked"; Back button (D12).
-- [ ] Tests: `tests/test_fighter_screen.gd` (Rocko + Crystal selected → home shows Rocko with
+- [x] Tests: `tests/test_fighter_screen.gd` (Rocko + Crystal selected → home shows Rocko with
       Crystal; Pixel cannot be selected; the Legendary skin button has the frame; after the
       arena and back the choice is unchanged); `test_screen_sizes.gd` adds the fighter screen.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 16:53
+**Done (2026-11-21 · ~4m · Claude Sonnet 5.5)** — `scenes/fighter_screen.tscn` + `.gd` (`Screens.FIGHTER`; the fighter id passes through the new `GameState.viewed_fighter`, set by the list): `FighterStage`, name as title, rarity in its colour, trophies, power level, Prestige badge, one `scenes/ui/skin_button.tscn` + `.gd` per skin (name and rarity colour; Legendary skins with a 6 px gold frame; the chosen skin highlighted), choosing a skin previews it without choosing it; **Select** calls `GameState.select` and goes home, for a locked fighter it is disabled and reads "Locked" (its skins can still be looked at); Back goes home (D12). Fighter cards got an invisible button over them (`opened` signal, so a scrolling drag does not open them) and the list opens the screen. `tests/test_fighter_screen.gd` (9: values, one button per skin, gold frame only on Legendary, preview, starts on the chosen skin, Rocko + Crystal selected and shown on home, Pixel cannot be selected, choice kept after the arena and back, Back) + list card test + `test_screen_sizes.gd` (5 sizes) + `test_screens.gd`; `docs/architecture.md` has the screen row. `tools/test.ps1`: 97 tests passed; `tools/lint.ps1`: exit 0; screenshots from a windowed run (desktop 1280×720: Blaze with Phoenix; phone portrait 390×844: Blaze with Phoenix; phone landscape: Luna locked; iPad portrait: Frosty with Snow King): the fighter large with its glow, everything inside the screen, the gold frame on the Legendary skin, Select greyed "Locked" for locked fighters. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.35 M tokens · CHF 0.45 (54 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

@@ -16,6 +16,7 @@ func _ready() -> void:
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_grid.add_child(card)
 		card.setup(fighter_id)
+		card.opened.connect(_on_card_opened)
 	_scroll.resized.connect(_update_columns)
 	_update_columns()
 	await FighterPictures.ensure(self)
@@ -34,3 +35,8 @@ func _cards() -> Array[FighterCard]:
 # As many columns as fit the width, at least one.
 func _update_columns() -> void:
 	_grid.columns = maxi(1, int(_scroll.size.x / CARD_WIDTH))
+
+
+func _on_card_opened(fighter_id: String) -> void:
+	GameState.viewed_fighter = fighter_id
+	Screens.go_to(Screens.FIGHTER)
