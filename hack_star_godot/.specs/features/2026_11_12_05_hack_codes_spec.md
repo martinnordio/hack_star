@@ -17,6 +17,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #29 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.39 M (129 k in · 3.23 M cached · 37 k out) | CHF 1.70 (202 credits) | Part 2 written (9 Steps: standard, standard, standard, standard, reasoning, standard, standard, reasoning, light); also the requirements revision and the issue (`usage.ps1 -AgentName s05-lead` from 17:25:44) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 914 k (88 k in · 816 k cached · 10 k out) | CHF 0.33 (40 credits) | Step 1 done (`usage.ps1 -AgentName s05-steps1-4` 17:25:44–17:35:03) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.05 M (27 k in · 2.01 M cached · 13 k out) | CHF 0.33 (40 credits) | Step 2 done (`usage.ps1 -AgentName s05-steps1-4` 17:35:03–17:38:13) |
 
 ---
 
@@ -150,7 +151,7 @@ simplest reading that fits the Godot game._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Hack rules and the saved active hacks | standard (Claude Sonnet 5.5) — pure rules, a small JSON file and tests, fixed by D4 and D5 | ✅ Done | [→ Step 1](#step-1--hack-rules-and-the-saved-active-hacks) |
-| **2** | Server connection | standard (Claude Sonnet 5.5) — one autoload with `HTTPRequest` and a test seam, fixed by D1–D3 | ⬜ Not started | [→ Step 2](#step-2--server-connection) |
+| **2** | Server connection | standard (Claude Sonnet 5.5) — one autoload with `HTTPRequest` and a test seam, fixed by D1–D3 | ✅ Done | [→ Step 2](#step-2--server-connection) |
 | **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ⬜ Not started | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
 | **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ⬜ Not started | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
 | **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ⬜ Not started | [→ Step 5](#step-5--qr-code-encoder) |
@@ -239,21 +240,23 @@ The game asks the existing server for a hack code and the list of hacks, and tel
 code, an unknown code and a missing server apart (S2, S7, S11, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Autoload `HackServer` (`scenes/autoload/hack_server.gd`) after D2 and D3 (base URL by
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Autoload `HackServer` (`scenes/autoload/hack_server.gd`) after D2 and D3 (base URL by
       platform, `redeem(code)` sends the normalized code, `list_hacks()`), registered in
       `project.godot`.
-- [ ] Tests: `tests/test_hack_server.gd` with `fake_responder`: 200 known id → `ok` with name;
+- [x] Tests: `tests/test_hack_server.gd` with `fake_responder`: 200 known id → `ok` with name;
       200 `hypercharge` → `unknown`; 404 → `unknown`; 500, broken JSON, no connection →
       `no_server`; the list keeps only the three known ids; the base URL outside the web is
       `http://127.0.0.1:8180/api`.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; once by hand, with
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; once by hand, with
       `cd server; uv run hack-star-server` running, a temporary headless Godot script (outside
       the repository, removed after) redeems ` power22 ` → `ok` "Power 22" and `NOPE` →
       `unknown`, and with the server stopped → `no_server`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 17:35
+
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — autoload `HackServer` (`redeem`, `list_hacks`, `base_url`, `fake_responder`; statuses `ok`/`unknown`/`no_server`; `HTTPRequest` with 8 s timeout), registered in `project.godot`; a 200 that is not valid JSON counts as `no_server`. 7 new tests; `tools/test.ps1` 133 passing, exit 0; `tools/lint.ps1` exit 0. By hand with `uv run hack-star-server` running, a temporary headless Godot script (in `%TEMP%`, removed): ` power22 ` → `ok` "Power 22", `NOPE` → `unknown`, `HYPERCHARGE` → `unknown`, list → the three known hacks; with the server stopped → `no_server`. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.05 M · CHF 0.33
 
 ---
 
