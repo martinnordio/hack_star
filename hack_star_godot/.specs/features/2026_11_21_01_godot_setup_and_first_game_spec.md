@@ -144,7 +144,7 @@ _None._
 | **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ✅ Done | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
 | **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ✅ Done | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
 | **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | 🔄 In progress — iPad check by the author | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
-| **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 5](#step-5--readme-licences-final-check) | [→ Step 5](#step-5--readme-licences-final-check) |
+| **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 5](#step-5--readme-licences-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
