@@ -21,6 +21,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.04 M (48 k in · 978 k cached · 10 k out) | CHF 0.27 (32 credits) | Step 3 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:01:47" -Until "2026-11-21 22:06:30"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 565 k (14 k in · 545 k cached · 7 k out) | CHF 0.13 (15 credits) | Step 4 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:06:30" -Until "2026-11-21 22:09:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.58 M (40 k in · 2.52 M cached · 17 k out) | CHF 0.44 (52 credits) | Step 5 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:09:00" -Until "2026-11-21 22:14:00"`) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.46 M (19 k in · 1.44 M cached · 9 k out) | CHF 0.23 (28 credits) | Step 6 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:14:00" -Until "2026-11-21 22:18:00"`) |
 ---
 
 # Part 1 · Requirements
@@ -157,7 +158,7 @@ kept, S11)._
 | **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ✅ Done | [→ Step 3](#step-3--progress-loaded-and-saved) |
 | **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ✅ Done | [→ Step 4](#step-4--trophies-after-a-match) |
 | **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ✅ Done | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
-| **6** | MVP flow check | standard (Claude Sonnet 5.5) — one end-to-end test across the screens of specs 04–08 (D9) | ⬜ Not started | [→ Step 6](#step-6--mvp-flow-check) |
+| **6** | MVP flow check | standard (Claude Sonnet 5.5) — one end-to-end test across the screens of specs 04–08 (D9) | ✅ Done | [→ Step 6](#step-6--mvp-flow-check) |
 | **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -346,13 +347,23 @@ F0–F5 work together: hack, fighter choice, match, trophies on the result scree
 and everything back after a reload (S3, S11, S13, S14).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] New `tests/test_mvp_flow.gd` after D10.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a windowed run: win a match, close
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] New `tests/test_mvp_flow.gd` after D10.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a windowed run: win a match, close
       Godot, open it again — home shows the new total and the chosen fighter (screenshot).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 22:14
+
+**Done (2026-11-21 · ~4 min · Claude Sonnet 5.5)** — `test_mvp_flow.gd` clicks home → **Hack**
+(`power22` through the fake `HackServer`) → home → **Fighters** → Blaze → Lava skin → **Select**
+→ **Play** (1 bot) → the bot knocked out → the result screen (+10, "1250 / 2000") → **Home**
+(total 1755, Prestige badge), then loads a fresh `GameState` from the same file and finds the
+trophies, the skin and the hack. Windowed check with two separate Godot processes (win a match
+and quit; start again): home shows "Trophies: 1755" and Blaze in Lava with "Prestige 1" on a
+screenshot (capture script and test file removed). `tools/test.ps1` 342 tests passed,
+`tools/lint.ps1` OK, the player's save file untouched · suggested: standard (Claude Sonnet 5.5)
+· ran: Claude Sonnet 5.5 · ~1.46 M · ~CHF 0.23 (28 credits)
 
 ---
 
