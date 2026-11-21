@@ -17,6 +17,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 714 k (84 k in · 613 k cached · 17 k out) | CHF 0.74 (88 credits) | Step 1 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 801 k (74 k in · 706 k cached · 21 k out) | CHF 0.41 (49 credits) | Step 2 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 653 k (61 k in · 572 k cached · 20 k out) | CHF 0.35 (41 credits) | Step 3 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.69 M (72 k in · 1.59 M cached · 26 k out) | CHF 0.50 (60 credits) | Step 4 done |
 ---
 
 # Part 1 · Requirements
@@ -163,7 +164,7 @@ linked, not copied (S16)._
 | **1** | Ordered list; move 03 MVP and Architecture and 04 Basic UI for Godot | reasoning (Claude Opus 5.5) — Godot architecture and UI statements | ✅ Done | [→ Step 1](#step-1--ordered-list-move-03-mvp-and-architecture-and-04-basic-ui-for-godot) |
 | **2** | Move 05–10 | standard (Claude Sonnet 5.5) — same rules, applied to six specs | ✅ Done | [→ Step 2](#step-2--move-0510) |
 | **3** | Move 11–15 | standard (Claude Sonnet 5.5) — same rules, applied to five specs | ✅ Done | [→ Step 3](#step-3--move-1115) |
-| **4** | Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds | standard (Claude Sonnet 5.5) — same rules; S0 variant for bugs; Worlds from its branch | ⬜ Not started | [→ Step 4](#step-4--move-16-bug-fixes-17-fighter-studio-18-worlds) |
+| **4** | Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds | standard (Claude Sonnet 5.5) — same rules; S0 variant for bugs; Worlds from its branch | ✅ Done | [→ Step 4](#step-4--move-16-bug-fixes-17-fighter-studio-18-worlds) |
 | **5** | Final check of all moved specs | light (Claude Haiku 5.5) — running the checks, fixing links | ⬜ Not started | [→ Step 5](#step-5--final-check-of-all-moved-specs) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -304,15 +305,29 @@ The last three specs are moved, *Bug Fixes* with the bug variant of S0 and *Worl
 branch (S1–S10, S13, S16).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Move 16 `bug_fixes` (S0 with the bug sentence of D4), 17 `fighter_studio_saves_and_music`
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Move 16 `bug_fixes` (S0 with the bug sentence of D4), 17 `fighter_studio_saves_and_music`
       (from `2026_11_14_1_…`; the music rules stay: no music in the repository), 18
       `worlds_and_world_coins` from `git show feature/worlds-and-world-coins:.specs/features/done/2026_11_16_worlds_and_world_coins_spec.md`
       with the GitHub *Moved from* link (D6); update the README rows.
-- [ ] Check (each file): as in Step 2.
+- [x] Check (each file): as in Step 2.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 15:28
+
+16: S0 has the bug sentence of D4; no statement was struck. The *What was found* list is kept as
+history (it names the Python + Svelte game's dev server); the `REQUIREMENTS:` file name in the
+Context and the link in S7 point to the new names. 17: S31 (documents and paths), S32 (path of
+the licences document) and S34 (`npm run dev`) are struck and replaced by S35, S36 (music in the
+git-ignored `hack_star_godot/assets/music/`, spec 01 D13) and S37; new open question Q1: how the
+music tools work in Godot. 18: S24 (documentation) struck, replaced by S25; `ideas.md` links to
+the root file; Created/Last updated are today's date (D2).
+
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — 16–18 moved, README rows 16–18 set to
+*requirements*. Check: header of D2 (no `Issue:`), S0 first, only the Part 2 placeholder below
+the marker, all other statements identical to the originals, every relative link resolves with
+`Test-Path`; `git status --short .specs` empty. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.69 M (72 k in · 1.59 M cached · 26 k out) · CHF 0.50 (60 credits)
 
 ---
 
