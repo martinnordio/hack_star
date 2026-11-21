@@ -173,5 +173,4 @@ func _wait_for_the_end(delta: float) -> void:
 		return
 	_end_left = maxf(_end_left - delta, 0.0)
 	if _end_left == 0.0:
-		# The result screen comes with Step 6; until then the match ends at home.
-		Screens.go_home()
+		Screens.go_to(Screens.RESULT)

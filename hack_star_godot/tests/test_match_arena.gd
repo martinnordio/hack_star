@@ -151,7 +151,7 @@ func test_knocking_out_the_last_bot_is_a_victory_then_the_match_leaves() -> void
 	assert_eq(GameState.last_result["skin"], GameState.selected_skin())
 	assert_false(arena.player_can_act(), "nobody acts after the end")
 	await wait_seconds(MatchArena.END_WAIT_SECONDS + 0.3)
-	assert_eq(get_tree().current_scene.scene_file_path, Screens.HOME, "then home (Step 6: result)")
+	assert_eq(get_tree().current_scene.scene_file_path, Screens.RESULT, "then the result screen")
 
 
 func test_the_player_out_with_two_bots_left_is_a_defeat_in_third_place() -> void:

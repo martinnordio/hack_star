@@ -1,6 +1,6 @@
 extends Control
 ## The home screen: the chosen fighter and skin, the player's trophies and credits, the
-## fighter's Prestige, **Play**, **Fighters**, **Info** and **Hack**.
+## The fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**.
 ## At each game start it first plays the entrance: the fighter drops in with a bounce, a light
 ## burst and sparkles, the title pops in; a click, a touch or a key skips to the end state.
 
@@ -30,6 +30,7 @@ var _effects: Node3D
 @onready var _body: BoxContainer = $Margin/Column/Body
 @onready var _controls: Control = $Margin/Column/Body/Controls
 @onready var _play_button: Button = $Margin/Column/Body/Controls/PlayButton
+@onready var _training_button: Button = $Margin/Column/Body/Controls/MoreRow/TrainingButton
 @onready var _fighters_button: Button = $Margin/Column/Body/Controls/MoreRow/FightersButton
 @onready var _info_button: Button = $Margin/Column/Body/Controls/MoreRow/InfoButton
 @onready var _hack_button: Button = $Margin/Column/Body/Controls/MoreRow/HackButton
@@ -43,6 +44,7 @@ func _ready() -> void:
 		Screens.go_to.call_deferred(Screens.HACK)
 		return
 	_play_button.pressed.connect(_on_play_pressed)
+	_training_button.pressed.connect(_on_training_pressed)
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)
 	_hack_button.pressed.connect(_on_hack_pressed)
@@ -91,6 +93,10 @@ func _center_title_pivot() -> void:
 
 
 func _on_play_pressed() -> void:
+	Screens.go_to(Screens.MATCH)
+
+
+func _on_training_pressed() -> void:
 	Screens.go_to(Screens.ARENA)
 
 

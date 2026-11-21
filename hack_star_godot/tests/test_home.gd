@@ -84,8 +84,14 @@ func _assert_opens(label: String, scene_path: String, button_path: String) -> vo
 		await UiInput.close(self, shown)
 
 
-func test_play_opens_the_arena_by_click_and_by_touch() -> void:
-	await _assert_opens("Play", Screens.ARENA, PLAY_PATH)
+func test_play_opens_the_match_by_click_and_by_touch() -> void:
+	await _assert_opens("Play", Screens.MATCH, PLAY_PATH)
+
+
+func test_training_opens_the_arena_by_click_and_by_touch() -> void:
+	await _assert_opens(
+		"Training", Screens.ARENA, "Margin/Column/Body/Controls/MoreRow/TrainingButton"
+	)
 
 
 func test_hack_is_always_visible_and_opens_the_hack_screen() -> void:

@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — Step 5 of 7 done
+> **Status:** 🔄 In progress — Step 6 of 7 done
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -21,6 +21,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.18 M (75 k in · 2.08 M cached · 27 k out) | CHF 0.55 (66 credits) | Step 3 done (`usage.ps1 -AgentName s07-step3` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.14 M (112 k in · 2.00 M cached · 29 k out) | CHF 1.29 (154 credits) | Step 4 done (`usage.ps1 -AgentName s07-step4` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (107 k in · 2.70 M cached · 18 k out) | CHF 0.60 (71 credits) | Step 5 done (`usage.ps1 -AgentName s07-steps5-6 -Until 20:59:30` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.97 M (194 k in · 4.75 M cached · 25 k out) | CHF 1.02 (121 credits) | Step 6 done (`usage.ps1 -AgentName s07-steps5-6 -Since 20:59:30 -Until 21:24:18`) |
 ---
 
 # Part 1 · Requirements
@@ -159,7 +160,7 @@ original game's numbers (2.5 m in a bush, the place)._
 | **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ✅ Done | [→ Step 3](#step-3--fighters-that-can-be-hit) |
 | **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ✅ Done | [→ Step 4](#step-4--match-arena-with-bots) |
 | **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ✅ Done | [→ Step 5](#step-5--match-hud) |
-| **6** | Result screen and Training on home | standard (Claude Sonnet 5.5) — one new screen from the UI foundation and one button (D10, D11) | ⬜ Not started | [→ Step 6](#step-6--result-screen-and-training-on-home) |
+| **6** | Result screen and Training on home | standard (Claude Sonnet 5.5) — one new screen from the UI foundation and one button (D10, D11) | ✅ Done | [→ Step 6](#step-6--result-screen-and-training-on-home) |
 | **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -368,22 +369,25 @@ player's fighter, **Play again** and **Home**; **Play** starts a match and **Tra
 dummy arena (S1, S8, S9, S12, S15, S16).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/result_screen.tscn` + `.gd` after D10; `Screens.RESULT`; `MatchArena` goes there
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/result_screen.tscn` + `.gd` after D10; `Screens.RESULT`; `MatchArena` goes there
       at the end of a match.
-- [ ] Home after D11 (**Play** → match, **Training** → arena).
-- [ ] Tests: `tests/test_result_screen.gd` (each of the three results shows its heading and
+- [x] Home after D11 (**Play** → match, **Training** → arena).
+- [x] Tests: `tests/test_result_screen.gd` (each of the three results shows its heading and
       line, "You finished 3rd"; the player's fighter and skin in the stage; **Play again**
       opens the match; **Home** goes home; no result → home); `tests/test_home.gd` (Play opens
       the match, Training opens the arena; trophies and credits unchanged after a match);
       `tests/test_screen_sizes_match.gd` (the result screen fits the five sizes; **Play
       again**, **Home** and **Training** react to a mouse click and a touch); the spec 04–06
       screen tests still pass.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of home (with
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of home (with
       **Training**) and of the three results at 1280×720 and 390×844.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 20:59
+
+**Done (2026-11-21 · ~25 min · Claude Sonnet 5.5)** — `result_screen.tscn` + `.gd` (heading, line, the player's fighter in a `FighterStage`, **Play again**, **Home**; wide screens put the fighter left, tall ones one column; no result → home), `Screens.RESULT`, `MatchArena` goes to it 1.5 s after the end; home: **Play** → match, new **Training** button in `MoreRow` → arena. Tests: `test_result_screen.gd` (7), `test_home.gd` (Play → match, Training → arena), `test_screens.gd`, `test_screen_sizes_match.gd` (result screen at the five sizes, click and touch on Play again, Home and Training); the trophies-and-credits check sits in `test_result_screen.gd` because `test_home.gd` is at gdlint's 20-method limit. `tools/test.ps1` 298 tests pass, `tools/lint.ps1` exit 0; screenshots at 1280×720 and 390×844 checked (home with Training, Victory, Defeat "You finished 3rd", Time's up).
+suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 4.97 M · CHF 1.02
 
 ---
 

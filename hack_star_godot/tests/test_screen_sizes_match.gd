@@ -2,6 +2,15 @@ extends GutTest
 ## The match screens fit desktop, iPad and phone sizes (spec 07, D9, D13).
 
 const MATCH_SCENE: PackedScene = preload("res://scenes/match.tscn")
+const RESULT_SCENE: PackedScene = preload("res://scenes/result_screen.tscn")
+const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
+const RESULT_PATHS: Array[String] = [
+	"Margin/Column/Heading",
+	"Margin/Column/Line",
+	"Margin/Column/Body/FighterStage",
+	"Margin/Column/Body/Controls/PlayAgainButton",
+	"Margin/Column/Body/Controls/HomeButton",
+]
 const SIZES: Dictionary = {
 	"desktop 1280x720": Vector2i(1280, 720),
 	"iPad landscape 1180x820": Vector2i(1180, 820),
@@ -71,3 +80,54 @@ func test_the_match_hud_fits_every_size() -> void:
 				var clear: bool = not stick_rect.intersects(hud_label.get_global_rect())
 				assert_true(clear, "%s %s clear of a stick" % [label, hud_label.name])
 		shown[0].queue_free()
+
+
+func _set_result(outcome: Match.Result, place: int) -> void:
+	GameState.last_result = {
+		"outcome": outcome, "place": place, "fighter": "blaze", "skin": "default"
+	}
+
+
+func test_the_result_screen_fits_every_size() -> void:
+	for label: String in SIZES:
+		var size: Vector2i = SIZES[label]
+		for outcome: Match.Result in [Match.Result.VICTORY, Match.Result.DEFEAT]:
+			_set_result(outcome, 3)
+			var shown: Array = await _show_in_viewport(RESULT_SCENE, size)
+			var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
+			for path: String in RESULT_PATHS:
+				var control: Control = shown[1].get_node(path)
+				_assert_inside(control, visible_rect, "%s %s %s" % [label, outcome, path])
+			shown[0].queue_free()
+
+
+## Presses the button at `path` by click and by touch; its own handler is dropped, so the
+## scene stays.
+func _assert_press(scene: PackedScene, path: String, size: Vector2i) -> void:
+	for use_touch: bool in [false, true]:
+		var shown: Array = await _show_in_viewport(scene, size)
+		var button: Button = shown[1].get_node(path)
+		for connection: Dictionary in button.pressed.get_connections():
+			button.pressed.disconnect(connection["callable"])
+		watch_signals(button)
+		if use_touch:
+			UiInput.touch(shown[0], button)
+		else:
+			UiInput.click(shown[0], button)
+		assert_signal_emit_count(button, "pressed", 1, "%s (touch: %s)" % [path, use_touch])
+		shown[0].queue_free()
+
+
+func test_play_again_and_home_react_to_a_click_and_a_touch() -> void:
+	_set_result(Match.Result.VICTORY, 1)
+	await _assert_press(
+		RESULT_SCENE, "Margin/Column/Body/Controls/PlayAgainButton", Vector2i(1280, 720)
+	)
+	await _assert_press(RESULT_SCENE, "Margin/Column/Body/Controls/HomeButton", Vector2i(390, 844))
+
+
+func test_training_reacts_to_a_click_and_a_touch() -> void:
+	GameState.entrance_played = true
+	await _assert_press(
+		HOME_SCENE, "Margin/Column/Body/Controls/MoreRow/TrainingButton", Vector2i(844, 390)
+	)

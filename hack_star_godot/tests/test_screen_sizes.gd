@@ -73,6 +73,7 @@ func test_home_fits_every_size() -> void:
 		"Margin/Column/Body/Controls/NameRow/NameLabel",
 		"Margin/Column/Body/Controls/NameRow/PrestigeBadge",
 		"Margin/Column/Body/Controls/PlayButton",
+		"Margin/Column/Body/Controls/MoreRow/TrainingButton",
 		"Margin/Column/Body/Controls/MoreRow/FightersButton",
 		"Margin/Column/Body/Controls/MoreRow/InfoButton",
 		"Margin/Column/Body/Controls/MoreRow/HackButton",
