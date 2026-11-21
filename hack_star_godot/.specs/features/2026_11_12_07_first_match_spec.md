@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — Step 4 of 7 done
+> **Status:** 🔄 In progress — Step 5 of 7 done
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -20,6 +20,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 486 k (58 k in · 418 k cached · 10 k out) | CHF 0.48 (57 credits) | Step 2 done (`usage.ps1 -AgentName s07-step2` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.18 M (75 k in · 2.08 M cached · 27 k out) | CHF 0.55 (66 credits) | Step 3 done (`usage.ps1 -AgentName s07-step3` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.14 M (112 k in · 2.00 M cached · 29 k out) | CHF 1.29 (154 credits) | Step 4 done (`usage.ps1 -AgentName s07-step4` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (107 k in · 2.70 M cached · 18 k out) | CHF 0.60 (71 credits) | Step 5 done (`usage.ps1 -AgentName s07-steps5-6 -Until 20:59:30` from 20:14:28) |
 ---
 
 # Part 1 · Requirements
@@ -157,7 +158,7 @@ original game's numbers (2.5 m in a bush, the place)._
 | **2** | Bot brain | reasoning (Claude Opus 5.5) — tricky logic: sight and bushes, targets, reaction, aim error, chasing, wandering, all testable without a scene (D5) | ✅ Done | [→ Step 2](#step-2--bot-brain) |
 | **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ✅ Done | [→ Step 3](#step-3--fighters-that-can-be-hit) |
 | **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ✅ Done | [→ Step 4](#step-4--match-arena-with-bots) |
-| **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ⬜ Not started | [→ Step 5](#step-5--match-hud) |
+| **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ✅ Done | [→ Step 5](#step-5--match-hud) |
 | **6** | Result screen and Training on home | standard (Claude Sonnet 5.5) — one new screen from the UI foundation and one button (D10, D11) | ⬜ Not started | [→ Step 6](#step-6--result-screen-and-training-on-home) |
 | **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
 
@@ -341,18 +342,21 @@ The match shows the "3, 2, 1, FIGHT!" countdown, the timer (red in the last 10 s
 fighters are still in, on every screen size (S1, S5, S7, S15).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `Hud/MatchHud` in `match.tscn` after D9, updated by `MatchArena` from `Match`.
-- [ ] Tests: `tests/test_match_hud.gd` (the countdown label shows "3" at the start and
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `Hud/MatchHud` in `match.tscn` after D9, updated by `MatchArena` from `Match`.
+- [x] Tests: `tests/test_match_hud.gd` (the countdown label shows "3" at the start and
       "FIGHT!" right after the countdown, then nothing; the timer shows "2:00" then counts
       down and is red in the last 10 s; "Fighters left: 4" becomes 3 after a knock-out);
       `tests/test_screen_sizes_match.gd` (countdown, timer, fighters left, Back and both sticks
       inside at the five sizes, no overlap with Back or the FPS label).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844
       and 844×390 of the countdown and of the red timer.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 20:51
+
+**Done (2026-11-21 · ~8 min · Claude Sonnet 5.5)** — `Hud/MatchHud` in `match.tscn` (`CountdownLabel`, `TimerLabel`, `FightersLeftLabel`) updated by `MatchArena` from `Match`; the timer turns `Combat.COLOR_RED` in the last 10 s; a theme variation `HudLabel` (dark outline) keeps the white text readable on the yellow floor; `tests/test_match_hud.gd` (4 tests) and `tests/test_screen_sizes_match.gd` (HUD at the five sizes). `tools/test.ps1` 287 tests pass, `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844 and 844×390 checked (countdown "3" above the player, "FIGHT!", red timer, fighters left under the FPS label, no overlap with Back).
+suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.83 M · CHF 0.60
 
 ---
 

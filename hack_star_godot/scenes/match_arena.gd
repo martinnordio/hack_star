@@ -22,6 +22,9 @@ var _brains: Array[BotBrain] = []
 var _end_left: float = -1.0
 
 @onready var _bots: Node3D = $Bots
+@onready var _countdown_label: Label = $Hud/MatchHud/CountdownLabel
+@onready var _timer_label: Label = $Hud/MatchHud/TimerLabel
+@onready var _fighters_left_label: Label = $Hud/MatchHud/FightersLeftLabel
 
 
 func _ready() -> void:
@@ -44,6 +47,7 @@ func _ready() -> void:
 		brain.bush_sight = _settings.bush_sight
 		_brains.append(brain)
 	match_state = Match.new(_settings, fighters.size())
+	_update_hud()
 
 
 ## The bots' fighters (not the player's).
@@ -67,6 +71,7 @@ func tap_targets() -> Array[Vector2]:
 func _physics_process(delta: float) -> void:
 	match_state.advance(delta)
 	super._physics_process(delta)
+	_update_hud()
 	var now: float = Time.get_ticks_msec() / 1000.0
 	var acting: bool = match_state.can_act()
 	for i: int in range(1, fighters.size()):
@@ -77,6 +82,18 @@ func _physics_process(delta: float) -> void:
 	if match_state.phase == Match.Phase.OVER:
 		_store_result_when_over()
 		_wait_for_the_end(delta)
+
+
+func _update_hud() -> void:
+	var countdown: String = match_state.countdown_text()
+	_countdown_label.text = countdown
+	_countdown_label.visible = not countdown.is_empty()
+	_timer_label.text = match_state.timer_text()
+	if match_state.timer_red():
+		_timer_label.add_theme_color_override("font_color", Combat.COLOR_RED)
+	else:
+		_timer_label.remove_theme_color_override("font_color")
+	_fighters_left_label.text = "Fighters left: %d" % match_state.fighters_left()
 
 
 func _add_to_match(fighter: Fighter, bar_color: Color, number_color: Color) -> void:
@@ -134,6 +151,7 @@ func _opponents_of(index: int) -> Array[Dictionary]:
 
 func _on_knocked_out(index: int) -> void:
 	match_state.knock_out(index)
+	_update_hud()
 	_store_result_when_over()
 
 
