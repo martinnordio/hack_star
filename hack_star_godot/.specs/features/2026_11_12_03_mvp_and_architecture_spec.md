@@ -1,7 +1,7 @@
 # MVP and Architecture Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -16,6 +16,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S7 (licences file), S8 (F6–F12 out, F13 only fitting fixes), S9 (same browser), S13 (server connection) revised; S4/S5 marked removed; feature list for the Godot game; server question answered — S15 (keep FastAPI); branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #27 created |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 1.56 M (108 k in · 1.43 M cached · 22 k out) | CHF 1.07 (127 credits) | Part 2 written (3 Steps: standard, standard, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 15:47) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.33 M (80 k in · 1.23 M cached · 19 k out) | CHF 0.57 (68 credits) | Step 1 done (`usage.ps1 -Agent subagents` from 15:51) |
 
 ---
 
@@ -184,7 +185,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Architecture document | standard (Claude Sonnet 5.5) — a document whose content the decisions fix | ⬜ Not started | [→ Step 1](#step-1--architecture-document) |
+| **1** | Architecture document | standard (Claude Sonnet 5.5) — a document whose content the decisions fix | ✅ Done | [→ Step 1](#step-1--architecture-document) |
 | **2** | Screen sizes and input checked by tests | standard (Claude Sonnet 5.5) — GUT tests in sub-viewports, small layout fixes if a size fails | ⬜ Not started | [→ Step 2](#step-2--screen-sizes-and-input-checked-by-tests) |
 | **3** | README, ordered list, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 3](#step-3--readme-ordered-list-final-check) |
 
@@ -229,19 +230,22 @@ where the planned parts go, including the FastAPI server for rooms and hack code
 S11, S12, S13, S15).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Read `hack_star_godot/README.md`, `project.godot`, `scenes/`, `game/`, `tests/`,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Read `hack_star_godot/README.md`, `project.godot`, `scenes/`, `game/`, `tests/`,
       `tools/`, the root `docs/architecture.md`, `server/src/hack_star_server/app.py` and
       `rooms.py`, and `ui/vite.config.ts`.
-- [ ] Write `hack_star_godot/docs/architecture.md` with the sections of D1: what exists
+- [x] Write `hack_star_godot/docs/architecture.md` with the sections of D1: what exists
       (start screen, arena, fighter, touch joystick, `Movement`, the GUT tests, the tools) with
       file paths; Server, hack codes and rooms after D2 and D3 (the three endpoints, same
       address, the serving tool deferred to spec 05); Saved progress after D4; art and
       licences (S7, `LICENSES.md`); parts that are not built yet marked *planned — spec NN*.
-- [ ] Check: every path named in the document exists (`Test-Path`) or is marked *planned*;
+- [x] Check: every path named in the document exists (`Test-Path`) or is marked *planned*;
       every relative link resolves; no change outside `hack_star_godot/docs/`.
 
 ### Notes
+Started: 2026-11-21 15:52
+
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — wrote `hack_star_godot/docs/architecture.md` (D1 sections: Layout, Screens, Game rules, 3D models, Saved progress, Server/hack codes/rooms, Languages, Art and licences, Tests and checks, Spec order, How to…; unbuilt parts marked *planned — spec NN*). Check: every path named exists or is marked planned, every relative link resolves (`Test-Path`), nothing changed outside `hack_star_godot/docs/` (besides this spec). suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.33 M tokens · CHF 0.57 (68 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
