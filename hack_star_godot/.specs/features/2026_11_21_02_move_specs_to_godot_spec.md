@@ -19,6 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 653 k (61 k in · 572 k cached · 20 k out) | CHF 0.35 (41 credits) | Step 3 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.69 M (72 k in · 1.59 M cached · 26 k out) | CHF 0.50 (60 credits) | Step 4 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 946 k (85 k in · 839 k cached · 22 k out) | CHF 0.03 (3 credits) | Step 5 done |
+| 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 2.60 M (126 k in · 2.44 M cached · 36 k out) | CHF 1.55 (185 credits) | review page written; code review: Approve (0 blocking, 3 should-fix, 5 nit) |
 ---
 
 # Part 1 · Requirements
@@ -370,6 +371,32 @@ Started: 2026-11-21 15:32
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff (specs and documents only: summary and highlights, no change record, no PR text — S17) | [review page](../review/2026-11-21_main-move-specs-to-godot.html) | — |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff `c2ff04c..5cccaae` (16 moved specs, ordered list, README, costs) | Approve | 0 blocking · 3 should-fix · 5 nit |
+
+### Code review 2026-11-21
+
+Range `c2ff04c..5cccaae` on `main` (Steps 1–5). All 16 moved specs pass the structural checks
+(re-run by script: name, D2 header, S0 wording of D4 with the right range and the bug sentence
+in 16, numbering, placeholder, links); Part 1 of every spec was diffed against its original (18
+against the branch copy) — only the documented changes differ; root `.specs/` unchanged (S9).
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | Definition of Done: the *Implementation* line is not ticked although Steps 1–5 are ✅ Done and Step 5's checks passed | spec | spec | Should-fix | fix now |
+| 2 | `features/README.md`: row 02 says *planned* although all Steps are done (should be *implemented*, S11) | spec | docs | Should-fix | fix now |
+| 3 | 17 Q1 (music tools in Godot) does not name the statements its answer changes: S24/S25 (developer mode "in this browser", page by address `/?dev`) and S26/S27 (candidate files in the project, list in the repository — already in conflict with S36, inherited from the original S32) | spec | spec | Should-fix | fix now |
+| 4 | Context/feature-list text still names the Python server unmarked: 03 F0 ("server, UI") next to "No server."; 14 Context ("the Python server must connect the devices"); 15 Context (`GET /api/hacks`); 05 has no pointer to 03's question "Server for rooms and hack codes" | spec | docs | Nit | fix now |
+| 5 | 17 S36 replaces "the repository credits of S20, S22 and S35", but the new S35 has no repository credits (should be S20, S22 or the struck S31) | spec | docs | Nit | fix now |
+| 6 | 17: the answered note of the original Open questions (candidate tracks made by us or from CC0 / CC BY libraries) was dropped when Q1 was added | spec | docs | Nit | fix now |
+| 7 | 18 *Moved from* links to the blob on `feature/worlds-and-world-coins`; it breaks when that branch is merged and deleted — point it to `main` then | spec | docs | Nit | deferred |
+| 8 | "(found by the requirements stage — reuse, don't rebuild)" kept in 03–15, "(reuse, don't rebuild)" in 16–18; one wording | scan | docs | Nit | fix now |
+
+**Good:** identical S0 in all 16 specs; every struck statement names its successor and the
+reason; the server question is asked once (03) and referenced (14 Q3); 03 S12–S14 and 04 S12
+match D7/D8; no broken link; Step notes document every deviation.
+
+**Outcome:** Approve (no Blocking finding open).
 
 ---
 
@@ -378,6 +405,6 @@ Started: 2026-11-21 15:32
 - [x] Requirements · Part 1 agreed (S1..S17 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; all 16 specs moved and checked; root `.specs/` unchanged
-- [ ] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
+- [x] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · not used — worked on `main` (S17)
