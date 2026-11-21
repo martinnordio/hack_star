@@ -1,0 +1,33 @@
+﻿NAME
+    <root>\tools\export_web.ps1
+    
+SYNOPSIS
+    Exports the game for the web into build\web\.
+    
+    
+SYNTAX
+    <root>\tools\export_web.ps1 
+    [<CommonParameters>]
+    
+    
+DESCRIPTION
+    Deletes build\web\, runs `godot --headless --export-release "Web" build/web/index.html` and
+    checks that index.html, a .wasm and a .pck exist. Exit code 1 if Godot fails or a file is 
+    missing.
+    
+    Requires -Version 5.1
+    
+
+PARAMETERS
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see 
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216). 
+    
+INPUTS
+    
+OUTPUTS
+    
+    
+RELATED LINKS

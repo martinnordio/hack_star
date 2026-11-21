@@ -1,0 +1,4 @@
+# QrCode (game/qr_code.gd)
+encode("INFINITY") -> version 1, 21 x 21
+encode("http://localhost:8060/?hack=OPENSESAME") -> version 3, 29 x 29
+encode(<300 characters>) -> 0 rows

@@ -1,0 +1,217 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 05 on feature/godot-mvp (written by REVIEW:, 2026-11-21).
+# Range: this spec's commits only, 94ba207..b0bdc6d (the branch carries specs 03-08 and 16).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/".
+# Screens: real screenshots of a windowed Godot 4.7.2 run (temporary capture script under the
+# git-ignored build/, removed); HackServer.fake_responder answers as the server does, so the
+# screens do not need the server. Before comes from a temporary worktree at 94ba207 (removed).
+# Proxy: the real server (cd server; uv run hack-star-server) and tools/serve_web.py, curl.
+version: 1
+branch: feature/godot-mvp
+base: 94ba207
+why: |
+  Hack codes are what makes Hack star different from Brawl Stars: a secret code or a QR code
+  gives unlimited credits, every fighter unlocked, or power levels up to 22. Spec 05 brings
+  them to the Godot game with the existing FastAPI server (shared codes), the first save file
+  (the active hacks), a QR page to print, camera scanning in the browser, and the local web
+  setup that serves the export with the server's /api at the same address.
+spec:
+  path: .specs/features/2026_11_12_05_hack_codes_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15]
+changes:
+  - id: home-screen
+    kind: ui
+    change: modified
+    object: Home screen (scenes/home.tscn) - Hack button and credits
+    note: A fourth button **Hack** under Fighters and Info (the row is now an HFlowContainer, so it wraps); credits go through Hacks.credits_text and show ∞ with the unlimited-credits hack.
+    statements: [S1, S4]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (home, entrance already played, no hacks, 1.5 s)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+      - name: infinity-1280x720
+        input: |
+          same at 1280x720 with GameState.activate_hack("infinite_credits") (after only)
+        views: [desktop]
+  - id: fighter-list
+    kind: ui
+    change: modified
+    object: Fighter list and fighter screen - power with its maximum, locks follow the hacks
+    note: '"Power: 7" becomes "Power 7 / 11" (S6); with all three hacks every card is unlocked and shows "/ 22". The fighter screen uses the same Hacks.power_text.'
+    statements: [S5, S6, S12]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (scenes/fighter_list.tscn, no hacks, 2.5 s)
+        views: [desktop]
+      - name: all-hacks-1280x720
+        input: |
+          same with infinite_credits, unlock_all and power22 active (after only)
+        views: [desktop]
+  - id: hack-screen
+    kind: ui
+    change: added
+    object: Hack screen (scenes/hack_screen.tscn, Screens.HACK)
+    note: Code field with Use code (and Enter), Scan QR code, message, Active hacks list, Turn all hacks off (with a confirmation), QR codes; a correct code pops the message and bursts stars for 1.8 s.
+    statements: [S1, S2, S3, S7, S8, S9, S13, S14]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (hack screen, power22 and infinite_credits active)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+      - name: celebration-1280x720
+        input: |
+          hack screen, no hacks, submit(" opensesame ") with a fake 200 unlock_all answer,
+          captured 0.6 s later
+        views: [desktop]
+  - id: qr-page
+    kind: ui
+    change: added
+    object: QR page (scenes/qr_page.tscn, Screens.QR)
+    note: One card per known hack of GET /api/hacks (hypercharge and creator left out) with name, code, a 320 px QR image of the D9 link and Save image.
+    statements: [S10, S11, S13]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (QR page, fake list answer with the three hacks and hypercharge)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: hack-rules
+    kind: output
+    change: added
+    object: Hack rules (game/hacks.gd, Hacks)
+    note: Effects are computed from the list of active ids, never written into progress; code_from_scan accepts a plain code or a ?hack= link.
+    statements: [S2, S3, S4, S5, S6, S11, S12]
+    examples:
+      - name: outputs
+        input: |
+          godot --headless --path hack_star_godot -s <temporary script>
+          (normalize_code, code_from_scan, link, credits_text, spend, power_text,
+          is_fighter_unlocked with no hacks and with all three)
+  - id: save-file
+    kind: data-format
+    change: added
+    object: Save file user://hack_star_save.json (game/save_data.gd, GameState)
+    note: '{"version": 1, "hacks": [...]}; broken, newer or unknown content gives no hacks or drops the unknown ids. The first saved data of the Godot game.'
+    statements: [S8, S9]
+    examples:
+      - name: save-data
+        input: |
+          same script: SaveData.to_json([power22, unlock_all]) and from_json of a broken,
+          a newer and a file with an unknown and a repeated id
+  - id: hack-server-client
+    kind: output
+    change: added
+    object: Server client (autoload HackServer) - redeem outcomes
+    note: Three outcomes ok / unknown / no_server; a 200 with an id the game does not know is unknown; any status other than 200 and 404 is no_server (finding 4).
+    statements: [S2, S7, S11, S13]
+    examples:
+      - name: redeem
+        input: |
+          same script: HackServer.redeem(" power22 ") with fake_responder answers 200 (power22),
+          200 (hypercharge), 404, 422, 500, 200 with broken JSON and 0 (no connection)
+  - id: qr-encoder
+    kind: output
+    change: added
+    object: QR code encoder (game/qr_code.gd, QrCode)
+    note: Byte mode, level M, versions 1-10; the GUT tests compare four matrices bit for bit with segno 1.6.6.
+    statements: [S10]
+    examples:
+      - name: encode
+        input: |
+          same script: QrCode.encode("INFINITY"), encode of the OPENSESAME link and of a
+          300-character text
+  - id: web-proxy
+    kind: output
+    change: added
+    object: Local web setup (tools/serve_web.py) - /api forwarded at the page's address
+    note: The page and /api share one address; with the server down /api answers 502 so the game shows the S13 message.
+    statements: [S13, S15]
+    examples:
+      - name: server-up
+        input: |
+          cd server; uv run hack-star-server
+          uv run --no-project python tools/serve_web.py --port 8060 --bind 127.0.0.1 --directory build/web
+          curl / ; curl /api/hacks ; POST /api/hacks/redeem " power22 " and "nope"
+      - name: server-down
+        input: |
+          the server stopped, serve_web.py still running: curl /api/hacks
+  - id: serve-web-command
+    kind: command
+    change: modified
+    object: tools/serve_web.ps1
+    note: New -ApiUrl and -Https; it now runs serve_web.py (forwarding /api) instead of http.server, and makes a self-signed certificate with make_cert.py for -Https.
+    statements: [S15]
+    examples:
+      - name: help
+        input: |
+          Get-Help tools\serve_web.ps1 -Full
+  - id: export-web-command
+    kind: command
+    change: modified
+    object: tools/export_web.ps1
+    note: Also copies web/*.js (jsQR and the camera scanner) next to index.html; exit 1 when none is found.
+    statements: [S3]
+    examples:
+      - name: help
+        input: |
+          Get-Help tools\export_web.ps1 -Full
+  - id: project-settings
+    kind: config
+    change: modified
+    object: project.godot autoloads and the Web export preset
+    note: New autoload HackServer; the Web preset loads jsQR.js and qr_scanner.js with html/head_include and turns on the virtual keyboard.
+    statements: [S3, S13, S15]
+    examples:
+      - name: settings
+        input: |
+          git show <rev>:hack_star_godot/project.godot ([autoload]) and
+          git show <rev>:hack_star_godot/export_presets.cfg (html/head_include,
+          html/experimental_virtual_keyboard)
+  - id: dependencies
+    kind: dependency
+    change: modified
+    object: Pinned tools and shipped scripts (tools/versions.json, web/)
+    note: cryptography 50.0.2 pinned for make_cert.py only (D3); jsQR 1.4.0 shipped in the web export with its licence (D8, LICENSES.md).
+    statements: [S3, S15]
+    examples:
+      - name: versions
+        input: |
+          git show <rev>:hack_star_godot/tools/versions.json, and the files under web/
+breaking: none
+review:
+  - question: Why does the Godot game call the Python server instead of checking codes itself?
+    answer: |
+      D1 and spec 03: one server for both games so they share the codes; the codes are not
+      written in the Godot code. server/ and ui/ are unchanged (git diff is empty there).
+  - question: Can a hack corrupt progress?
+    answer: |
+      No. D4: effects are computed from active_hacks at read time; trophies, unlocks and power
+      levels are never written. Turning all hacks off only clears the list (S9).
+  - question: Why a GDScript QR encoder and a JavaScript decoder?
+    answer: |
+      D10: drawing a QR code needs no library and works headless for the tests (checked bit for
+      bit against segno). D8: Godot has no camera QR decoder and Safari has no BarcodeDetector,
+      so jsQR runs in the page with an HTML video overlay, as in the Svelte game.
+  - question: How does the phone reach the server?
+    answer: |
+      D3: serve_web.ps1 serves the export and forwards /api to the server on this computer, so
+      the page's own origin + /api works on the Wi-Fi too; -Https adds a self-signed certificate
+      because the camera needs https:// away from localhost.

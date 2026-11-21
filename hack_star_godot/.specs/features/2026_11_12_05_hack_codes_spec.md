@@ -25,6 +25,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.73 M (27 k in · 2.68 M cached · 19 k out) | CHF 0.44 (52 credits) | Step 7 done (`usage.ps1 -AgentName s05-steps6-7` 18:00:26–18:04:27) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.32 M (139 k in · 6.15 M cached · 34 k out) | CHF 2.18 (260 credits) | Step 8 done (`usage.ps1 -AgentName s05-step8` from 17:25:44) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.84 M (101 k in · 1.71 M cached · 27 k out) | CHF 0.05 (6 credits) | Step 9 done (`usage.ps1 -AgentName s05-step9` from 17:25:44) |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.27 M (169 k in · 8.04 M cached · 55 k out) | CHF 2.98 (356 credits) | semantic diff written (13 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-05-hack-codes.html)); code review: Approve, 0 Blocking · 2 Should-fix · 6 Nit (`usage.ps1 -AgentName s05-review` from 17:25:44) |
 
 ---
 
@@ -484,6 +485,7 @@ Started: 2026-11-21 18:16
 | Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
 | Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | Play-test on a real iPad and phone (in-game camera over `-Https`, camera app with a QR link, on-screen keyboard) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
+| WebSocket tunnel of `tools/serve_web.py` to an `https://` `-ApiUrl` (code review finding 6) | Plain TCP today; only rooms use WebSockets | [14 Play with friends](2026_11_12_14_play_with_friends_spec.md) |
 
 ---
 
@@ -491,6 +493,35 @@ Started: 2026-11-21 18:16
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-05-hack-codes.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve (with follow-ups) | 0 Blocking · 2 Should-fix · 6 Nit |
+
+### Code review 2026-11-21
+
+Range `94ba207..b0bdc6d` (this spec's commits only). Ran: `tools/test.ps1` (172 of 172 passed),
+`tools/lint.ps1` (OK); record checked with `change_record.schema.json` (checks 7 pass · 2 n/a ·
+0 fail). Before | After: real screenshots from a windowed Godot 4.7.2 run (temporary capture
+script, removed; `HackServer.fake_responder` answering like the server), the before side from a
+temporary worktree at `94ba207`; outputs from a temporary headless script; the proxy with the
+real server, `serve_web.py` and curl (`/api/hacks` 200, redeem 200 / 404, 502 with the server
+stopped). Good: one autoload owns the network and one the file, with three clear outcomes and a
+test seam, so the tests stay offline (D2). Hack effects are derived from the active ids, never
+stored, so a reset is exact (D4). The save file is read defensively. The QR encoder matches segno
+bit for bit on four references. The camera overlay keeps frames out of the engine and closes with
+the screen. `server/` and `ui/` are unchanged; no debug output, no TODO.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | The QR codes link to the address the QR page is opened on (`scenes/qr_page.gd:9, 36-41`). Opened on this computer (`localhost`, and always in a desktop run) the saved or printed codes open `http://localhost:8060/?hack=…` on a phone, which does not reach this computer, so the camera-app way of S3 and S10 fails. The README does not tell the adult to open the QR page from the Wi-Fi address. Decide: a README note (open the QR page at the Wi-Fi address before saving), or links to this computer's Wi-Fi address | spec | spec | Should-fix | plan decision |
+| 2 | `GameState._save_hacks` (`scenes/autoload/game_state.gd:102-106`) ignores a failed `FileAccess.open`: the screen says "unlocked!", but after a reload the hack is gone, with no warning anywhere. Add `push_warning` with `FileAccess.get_open_error()` | code | guideline | Should-fix | fix now |
+| 3 | Back pressed while a code is checked: `submit` returns at `scenes/hack_screen.gd:71` before `GameState.activate_hack` (line 76), so a code the server accepted is not activated. Activate before the tree check | code | spec | Nit | fix now |
+| 4 | `HackServer.redeem` (`scenes/autoload/hack_server.gd:34-37`) maps every status besides 200 and 404 to `no_server`; a 422 (a scanned plain text over the server's 100 characters) shows "Can't reach the hack server" although the server answered (record block *hack-server-client*). D2 says "any other status", so a change (e.g. other 4xx → `unknown`) needs a decision | code | spec | Nit | plan decision |
+| 5 | `QrPage.save_image` (`scenes/qr_page.gd:47-49`) calls `save_png_to_buffer()` on `QrImage.image_for`, which returns null for a link too long for version 10 (a long game address). Guard it and return an empty path ("Could not save the image.") | code | guideline | Nit | fix now |
+| 6 | `tools/serve_web.py` `_tunnel` (lines 111-113) opens a plain TCP connection even when `-ApiUrl` is `https://`, so a WebSocket to an https server would fail (plain HTTP forwarding handles TLS). It matters only for rooms | code | spec | Nit | deferred (spec 14) |
+| 7 | Docs: `README.md:147` and `docs/architecture.md:48` call the button **Use** (the screen says **Use code**); `architecture.md:48` names a class `HackScreen` that `hack_screen.gd` does not declare; the heading *Saved progress (planned — spec 05 / spec 08)* (`architecture.md:150`) is stale | spec | docs | Nit | fix now |
+| 8 | `tests/test_home.gd:96-105` and `tests/test_screen_sizes.gd:214-255` reset `HackServer.fake_responder` at the end of the test body, not in `after_each` like the other hack tests; a runtime error in such a test leaves the fake set for the following tests (D2) | code | test | Nit | fix now |
+
+**Outcome:** Approve. Nothing is Blocking. Findings 2, 3, 5, 7 and 8 are fix now; findings 1 and 4 need a plan decision (`PLAN:`); finding 6 is deferred to spec 14.
 
 ---
 
@@ -499,6 +530,6 @@ Started: 2026-11-21 18:16
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

@@ -1,0 +1,66 @@
+﻿NAME
+    <root>\tools\serve_web.ps1
+    
+SYNOPSIS
+    Serves build\web\ on the local network (port 8060) and forwards /api to the hack server, until
+    stopped with Ctrl+C.
+    
+    
+SYNTAX
+    <root>\tools\serve_web.ps1 [[-Port] <Int32>] [[-ApiUrl] <String>] 
+    [-Https] [<CommonParameters>]
+    
+    
+DESCRIPTION
+    Prints the addresses to open (this computer's IPv4 address for an iPad on the same Wi-Fi, and
+    localhost), then runs tools\serve_web.py (Python standard library only) through uv. The page and
+    the server's /api share one address, so the web game needs no setup. Start the server first in
+    its own window: cd server; uv run hack-star-server (port 8180). Without it /api answers 502 and
+    the game says it cannot reach the hack server. Run tools\export_web.ps1 first. Windows may ask
+    to allow Python through the firewall.
+    
+
+PARAMETERS
+    -Port <Int32>
+        The port of the web game (default 8060).
+        
+        Required?                    false
+        Position?                    1
+        Default value                8060
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+        
+    -ApiUrl <String>
+        Where the hack server listens (default http://127.0.0.1:8180).
+        
+        Required?                    false
+        Position?                    2
+        Default value                http://127.0.0.1:8180
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+        
+    -Https [<SwitchParameter>]
+        Serves https:// with a self-signed certificate (made once into build\cert\); the browser 
+        camera
+        needs https:// on an iPad or phone. The browser warns once: accept the certificate.
+        
+        Requires -Version 5.1
+        
+        Required?                    false
+        Position?                    named
+        Default value                False
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+        
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see 
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216). 
+    
+INPUTS
+    
+OUTPUTS
+    
+    
+RELATED LINKS

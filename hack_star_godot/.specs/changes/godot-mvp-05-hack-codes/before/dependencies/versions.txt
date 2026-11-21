@@ -1,0 +1,9 @@
+# tools/versions.json
+{
+  "godot": "4.7.2",
+  "gut": "9.7.1",
+  "gdtoolkit": "4.5.0"
+}
+
+# web/ (shipped in the web export)
+(no web/ folder)
