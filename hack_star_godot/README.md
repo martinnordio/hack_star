@@ -2,7 +2,7 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a start screen and a 3D arena with one fighter. The
+It is the first basic game so far: a home screen and a 3D arena with one fighter. The
 Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
@@ -86,8 +86,8 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
 ## Run in the editor
 
 1. Start Godot and choose **Import**; select `hack_star_godot\project.godot`; then **Import & Edit**.
-2. Press **F5** (Run Project). The start screen shows **Hack star** and **Play**.
-3. **Play** opens the arena. Press **Back** (top-left) to return to the start screen.
+2. Press **F5** (Run Project). The home screen shows your fighter, trophies, credits, **Hack star** and **Play**.
+3. **Play** opens the arena. Press **Back** (top-left) to return to the home screen.
 
 ## Commands
 
@@ -122,7 +122,7 @@ Run them from the `hack_star_godot` folder.
 - **Computer:** WASD or the arrow keys move the fighter.
 - **iPad and phone:** the touch joystick (bottom-left) moves the fighter. It appears only on a
   touch screen.
-- **Back** (top-left) returns to the start screen.
+- **Back** (top-left) returns to the home screen.
 
 ## Resources outside the folder
 

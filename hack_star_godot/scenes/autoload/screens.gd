@@ -2,7 +2,7 @@ extends Node
 ## The one way from screen to screen: every screen has a constant here and every Back goes home.
 ## A later spec adds its screen as one more constant.
 
-const HOME: String = "res://scenes/start_screen.tscn"
+const HOME: String = "res://scenes/home.tscn"
 const ARENA: String = "res://scenes/arena.tscn"
 
 

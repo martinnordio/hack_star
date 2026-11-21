@@ -20,6 +20,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 717 k (15 k in · 692 k cached · 10 k out) | CHF 0.17 (21 credits) | Step 2 done (`usage.ps1 -Agent subagents` 16:17–16:19) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.57 M (135 k in · 3.40 M cached · 38 k out) | CHF 1.78 (213 credits) | Step 3 done (`usage.ps1 -Agent subagents` 16:19–16:26) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.36 M (52 k in · 4.28 M cached · 31 k out) | CHF 1.45 (173 credits) | Step 4 done (`usage.ps1 -Agent subagents` 16:27–16:32) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.04 M (93 k in · 1.93 M cached · 19 k out) | CHF 0.52 (62 credits) | Step 5 done (`usage.ps1 -Agent subagents` 16:33–16:38) |
 
 ---
 
@@ -183,7 +184,7 @@ of this spec (see Deferred Items in the plan of the
 | **2** | Fighter catalogue, Prestige and sample progress | standard (Claude Sonnet 5.5) — data and pure rules with tests, all values given by S8, S11 and D5 | ✅ Done | [→ Step 2](#step-2--fighter-catalogue-prestige-and-sample-progress) |
 | **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ✅ Done | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
 | **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ✅ Done | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
-| **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ⬜ Not started | [→ Step 5](#step-5--home-screen) |
+| **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ✅ Done | [→ Step 5](#step-5--home-screen) |
 | **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ⬜ Not started | [→ Step 6](#step-6--wow-entrance) |
 | **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ⬜ Not started | [→ Step 7](#step-7--fighter-list) |
 | **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
@@ -339,19 +340,21 @@ The game opens on the home screen with the selected fighter, trophies, credits, 
 **Play**, and the arena's Back returns to it (S1, S3, S6, S10, S14).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Rename the start screen to `scenes/home.tscn`/`.gd` and its test to `tests/test_home.gd`
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Rename the start screen to `scenes/home.tscn`/`.gd` and its test to `tests/test_home.gd`
       (D9); main scene and `Screens.HOME` updated.
-- [ ] Layout with containers: top bar (total trophies, credits), title "Hack star", the
+- [x] Layout with containers: top bar (total trophies, credits), title "Hack star", the
       `FighterStage` with the selected fighter and skin (idle), its name and Prestige badge
       (`scenes/ui/prestige_badge.tscn`, shown only at Prestige ≥ 1), big **Play** (opens the
       arena), smaller **Fighters** and **Info** buttons (disabled until Steps 7 and 9).
-- [ ] Tests: `tests/test_home.gd` (the values come from `GameState`; Blaze shows Prestige 1;
+- [x] Tests: `tests/test_home.gd` (the values come from `GameState`; Blaze shows Prestige 1;
       a fighter under 1000 shows no badge; Play opens the arena); `test_screen_sizes.gd` uses
       the home screen at the five sizes (D10).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 16:33
+**Done (2026-11-21 · ~5m · Claude Sonnet 5.5)** — `start_screen` renamed to `scenes/home.tscn`/`.gd` (`git mv`; main scene, `Screens.HOME`, `tests/test_home.gd`); layout with containers: top bar (trophies, credits), title, a `Body` box (the `FighterStage` with the chosen fighter and skin, and the controls: name, `PrestigeBadge`, **Play**, disabled **Fighters** and **Info**) that is one column on tall screens and fighter-left, buttons-right on wide ones; `scenes/ui/prestige_badge.tscn` + `.gd` (hidden below 1000 trophies). `tests/test_home.gd` (7 tests: values from `GameState`, Blaze Prestige 1, no badge for Turbo, selected skin shown, Play opens the arena); `test_screen_sizes.gd` checks every home element at the five sizes. README and `docs/architecture.md` lines about the start screen updated. `tools/test.ps1`: 68 tests passed; `tools/lint.ps1`: exit 0; screenshots from a windowed run (desktop 1280×720, iPad portrait, phone portrait, phone landscape): everything inside the screen, fighter large and Prestige 1 badge visible, Fighters/Info greyed. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.04 M tokens · CHF 0.52 (62 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

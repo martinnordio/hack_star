@@ -14,7 +14,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 
 | Path | What |
 |------|------|
-| `project.godot` | The project: main scene `scenes/start_screen.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
+| `project.godot` | The project: main scene `scenes/home.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
 | `scenes/` | Screens and objects: each `.tscn` with the script of the same name |
 | `game/` | Game rules: plain scripts without scene access |
 | `tests/` | GUT tests, `test_<name>.gd` |
@@ -35,8 +35,8 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with
 
 | Scene | Script | What |
 |-------|--------|------|
-| `start_screen.tscn` | `start_screen.gd` | Title "Hack star" and the **Play** button (main scene); **Play** opens the arena |
-| `arena.tscn` | `arena.gd` | The 3D arena (floor, walls, inner walls), one fighter, the camera and the HUD: **Back** (top-left, returns to the start screen), the touch joystick and the FPS label (top-right) |
+| `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the arena) and **Fighters** and **Info** (disabled until their screens exist). Wide screens put the fighter left and the buttons right; tall screens use one column |
+| `arena.tscn` | `arena.gd` | The 3D arena (floor, walls, inner walls), one fighter, the camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick and the FPS label (top-right) |
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame |
 | `touch_joystick.tscn` | `touch_joystick.gd` (`TouchJoystick`) | On-screen joystick, visible only on a touch screen; its `direction` has length ≤ 1 |
 
@@ -121,7 +121,7 @@ that adds an asset.
 ## Tests and checks
 
 Tests are GUT 9.7.1 files in `tests/` (`test_movement.gd` checks `game/movement.gd`;
-`test_start_screen.gd`, `test_arena.gd` and `test_touch_joystick.gd` check the scenes;
+`test_home.gd`, `test_arena.gd` and `test_touch_joystick.gd` check the scenes;
 `test_screen_sizes.gd` checks that the screens fit five screen sizes and that Play and Back
 react to a mouse click and a touch). Run
 them headless, from the `hack_star_godot` folder:

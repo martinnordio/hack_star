@@ -2,7 +2,7 @@ extends GutTest
 ## Every screen fits desktop, iPad and phone sizes in landscape and portrait (spec 03, D5),
 ## and Play and Back react to a mouse click and to a touch.
 
-const START_SCREEN: PackedScene = preload("res://scenes/start_screen.tscn")
+const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const SIZES: Dictionary = {
@@ -72,14 +72,25 @@ func _drop_handlers(button: Button) -> void:
 		button.pressed.disconnect(connection["callable"])
 
 
-func test_start_screen_fits_every_size() -> void:
+func test_home_fits_every_size() -> void:
+	var paths: Array[String] = [
+		"Margin/Column/TopBar/TrophiesLabel",
+		"Margin/Column/TopBar/CreditsLabel",
+		"Margin/Column/Title",
+		"Margin/Column/Body/FighterStage",
+		"Margin/Column/Body/Controls/NameRow/NameLabel",
+		"Margin/Column/Body/Controls/NameRow/PrestigeBadge",
+		"Margin/Column/Body/Controls/PlayButton",
+		"Margin/Column/Body/Controls/MoreRow/FightersButton",
+		"Margin/Column/Body/Controls/MoreRow/InfoButton",
+	]
 	for label: String in SIZES:
 		var size: Vector2i = SIZES[label]
-		var shown: Array = await _show_in_viewport(START_SCREEN, size)
+		var shown: Array = await _show_in_viewport(HOME_SCENE, size)
 		var screen: Control = shown[1]
 		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
-		_assert_inside(screen.get_node("Center/Column/Title"), visible_rect, "%s title" % label)
-		_assert_inside(screen.get_node("Center/Column/PlayButton"), visible_rect, "%s Play" % label)
+		for path: String in paths:
+			_assert_inside(screen.get_node(path), visible_rect, "%s %s" % [label, path])
 		shown[0].queue_free()
 
 
@@ -103,8 +114,8 @@ func test_arena_fits_every_size() -> void:
 
 
 func test_play_reacts_to_mouse_click() -> void:
-	var shown: Array = await _show_in_viewport(START_SCREEN, Vector2i(1280, 720))
-	var button: Button = shown[1].get_node("Center/Column/PlayButton")
+	var shown: Array = await _show_in_viewport(HOME_SCENE, Vector2i(1280, 720))
+	var button: Button = shown[1].get_node("Margin/Column/Body/Controls/PlayButton")
 	_drop_handlers(button)
 	watch_signals(button)
 	_click(shown[0], button)
@@ -112,8 +123,8 @@ func test_play_reacts_to_mouse_click() -> void:
 
 
 func test_play_reacts_to_touch() -> void:
-	var shown: Array = await _show_in_viewport(START_SCREEN, Vector2i(844, 390))
-	var button: Button = shown[1].get_node("Center/Column/PlayButton")
+	var shown: Array = await _show_in_viewport(HOME_SCENE, Vector2i(844, 390))
+	var button: Button = shown[1].get_node("Margin/Column/Body/Controls/PlayButton")
 	_drop_handlers(button)
 	watch_signals(button)
 	_touch(shown[0], button)

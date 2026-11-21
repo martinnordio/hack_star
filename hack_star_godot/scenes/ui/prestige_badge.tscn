@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/prestige_badge.gd" id="1_badge"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+content_margin_left = 20.0
+content_margin_top = 6.0
+content_margin_right = 20.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.82, 0.2, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7, 0.45, 0.05, 1)
+
+[node name="PrestigeBadge" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge")
+script = ExtResource("1_badge")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.14, 0.02, 1)
+text = "Prestige 1"
+horizontal_alignment = 1
