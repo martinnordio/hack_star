@@ -4,6 +4,7 @@ extends GutTest
 
 const START_SCREEN: PackedScene = preload("res://scenes/start_screen.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
+const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const SIZES: Dictionary = {
 	"desktop 1280x720": Vector2i(1280, 720),
 	"iPad landscape 1180x820": Vector2i(1180, 820),
@@ -11,17 +12,26 @@ const SIZES: Dictionary = {
 	"phone portrait 390x844": Vector2i(390, 844),
 	"phone landscape 844x390": Vector2i(844, 390),
 }
-const ARENA_CORNERS: Array[Vector3] = [
-	Vector3(-8.5, 1.2, -6.5),
-	Vector3(8.5, 1.2, -6.5),
-	Vector3(-8.5, 1.2, 6.5),
-	Vector3(8.5, 1.2, 6.5),
-]
+
+
+## The window's content scale as the project sets it (`canvas_items`, `expand`): the scene is
+## laid out in a rectangle of the base aspect or wider/taller, then scaled to the window.
+func _content_size(window_size: Vector2i) -> Vector2:
+	assert_eq(ProjectSettings.get_setting("display/window/stretch/mode"), "canvas_items")
+	assert_eq(ProjectSettings.get_setting("display/window/stretch/aspect"), "expand")
+	var base: Vector2 = Vector2(
+		ProjectSettings.get_setting("display/window/size/viewport_width"),
+		ProjectSettings.get_setting("display/window/size/viewport_height")
+	)
+	var scale: float = minf(window_size.x / base.x, window_size.y / base.y)
+	return Vector2(window_size) / scale
 
 
 func _show_in_viewport(scene: PackedScene, size: Vector2i) -> Array:
 	var viewport: SubViewport = SubViewport.new()
 	viewport.size = size
+	viewport.size_2d_override = Vector2i(_content_size(size).round())
+	viewport.size_2d_override_stretch = true
 	add_child_autofree(viewport)
 	var root: Node = scene.instantiate()
 	viewport.add_child(root)
@@ -43,7 +53,17 @@ func _click(viewport: SubViewport, control: Control) -> void:
 		event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
 		event.position = position
 		event.global_position = position
-		viewport.push_input(event)
+		viewport.push_input(event, true)
+
+
+func _touch(viewport: SubViewport, control: Control) -> void:
+	var position: Vector2 = control.get_global_rect().get_center()
+	for pressed: bool in [true, false]:
+		var event: InputEventScreenTouch = InputEventScreenTouch.new()
+		event.index = 0
+		event.pressed = pressed
+		event.position = position
+		viewport.push_input(event, true)
 
 
 ## Without leaving the test scene: the screen's own handler would change the scene.
@@ -57,7 +77,7 @@ func test_start_screen_fits_every_size() -> void:
 		var size: Vector2i = SIZES[label]
 		var shown: Array = await _show_in_viewport(START_SCREEN, size)
 		var screen: Control = shown[1]
-		var visible_rect: Rect2 = Rect2(Vector2.ZERO, Vector2(size))
+		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
 		_assert_inside(screen.get_node("Center/Column/Title"), visible_rect, "%s title" % label)
 		_assert_inside(screen.get_node("Center/Column/PlayButton"), visible_rect, "%s Play" % label)
 		shown[0].queue_free()
@@ -68,13 +88,13 @@ func test_arena_fits_every_size() -> void:
 		var size: Vector2i = SIZES[label]
 		var shown: Array = await _show_in_viewport(ARENA_SCENE, size)
 		var arena: Node3D = shown[1]
-		var visible_rect: Rect2 = Rect2(Vector2.ZERO, Vector2(size))
+		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
 		_assert_inside(arena.get_node("Hud/BackButton"), visible_rect, "%s Back" % label)
 		var joystick: TouchJoystick = arena.get_node("Hud/TouchJoystick")
 		_assert_inside(joystick, visible_rect, "%s joystick" % label)
 		_assert_inside(arena.get_node("Hud/FpsLabel"), visible_rect, "%s FPS label" % label)
 		var camera: Camera3D = arena.get_node("Camera")
-		for corner: Vector3 in ARENA_CORNERS:
+		for corner: Vector3 in ArenaScript.ARENA_CORNERS:
 			assert_true(
 				visible_rect.has_point(camera.unproject_position(corner)),
 				"%s corner %s in view" % [label, corner]
@@ -92,16 +112,11 @@ func test_play_reacts_to_mouse_click() -> void:
 
 
 func test_play_reacts_to_touch() -> void:
-	assert_true(
-		ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch", true),
-		"a touch becomes a left mouse click"
-	)
 	var shown: Array = await _show_in_viewport(START_SCREEN, Vector2i(844, 390))
 	var button: Button = shown[1].get_node("Center/Column/PlayButton")
 	_drop_handlers(button)
 	watch_signals(button)
-	# The touch Godot emulates is the same left-button press and release at that point.
-	_click(shown[0], button)
+	_touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a touch presses Play")
 
 
@@ -112,5 +127,5 @@ func test_back_reacts_to_mouse_click_and_touch() -> void:
 	watch_signals(button)
 	_click(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
-	_click(shown[0], button)
-	assert_signal_emit_count(button, "pressed", 2, "a touch (emulated click) presses Back")
+	_touch(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")

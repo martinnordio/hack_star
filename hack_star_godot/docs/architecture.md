@@ -44,8 +44,8 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with
 (3D, seen from above at an angle) and moves back until the four top corners of the walls are
 inside the screen with a margin, so the arena fits landscape and portrait. It does this again
 on every `size_changed` of the viewport. The UI uses anchors and containers, not fixed pixel
-positions, so it fits a desktop, an iPad and a phone; tests that check this in sub-viewports
-of these sizes are *planned — this spec, Step 2*.
+positions, so it fits a desktop, an iPad and a phone; `tests/test_screen_sizes.gd` checks this in sub-viewports
+of five sizes (desktop, iPad and phone, landscape and portrait) with the project's own content scale (`canvas_items`, `expand`), as a player sees it.
 
 **Input (S3).** Keyboard through the input actions of `project.godot`; touch through
 `TouchJoystick` (`InputEventScreenTouch` and `InputEventScreenDrag`); buttons work with the
@@ -121,7 +121,9 @@ that adds an asset.
 ## Tests and checks
 
 Tests are GUT 9.7.1 files in `tests/` (`test_movement.gd` checks `game/movement.gd`;
-`test_start_screen.gd`, `test_arena.gd` and `test_touch_joystick.gd` check the scenes). Run
+`test_start_screen.gd`, `test_arena.gd` and `test_touch_joystick.gd` check the scenes;
+`test_screen_sizes.gd` checks that the screens fit five screen sizes and that Play and Back
+react to a mouse click and a touch). Run
 them headless, from the `hack_star_godot` folder:
 
 | Command | What |

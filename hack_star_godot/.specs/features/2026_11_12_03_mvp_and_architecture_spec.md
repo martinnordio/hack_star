@@ -189,7 +189,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 |------|-------------|-------------------|--------|--------|
 | **1** | Architecture document | standard (Claude Sonnet 5.5) — a document whose content the decisions fix | ✅ Done | [→ Step 1](#step-1--architecture-document) |
 | **2** | Screen sizes and input checked by tests | standard (Claude Sonnet 5.5) — GUT tests in sub-viewports, small layout fixes if a size fails | ✅ Done | [→ Step 2](#step-2--screen-sizes-and-input-checked-by-tests) |
-| **3** | README, ordered list, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 3](#step-3--readme-ordered-list-final-check) | [→ Step 3](#step-3--readme-ordered-list-final-check) |
+| **3** | README, ordered list, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 3](#step-3--readme-ordered-list-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -221,6 +221,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 | D4 | **Saved progress (planned):** one JSON file in `user://` (in the browser Godot keeps it in IndexedDB, per device and browser — S9) with a `version` number, read and written by one autoload; its fields are defined by the first spec that saves (05 Hack codes / 08 Trophies). Only described in the document in this spec. | One place for every saved value; the version allows later migrations; matches S9's "same device and browser". |
 | D5 | **Screen sizes in tests:** GUT tests put each screen into a `SubViewport` of a given size — desktop 1280×720, iPad landscape 1180×820, iPad portrait 820×1180, phone portrait 390×844, phone landscape 844×390 — and check that every control (title, **Play**, **Back**, joystick, FPS label) lies inside the visible rectangle and the arena's four corners are in view. | S2 can be checked without a device; the sizes are the ones of spec 01's checks plus a phone. |
 | D6 | **Device checks stay with the author:** the play-test on a real iPad and phone (Safari, landscape and portrait, touch, ≥ 30 fps — S1, S3, S6, S11) needs a person with the devices; it stays in Deferred Items (spec 01's row) and is not a task of an AI Step. | An AI Step cannot hold an iPad; the FPS label and `tools/serve_web.ps1` already make the check quick. |
+| D7 | **The size tests apply the project's stretch settings** (decided 2026-11-21 on review finding 2): each sub-viewport gets the content scale of `project.godot` — `canvas_items` with `expand`, base 1280×720 — through `size_2d_override`, so a control is measured in the rectangle a player sees (390×844 → 1280×2770 logical px), not in the raw window pixels. The settings are read from `ProjectSettings` and the test fails if they change. With this the start-screen title is back at font size 96 (it fits at all five sizes; Step 2 had cut it to 72 for a cut-off that no player sees). | D5 measured stricter than reality and made the title smaller on every device; the tests must measure what a player sees. |
 
 ---
 
@@ -274,6 +275,8 @@ landscape and portrait, and that **Play** and **Back** work with a mouse click a
 Started: 2026-11-21 15:53
 
 **Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — new `tests/test_screen_sizes.gd` (the five sizes of D5: start-screen title and Play; arena Back, joystick, FPS label and the four corners in view; Play and Back pressed by a mouse click and by the left-button press Godot emulates from a touch). One layout fix: start-screen title font 96 → 72, it was cut off on the 390 px phone portrait. Check: `tools/test.ps1` 25 tests pass (was 20), `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 839 k tokens · CHF 0.26 (30 credits)
+
+**Review fix (2026-11-21, D7):** the tests now use the project's stretch settings; the title is back at 96 (fits at all five sizes); the touch cases send `InputEventScreenTouch`.
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
@@ -303,7 +306,7 @@ S15).
 ### Notes
 Started: 2026-11-21 15:56
 
-**Done (2026-11-21 · ~2m · Claude Haiku 5.5)** — README: `docs/` row in the Layout table, a paragraph linking `docs/architecture.md` (read before a spec, keep it updated) and saying rooms and hack codes come from the FastAPI server in `server/` (D2, D3); `.specs/features/README.md`: one line that the MVP is specs 03–08 (F0–F5, S8) and the order follows the feature list (S10). Checks: `tools/check_tools.ps1` exit 0 (All pinned tools OK), `tools/test.ps1` exit 0 (25 tests passed), `tools/lint.ps1` exit 0 (gdlint and gdformat OK), `tools/export_web.ps1` exit 0 (web export built). No `.ps1` changed; `git diff --stat -- server ui` empty (S15). Device check (S1, S3, S6, S11 on iPad and phone) stays open per D6, see Deferred Items. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 651 k tokens · CHF 0.01 (2 credits), append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+**Done (2026-11-21 · ~2m · Claude Haiku 5.5)** — README: `docs/` row in the Layout table, a paragraph linking `docs/architecture.md` (read before a spec, keep it updated) and saying rooms and hack codes come from the FastAPI server in `server/` (D2, D3); `.specs/features/README.md`: one line that the MVP is specs 03–08 (F0–F5, S8) and the order follows the feature list (S10). Checks: `tools/check_tools.ps1` exit 0 (All pinned tools OK), `tools/test.ps1` exit 0 (25 tests passed), `tools/lint.ps1` exit 0 (gdlint and gdformat OK), `tools/export_web.ps1` exit 0 (web export built). No `.ps1` changed; `git diff --stat -- server ui` empty (S15). Device check (S1, S3, S6, S11 on iPad and phone) stays open per D6, see Deferred Items. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 651 k tokens · CHF 0.01 (2 credits)
 
 ---
 
@@ -323,6 +326,7 @@ Started: 2026-11-21 15:56
 |------|----------|-------|---------|----------|
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-03-mvp-and-architecture.html) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 blocking, 4 should-fix, 3 nit |
+| 2026-11-21 | AI assistant (Claude Sonnet 5.5) | fixes | Fixed | findings 1, 2 (D7), 3, 5, 7 fixed with the tests at 25 and the title back at 96; 4 and 6 with CLOSE |
 
 ### Code review 2026-11-21
 
@@ -335,13 +339,13 @@ section matches `server/`; `server/` and `ui/` are unchanged (S15).
 
 | # | Finding | Layer | Class | Severity | Target |
 |---|---------|-------|-------|----------|--------|
-| 1 | The "touch" cases (`test_play_reacts_to_touch`, second press in `test_back_reacts_to_mouse_click_and_touch`) push the same `InputEventMouseButton` as the click cases; no touch event is sent, only the `emulate_mouse_from_touch` setting is read — the touch half of S3 is not exercised | code | test | Should-fix | fix now |
-| 2 | D5's SubViewports do not apply the project's `canvas_items` stretch: at 390×844 the test lays out 390 logical px, the game window 1280×2770 (measured). The tests are stricter than reality, and the title 96 → 72 fixes a cut-off no player sees, making the title smaller on every device | spec | spec | Should-fix | plan decision |
-| 3 | `docs/architecture.md` still says the sub-viewport tests are "planned — this spec, Step 2" (line 48) and its Tests section omits `test_screen_sizes.gd` (S13: kept up to date) | spec | docs | Should-fix | fix now |
+| 1 | The "touch" cases (`test_play_reacts_to_touch`, second press in `test_back_reacts_to_mouse_click_and_touch`) push the same `InputEventMouseButton` as the click cases; no touch event is sent, only the `emulate_mouse_from_touch` setting is read — the touch half of S3 is not exercised | code | test | Should-fix | fix now — fixed 2026-11-21 |
+| 2 | D5's SubViewports do not apply the project's `canvas_items` stretch: at 390×844 the test lays out 390 logical px, the game window 1280×2770 (measured). The tests are stricter than reality, and the title 96 → 72 fixes a cut-off no player sees, making the title smaller on every device | spec | spec | Should-fix | plan decision — decided and fixed 2026-11-21 (D7) |
+| 3 | `docs/architecture.md` still says the sub-viewport tests are "planned — this spec, Step 2" (line 48) and its Tests section omits `test_screen_sizes.gd` (S13: kept up to date) | spec | docs | Should-fix | fix now — fixed 2026-11-21 |
 | 4 | Definition of Done: the *Implementation* line is not ticked although all three Steps are ✅ and the checks pass | spec | spec | Should-fix | fix now |
-| 5 | Spec Overview row 3 has its Detail cell twice; Step 3 Notes end with a broken template fragment (", append: **Done (…)** — summary + verifying result. -->") | spec | docs | Nit | fix now |
+| 5 | Spec Overview row 3 has its Detail cell twice; Step 3 Notes end with a broken template fragment (", append: **Done (…)** — summary + verifying result. -->") | spec | docs | Nit | fix now — fixed 2026-11-21 |
 | 6 | `.specs/features/README.md`: spec 03's status is *planned*; the legend has *implemented* for a spec whose Steps are done | spec | docs | Nit | fix now |
-| 7 | `ARENA_CORNERS` in `tests/test_screen_sizes.gd` is a copy of `scenes/arena.gd`'s constant; reading it from the arena script keeps them from drifting | code | guideline | Nit | fix now |
+| 7 | `ARENA_CORNERS` in `tests/test_screen_sizes.gd` is a copy of `scenes/arena.gd`'s constant; reading it from the arena script keeps them from drifting | code | guideline | Nit | fix now — fixed 2026-11-21 |
 
 **Outcome:** Approve (no Blocking) — with follow-ups: findings 1, 3–7 to fix, a decision on 2.
 
