@@ -24,6 +24,7 @@ func before_each() -> void:
 
 func after_each() -> void:
 	HackServer.fake_responder = Callable()
+	GameState.start_code = ""
 
 
 func after_all() -> void:
@@ -166,12 +167,67 @@ func test_back_goes_home_by_click_and_by_touch() -> void:
 		await UiInput.close(self, shown)
 
 
-func test_scan_is_hidden_until_it_is_connected_and_qr_codes_opens_the_qr_page() -> void:
+func test_scan_qr_code_is_shown_and_qr_codes_opens_the_qr_page() -> void:
 	_answer(0, "")
 	var opened: Dictionary = await UiInput.open(self, HACK_SCREEN)
 	var content: Node = opened["screen"].get_node("Margin/Column/Scroll/Content")
-	assert_false(content.get_node("ScanButton").visible)
+	assert_true(content.get_node("ScanButton").visible)
+	var scroll: ScrollContainer = opened["screen"].get_node("Margin/Column/Scroll")
+	scroll.ensure_control_visible(content.get_node("QrButton"))
+	await wait_process_frames(2)
 	UiInput.click(opened["viewport"], content.get_node("QrButton"))
 	var shown: Node = await UiInput.settle(self, opened)
 	assert_eq(shown.scene_file_path, Screens.QR, "QR codes opens the QR page")
 	await UiInput.close(self, shown)
+
+
+func test_without_a_camera_the_screen_says_why() -> void:
+	var screen: Control = _show_screen()
+	screen.get_node("Margin/Column/Scroll/Content/ScanButton").pressed.emit()
+	assert_eq(
+		screen.get_node(MESSAGE_PATH).text,
+		"Camera not available — type the code",
+		"outside the browser"
+	)
+	var expected: Dictionary[String, String] = {
+		QrScanner.NO_CAMERA: "Camera not available — type the code",
+		QrScanner.DENIED: "Camera permission refused — type the code",
+		QrScanner.NEEDS_HTTPS: "The camera needs https:// — type the code",
+		QrScanner.CANCELLED: "",
+	}
+	for reason: String in expected:
+		screen.scanner.failed.emit(reason)
+		assert_eq(screen.get_node(MESSAGE_PATH).text, expected[reason], reason)
+	assert_eq(GameState.active_hacks, [])
+	assert_true((screen.get_node(EDIT_PATH) as LineEdit).editable, "typing still works")
+
+
+func test_a_scanned_link_redeems_its_code() -> void:
+	var sent: Array[String] = []
+	HackServer.fake_responder = func(_method: String, _url: String, body: String) -> Dictionary:
+		sent.append(body)
+		return {"status": 200, "body": '{"id": "power22", "code": "POWER22", "name": "Power 22"}'}
+	var screen: Control = _show_screen()
+	screen.scanner.scanned.emit("https://192.168.1.5:8060/?hack=power22")
+	await wait_process_frames(2)
+	assert_eq(sent.size(), 1)
+	assert_eq(JSON.parse_string(sent[0])["code"], "POWER22")
+	assert_eq(screen.get_node(MESSAGE_PATH).text, "Power 22 unlocked!")
+	assert_true(GameState.has_hack(Hacks.POWER22))
+
+
+func test_a_scanned_text_without_a_code_is_unknown() -> void:
+	var screen: Control = _show_screen()
+	screen.scanner.scanned.emit("https://example.com/?page=2")
+	assert_eq(screen.get_node(MESSAGE_PATH).text, "Unknown code")
+	assert_eq(GameState.active_hacks, [])
+
+
+func test_the_code_of_a_qr_link_is_redeemed_when_the_screen_opens() -> void:
+	_answer(200, OPEN_BODY)
+	GameState.start_code = "OPENSESAME"
+	var screen: Control = _show_screen()
+	await wait_process_frames(2)
+	assert_eq(screen.get_node(MESSAGE_PATH).text, "Unlock everything unlocked!")
+	assert_true(GameState.has_hack(Hacks.UNLOCK_ALL))
+	assert_eq(GameState.start_code, "", "redeemed once")

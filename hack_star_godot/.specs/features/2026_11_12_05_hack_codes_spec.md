@@ -23,6 +23,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.03 M (93 k in · 1.91 M cached · 31 k out) | CHF 1.24 (148 credits) | Step 5 done (`usage.ps1 -AgentName s05-step5` from 17:25:44) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.97 M (106 k in · 2.84 M cached · 24 k out) | CHF 0.66 (79 credits) | Step 6 done (`usage.ps1 -AgentName s05-steps6-7` 17:25:44–18:00:26) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.73 M (27 k in · 2.68 M cached · 19 k out) | CHF 0.44 (52 credits) | Step 7 done (`usage.ps1 -AgentName s05-steps6-7` 18:00:26–18:04:27) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.32 M (139 k in · 6.15 M cached · 34 k out) | CHF 2.18 (260 credits) | Step 8 done (`usage.ps1 -AgentName s05-step8` from 17:25:44) |
 
 ---
 
@@ -162,7 +163,7 @@ simplest reading that fits the Godot game._
 | **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ✅ Done | [→ Step 5](#step-5--qr-code-encoder) |
 | **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ✅ Done | [→ Step 6](#step-6--qr-page-with-savable-images) |
 | **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ✅ Done | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
-| **8** | Camera scanning and QR links in the browser | reasoning (Claude Opus 5.5) — JavaScript bridge, camera permissions, an end-to-end browser check with a fake camera | ⬜ Not started | [→ Step 8](#step-8--camera-scanning-and-qr-links-in-the-browser) |
+| **8** | Camera scanning and QR links in the browser | reasoning (Claude Opus 5.5) — JavaScript bridge, camera permissions, an end-to-end browser check with a fake camera | ✅ Done | [→ Step 8](#step-8--camera-scanning-and-qr-links-in-the-browser) |
 | **9** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 9](#step-9--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -408,18 +409,18 @@ In the browser the player scans a QR code with the camera, or opens a QR link wi
 camera app, and it works like typing; without a camera the screen says why (S3, S7, S15).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `web/qr_scanner.js`, `web/jsQR.js` (jsQR 1.4.0 with its licence header), the
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `web/qr_scanner.js`, `web/jsQR.js` (jsQR 1.4.0 with its licence header), the
       `html/head_include` and `html/experimental_virtual_keyboard` in `export_presets.cfg`,
       the copy in `tools/export_web.ps1`, after D8; the row for jsQR in `LICENSES.md`.
-- [ ] `scenes/ui/qr_scanner.gd` (`QrScanner`) after D8; **Scan QR code** on the hack screen
+- [x] `scenes/ui/qr_scanner.gd` (`QrScanner`) after D8; **Scan QR code** on the hack screen
       uses it and shows the messages of D8.
-- [ ] `?hack=` at start after D9 (home or `GameState` checks it once per game start on the
+- [x] `?hack=` at start after D9 (home or `GameState` checks it once per game start on the
       web, opens the hack screen and redeems).
-- [ ] Tests: `tests/test_qr_scanner.gd` (outside the web → `failed("not_web")`); the hack
+- [x] Tests: `tests/test_qr_scanner.gd` (outside the web → `failed("not_web")`); the hack
       screen shows the camera message for each reason and a scanned link redeems its code
       (scanner faked).
-- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` exit 0; with the
+- [x] Check: `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` exit 0; with the
       server and `tools/serve_web.ps1` running, a temporary Playwright script (outside the
       repository, removed after) in Chromium: typing ` infinity ` shows "Unlimited credits
       unlocked!" and the home shows ∞ after a reload (saved in IndexedDB); with
@@ -430,7 +431,9 @@ camera app, and it works like typing; without a camera the screen says why (S3, 
       shows; **Save image** downloads a PNG. Screenshots under `%TEMP%`.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 18:05
+
+**Done (2026-11-21 · ~10m · Claude Opus 5.5)** — `web/qr_scanner.js` (own: back camera with `getUserMedia`, full-screen `<video>` over the canvas with **Cancel**, jsQR on each frame, reports `scanned`/`failed` with `denied`, `no_camera`, `needs_https`, `cancelled`; `cancel()` when the screen goes away), `web/jsQR.js` (jsQR 1.4.0 unmodified with a licence header) + `web/jsQR-LICENSE.txt`, `html/head_include` and `html/experimental_virtual_keyboard=true` in `export_presets.cfg`, `tools/export_web.ps1` copies `web/*.js` into `build/web/` (exit 1 if none), jsQR row in `LICENSES.md`. `scenes/ui/qr_scanner.gd` (`QrScanner`: `JavaScriptBridge` callback, signals deferred; `not_web` outside the browser); **Scan QR code** is visible and goes through `Hacks.code_from_scan` and the same `submit` as typing, with the D8 messages (`cancelled` clears the message; a scan without a code shows "Unknown code"). `?hack=`: `GameState._ready` (web only) reads `Hacks.code_from_address(location.href)` into `start_code` and removes only `hack` from the address (`history.replaceState`); home then opens the hack screen, which redeems it once. 7 new tests (`test_qr_scanner.gd`, camera messages, scanned link, scan without code, start code in the hack screen and from home, `code_from_address`); `tools/test.ps1` 172 passing, `tools/lint.ps1`, `tools/export_web.ps1`, `tools/check_tools.ps1` exit 0; `export_web.ps1` parses (0 errors). Browser run (Playwright 1.59.1 with the installed Chromium, server + `serve_web.ps1` running, scratch folder in the git-ignored `build/e2e/` instead of `%TEMP%`, removed after; screenshots kept in `build/step8_screens/`): ` infinity ` typed → "Unlimited credits unlocked!" with stars, after a reload the home shows "Credits: ∞"; fake camera with a .y4m of the POWER22 QR (made from `QrImage`) → overlay shown, closed by itself, "Power 22 unlocked!"; `/?hack=OPENSESAME` → hack screen "Unlock everything unlocked!", address `http://localhost:8060/`; `--deny-permission-prompts` → "Camera permission refused — type the code"; **Save image** downloaded `hack-power22.png`, read back by jsQR as `http://localhost:8060/?hack=POWER22`. Server and web server stopped by id, ports 8060/8180 free. Open: the iPad/phone run over `-Https` stays with the author (Step 9). suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 6.32 M · CHF 2.18
 
 ---
 

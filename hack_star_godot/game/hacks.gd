@@ -58,6 +58,13 @@ static func code_from_scan(text: String) -> String:
 	return ""
 
 
+## The code in the game's own address (`?hack=<CODE>`), or an empty string.
+static func code_from_address(address: String) -> String:
+	if address.find("?") < 0:
+		return ""
+	return code_from_scan(address)
+
+
 ## The text of a hack's QR code: the game's address with the code (D9 of spec 05).
 static func link(game_address: String, code: String) -> String:
 	return "%s?%s=%s" % [game_address, CODE_PARAMETER, normalize_code(code).uri_encode()]

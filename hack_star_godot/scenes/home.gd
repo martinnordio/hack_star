@@ -38,6 +38,10 @@ var _effects: Node3D
 
 
 func _ready() -> void:
+	# Opened from a QR link: straight to the hack screen, which redeems the code.
+	if not GameState.start_code.is_empty():
+		Screens.go_to.call_deferred(Screens.HACK)
+		return
 	_play_button.pressed.connect(_on_play_pressed)
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)

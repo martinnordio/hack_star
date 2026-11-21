@@ -19,11 +19,16 @@ var active_hacks: Array[String] = []
 var save_path: String = "user://hack_star_save.json"
 ## The fighter pictures of the list, rendered once per game start (see `FighterPictures`).
 var pictures: Dictionary[String, Texture2D] = {}
+## The code of a QR link the web game was opened with (`?hack=`, D9 of spec 05); the hack
+## screen redeems it once and empties it.
+var start_code: String = ""
 
 
 func _ready() -> void:
 	reset()
 	active_hacks = _load_hacks()
+	if OS.has_feature("web"):
+		start_code = _take_start_code()
 
 
 ## Back to the sample progress of a fresh game start.
@@ -99,3 +104,19 @@ func _save_hacks() -> void:
 	var file: FileAccess = FileAccess.open(save_path, FileAccess.WRITE)
 	if file != null:
 		file.store_string(SaveData.to_json(active_hacks))
+
+
+# Reads `?hack=` from the page address and removes it, so a reload does not redeem it again.
+func _take_start_code() -> String:
+	var address: Variant = JavaScriptBridge.eval("location.href")
+	if not address is String:
+		return ""
+	var code: String = Hacks.code_from_address(address)
+	if not code.is_empty():
+		JavaScriptBridge.eval(
+			(
+				"(function () { var u = new URL(location.href); u.searchParams.delete('hack');"
+				+ " history.replaceState(null, '', u.pathname + u.search + u.hash); })()"
+			)
+		)
+	return code

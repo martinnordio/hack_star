@@ -92,6 +92,19 @@ func test_hack_is_always_visible_and_opens_the_hack_screen() -> void:
 	await _assert_opens("Hack", Screens.HACK, "Margin/Column/Body/Controls/MoreRow/HackButton")
 
 
+func test_a_game_opened_from_a_qr_link_goes_to_the_hack_screen() -> void:
+	HackServer.fake_responder = func(_method: String, _url: String, _sent: String) -> Dictionary:
+		return {"status": 404, "body": '{"detail": "Unknown code"}'}
+	GameState.start_code = "NOPE"
+	var opened: Dictionary = await UiInput.open(self, HOME)
+	var shown: Node = await UiInput.settle(self, opened)
+	assert_eq(shown.scene_file_path, Screens.HACK)
+	await wait_process_frames(2)
+	assert_eq(GameState.start_code, "", "the hack screen took the code")
+	await UiInput.close(self, shown)
+	HackServer.fake_responder = Callable()
+
+
 # --- Entrance (S2) ----------------------------------------------------------------------------
 
 

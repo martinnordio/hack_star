@@ -18,6 +18,12 @@ func test_a_scan_is_a_code_or_a_link_with_the_code() -> void:
 	assert_eq(Hacks.code_from_scan("https://x.test/?other=1"), "")
 
 
+func test_the_game_address_gives_the_code_only_with_hack() -> void:
+	assert_eq(Hacks.code_from_address("https://x.test:8060/?hack=opensesame"), "OPENSESAME")
+	assert_eq(Hacks.code_from_address("https://x.test:8060/"), "")
+	assert_eq(Hacks.code_from_address("https://x.test:8060/?debug=1"), "")
+
+
 func test_credits_show_the_infinity_sign_only_with_the_hack() -> void:
 	assert_eq(Hacks.credits_text(500, _none), "Credits: 500")
 	assert_eq(Hacks.credits_text(500, _credits), "Credits: ∞")

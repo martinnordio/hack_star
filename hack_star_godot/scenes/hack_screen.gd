@@ -1,6 +1,6 @@
 extends Control
-## The hack screen: type a code, see what it unlocked, the list of active hacks and a way to
-## turn them all off (spec 05, D6 and D7). The server checks every code (`HackServer`).
+## The hack screen: type or scan a code, see what it unlocked, the list of active hacks and a way
+## to turn them all off (spec 05, D6–D9). The server checks every code (`HackServer`).
 
 const MESSAGE_COLOR: Color = Color(0.94, 0.95, 1.0)
 const SUCCESS_COLOR: Color = Color(1.0, 0.85, 0.3)
@@ -10,11 +10,20 @@ const MAX_CODE_LENGTH: int = 100
 const CELEBRATION_SECONDS: float = 1.8
 const STAR_COUNT: int = 40
 const STAR_TEXTURE_SIZE: int = 32
+## The camera messages of D8, by the reason `QrScanner` gives.
+const CAMERA_MESSAGES: Dictionary[String, String] = {
+	QrScanner.NOT_WEB: "Camera not available — type the code",
+	QrScanner.NO_CAMERA: "Camera not available — type the code",
+	QrScanner.DENIED: "Camera permission refused — type the code",
+	QrScanner.NEEDS_HTTPS: "The camera needs https:// — type the code",
+}
 
 static var _star_texture: ImageTexture
 
 ## True while a code is being checked.
 var busy: bool = false
+## Opens the camera; a test emits its signals instead.
+var scanner: QrScanner
 
 var _pop: Tween
 var _stars: CPUParticles2D
@@ -35,9 +44,20 @@ func _ready() -> void:
 	_use_button.pressed.connect(_on_use_pressed)
 	_reset_button.pressed.connect(_on_reset_pressed)
 	_qr_button.pressed.connect(_on_qr_pressed)
+	_scan_button.pressed.connect(_on_scan_pressed)
 	_confirm.confirmed.connect(_on_reset_confirmed)
 	_message.resized.connect(_center_message_pivot)
+	scanner = QrScanner.new()
+	scanner.name = "QrScanner"
+	scanner.scanned.connect(_on_scanned)
+	scanner.failed.connect(_on_scan_failed)
+	add_child(scanner)
 	_refresh()
+	# A game opened from a QR link (`?hack=`, D9) redeems its code here.
+	if not GameState.start_code.is_empty():
+		var code: String = GameState.start_code
+		GameState.start_code = ""
+		submit(code)
 
 
 ## Checks a typed or scanned code with the server and shows the outcome.
@@ -65,6 +85,25 @@ func submit(text: String) -> void:
 
 func _on_use_pressed() -> void:
 	submit(_code_edit.text)
+
+
+func _on_scan_pressed() -> void:
+	if not busy:
+		_show_message("", MESSAGE_COLOR)
+		scanner.start()
+
+
+## A scanned link or plain code goes the same way as a typed code.
+func _on_scanned(text: String) -> void:
+	var code: String = Hacks.code_from_scan(text)
+	if code.is_empty():
+		_show_message("Unknown code", ERROR_COLOR)
+		return
+	submit(code)
+
+
+func _on_scan_failed(reason: String) -> void:
+	_show_message(CAMERA_MESSAGES.get(reason, ""), ERROR_COLOR)
 
 
 func _on_qr_pressed() -> void:
