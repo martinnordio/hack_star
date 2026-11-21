@@ -14,6 +14,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 1.66 M (12 k in · 1.64 M cached · 7 k out) | CHF 0.45 (53 credits) | Part 1 revised: open questions answered — GDScript, pinned latest stable Godot 4, browser only, no server yet; no own kit, the root kit with Godot specs in `hack_star_godot/.specs/` (S3 removed, S15–S19 added) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.07 M (34 k in · 2.02 M cached · 18 k out) | CHF 0.78 (93 credits) | Part 2 written |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.12 M (54 k in · 1.06 M cached · 10 k out) | CHF 0.36 (43 credits) | Step 1 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.64 M (49 k in · 1.58 M cached · 13 k out) | CHF 0.44 (52 credits) | Step 2 done |
 
 ---
 
@@ -137,7 +138,7 @@ _None._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Folder, rule for Godot specs, pinned tools | standard (Claude Sonnet 5.5) — files and scripts a clear plan describes | ✅ Done | [→ Step 1](#step-1--folder-rule-for-godot-specs-pinned-tools) |
-| **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ⬜ Not started | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
+| **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ✅ Done | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
 | **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
 | **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | ⬜ Not started | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
 | **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 5](#step-5--readme-licences-final-check) |
@@ -234,25 +235,35 @@ A Godot 4.7 project that opens without errors and shows the start screen, with t
 lint commands working (S9, S12, S16, S17).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `project.godot`: name "Hack star", features `4.7`, Compatibility renderer (D3), main
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `project.godot`: name "Hack star", features `4.7`, Compatibility renderer (D3), main
       scene `scenes/start_screen.tscn`, stretch mode `canvas_items` / aspect `expand` so it
       fits landscape and portrait, Input Map actions `move_left/right/up/down` (D11).
-- [ ] `scenes/start_screen.tscn` + `.gd`: title "Hack star" and a **Play** button (centred,
+- [x] `scenes/start_screen.tscn` + `.gd`: title "Hack star" and a **Play** button (centred,
       large enough for a thumb); **Play** changes to `scenes/arena.tscn` (an empty
       placeholder until Step 3).
-- [ ] Add GUT 9.7.1 to `addons/gut/` from its GitHub release, with its `LICENSE.md`; enable
+- [x] Add GUT 9.7.1 to `addons/gut/` from its GitHub release, with its `LICENSE.md`; enable
       the plugin (D6).
-- [ ] `tools/test.ps1` (D6) and `tools/lint.ps1` (D7); `.gdlintrc` only if a default rule
+- [x] `tools/test.ps1` (D6) and `tools/lint.ps1` (D7); `.gdlintrc` only if a default rule
       clashes with the guideline.
-- [ ] First test `tests/test_start_screen.gd`: the scene loads, shows the title text and a
+- [x] First test `tests/test_start_screen.gd`: the scene loads, shows the title text and a
       Play button.
-- [ ] Check: the editor opens the project with no errors or warnings in the Output panel;
+- [x] Check: the editor opens the project with no errors or warnings in the Output panel;
       `tools/test.ps1` passes (≥ 1 test), `tools/lint.ps1` passes, `tools/check_tools.ps1`
       all OK; running the project shows the start screen.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 14:02
+
+- Godot lookup moved into the shared `tools/godot.ps1` (`Find-Godot`), dot-sourced by `check_tools.ps1` and `test.ps1`.
+- GUT 9.7.1 copied from the GitHub release `v9.7.1` (only `addons/gut/`; its `LICENSE.md` is inside that folder); `plugin.cfg` says 9.7.1; plugin enabled in `project.godot`.
+- `test.ps1` imports, runs GUT (`-gdir=res://tests -ginclude_subdirs -gprefix=test_ -gexit`), exits 1 on a Godot error, a failing test (verified with a temporary failing test, removed) or when the summary shows no test.
+- `lint.ps1` runs `gdlint` and `gdformat --check` on `game/`, `scenes/`, `tests/` when they exist; `game/` is not created yet. No `.gdlintrc` needed.
+- The editor GUI is not available: the check is headless (`--import`, `--editor --quit-after 60`, `--quit-after 120`): no ERROR / WARNING / SCRIPT ERROR lines. The visual look is checked by the author / in the browser in Step 4.
+- Godot writes `.uid` files next to scripts; they are committed (Godot 4.4+ practice). `.godot/` stays ignored.
+
+**Done (2026-11-21 · ~10m · Claude Sonnet 5.5)** — Created `project.godot`, `scenes/start_screen.tscn/.gd`, placeholder `scenes/arena.tscn`, `tests/test_start_screen.gd`, `addons/gut/` (9.7.1), `tools/godot.ps1`, `test.ps1`, `lint.ps1`. Headless check: `test.ps1` passes (2 tests, exit 0; exit 1 with a failing test), `lint.ps1` OK, `check_tools.ps1` all OK (GUT 9.7.1), headless import / editor / run print no ERROR or WARNING lines; all scripts parse. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.64 M (49 k in · 1.58 M cached · 13 k out) · CHF 0.44 (52 credits)
+
 
 ---
 

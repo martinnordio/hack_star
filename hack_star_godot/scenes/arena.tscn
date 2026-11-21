@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[node name="Arena" type="Node3D"]
+
+[node name="Placeholder" type="Label" parent="."]
+offset_right = 400.0
+offset_bottom = 40.0
+text = "Arena (coming in Step 3)"
