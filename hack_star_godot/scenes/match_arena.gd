@@ -3,8 +3,9 @@ extends Arena
 ## A match (`match.tscn`, the canyon of `Arena` without dummies): the player and the bots at
 ## their start points (`ArenaLayout.STARTS`), each bot driven by a `BotBrain`, the flow of a
 ## `Match` (countdown, fight, knock-outs, timer, result) under `GameState.match_settings`.
-## Nobody moves or fires before the fight or after it ends; then the result is stored in
-## `GameState.last_result` and, after `END_WAIT_SECONDS`, the game goes on.
+## Nobody moves or fires before the fight or after it ends; then the player's fighter gets its
+## trophies (saved at once), the result is stored in `GameState.last_result` and, after
+## `END_WAIT_SECONDS`, the game goes on.
 
 ## How long the arena stays after the end, so the last knock-out is seen.
 const END_WAIT_SECONDS: float = 1.5
@@ -162,11 +163,14 @@ func _store_result_when_over() -> void:
 	_end_left = END_WAIT_SECONDS
 	for fighter: Fighter in fighters:
 		fighter.invulnerable = true
+	var fighter_id: String = GameState.selected_fighter
+	var reward: Dictionary = GameState.award_trophies(fighter_id, match_state.result)
 	GameState.last_result = {
 		"outcome": match_state.result,
 		"place": match_state.place,
-		"fighter": GameState.selected_fighter,
+		"fighter": fighter_id,
 		"skin": GameState.selected_skin(),
+		"reward": reward,
 	}
 
 

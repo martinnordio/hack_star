@@ -19,6 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 392 k (52 k in · 335 k cached · 5 k out) | CHF 0.18 (21 credits) | Step 1 done (`usage.ps1 -AgentName s08-step1` from 21:49:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 862 k (43 k in · 811 k cached · 8 k out) | CHF 0.45 (53 credits) | Step 2 done (`usage.ps1 -AgentName s08-step2` from 21:49:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.04 M (48 k in · 978 k cached · 10 k out) | CHF 0.27 (32 credits) | Step 3 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:01:47" -Until "2026-11-21 22:06:30"`) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 565 k (14 k in · 545 k cached · 7 k out) | CHF 0.13 (15 credits) | Step 4 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:06:30" -Until "2026-11-21 22:09:00"`) |
 ---
 
 # Part 1 · Requirements
@@ -153,7 +154,7 @@ kept, S11)._
 | **1** | Trophy rules and settings | standard (Claude Sonnet 5.5) — pure rules and tests, numbers fixed by D1 and D2 | ✅ Done | [→ Step 1](#step-1--trophy-rules-and-settings) |
 | **2** | Save file version 2 | reasoning (Claude Opus 5.5) — a new saved format with versioning, migration of the spec 05 file and checks of every field (D3) | ✅ Done | [→ Step 2](#step-2--save-file-version-2) |
 | **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ✅ Done | [→ Step 3](#step-3--progress-loaded-and-saved) |
-| **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ⬜ Not started | [→ Step 4](#step-4--trophies-after-a-match) |
+| **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ✅ Done | [→ Step 4](#step-4--trophies-after-a-match) |
 | **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ⬜ Not started | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
 | **6** | MVP flow check | standard (Claude Sonnet 5.5) — one end-to-end test across the screens of specs 04–08 (D9) | ⬜ Not started | [→ Step 6](#step-6--mvp-flow-check) |
 | **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
@@ -288,14 +289,21 @@ The end of a match gives the player's fighter its trophies once and saves them b
 result screen opens; Back before the end and Training change nothing (S1, S2, S3, S7).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `MatchArena._store_result_when_over` calls `GameState.award_trophies` and stores the
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `MatchArena._store_result_when_over` calls `GameState.award_trophies` and stores the
       reward in `last_result["reward"]` (D5).
-- [ ] Tests (D9): new `test_match_trophies.gd`; `test_match_arena.gd` still passes.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Tests (D9): new `test_match_trophies.gd`; `test_match_arena.gd` still passes.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 22:06
+
+**Done (2026-11-21 · ~3 min · Claude Sonnet 5.5)** — `MatchArena` gives the player's fighter its
+trophies once when the match ends (saved before the result screen opens) and stores the reward
+in `last_result["reward"]`; tests: victory +10 saved at once, only the chosen fighter, defeat and
+time-up 0, a time-up counted as a defeat, the Prestige floor, Back before and during the wait,
+Training, a hack. `tools/test.ps1` 334 tests passed, `tools/lint.ps1` OK · suggested: standard
+(Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · ~565 k · ~CHF 0.13 (15 credits)
 
 ---
 
