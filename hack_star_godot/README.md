@@ -13,10 +13,16 @@ Python + Svelte game in the rest of the repository is unchanged; see the [root R
 | `scenes/` | Screens and objects (`.tscn`) with their scripts |
 | `game/` | Pure rules (movement) without scenes |
 | `tests/` | Automated tests (GUT) |
+| `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |
 | `addons/gut/` | GUT 9.7.1, the test tool, with its licence |
 | `tools/` | PowerShell scripts for the checks, export and serving |
 | `build/` | Web export (created by the scripts, git-ignored) |
 | `.specs/` | Specs of this game (see [Specs](#specs)) |
+
+Read [docs/architecture.md](docs/architecture.md) before you work on a spec, and keep it up to
+date in the spec that changes it. Rooms and hack codes will come from the FastAPI server in
+`server/` of the repository, the same server as the Svelte game; the Godot game does not have
+its own.
 
 ## Install on Windows
 
@@ -132,11 +138,12 @@ is listed in [LICENSES.md](LICENSES.md).
 
 ## Specs
 
-The ordered list of the specs is [.specs/features/README.md](.specs/features/README.md). Work
-through it from the first spec that is not closed: **S0** (check each statement against the game
-as built so far), `REQUIREMENTS:` if a statement does not fit, then `PLAN:` → `IMPLEMENT:` →
-`REVIEW:` → `CLOSE:` with the root kit's commands. The Godot specs live in
-`hack_star_godot/.specs/`, not in the root `.specs/` (see [AGENTS.md](../AGENTS.md)).
+The ordered list of the specs is [.specs/features/README.md](.specs/features/README.md). The MVP
+is specs 03–08, and the order follows the feature list. Work through it from the first spec
+that is not closed: **S0** (check each statement against the game as built so far),
+`REQUIREMENTS:` if a statement does not fit, then `PLAN:` → `IMPLEMENT:` → `REVIEW:` →
+`CLOSE:` with the root kit's commands. The Godot specs live in `hack_star_godot/.specs/`, not in
+the root `.specs/` (see [AGENTS.md](../AGENTS.md)).
 
 Specs of this game are in `hack_star_godot/.specs/features/`. The rule for them is in
 [AGENTS.md](../AGENTS.md): a new Godot spec goes into `hack_star_godot/.specs/features/`, and

@@ -6,6 +6,8 @@ only (Part 1), numbered in the order the features were built
 ([2026_11_21_02_move_specs_to_godot_spec.md](done/2026_11_21_02_move_specs_to_godot_spec.md)).
 Each spec only needs features of specs with a lower number.
 
+The MVP is specs 03–08 (features F0–F5, statement S8); the order follows the feature list.
+
 **How to work through it:** take the first spec that is not *closed*, then
 1. **S0** — check each statement against the Godot game as built so far and the Godot
    architecture (`hack_star_godot/docs/architecture.md`, spec 03);

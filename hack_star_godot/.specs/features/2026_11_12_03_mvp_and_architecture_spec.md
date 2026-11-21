@@ -18,6 +18,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 1.56 M (108 k in · 1.43 M cached · 22 k out) | CHF 1.07 (127 credits) | Part 2 written (3 Steps: standard, standard, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 15:47) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.33 M (80 k in · 1.23 M cached · 19 k out) | CHF 0.57 (68 credits) | Step 1 done (`usage.ps1 -Agent subagents` from 15:51) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 839 k (41 k in · 785 k cached · 12 k out) | CHF 0.26 (30 credits) | Step 2 done (`usage.ps1 -Agent subagents` from 15:53) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 651 k (54 k in · 590 k cached · 7 k out) | CHF 0.01 (2 credits) | Step 3 done (`usage.ps1 -Agent subagents` from 15:56) |
 
 ---
 
@@ -188,7 +189,7 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 |------|-------------|-------------------|--------|--------|
 | **1** | Architecture document | standard (Claude Sonnet 5.5) — a document whose content the decisions fix | ✅ Done | [→ Step 1](#step-1--architecture-document) |
 | **2** | Screen sizes and input checked by tests | standard (Claude Sonnet 5.5) — GUT tests in sub-viewports, small layout fixes if a size fails | ✅ Done | [→ Step 2](#step-2--screen-sizes-and-input-checked-by-tests) |
-| **3** | README, ordered list, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 3](#step-3--readme-ordered-list-final-check) |
+| **3** | README, ordered list, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 3](#step-3--readme-ordered-list-final-check) | [→ Step 3](#step-3--readme-ordered-list-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -285,22 +286,24 @@ where developers look, and all Godot checks pass with the server unchanged (S6, 
 S15).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/README.md`: `docs/` in the Layout table; a link to
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/README.md`: `docs/` in the Layout table; a link to
       `docs/architecture.md` (read it before a spec, keep it up to date); one line that rooms
       and hack codes will come from the FastAPI server in `server/` (D2, D3).
-- [ ] `hack_star_godot/.specs/features/README.md`: one line that the MVP is specs 03–08
+- [x] `hack_star_godot/.specs/features/README.md`: one line that the MVP is specs 03–08
       (F0–F5, S8) and that the order follows the feature list (S10).
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); parse every changed `.ps1` with
       `[System.Management.Automation.Language.Parser]::ParseFile` (if any).
-- [ ] Show the server is unchanged (S15): `git diff --stat` of this spec shows nothing in
+- [x] Show the server is unchanged (S15): `git diff --stat` of this spec shows nothing in
       `server/` or `ui/`.
-- [ ] Note in Notes that the device check (S1, S3, S6, S11 on iPad and phone) stays open
+- [x] Note in Notes that the device check (S1, S3, S6, S11 on iPad and phone) stays open
       (D6, Deferred Items).
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 15:56
+
+**Done (2026-11-21 · ~2m · Claude Haiku 5.5)** — README: `docs/` row in the Layout table, a paragraph linking `docs/architecture.md` (read before a spec, keep it updated) and saying rooms and hack codes come from the FastAPI server in `server/` (D2, D3); `.specs/features/README.md`: one line that the MVP is specs 03–08 (F0–F5, S8) and the order follows the feature list (S10). Checks: `tools/check_tools.ps1` exit 0 (All pinned tools OK), `tools/test.ps1` exit 0 (25 tests passed), `tools/lint.ps1` exit 0 (gdlint and gdformat OK), `tools/export_web.ps1` exit 0 (web export built). No `.ps1` changed; `git diff --stat -- server ui` empty (S15). Device check (S1, S3, S6, S11 on iPad and phone) stays open per D6, see Deferred Items. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 651 k tokens · CHF 0.01 (2 credits), append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
 
