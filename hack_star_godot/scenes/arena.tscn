@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/arena.gd" id="1_arena"]
 [ext_resource type="PackedScene" path="res://scenes/fighter.tscn" id="2_fighter"]
 [ext_resource type="PackedScene" path="res://scenes/touch_joystick.tscn" id="3_joystick"]
+[ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="4_back"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
@@ -188,14 +189,7 @@ rotation = Vector3(0, 3.1416, 0)
 
 [node name="Hud" type="CanvasLayer" parent="."]
 
-[node name="BackButton" type="Button" parent="Hud"]
-custom_minimum_size = Vector2(180, 80)
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 204.0
-offset_bottom = 104.0
-theme_override_font_sizes/font_size = 36
-text = "Back"
+[node name="BackButton" parent="Hud" instance=ExtResource("4_back")]
 
 [node name="TouchJoystick" parent="Hud" instance=ExtResource("3_joystick")]
 anchors_preset = 2
@@ -216,6 +210,5 @@ offset_top = 24.0
 offset_right = -24.0
 offset_bottom = 70.0
 grow_horizontal = 0
-theme_override_font_sizes/font_size = 32
 text = "FPS: 0"
 horizontal_alignment = 2

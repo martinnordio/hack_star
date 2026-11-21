@@ -1,7 +1,5 @@
 extends Control
 
-const ARENA_SCENE: String = "res://scenes/arena.tscn"
-
 @onready var _play_button: Button = $Center/Column/PlayButton
 
 
@@ -10,4 +8,4 @@ func _ready() -> void:
 
 
 func _on_play_pressed() -> void:
-	get_tree().change_scene_to_file(ARENA_SCENE)
+	Screens.go_to(Screens.ARENA)

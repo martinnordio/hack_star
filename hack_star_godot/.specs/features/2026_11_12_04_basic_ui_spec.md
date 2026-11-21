@@ -1,7 +1,7 @@
 # Basic UI Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -16,6 +16,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S2, S3 (arena instead of "Coming soon"), S4, S5, S7, S8 (sample credits), S10 revised; S13 (choice kept while the game is open) and S14 (English) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #28 created |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.32 M (130 k in · 2.16 M cached · 30 k out) | CHF 1.34 (160 credits) | Part 2 written (10 Steps: standard, standard, reasoning, reasoning, standard, reasoning, standard, standard, light, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 16:09) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.97 M (91 k in · 1.86 M cached · 20 k out) | CHF 0.58 (69 credits) | Step 1 done (`usage.ps1 -Agent subagents` 16:14–16:17) |
 
 ---
 
@@ -175,7 +176,7 @@ of this spec (see Deferred Items in the plan of the
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | UI foundation: shared theme, screen navigation, Back button | standard (Claude Sonnet 5.5) — a theme, an autoload and a small scene, fixed by D1–D3 | ⬜ Not started | [→ Step 1](#step-1--ui-foundation-shared-theme-screen-navigation-back-button) |
+| **1** | UI foundation: shared theme, screen navigation, Back button | standard (Claude Sonnet 5.5) — a theme, an autoload and a small scene, fixed by D1–D3 | ✅ Done | [→ Step 1](#step-1--ui-foundation-shared-theme-screen-navigation-back-button) |
 | **2** | Fighter catalogue, Prestige and sample progress | standard (Claude Sonnet 5.5) — data and pure rules with tests, all values given by S8, S11 and D5 | ⬜ Not started | [→ Step 2](#step-2--fighter-catalogue-prestige-and-sample-progress) |
 | **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ⬜ Not started | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
 | **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ⬜ Not started | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
@@ -234,22 +235,24 @@ All screens share one theme, go from screen to screen through one autoload and u
 button; the start screen and the arena work as before with them (S10, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/ui/hack_star_theme.tres` after D1, set as `gui/theme/custom` in `project.godot`;
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/ui/hack_star_theme.tres` after D1, set as `gui/theme/custom` in `project.godot`;
       remove the per-scene colour and font-size overrides of the start screen and the arena
       that the theme now gives (keep the title's 96).
-- [ ] `game/rarity.gd` (`Rarity`): the five rarities in order with their colours (D1, D5).
-- [ ] Autoload `Screens` (`scenes/autoload/screens.gd`) after D2; the start screen's **Play**
+- [x] `game/rarity.gd` (`Rarity`): the five rarities in order with their colours (D1, D5).
+- [x] Autoload `Screens` (`scenes/autoload/screens.gd`) after D2; the start screen's **Play**
       and the arena's Back use it.
-- [ ] `scenes/ui/back_button.tscn` + `.gd` after D3; the arena's **Back** is replaced by it
+- [x] `scenes/ui/back_button.tscn` + `.gd` after D3; the arena's **Back** is replaced by it
       (same node path `Hud/BackButton` or the tests updated).
-- [ ] Tests: `tests/test_screens.gd` (each constant names an existing scene; `go_to` changes
+- [x] Tests: `tests/test_screens.gd` (each constant names an existing scene; `go_to` changes
       the scene), `tests/test_back_button.gd` (pressed → home), `tests/test_rarity.gd`; a
       test that the project's default theme is the Hack star theme.
-- [ ] Check: `tools/test.ps1` (all earlier tests too, including `test_screen_sizes.gd`) and
+- [x] Check: `tools/test.ps1` (all earlier tests too, including `test_screen_sizes.gd`) and
       `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 16:14
+**Done (2026-11-21 · ~3m · Claude Sonnet 5.5)** — Hack star theme (`scenes/ui/hack_star_theme.tres`, default theme, `BigButton`/`HeadingLabel`/`BackgroundPanel` variations), `Rarity`, autoload `Screens` (`HOME`, `ARENA`; the other screens are added by their Steps), `BackButton` scene used by the arena, start screen and arena without their own colours and font sizes (title 96 kept). `tools/test.ps1`: 35 tests passed; `tools/lint.ps1`: exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.97 M tokens · CHF 0.58 (69 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

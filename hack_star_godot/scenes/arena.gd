@@ -2,7 +2,6 @@ extends Node3D
 ## The arena: floor, walls, one fighter, a camera above and behind it, and the HUD.
 ## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`).
 
-const START_SCREEN: String = "res://scenes/start_screen.tscn"
 ## The camera looks at this point from above and behind (towards +z), at this angle down.
 const CAMERA_TARGET: Vector3 = Vector3(0.0, 0.0, 0.4)
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -30,12 +29,10 @@ var _fps_timer: float = 0.0
 @onready var _fighter: Fighter = $Fighter
 @onready var _camera: Camera3D = $Camera
 @onready var _joystick: TouchJoystick = $Hud/TouchJoystick
-@onready var _back_button: Button = $Hud/BackButton
 @onready var _fps_label: Label = $Hud/FpsLabel
 
 
 func _ready() -> void:
-	_back_button.pressed.connect(_on_back_pressed)
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
 	_update_fps_label()
@@ -78,10 +75,6 @@ func _corners_inside(allowed: Rect2) -> bool:
 		if not allowed.has_point(_camera.unproject_position(corner)):
 			return false
 	return true
-
-
-func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file(START_SCREEN)
 
 
 func _update_fps_label() -> void:
