@@ -1,6 +1,9 @@
 <#
 .SYNOPSIS
   Tokens and cost of a time range of the AI chat, by the method of COSTS.md.
+  Without -Transcript it checks every chat log of this project written since -Since
+  (Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions) and
+  uses the one with the most requests in the range. It stops with an error when it finds none.
 .EXAMPLE
   ./usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5"
   ./usage.ps1 -Since 2026-11-16T07:55:00Z -Until 2026-11-16T08:10:00Z -Model "Claude Opus 5.5" -Json
@@ -41,31 +44,6 @@ if ($cost.ContainsKey('enabled') -and -not $cost['enabled']) { Write-Output 'Cos
 $sinceUtc = To-Utc $Since
 $untilUtc = if ($Until) { To-Utc $Until } else { '9999' }
 
-if (-not $Transcript) {
-    $found = @()
-    $bases = @($env:APPDATA, (Join-Path $HOME '.config'), (Join-Path $HOME 'Library/Application Support')) | Where-Object { $_ }
-    foreach ($b in $bases) {
-        foreach ($app in 'Code', 'Code - Insiders') {
-            $dir = Join-Path $b "$app/User/workspaceStorage"
-            if (Test-Path -LiteralPath $dir) {
-                $found += Get-ChildItem -LiteralPath $dir -Directory | ForEach-Object {
-                    $t = Join-Path $_.FullName 'GitHub.copilot-chat/transcripts'
-                    if (Test-Path -LiteralPath $t) { Get-ChildItem -LiteralPath $t -Filter *.jsonl -File }
-                }
-            }
-        }
-    }
-    $slug = (Resolve-Path $Root).Path -replace '[^A-Za-z0-9]', '-'
-    $claude = Join-Path $HOME ".claude/projects/$slug"
-    if (Test-Path -LiteralPath $claude) { $found += Get-ChildItem -LiteralPath $claude -Filter *.jsonl -File }
-    if (-not $found) { throw 'No chat transcript found; pass -Transcript <file>.' }
-    $Transcript = ($found | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
-}
-
-$Transcript = (Resolve-Path -LiteralPath $Transcript).Path
-$lines = [IO.File]::ReadAllLines($Transcript, [Text.Encoding]::UTF8)
-$vscode = $lines.Count -gt 0 -and $lines[0].StartsWith('{"type":"session.start"')
-
 function Get-Stamp([string] $raw) {
     $i = $raw.LastIndexOf('"timestamp":"')
     if ($i -lt 0) { return '' }
@@ -82,44 +60,142 @@ function Get-Num([string] $raw, [string] $key) {
     return 0
 }
 
-$t = @{ requests = 0; input = [long]0; cached = [long]0; output = [long]0 }
-if ($vscode) {
-    $base = if ($cost.ContainsKey('base_tokens')) { [long]$cost['base_tokens'] } else { 35000 }
-    $context = [long]$base; $previous = $null
-    foreach ($raw in $lines) {
-        $kind = if ($raw.StartsWith('{"type":"')) { $raw.Substring(9, $raw.IndexOf('"', 9) - 9) } else { '' }
-        $ts = Get-Stamp $raw
-        $n = [long](Get-Size $raw)
-        $inside = ([string]::CompareOrdinal($ts, $sinceUtc) -ge 0) -and ([string]::CompareOrdinal($ts, $untilUtc) -lt 0)
-        if ($kind -eq 'assistant.turn_start') {
-            if ($context -gt $ContextCap) { $context = [long]$base; $previous = $null }
-            if ($inside) {
-                $c = if ($null -ne $previous) { $previous } else { 0 }
-                $t.requests++; $t.cached += $c; $t.input += $context - $c
+function Get-Kind([string[]] $lines) {
+    # A Copilot CLI log starts like a VS Code transcript but records billed usage per request.
+    foreach ($raw in $lines) { if ($raw.StartsWith('{"type":"session.usage_record"')) { return 'cli' } }
+    if ($lines.Count -gt 0 -and $lines[0].StartsWith('{"type":"session.start"')) { return 'vscode' }
+    return 'claude'
+}
+
+function Measure-Log([string] $path) {
+    $lines = [IO.File]::ReadAllLines($path, [Text.Encoding]::UTF8)
+    $kind = Get-Kind $lines
+    $t = @{ kind = $kind; requests = 0; input = [long]0; cached = [long]0; output = [long]0; credits = $null; models = @() }
+    if ($kind -eq 'cli') {
+        $nano = [double]0; $models = @{}
+        foreach ($raw in $lines) {
+            if (-not $raw.StartsWith('{"type":"session.usage_record"')) { continue }
+            $ts = Get-Stamp $raw
+            if ([string]::CompareOrdinal($ts, $sinceUtc) -lt 0 -or [string]::CompareOrdinal($ts, $untilUtc) -ge 0) { continue }
+            $u = ($raw | ConvertFrom-Json).data.usage
+            $t.requests++
+            $t.input += [long]$u.inputTokens - [long]$u.cacheReadTokens
+            $t.cached += [long]$u.cacheReadTokens
+            $t.output += [long]$u.outputTokens
+            $name = if ($u.modelDisplayName) { $u.modelDisplayName } else { $u.model }
+            $models[$name] = $true
+            if ($u.copilotUsage -and $null -ne $u.copilotUsage.totalNanoAiu) {
+                $nano += [double]$u.copilotUsage.totalNanoAiu
+            } elseif ($u.copilotUsage -and $u.copilotUsage.tokenDetails) {
+                foreach ($d in $u.copilotUsage.tokenDetails) { $nano += [double]$d.tokenCount * [double]$d.costPerBatch / [double]$d.batchSize }
             }
-            $previous = $context
-        } elseif ($kind -eq 'assistant.message' -and $inside) {
-            $t.output += $n
         }
-        $context += $n
+        $t.credits = $nano / 1e9
+        $t.models = @($models.Keys | Sort-Object)
+    } elseif ($kind -eq 'vscode') {
+        $base = if ($cost.ContainsKey('base_tokens')) { [long]$cost['base_tokens'] } else { 35000 }
+        $context = [long]$base; $previous = $null
+        foreach ($raw in $lines) {
+            $k = if ($raw.StartsWith('{"type":"')) { $raw.Substring(9, $raw.IndexOf('"', 9) - 9) } else { '' }
+            $ts = Get-Stamp $raw
+            $n = [long](Get-Size $raw)
+            $inside = ([string]::CompareOrdinal($ts, $sinceUtc) -ge 0) -and ([string]::CompareOrdinal($ts, $untilUtc) -lt 0)
+            if ($k -eq 'assistant.turn_start') {
+                if ($context -gt $ContextCap) { $context = [long]$base; $previous = $null }
+                if ($inside) {
+                    $c = if ($null -ne $previous) { $previous } else { 0 }
+                    $t.requests++; $t.cached += $c; $t.input += $context - $c
+                }
+                $previous = $context
+            } elseif ($k -eq 'assistant.message' -and $inside) {
+                $t.output += $n
+            }
+            $context += $n
+        }
+    } else {
+        $seen = @{}
+        foreach ($raw in $lines) {
+            if (-not $raw.Contains('"type":"assistant"') -or -not $raw.Contains('"usage"')) { continue }
+            $ts = Get-Stamp $raw
+            if ([string]::CompareOrdinal($ts, $sinceUtc) -lt 0 -or [string]::CompareOrdinal($ts, $untilUtc) -ge 0) { continue }
+            $m = [regex]::Match($raw, '"id":"(msg_[^"]+)"')
+            if ($m.Success) {
+                if ($seen.ContainsKey($m.Groups[1].Value)) { continue }
+                $seen[$m.Groups[1].Value] = $true
+            }
+            $t.requests++
+            $t.input += (Get-Num $raw 'input_tokens') + (Get-Num $raw 'cache_creation_input_tokens')
+            $t.cached += Get-Num $raw 'cache_read_input_tokens'
+            $t.output += Get-Num $raw 'output_tokens'
+        }
     }
+    return $t
+}
+
+function Test-Inside([string] $folder, [string] $rootPath) {
+    if (-not $folder) { return $false }
+    $f = $folder.TrimEnd('\', '/'); $r = $rootPath.TrimEnd('\', '/')
+    return $f.Equals($r, [StringComparison]::OrdinalIgnoreCase) -or
+        $f.StartsWith($r + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -or
+        $f.StartsWith($r + '/', [StringComparison]::OrdinalIgnoreCase)
+}
+
+$rootPath = (Resolve-Path $Root).Path
+$tried = @()
+if ($Transcript) {
+    $Transcript = (Resolve-Path -LiteralPath $Transcript).Path
+    $t = Measure-Log $Transcript
+    $tried += $Transcript
 } else {
-    $seen = @{}
-    foreach ($raw in $lines) {
-        if (-not $raw.Contains('"type":"assistant"') -or -not $raw.Contains('"usage"')) { continue }
-        $ts = Get-Stamp $raw
-        if ([string]::CompareOrdinal($ts, $sinceUtc) -lt 0 -or [string]::CompareOrdinal($ts, $untilUtc) -ge 0) { continue }
-        $m = [regex]::Match($raw, '"id":"(msg_[^"]+)"')
-        if ($m.Success) {
-            if ($seen.ContainsKey($m.Groups[1].Value)) { continue }
-            $seen[$m.Groups[1].Value] = $true
+    # Every chat log of this project written to since the start time: Copilot CLI sessions,
+    # VS Code Copilot chats of this workspace, Claude Code sessions. The one with the most
+    # requests in the time range wins.
+    $sinceLocal = [datetime]::Parse($sinceUtc, $inv, [Globalization.DateTimeStyles]::AdjustToUniversal).ToLocalTime()
+    $candidates = @()
+    $cli = Join-Path $HOME '.copilot/session-state'
+    if (Test-Path -LiteralPath $cli) {
+        foreach ($d in Get-ChildItem -LiteralPath $cli -Directory) {
+            $events = Join-Path $d.FullName 'events.jsonl'; $ws = Join-Path $d.FullName 'workspace.yaml'
+            if (-not (Test-Path -LiteralPath $events) -or -not (Test-Path -LiteralPath $ws)) { continue }
+            $cwd = (Get-Content -LiteralPath $ws -Encoding UTF8 | Where-Object { $_ -match '^(cwd|git_root):' } | ForEach-Object { ($_ -split ':', 2)[1].Trim().Trim("'", '"') })
+            if (@($cwd | Where-Object { Test-Inside $_ $rootPath }).Count -eq 0) { continue }
+            $candidates += Get-Item -LiteralPath $events
         }
-        $t.requests++
-        $t.input += (Get-Num $raw 'input_tokens') + (Get-Num $raw 'cache_creation_input_tokens')
-        $t.cached += Get-Num $raw 'cache_read_input_tokens'
-        $t.output += Get-Num $raw 'output_tokens'
+    }
+    $bases = @($env:APPDATA, (Join-Path $HOME '.config'), (Join-Path $HOME 'Library/Application Support')) | Where-Object { $_ }
+    foreach ($b in $bases) {
+        foreach ($app in 'Code', 'Code - Insiders') {
+            $dir = Join-Path $b "$app/User/workspaceStorage"
+            if (-not (Test-Path -LiteralPath $dir)) { continue }
+            foreach ($w in Get-ChildItem -LiteralPath $dir -Directory) {
+                $wsFile = Join-Path $w.FullName 'workspace.json'; $tr = Join-Path $w.FullName 'GitHub.copilot-chat/transcripts'
+                if (-not (Test-Path -LiteralPath $wsFile) -or -not (Test-Path -LiteralPath $tr)) { continue }
+                $folder = (Get-Content -LiteralPath $wsFile -Raw -Encoding UTF8 | ConvertFrom-Json).folder
+                if (-not $folder) { continue }
+                $folderPath = [uri]::UnescapeDataString(($folder -replace '^file://', ''))
+                if ($folderPath -match '^/[A-Za-z]:') { $folderPath = $folderPath.Substring(1).Replace('/', '\') }
+                if (-not (Test-Inside $folderPath $rootPath)) { continue }
+                $candidates += Get-ChildItem -LiteralPath $tr -Filter *.jsonl -File
+            }
+        }
+    }
+    $slug = $rootPath -replace '[^A-Za-z0-9]', '-'
+    $claude = Join-Path $HOME ".claude/projects/$slug"
+    if (Test-Path -LiteralPath $claude) { $candidates += Get-ChildItem -LiteralPath $claude -Filter *.jsonl -File }
+
+    $t = $null
+    foreach ($c in ($candidates | Where-Object { $_.LastWriteTime -ge $sinceLocal })) {
+        $tried += $c.FullName
+        $m = Measure-Log $c.FullName
+        if ($null -eq $t -or $m.requests -gt $t.requests) { $t = $m; $Transcript = $c.FullName }
     }
 }
+
+if ($null -eq $t -or $t.requests -eq 0) {
+    $list = if ($tried) { ($tried | ForEach-Object { "  $_" }) -join "`n" } else { '  (none written to since the start time)' }
+    throw "No AI requests found between $sinceUtc and $(if ($Until) { $untilUtc } else { 'now' }) for $rootPath. Logs checked:`n$list`nCheck the start time, or pass -Transcript <file> (Copilot CLI: ~/.copilot/session-state/<session>/events.jsonl)."
+}
+$vscode = $t.kind -eq 'vscode'
 
 function Get-Prices {
     $sid = [IO.Path]::GetFileNameWithoutExtension($Transcript)
@@ -146,8 +222,12 @@ function Get-Prices {
     throw "No price for `"$Model`": add it to cost.prices in .specs/spec-nx.json."
 }
 
-$pr = Get-Prices
-$credits = ($t.input * $pr.cache_write + $t.cached * $pr.cached + $t.output * $pr.output) / 1000000
+if ($t.kind -eq 'cli') {
+    $credits = $t.credits
+} else {
+    $pr = Get-Prices
+    $credits = ($t.input * $pr.cache_write + $t.cached * $pr.cached + $t.output * $pr.output) / 1000000
+}
 $usd = $credits / 100
 $currency = if ($cost['currency']) { $cost['currency'] } else { 'USD' }
 $rate = if ($cost['rate']) { [double]$cost['rate'] } else { 1.0 }
@@ -155,10 +235,11 @@ $localAmount = $usd * $rate
 $share = if ($cost['monthly_credits']) { $credits / [double]$cost['monthly_credits'] * 100 } else { $null }
 $total = $t.input + $t.cached + $t.output
 $source = if ($vscode) { 'estimated' } else { 'measured' }
+$modelText = if ($t.models.Count -gt 0) { $t.models -join ', ' } else { $Model }
 
 if ($Json) {
     [ordered]@{
-        source = $source; transcript = $Transcript; model = $Model
+        source = $source; transcript = $Transcript; model = $modelText
         requests = $t.requests; input = $t.input; cached = $t.cached; output = $t.output; total = $total
         credits = [math]::Round($credits, 4); usd = [math]::Round($usd, 4); currency = $currency
         local = [math]::Round($localAmount, 4)
@@ -179,4 +260,4 @@ $planText = if ($null -ne $share) { ', ' + $share.ToString('0.0', $inv) + ' % of
 $creditsRounded = [math]::Round($credits)
 $creditsWord = if ($creditsRounded -eq 1) { 'credit' } else { 'credits' }
 Write-Output ("Cost: {0}{1} {2} ({3} {4}{5})" -f $tilde, $currency, ([math]::Round($localAmount, 2)).ToString('0.00', $inv), $creditsRounded.ToString('0', $inv), $creditsWord, $planText)
-Write-Output ("Source: {0} from {1}{2}{3} requests" -f $source, $Transcript, $dot, $t.requests)
+Write-Output ("Source: {0} from {1}{2}{3} requests{2}{4}" -f $source, $Transcript, $dot, $t.requests, $modelText)

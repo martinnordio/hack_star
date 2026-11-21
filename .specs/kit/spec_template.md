@@ -26,8 +26,9 @@
      cannot tell); write "person" for edits made by hand. If the last row has the same date,
      stage and model, update it instead of adding a new one. Rows are never removed.
      The Tokens and Cost columns are only there with cost tracking on (the `cost` block,
-     COSTS.md of the kit): copied from the `usage` script, never computed by hand; `N/A` if it
-     could not run. Without cost tracking, drop both columns. -->
+     COSTS.md of the kit): copied from the `usage` script, never computed by hand; `N/A` only
+     after the script still fails with the right start time and log, with its error in the
+     Note (COSTS.md, rule 3). Without cost tracking, drop both columns. -->
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
