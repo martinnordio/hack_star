@@ -15,6 +15,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.07 M (34 k in · 2.02 M cached · 18 k out) | CHF 0.78 (93 credits) | Part 2 written |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.12 M (54 k in · 1.06 M cached · 10 k out) | CHF 0.36 (43 credits) | Step 1 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.64 M (49 k in · 1.58 M cached · 13 k out) | CHF 0.44 (52 credits) | Step 2 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.45 M (97 k in · 2.32 M cached · 34 k out) | CHF 1.37 (163 credits) | Step 3 done |
 
 ---
 
@@ -139,7 +140,7 @@ _None._
 |------|-------------|-------------------|--------|--------|
 | **1** | Folder, rule for Godot specs, pinned tools | standard (Claude Sonnet 5.5) — files and scripts a clear plan describes | ✅ Done | [→ Step 1](#step-1--folder-rule-for-godot-specs-pinned-tools) |
 | **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ✅ Done | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
-| **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ⬜ Not started | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
+| **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ✅ Done | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
 | **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | ⬜ Not started | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
 | **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 5](#step-5--readme-licences-final-check) |
 
@@ -275,28 +276,37 @@ that walks with the keyboard or a touch joystick, is stopped by walls, and a but
 the start screen (S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/movement.gd`: the pure rule — from an input direction (length ≤ 1), speed and
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/movement.gd`: the pure rule — from an input direction (length ≤ 1), speed and
       delta to a velocity on the ground plane; diagonal not faster; no input → stop.
-- [ ] `scenes/arena.tscn` + `.gd`: floor and border walls (static bodies) and a few inner
+- [x] `scenes/arena.tscn` + `.gd`: floor and border walls (static bodies) and a few inner
       walls from box meshes (D10); a `Camera3D` above and behind at an angle that keeps the
       fighter in view in landscape and portrait; one light.
-- [ ] `scenes/fighter.tscn` + `.gd`: a `CharacterBody3D` built from a capsule body, a sphere
+- [x] `scenes/fighter.tscn` + `.gd`: a `CharacterBody3D` built from a capsule body, a sphere
       head and a direction marker in a bright colour; moves with `move_and_slide` using
       `game/movement.gd`; faces its direction.
-- [ ] `scenes/touch_joystick.tscn` + `.gd` (D11): bottom-left, shown only on touch screens,
+- [x] `scenes/touch_joystick.tscn` + `.gd` (D11): bottom-left, shown only on touch screens,
       gives a direction of length ≤ 1; keyboard and joystick feed the same rule.
-- [ ] A **Back** button (top-left) returns to the start screen.
-- [ ] Tests: `tests/test_movement.gd` (straight, diagonal not faster, stop, joystick length
+- [x] A **Back** button (top-left) returns to the start screen.
+- [x] Tests: `tests/test_movement.gd` (straight, diagonal not faster, stop, joystick length
       clamped); `tests/test_arena.gd` (the arena loads with fighter, camera and walls; after
       simulated frames pressing right against the east wall, the fighter stays inside).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` pass; in the editor (desktop window,
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` pass; in the editor (desktop window,
       then 820 × 1180 and 1180 × 820) the fighter walks with WASD and the arrows, stops at
       walls, Back works; the touch joystick checked with the editor's *Emulate Touch From
       Mouse*.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 14:06
+
+- `game/movement.gd` (`class_name Movement`, static functions): `velocity(direction, speed)` for `move_and_slide` (which applies the delta itself), `step(direction, speed, delta)` for the distance per frame, `clamp_direction`, `joystick_direction(offset, radius)` and `facing_yaw(direction)`.
+- Arena 16 × 12 m: floor, four border walls and four inner walls (`Walls/`), each a `StaticBody3D` with a `BoxMesh` and a `BoxShape3D`; `WorldEnvironment` (colour background, ambient light), one `DirectionalLight3D` with shadows. The lane at z = 0 from the start to the east wall is free (used by the wall test).
+- Camera: fixed, 55° down from behind; `arena.gd` moves it back along that line until the four top corners of the outer walls fit the screen (more margin at the top for **Back**), again on every window resize — so landscape and portrait both show the whole arena and the fighter.
+- Fighter: `CharacterBody3D` in floating motion mode (top-down, no gravity), capsule body, sphere head, yellow nose and chest marker; turns to its direction; starts facing the camera. `arena.gd` sets `Fighter.input_direction` each physics frame from `Input.get_vector(move_*)` + the joystick, clamped to length 1 (one rule for both); `read_player_input = false` lets tests set it directly.
+- Touch joystick: own `Control` (drawn circles), bottom-left in the `Hud` `CanvasLayer`, visible only when `DisplayServer.is_touchscreen_available()`; follows one finger (`InputEventScreenTouch` / `ScreenDrag`), releases to zero.
+- How it was checked (the editor GUI is not available to the agent): `tools/test.ps1` — 14 tests pass (`test_movement` 8, `test_arena` 4 incl. the east-wall test with 150 simulated physics frames and the camera framing, `test_start_screen` 2); `tools/lint.ps1` OK (gdformat applied); headless `--import`, `--editor --quit-after 60`, the main scene and `arena.tscn` with `--quit-after 120`: no ERROR / WARNING / SCRIPT ERROR lines. Screenshots (non-headless run with a temporary SceneTree script, removed) at 1280 × 720, 820 × 1180 and 1180 × 820: the whole arena and the fighter in view in all three, Back top-left. A second temporary script fed a synthetic touch + drag into the joystick (made visible): direction (0.96, −0.29), the fighter walked and turned, release → direction 0; `move_up` pressed 20 frames moved the fighter 1.67 m north; **Back** → `StartScreen`. Keyboard play by hand and the editor's *Emulate Touch From Mouse* were not run by the agent; **the touch joystick on a real device (iPad) is checked by the author in Step 4.**
+
+**Done (2026-11-21 · ~6m · Claude Opus 5.5)** — `game/movement.gd`; `scenes/arena.tscn/.gd` (floor, walls, framing camera, light, HUD with Back and joystick), `scenes/fighter.tscn/.gd`, `scenes/touch_joystick.tscn/.gd`; `tests/test_movement.gd`, `tests/test_arena.gd`. `tools/test.ps1` 14/14 passed, `tools/lint.ps1` OK, headless import / editor / run clean, screenshots in landscape and portrait frame the whole arena. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.45 M (97 k in · 2.32 M cached · 34 k out) · CHF 1.37 (163 credits)
 
 ---
 
