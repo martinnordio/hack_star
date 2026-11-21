@@ -1,7 +1,9 @@
 extends Node3D
 ## The arena: the canyon (`Canyon`, built from `ArenaLayout`), one fighter, a camera above
 ## and behind it, and the HUD.
-## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`).
+## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); the mouse
+## (aim and click) and the right stick (`AimJoystick`, drag and release or a quick tap) fire
+## shots (`Shot`) under the rules of `game/combat.gd`.
 
 ## The camera looks at the fighter from above and behind (towards +z), at this angle down.
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -27,16 +29,23 @@ var read_player_input: bool = true
 var _fps_timer: float = 0.0
 var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
+var _last_fire_seconds: float = -INF
+var _mouse_held: bool = false
+var _mouse_position: Vector2 = Vector2.ZERO
 
 @onready var _fighter: Fighter = $Fighter
 @onready var _camera: Camera3D = $Camera
 @onready var _joystick: TouchJoystick = $Hud/TouchJoystick
+@onready var _aim_joystick: TouchJoystick = $Hud/AimJoystick
+@onready var _aim_line: MeshInstance3D = $AimLine
+@onready var _shots: Node3D = $Shots
 @onready var _fps_label: Label = $Hud/FpsLabel
 
 
 func _ready() -> void:
 	_fighter.position = Vector3(ArenaLayout.START.x, 0.0, ArenaLayout.START.y)
 	_fighter.set_look(GameState.selected_fighter, GameState.selected_skin())
+	_aim_joystick.released.connect(_on_aim_released)
 	_camera_target = _wanted_camera_target()
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
@@ -48,6 +57,9 @@ func _process(delta: float) -> void:
 		_camera_target, _wanted_camera_target(), delta, CAMERA_FOLLOW_RATE
 	)
 	_place_camera()
+	if _mouse_held:
+		_fire_at_mouse()
+	_update_aim_line()
 	_fps_timer += delta
 	if _fps_timer >= FPS_LABEL_INTERVAL:
 		_fps_timer = 0.0
@@ -59,6 +71,89 @@ func _physics_process(_delta: float) -> void:
 		return
 	var keys: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	_fighter.input_direction = Movement.clamp_direction(keys + _joystick.direction)
+
+
+## The mouse aims and fires; GUI controls (Back) take their clicks before this, and mouse
+## events made from touches are ignored, so a touch never fires twice.
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouse and event.device == InputEvent.DEVICE_ID_EMULATION:
+		return
+	if event is InputEventMouseMotion:
+		_mouse_position = (event as InputEventMouseMotion).position
+	elif event is InputEventMouseButton:
+		var button: InputEventMouseButton = event
+		if button.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_mouse_held = button.pressed
+		_mouse_position = button.position
+		if button.pressed:
+			_fire_at_mouse()
+
+
+## Fires a shot along `direction` (ground plane, x and z) when the cool-down is over: the
+## fighter turns that way and recoils, the shot leaves the muzzle. True when it fired.
+func fire(direction: Vector2) -> bool:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if direction.is_zero_approx() or not Combat.can_fire(now, _last_fire_seconds):
+		return false
+	_last_fire_seconds = now
+	_fighter.rotation.y = Movement.facing_yaw(direction)
+	_fighter.model.play_attack()
+	var shot: Shot = Shot.new()
+	shot.launch(
+		_fighter.muzzle.global_position,
+		Vector3(direction.x, 0.0, direction.y),
+		_fighter.model.main_color
+	)
+	_shots.add_child(shot)
+	return true
+
+
+func _fire_at_mouse() -> void:
+	var point: Vector3 = Combat.ground_point(
+		_camera.project_ray_origin(_mouse_position),
+		_camera.project_ray_normal(_mouse_position),
+		0.0
+	)
+	if point == Vector3.INF:
+		return
+	fire(Vector2(point.x - _fighter.position.x, point.z - _fighter.position.z))
+
+
+func _on_aim_released(direction: Vector2, held_seconds: float) -> void:
+	var aim: Vector2 = Combat.release_aim(direction, held_seconds)
+	if aim == Combat.NO_SHOT:
+		return
+	if aim == Vector2.ZERO:
+		aim = _tap_direction()
+	fire(aim)
+
+
+## A quick tap fires at the nearest target in range, else straight ahead.
+func _tap_direction() -> Vector2:
+	var from: Vector2 = Vector2(_fighter.position.x, _fighter.position.z)
+	var targets: Array[Vector2] = []
+	for target: Node in get_tree().get_nodes_in_group("targets"):
+		var at: Vector3 = (target as Node3D).global_position
+		targets.append(Vector2(at.x, at.z))
+	var nearest: int = Combat.nearest_target(from, targets, Combat.SHOT_RANGE)
+	if nearest >= 0 and not targets[nearest].is_equal_approx(from):
+		return targets[nearest] - from
+	var forward: Vector3 = -_fighter.global_basis.z
+	return Vector2(forward.x, forward.z)
+
+
+## A thin line on the ground shows where the right stick aims while it is dragged.
+func _update_aim_line() -> void:
+	var aim: Vector2 = _aim_joystick.direction
+	var aiming: bool = _aim_joystick.is_held() and aim.length() >= Combat.AIM_DEAD_ZONE
+	_aim_line.visible = aiming
+	if not aiming:
+		return
+	var unit: Vector2 = aim.normalized()
+	var middle: Vector2 = unit * Combat.SHOT_RANGE / 2.0
+	_aim_line.position = _fighter.position + Vector3(middle.x, 0.04, middle.y)
+	_aim_line.rotation = Vector3(0.0, Movement.facing_yaw(unit), 0.0)
 
 
 func _wanted_camera_target() -> Vector3:

@@ -20,6 +20,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.39 M (102 k in · 3.26 M cached · 35 k out) | CHF 1.56 (186 credits) | Step 2 done (`usage.ps1 -AgentName s06-step2` from 18:51) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (101 k in · 1.79 M cached · 16 k out) | CHF 0.49 (59 credits) | Step 3 done (`usage.ps1 -AgentName s06-steps3-4` from 18:59:00 to 19:04:19) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.28 M (30 k in · 1.24 M cached · 10 k out) | CHF 0.25 (30 credits) | Step 4 done (`usage.ps1 -AgentName s06-steps3-4` from 19:04:19 to 19:07:10) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.31 M (135 k in · 4.14 M cached · 40 k out) | CHF 1.94 (231 credits) | Step 5 done (`usage.ps1 -AgentName s06-step5`) |
 
 ---
 
@@ -145,7 +146,7 @@ right joystick)._
 | **2** | Canyon arena | reasoning (Claude Opus 5.5) — graphics-heavy: a bigger arena built in code (rocks, cacti, decoration, light) that must look good and stay fast (D1, D2, D10) | ✅ Done | [→ Step 2](#step-2--canyon-arena) |
 | **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ✅ Done | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
 | **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ✅ Done | [→ Step 4](#step-4--run-and-attack-animations) |
-| **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ⬜ Not started | [→ Step 5](#step-5--aiming-and-shooting) |
+| **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ✅ Done | [→ Step 5](#step-5--aiming-and-shooting) |
 | **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ⬜ Not started | [→ Step 6](#step-6--target-dummies) |
 | **7** | Bushes and effects | standard (Claude Sonnet 5.5) — see-through in a bush and small particle pools, fixed by D10 and D11 | ⬜ Not started | [→ Step 7](#step-7--bushes-and-effects) |
 | **8** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks, measuring the frame rate and updating two documents | ⬜ Not started | [→ Step 8](#step-8--final-check-readme-and-architecture) |
@@ -325,25 +326,50 @@ The fighter shoots with the mouse on a desktop and with the right stick (or a ta
 screen; shots fly visibly and stop at walls and rocks (S4, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `TouchJoystick`: signal `released(direction, held_seconds)`; `Hud/AimJoystick`
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `TouchJoystick`: signal `released(direction, held_seconds)`; `Hud/AimJoystick`
       bottom-right in `arena.tscn` (same size as the left one).
-- [ ] `scenes/shot.gd` (`Shot`) after D8; `arena.gd` fires after D7 (cool-down from
+- [x] `scenes/shot.gd` (`Shot`) after D8; `arena.gd` fires after D7 (cool-down from
       `Combat.can_fire`, the fighter turns to the aim, `Model.play_attack()`, a shot from
       `Muzzle`), the aim line while the right stick is dragged.
-- [ ] Tests: `tests/test_shot.gd` (a shot towards a wall ends at the wall; without a wall it
+- [x] Tests: `tests/test_shot.gd` (a shot towards a wall ends at the wall; without a wall it
       ends after `SHOT_RANGE`); `tests/test_touch_joystick.gd` (`released` with the direction
       and the time held); `tests/test_arena.gd` (a left click on the ground fires one shot
       towards the click; holding fires again only after the cool-down; an emulated mouse event
       does not fire; a click on Back does not fire; releasing the aim stick after a drag fires
       that way; a quick tap fires); `tests/test_screen_sizes.gd` (the aim stick inside at the
       five sizes and not overlapping the left stick or Back).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of shots in flight and
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of shots in flight and
       of a shot stopping at a rock, at 1280×720 and 390×844 (the aim stick made visible for the
       capture).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 19:07
+
+- `TouchJoystick` emits `released(direction, held_seconds)` (the direction before it resets,
+  the time from `Time.get_ticks_msec`) and has `is_held()`; `Hud/AimJoystick` is a second
+  instance anchored bottom-right (240 × 240, 32 px margins). At 390×844 the content is 650 px
+  wide, so the two sticks never overlap (tested at the five sizes).
+- `arena.gd`: `fire(direction)` (cool-down, turn, `play_attack`, a `Shot` from `Muzzle` in the
+  fighter's `main_color` into `Shots`); the mouse in `_unhandled_input` (emulated events
+  ignored; holding the button fires again in `_process` after the cool-down; the fighter turns
+  to where the mouse ray meets the ground); the aim stick's `released` goes through
+  `Combat.release_aim`; a quick tap aims at the nearest node of the group `targets` in range
+  (Step 6 puts the dummies there), else straight ahead; `AimLine` (a 9 m flat box in
+  `arena.tscn`) lies on the ground while the stick is dragged past the dead zone.
+- **Differs from D4:** `Muzzle` is 0.6 m up instead of 0.9 m — the border on the camera side
+  is only 0.7 m high (D2), so shots at 0.9 m flew over it; at 0.6 m they stop there too
+  (tested: a tap fires south and the shot ends at the low wall).
+- `Shot` shares its meshes and materials per colour (static caches), so firing creates no new
+  resources: a white core, a ball of the fighter's colour, a see-through halo and a tail, all
+  unshaded.
+- Screenshots (windowed run, temporary capture script under `%TEMP%`, removed): first look too
+  small and pale (additive blending washed out on the bright sand) → bigger ball, alpha-blended
+  halo and tail in the saturated colour. Final at 1280×720 and 390×844: a shot in flight east
+  with its tail, a shot just before the centre rock, the aim line and the aim stick visible.
+  FPS of the windowed desktop run while firing continuously for 7 s: **60**.
+
+**Done (2026-11-21 · ~14 min · Claude Opus 5.5)** — `TouchJoystick.released`/`is_held`, `Hud/AimJoystick`, `AimLine` and `Shots` in `arena.tscn`, `scenes/shot.gd` (`Shot`), firing in `arena.gd` (mouse, aim stick, tap), `Muzzle` at 0.6 m; tests `tests/test_shot.gd` (2), `tests/test_touch_joystick.gd` (`released`), `tests/test_arena.gd` (6: click, hold and cool-down, emulated click, Back, drag-release, tap to the low wall), `tests/test_screen_sizes.gd` (aim stick inside, apart from the left stick and Back). `tools/test.ps1` 209 tests passed, `tools/lint.ps1` exit 0, screenshots checked (FPS 60); suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 4.31 M tokens · CHF 1.94 (231 credits)
 
 ---
 
