@@ -1,4 +1,3 @@
-#Requires -Version 5.1
 <#
 .SYNOPSIS
 Exports the game for the web into build\web\.
@@ -7,6 +6,7 @@ Exports the game for the web into build\web\.
 Deletes build\web\, runs `godot --headless --export-release "Web" build/web/index.html` and
 checks that index.html, a .wasm and a .pck exist. Exit code 1 if Godot fails or a file is missing.
 #>
+#Requires -Version 5.1
 [CmdletBinding()]
 param()
 
@@ -20,6 +20,8 @@ if (-not $godot) {
     Write-Host 'Godot not found. Run tools\check_tools.ps1 for the install command (or set $env:GODOT).'
     exit 1
 }
+
+Write-GodotVersionWarning $godot
 
 $outputFolder = Join-Path $projectRoot 'build\web'
 if (Test-Path -LiteralPath $outputFolder) {

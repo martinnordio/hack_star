@@ -1,4 +1,3 @@
-#Requires -Version 5.1
 <#
 .SYNOPSIS
 Serves build\web\ on the local network (port 8060) until stopped with Ctrl+C.
@@ -8,6 +7,7 @@ Prints the addresses to open (this computer's IPv4 address for an iPad on the sa
 localhost), then runs Python's http.server through uv. Run tools\export_web.ps1 first.
 Windows may ask to allow Python through the firewall.
 #>
+#Requires -Version 5.1
 [CmdletBinding()]
 param(
     [int]$Port = 8060

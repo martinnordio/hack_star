@@ -1,3 +1,4 @@
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 735 k (53 k in · 673 k cached · 10 k out) | CHF 0.25 (30 credits) | review fixes #2, #3, #5, #7, #8 |
 # Godot Setup and First Game Spec
 
 > **Author:** Martin Nordio
@@ -21,6 +22,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 3.53 M (112 k in · 3.38 M cached · 37 k out) | CHF 0.12 (14 credits) | Step 5 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.51 M (640 k in · 6.85 M cached · 21 k out) | CHF 4.18 (498 credits) | orchestrator of the per-Step run (Steps 1–5): starting each Step's sub-agent, checking its result, the new-chat check, commits (`usage.ps1 -Agent main`; the Step rows are `-Agent subagents` over each sub-agent's own time) |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | 4.16 M (385 k in · 3.77 M cached · 7 k out) | CHF 2.36 (282 credits) | issue #25 created; the author's desktop check recorded, the iPad check deferred (Step 4) |
+| 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 5.47 M (180 k in · 5.23 M cached · 61 k out) | CHF 2.65 (317 credits) | semantic diff written; code review: Approve (0 blocking, 4 should-fix, 6 nit) |
 
 ---
 
@@ -408,6 +410,11 @@ Started: 2026-11-21 14:20
 | Music player and the developer page's music tools | No music in this spec (D13) | moved *Fighter Studio, Saves and Music* spec |
 | Automatic checks on GitHub (CI) for the Godot folder | The repository has no CI today | a later spec, if wanted |
 | Auto-approved Godot commands in `.vscode/settings.json` | Not needed to meet S1–S19 | when the Godot checks are run often |
+| Code review #1: S11 iPad part (see the first row) | Not verified yet | same as the iPad row above |
+| Code review #4: the kit's `change_record.schema.json` accepts only `^.specs/…` spec paths, so a Godot record cannot name its real path | `.specs/kit/` is generated; the record uses a path relative to `hack_star_godot/` (S4) | spec-nx |
+| Code review #6: no automated tests for the PowerShell tools (`tools/*.ps1`, the kit's `usage.ps1`) | Verified by runs only | a later spec, if wanted |
+| Code review #9: the arena size is kept in three places by hand (`arena.tscn` walls, `ARENA_CORNERS` in `arena.gd`, constants in `test_arena.gd`) | Nit; works and is tested | a later Godot spec |
+| Code review #10: `usage.ps1` ignores `-Model` for Copilot CLI logs and adds up every model in the window | Only the `Source:` line shows it | spec-nx |
 
 ---
 
@@ -415,6 +422,30 @@ Started: 2026-11-21 14:20
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_feature-godot-setup-and-first-game.html) · 17 record blocks · checks 6 pass · 2 n/a · 1 fail (C7) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 blocking, 4 should-fix, 6 nit |
+| 2026-11-21 | AI assistant (Claude Sonnet 5.5) | review fixes | fixed | #2, #3, #5, #7, #8 |
+
+### Code review 2026-11-21
+
+Range `a6a0f64..ea844ad` without the vendored `addons/gut/`. Ran: `tools/test.ps1` (15 of 15 passed),
+`tools/lint.ps1` (OK), `tools/check_tools.ps1` (all OK), `tools/export_web.ps1` (OK); every changed
+`.ps1` parses with `[System.Management.Automation.Language.Parser]::ParseFile` and is ASCII-only.
+Good: rules split from scenes as the guideline asks; the wall test runs the real physics; every
+script checks `$LASTEXITCODE`; the Step Notes say honestly what was and was not checked.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | S11's iPad part (Safari on a recent iPad, landscape and portrait, touch joystick, ≥ 30 fps) is not verified; the author checked the Windows desktop only (~60 fps). Known and documented. | spec | spec | Should-fix | deferred (existing Deferred Items row; run before `CLOSE:`, or close with S11 marked partly met) |
+| 2 | `tools/test.ps1` under Windows PowerShell 5.1: `2>&1` with `$ErrorActionPreference = 'Stop'` turns Godot's first stderr line into a terminating `NativeCommandError` — a script error in a test shows one line and no GUT summary (exit code still 1; reproduced on a temporary copy). | code | guideline | Should-fix | fix now — fixed 2026-11-21 |
+| 3 | `TouchJoystick`'s input handling (finger index, drag, release, reset when hidden) has no automated test; only `Movement.joystick_direction` is tested and the device check is deferred. | code | test | Should-fix | fix now — fixed 2026-11-21 |
+| 4 | The kit's `change_record.schema.json` accepts only `spec.path` `^.specs/…`, so a Godot record cannot name its real path; the record uses a path relative to `hack_star_godot/` (S4). | architecture | spec | Should-fix | deferred (fix in spec-nx; `.specs/kit/` is generated) |
+| 5 | `Get-Help` finds no help for `hack_star_godot/tools/*.ps1`: `#Requires -Version 5.1` sits directly above the `<# … #>` block; a blank line between them fixes it. | code | guideline | Nit | fix now — fixed 2026-11-21 |
+| 6 | C7: the PowerShell tools (`tools/*.ps1`, the kit's `usage.ps1`) changed without automated tests; verified by runs only. | code | test | Nit | deferred |
+| 7 | `lint.ps1` hard-codes `gdtoolkit==4.5.0` in its install hint instead of reading `tools/versions.json`. | code | guideline | Nit | fix now — fixed 2026-11-21 |
+| 8 | `Find-Godot`'s winget fallback returns the first `Godot_v*_win64_console.exe` found; with two versions installed `test.ps1` / `export_web.ps1` may use an unpinned one (only `check_tools.ps1` compares). | code | guideline | Nit | fix now — fixed 2026-11-21 |
+| 9 | The arena's size is kept in three places by hand: wall boxes in `arena.tscn`, `ARENA_CORNERS` in `arena.gd`, wall constants in `test_arena.gd`. | code | guideline | Nit | deferred |
+| 10 | `usage.ps1` does not use `-Model` with a Copilot CLI log and adds up every model in the window (the review's example window: "Claude Opus 5.5, Claude Sonnet 5.5"); only the `Source:` line shows it. | code | docs | Nit | deferred |
 
 ---
 
@@ -423,6 +454,6 @@ Started: 2026-11-21 14:20
 - [x] Requirements · Part 1 agreed (S1..S19 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; the root `uv run pytest`, `npm test`, `npm run check` and `npm run build` still pass; READMEs updated
-- [ ] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
+- [x] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

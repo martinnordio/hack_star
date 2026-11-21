@@ -1,4 +1,3 @@
-#Requires -Version 5.1
 <#
 .SYNOPSIS
 Runs the GUT tests of the Godot project headless.
@@ -7,6 +6,7 @@ Runs the GUT tests of the Godot project headless.
 Imports the project, then runs every tests\test_*.gd with GUT. Exit code 1 if Godot fails,
 a test fails, or no test ran.
 #>
+#Requires -Version 5.1
 [CmdletBinding()]
 param()
 
@@ -21,6 +21,8 @@ if (-not $godot) {
     exit 1
 }
 
+Write-GodotVersionWarning $godot
+
 Push-Location -LiteralPath $projectRoot
 try {
     & $godot --headless --path . --import
@@ -29,9 +31,12 @@ try {
         exit 1
     }
 
+    # Windows PowerShell 5.1 turns Godot's stderr lines into terminating errors under 'Stop'.
+    $ErrorActionPreference = 'Continue'
     $output = & $godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gprefix=test_ -gexit 2>&1 |
         ForEach-Object { $_.ToString() }
     $exitCode = $LASTEXITCODE
+    $ErrorActionPreference = 'Stop'
     $output | ForEach-Object { Write-Host $_ }
 
     if ($exitCode -ne 0) {

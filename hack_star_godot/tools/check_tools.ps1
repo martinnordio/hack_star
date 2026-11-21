@@ -1,4 +1,3 @@
-#Requires -Version 5.1
 <#
 .SYNOPSIS
 Checks that the pinned Godot tools (tools\versions.json) are installed.
@@ -10,6 +9,7 @@ addons\gut, which Step 2 adds together with project.godot: while project.godot d
 exist GUT is reported as pending and does not fail the check; once it exists a missing or
 wrong GUT fails. Exit code 1 if anything is missing or has the wrong version.
 #>
+#Requires -Version 5.1
 [CmdletBinding()]
 param()
 
@@ -44,7 +44,7 @@ else {
         Write-Result 'Godot' $true "$actual ($godot)"
     }
     else {
-        Write-Result 'Godot' $false "found $actual, need $godotVersion.stable. Install: winget install --id GodotEngine.GodotEngine --version $godotVersion -e"
+        Write-Result 'Godot' $false "found $actual at $godot, need $godotVersion.stable. Install: winget install --id GodotEngine.GodotEngine --version $godotVersion -e"
     }
 }
 
