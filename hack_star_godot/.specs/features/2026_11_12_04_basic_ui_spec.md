@@ -21,6 +21,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.57 M (135 k in · 3.40 M cached · 38 k out) | CHF 1.78 (213 credits) | Step 3 done (`usage.ps1 -Agent subagents` 16:19–16:26) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.36 M (52 k in · 4.28 M cached · 31 k out) | CHF 1.45 (173 credits) | Step 4 done (`usage.ps1 -Agent subagents` 16:27–16:32) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.04 M (93 k in · 1.93 M cached · 19 k out) | CHF 0.52 (62 credits) | Step 5 done (`usage.ps1 -Agent subagents` 16:33–16:38) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.50 M (124 k in · 3.35 M cached · 32 k out) | CHF 1.60 (191 credits) | Step 6 done (`usage.ps1 -Agent subagents` 16:39–16:45) |
 
 ---
 
@@ -185,7 +186,7 @@ of this spec (see Deferred Items in the plan of the
 | **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ✅ Done | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
 | **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ✅ Done | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
 | **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ✅ Done | [→ Step 5](#step-5--home-screen) |
-| **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ⬜ Not started | [→ Step 6](#step-6--wow-entrance) |
+| **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ✅ Done | [→ Step 6](#step-6--wow-entrance) |
 | **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ⬜ Not started | [→ Step 7](#step-7--fighter-list) |
 | **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
 | **9** | Info page | light (Claude Haiku 5.5) — a word list and a scrolling page | ⬜ Not started | [→ Step 9](#step-9--info-page) |
@@ -366,17 +367,19 @@ At each game start the home screen plays a skippable entrance of at most 3 secon
 not replay when coming back (S2).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Entrance after D8 on the home screen: fighter drop-in with bounce, light burst,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Entrance after D8 on the home screen: fighter drop-in with bounce, light burst,
       `CPUParticles3D` sparkles, title pop; "Tap to skip" hint while it plays.
-- [ ] Skip with a mouse button, a touch or a key: jumps to the end state at once.
-- [ ] Tests: `ENTRANCE_SECONDS` ≤ 3.0; the first home after a fresh `GameState` plays it and
+- [x] Skip with a mouse button, a touch or a key: jumps to the end state at once.
+- [x] Tests: `ENTRANCE_SECONDS` ≤ 3.0; the first home after a fresh `GameState` plays it and
       sets `entrance_played`; a second home does not; a click, a touch and a key each skip it;
       Play still works after a skip.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at start, middle and
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at start, middle and
       end of the entrance (D10).
 
 ### Notes
+Started: 2026-11-21 16:39
+**Done (2026-11-21 · ~6m · Claude Opus 5.5)** — `scenes/home.gd`/`.tscn`: on the first home of a game start (`GameState.entrance_played`, set when it starts) a parallel `Tween` of `ENTRANCE_SECONDS` = 2.4 plays: the fighter falls in from the sky small and spinning, growing with the same ease so it never leaves the stage, lands with a squash and an elastic bounce; at the landing a light burst (an `OmniLight3D` flash, a radial-gradient billboard halo, a ground shockwave ring), 64 `CPUParticles3D` sparkles in gold and the fighter's colour, and a short screen flash; then the title pops in (scale from 0.2 with a back ease; hidden by `modulate`, because the column resets its children's scale) and the trophies, credits and buttons fade in; a "Tap to skip" hint shows while it plays. A mouse button, a touch, a key or a joypad button skips to the end state and is taken, so the tap that skips does not also press Play; the 3D effects are freed at the end. 7 new tests in `tests/test_home.gd` (≤ 3 s; first home plays and sets the flag, a second does not; ends by itself; click, touch and key skip; Play works after a skip and is not pressed by the skipping tap); `test_screen_sizes.gd` checks the hint at the five sizes; `docs/architecture.md` home line updated. `tools/test.ps1`: 75 tests passed; `tools/lint.ps1`: exit 0; screenshots from a windowed run at 0.3, 0.6, 0.85, 1.0, 1.2, 1.6, 2.0 and 3.0 s: small fighter falling, landing with halo, ring and sparkles, title pop, UI fading in, clean end state without hint or effects. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 3.50 M tokens · CHF 1.60 (191 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

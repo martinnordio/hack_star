@@ -83,9 +83,11 @@ func test_home_fits_every_size() -> void:
 		"Margin/Column/Body/Controls/PlayButton",
 		"Margin/Column/Body/Controls/MoreRow/FightersButton",
 		"Margin/Column/Body/Controls/MoreRow/InfoButton",
+		"SkipHint",
 	]
 	for label: String in SIZES:
 		var size: Vector2i = SIZES[label]
+		GameState.entrance_played = false
 		var shown: Array = await _show_in_viewport(HOME_SCENE, size)
 		var screen: Control = shown[1]
 		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
@@ -114,6 +116,8 @@ func test_arena_fits_every_size() -> void:
 
 
 func test_play_reacts_to_mouse_click() -> void:
+	# Played already: the entrance would take the first tap to skip itself.
+	GameState.entrance_played = true
 	var shown: Array = await _show_in_viewport(HOME_SCENE, Vector2i(1280, 720))
 	var button: Button = shown[1].get_node("Margin/Column/Body/Controls/PlayButton")
 	_drop_handlers(button)
@@ -123,6 +127,8 @@ func test_play_reacts_to_mouse_click() -> void:
 
 
 func test_play_reacts_to_touch() -> void:
+	# Played already: the entrance would take the first tap to skip itself.
+	GameState.entrance_played = true
 	var shown: Array = await _show_in_viewport(HOME_SCENE, Vector2i(844, 390))
 	var button: Button = shown[1].get_node("Margin/Column/Body/Controls/PlayButton")
 	_drop_handlers(button)
