@@ -30,7 +30,7 @@ the "unlock everything" hack really unlock every skin. It is F7 in the
 - [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the skins of the fighters with their
   rarities (Default, Epic, Mythic, Legendary), their 3D looks and portraits, the skin choice on
   the fighter screen (S7) and the chosen skins in the saved progress.
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter
+- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter
   and every skin" (S5), `INFINITY` unlimited credits.
 - [Unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — credits earned in
   matches, purchases, "UNLOCKED!" celebrations.

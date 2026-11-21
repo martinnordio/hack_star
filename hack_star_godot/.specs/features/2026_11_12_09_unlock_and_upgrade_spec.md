@@ -27,7 +27,7 @@ in the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7).
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — `INFINITY` (credits shown as ∞),
+- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — `INFINITY` (credits shown as ∞),
   `OPENSESAME` (all unlocked), `POWER22` (max power 22). Its S12 said power 22 only changes
   what is shown "until F6" — this spec is F6.
 - [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — credits (500 at start), power levels and

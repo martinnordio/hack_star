@@ -42,7 +42,7 @@ review to the same page.
   each other's fighter and skin.
 - [First match spec](2026_11_12_07_first_match_spec.md) — rewards are given only when a match
   ends.
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — the QR page asks for a code every time
+- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — the QR page asks for a code every time
   (a lock for kids, not security).
 - The Settings have language, bots and account reset; no sound yet. There is no music in the
   repository (spec 01, D13: music goes to the git-ignored `hack_star_godot/assets/music/`).

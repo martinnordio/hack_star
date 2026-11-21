@@ -28,7 +28,7 @@ added with `REQUIREMENTS: 2026_11_14_16_bug_fixes_spec.md — <bug>` until the p
 - [Accounts, fighters and languages spec](2026_11_13_15_accounts_fighters_and_languages_spec.md) —
   the created fighter, its price and its lock: creating is free the first time, every change
   costs 500 C, only the CREATOR code unlocks it.
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) and
+- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) and
   [unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — INFINITY (unlimited
   credits: paying does not take credits).
 - Progress is saved per account (spec 15): in the Python game each open browser tab kept its

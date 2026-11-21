@@ -91,7 +91,7 @@ other features build on.
 |----------|---------|
 | [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
 | [Basic UI spec](2026_11_12_04_basic_ui_spec.md) | F1 |
-| [Hack codes spec](../2026_11_12_05_hack_codes_spec.md) | F2 |
+| [Hack codes spec](2026_11_12_05_hack_codes_spec.md) | F2 |
 | [Graphics demo spec](../2026_11_12_06_graphics_demo_spec.md) | F3 |
 
 ### Investigation: Brawl Stars (the parts that matter for Hack star)
@@ -133,7 +133,7 @@ names and logos are copyrighted and are not used.
 |---|---------|------|--------|
 | F0 | Architecture and foundation of the Godot game: architecture document, the existing FastAPI server for rooms and hack codes, runs in the browser on desktop, iPad, phone | this spec | ✅ |
 | F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_04_basic_ui_spec.md) | ✅ |
-| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](../2026_11_12_05_hack_codes_spec.md) | ✅ |
+| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_05_hack_codes_spec.md) | ✅ |
 | F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](../2026_11_12_06_graphics_demo_spec.md) | ✅ |
 | F4 | First real match: last fighter standing against bots, win or lose | [first match](../2026_11_12_07_first_match_spec.md) | ✅ |
 | F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](../2026_11_12_08_trophies_spec.md) | ✅ |
@@ -352,8 +352,8 @@ Started: 2026-11-21 15:56
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (Safari, landscape and portrait, touch, ≥ 30 fps) — S1, S3, S6, S11 device parts | Needs a person with the devices (D6); open since spec 01 | the author, before the MVP's last spec (08) is closed; `tools\export_web.ps1` + `tools\serve_web.ps1` |
-| Local tool that serves the web export and forwards `/api` (HTTP and WebSocket) to the FastAPI server | No spec calls the server yet (D3) | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) |
-| Saved-progress file and its fields | Nothing is saved yet (D4) | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| Local tool that serves the web export and forwards `/api` (HTTP and WebSocket) to the FastAPI server | No spec calls the server yet (D3) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) |
+| Saved-progress file and its fields | Nothing is saved yet (D4) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
 
 ---
 

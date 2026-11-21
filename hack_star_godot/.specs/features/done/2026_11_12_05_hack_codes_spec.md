@@ -1,18 +1,18 @@
 # Hack Codes Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #29
-> **Moved from:** [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3)
+> **Moved from:** [2026_11_12_hack_codes_spec.md](../../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_hack_codes_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_hack_codes_spec.md (requirements only) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S3, S4, S6, S10, S11, S12 revised; S13 (no server), S14 (English), S15 (web game reaches the server) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #29 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.39 M (129 k in · 3.23 M cached · 37 k out) | CHF 1.70 (202 credits) | Part 2 written (9 Steps: standard, standard, standard, standard, reasoning, standard, standard, reasoning, light); also the requirements revision and the issue (`usage.ps1 -AgentName s05-lead` from 17:25:44) |
@@ -25,7 +25,44 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.73 M (27 k in · 2.68 M cached · 19 k out) | CHF 0.44 (52 credits) | Step 7 done (`usage.ps1 -AgentName s05-steps6-7` 18:00:26–18:04:27) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.32 M (139 k in · 6.15 M cached · 34 k out) | CHF 2.18 (260 credits) | Step 8 done (`usage.ps1 -AgentName s05-step8` from 17:25:44) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.84 M (101 k in · 1.71 M cached · 27 k out) | CHF 0.05 (6 credits) | Step 9 done (`usage.ps1 -AgentName s05-step9` from 17:25:44) |
-| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.27 M (169 k in · 8.04 M cached · 55 k out) | CHF 2.98 (356 credits) | semantic diff written (13 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-05-hack-codes.html)); code review: Approve, 0 Blocking · 2 Should-fix · 6 Nit (`usage.ps1 -AgentName s05-review` from 17:25:44) |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.27 M (169 k in · 8.04 M cached · 55 k out) | CHF 2.98 (356 credits) | semantic diff written (13 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../../review/2026-11-21_godot-mvp-05-hack-codes.html)); code review: Approve, 0 Blocking · 2 Should-fix · 6 Nit (`usage.ps1 -AgentName s05-review` from 17:25:44) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.35 M (90 k in · 2.24 M cached · 18 k out) | CHF 0.52 (63 credits) | review fixes #2, #3 (D15), #5, #7, #8 and the decisions D13, D14; commit `Fix review findings (#29)` (`usage.ps1 -AgentName s05-close` 17:25:44–18:38:51) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.30 M (20 k in · 1.28 M cached · 6 k out) | CHF 0.20 (24 credits) | spec closed (`usage.ps1 -AgentName s05-close` from 18:38:51) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 453 k (232 k in · 216 k cached · 6 k out) | CHF 0.55 (66 credits) | spec runner (coordination) (`usage.ps1 -AgentName s05-runner` from 17:25:44) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 517 k (1 k in · 513 k cached · 3 k out) | CHF 0.14 (17 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 17:25:44) |
+
+---
+
+## Cost summary
+
+This feature used 41.31 M tokens, CHF 12.35 (1476 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Sonnet 5.5, Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 3.39 M | CHF 1.70 (202 credits) | 10.6 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 29.65 M | CHF 7.67 (918 credits) | 48.3 % |
+| review | Claude Opus 5.5 | 8.27 M | CHF 2.98 (356 credits) | 18.7 % |
+| **Total** | | **41.31 M** | **CHF 12.35 (1476 credits)** | **77.7 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 914 k | CHF 0.33 (40 credits) | 2.1 % |
+| Step 2 | Claude Sonnet 5.5 | 2.05 M | CHF 0.33 (40 credits) | 2.1 % |
+| Step 3 | Claude Sonnet 5.5 | 4.28 M | CHF 0.76 (91 credits) | 4.8 % |
+| Step 4 | Claude Sonnet 5.5 | 1.90 M | CHF 0.27 (32 credits) | 1.7 % |
+| Step 5 | Claude Opus 5.5 | 2.03 M | CHF 1.24 (148 credits) | 7.8 % |
+| Step 6 | Claude Sonnet 5.5 | 2.97 M | CHF 0.66 (79 credits) | 4.2 % |
+| Step 7 | Claude Sonnet 5.5 | 2.73 M | CHF 0.44 (52 credits) | 2.7 % |
+| Step 8 | Claude Opus 5.5 | 6.32 M | CHF 2.18 (260 credits) | 13.7 % |
+| Step 9 | Claude Haiku 5.5 | 1.84 M | CHF 0.05 (6 credits) | 0.3 % |
+| Review fixes | Claude Sonnet 5.5 | 2.35 M | CHF 0.52 (63 credits) | 3.3 % |
+| CLOSE | Claude Sonnet 5.5 | 1.30 M | CHF 0.20 (24 credits) | 1.3 % |
+| Spec runner (coordination) | Claude Sonnet 5.5 | 453 k | CHF 0.55 (66 credits) | 3.5 % |
+| Orchestrator (main chat) | Claude Opus 5.5 | 517 k | CHF 0.14 (17 credits) | 0.9 % |
+| **Total implementation** | | **29.65 M** | **CHF 7.67 (918 credits)** | **48.3 %** |
 
 ---
 
@@ -36,18 +73,18 @@
 Hack codes are what makes Hack star different from Brawl Stars: by typing a secret code or
 scanning a QR code, a player gets unlimited credits, all fighters unlocked, and power levels up
 to 22 instead of 11. This is F2 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) and the "hack codes" part
-of [overall_req.md](../../../.specs/overall_req.md).
+[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) and the "hack codes" part
+of [overall_req.md](../../../../.specs/overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3).
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3).
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input) and S9 (progress kept on the device) apply here too; the Godot technology,
   the architecture document `hack_star_godot/docs/architecture.md` and how to run the game
   (S12–S14).
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — its open question
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — its open question
   "Server for rooms and hack codes" decides whether the hack codes need a server in the Godot game.
-- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
+- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
   with locks and power levels (S4), the fighter screen with skins (S7); the UI foundation of
   the Godot game (S12).
 - Checked 2026-11-21 (S0) in the code: the home screen (`scenes/home.tscn`) has **Play**,
@@ -72,7 +109,7 @@ of [overall_req.md](../../../.specs/overall_req.md).
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
 
 ## 1 · Specs
 
@@ -124,7 +161,7 @@ of [overall_req.md](../../../.specs/overall_req.md).
   expire until spec 16. _(revised 2026-11-21: the server already knows later codes and
   durations.)_
 - **S12 — Power 22 for now:** Until power levels affect matches
-  ([spec 09](2026_11_12_09_unlock_and_upgrade_spec.md)), the power-22 hack changes only what
+  ([spec 09](../2026_11_12_09_unlock_and_upgrade_spec.md)), the power-22 hack changes only what
   the fighter list and fighter screen show. _(revised 2026-11-21: F6 is spec 09 in the
   ordered list.)_
 - **S13 — No server:** If the game cannot reach the server to check a code, the hack screen
@@ -132,7 +169,7 @@ of [overall_req.md](../../../.specs/overall_req.md).
   the active hacks keep working without the server. _(added 2026-11-21: the Godot game calls
   a server for the first time.)_
 - **S14 — Language:** All new text is in English; translations come with
-  [spec 15](2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet, `docs/architecture.md`.)_
 - **S15 — Web game reaches the server:** The web export finds the server at the address the
   page came from (spec 03, D3); one documented local command serves the web export with the
@@ -153,6 +190,14 @@ simplest reading that fits the Godot game._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** The Godot game has a **Hack** button on the home screen that opens the hack screen: type a code (or press **Scan QR code**, which uses the device camera in the browser) and the existing FastAPI server checks it. `INFINITY` (unlimited credits, shown as ∞), `OPENSESAME` (every fighter and skin unlocked) and `POWER22` (power levels up to 22) work with a short celebration; "Unknown code" and "Can't reach the hack server" are clear messages; the active hacks are listed and **Turn all hacks off** brings the normal rules back. The active hacks are saved in the first save file (`user://hack_star_save.json`). A **QR codes** page draws a QR code per hack (own encoder, checked against segno) and saves each as a PNG; a QR link `?hack=<CODE>` opens the game on the hack screen. `tools/serve_web.ps1` serves the web export and forwards `/api` to the server (`-Https` for the camera on an iPad). 174 GUT tests, `lint.ps1`, `check_tools.ps1`, `export_web.ps1` and `cd server; uv run pytest` pass; `server/` and `ui/` are unchanged. The device play-test (iPad and phone) stays with the author (spec 03, D6, Deferred Items).
+
+**Differs from the plan:** The code review (Approve, 8 points) was handled: finding 2 (a failed save now warns), 3 (**D15** — a code accepted after Back still counts: `GameState.redeem_code` activates it, because a freed screen never resumes its `await`), 5 (a QR link too long to encode shows "Could not save the image."), 7 (docs) and 8 (tests reset the fake server in `after_each`) were fixed; finding 1 (**D13**) is documented only — the QR page must be opened from the Wi-Fi address, not `localhost` (README and the page's help text); finding 4 (**D14**) keeps D2; finding 6 is deferred to spec 14.
+
+**Files:** `hack_star_godot/game/` (`hacks`, `save_data`, `qr_code`), `hack_star_godot/scenes/` (`hack_screen`, `qr_page`, `autoload/hack_server`, `autoload/game_state`, `ui/qr_scanner`, `ui/qr_image`, `home`, `fighter_list`, `fighter_screen`), `hack_star_godot/web/` (`qr_scanner.js`, `jsQR.js`), `hack_star_godot/tools/` (`serve_web.ps1`, `serve_web.py`, `make_cert.py`, `export_web.ps1`), `hack_star_godot/tests/`, `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`, `hack_star_godot/LICENSES.md`, `project.godot`, `export_presets.cfg`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 
 ## 2 · Spec Overview
 
@@ -186,7 +231,7 @@ simplest reading that fits the Godot game._
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0; a Step that changes a `.ps1`
 > also parses it with `[System.Management.Automation.Language.Parser]::ParseFile`. Nothing
 > in `server/` or `ui/` changes (D1); the GUT tests never call the network (D2).
@@ -481,14 +526,14 @@ Started: 2026-11-21 18:16
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Hacks that expire after 72 hours | The server has durations, but expiry is spec 16's statement (S11) | [16 Bug fixes](2026_11_14_16_bug_fixes_spec.md) |
-| `HYPERCHARGE` and `CREATOR` codes | Their effects come with their specs; until then "Unknown code" (S11, D1) | [12 Super and hypercharge](2026_11_12_12_super_and_hypercharge_spec.md), [17 Fighter studio, saves and music](2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
-| Buying with unlimited credits | Nothing can be bought yet; `Hacks.spend` is ready (S4, D4) | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md), [10 Skins shop](2026_11_12_10_skins_shop_spec.md) |
-| Power 22 in matches | Power levels do not affect matches yet (S12) | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
-| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Hacks that expire after 72 hours | The server has durations, but expiry is spec 16's statement (S11) | [16 Bug fixes](../2026_11_14_16_bug_fixes_spec.md) |
+| `HYPERCHARGE` and `CREATOR` codes | Their effects come with their specs; until then "Unknown code" (S11, D1) | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md), [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
+| Buying with unlimited credits | Nothing can be bought yet; `Hacks.spend` is ready (S4, D4) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md), [10 Skins shop](../2026_11_12_10_skins_shop_spec.md) |
+| Power 22 in matches | Power levels do not affect matches yet (S12) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | Play-test on a real iPad and phone (in-game camera over `-Https`, camera app with a QR link, on-screen keyboard) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
-| WebSocket tunnel of `tools/serve_web.py` to an `https://` `-ApiUrl` (code review finding 6) | Plain TCP today; only rooms use WebSockets | [14 Play with friends](2026_11_12_14_play_with_friends_spec.md) |
+| WebSocket tunnel of `tools/serve_web.py` to an `https://` `-ApiUrl` (code review finding 6) | Plain TCP today; only rooms use WebSockets | [14 Play with friends](../2026_11_12_14_play_with_friends_spec.md) |
 
 ---
 
@@ -496,7 +541,7 @@ Started: 2026-11-21 18:16
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-05-hack-codes.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-05-hack-codes.html) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve (with follow-ups) | 0 Blocking · 2 Should-fix · 6 Nit |
 
 ### Code review 2026-11-21
@@ -534,5 +579,5 @@ the screen. `server/` and `ui/` are unchanged; no debug output, no TODO.
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

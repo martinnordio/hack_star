@@ -28,7 +28,7 @@ part of F8).
 
 **Already in the repository** (reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) (#11).
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — codes typed or scanned as QR, the
+- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — codes typed or scanned as QR, the
   printable QR codes, the list of hack codes, **Reset all hacks**.
 - [First match spec](2026_11_12_07_first_match_spec.md) — match rules, bots, HUD and joysticks;
   [graphics demo spec](2026_11_12_06_graphics_demo_spec.md) — the arena, touch controls and

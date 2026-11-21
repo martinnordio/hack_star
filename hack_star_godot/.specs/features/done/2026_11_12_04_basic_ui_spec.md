@@ -540,9 +540,9 @@ Started: 2026-11-21 17:01
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
 | The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](../2026_11_12_06_graphics_demo_spec.md) (its S2) |
-| **Hack** button on the home screen | F2 | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) (its S1) |
+| **Hack** button on the home screen | F2 | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) (its S1) |
 | Unlocking fighters with credits | F6 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
 | Music and sound effects with a mute button | Left out of this spec (Open questions) | [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
 | Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |

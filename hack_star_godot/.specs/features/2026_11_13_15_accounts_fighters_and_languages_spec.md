@@ -42,7 +42,7 @@ agreed as enough.
   Sharpshooter, Speedy, Thrower, Spreader) come from
   [More fighters](2026_11_12_13_more_fighters_spec.md), so there are 10 fighters.
 - The Shop with the skin of the day, from [Skins Shop](2026_11_12_10_skins_shop_spec.md).
-- The hack codes and the QR codes, from [Hack codes](2026_11_12_05_hack_codes_spec.md) and
+- The hack codes and the QR codes, from [Hack codes](done/2026_11_12_05_hack_codes_spec.md) and
   [Super and Hypercharge](2026_11_12_12_super_and_hypercharge_spec.md): INFINITY, OPENSESAME,
   POWER22, HYPERCHARGE, typed or scanned, and the printable QR codes with no password.
 - Play with friends, from [Play with friends](2026_11_12_14_play_with_friends_spec.md), sends
