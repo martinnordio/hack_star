@@ -13,7 +13,7 @@ why: |
   fixes the MVP to specs 03-08, and adds tests that put every screen into desktop, iPad and
   phone sizes and press Play and Back.
 spec:
-  path: .specs/features/2026_11_12_03_mvp_and_architecture_spec.md
+  path: .specs/features/done/2026_11_12_03_mvp_and_architecture_spec.md
   statements: [S2, S3, S8, S10, S11, S13, S14, S15]
 changes:
   - id: start-screen

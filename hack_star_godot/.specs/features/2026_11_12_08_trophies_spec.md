@@ -23,7 +23,7 @@ Matches can be won and lost, but nothing is earned. The kids' favourite part of 
 pushing a fighter's trophies and reaching **Prestige** at 1000 trophies ("if I win, the
 fighter gets 10 trophies; at 1000 it gets a diamond with a number"). This spec gives trophies
 after each match and celebrates Prestige. It is F5 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md), and with it the
+[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md), and with it the
 first playable version (F0–F5) is complete.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
@@ -32,7 +32,7 @@ first playable version (F0–F5) is complete.
   defeat with place, time's up) and the result screen; match settings.
 - [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — trophies per fighter in the saved
   progress, total trophies on home, the Prestige badge on home, list and fighter screen.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 

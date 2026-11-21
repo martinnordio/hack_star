@@ -26,7 +26,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — browser, screen sizes,
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — browser, screen sizes,
   input, own art and smooth animation (S1–S3, S6, S7) apply here too; Brawl Stars investigation
   and feature list; the Godot technology, the architecture document
   `hack_star_godot/docs/architecture.md` and how to run the game (S12–S14).
@@ -93,7 +93,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   screens (colours, text styles, buttons, the Back button), one way to go from screen to
   screen that later specs reuse, and layouts that fit desktop, iPad and phone in landscape
   and portrait, with touch and mouse; it is written down in
-  `hack_star_godot/docs/architecture.md` ([spec 03](2026_11_12_03_mvp_and_architecture_spec.md)).
+  `hack_star_godot/docs/architecture.md` ([spec 03](done/2026_11_12_03_mvp_and_architecture_spec.md)).
 
 ### Vocabulary for the info page
 

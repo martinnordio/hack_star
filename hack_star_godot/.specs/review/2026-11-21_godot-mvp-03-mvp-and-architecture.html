@@ -105,7 +105,7 @@
 </section>
 
 <section id="spec-context"><h2>Spec context</h2>
-  <p><a href="../features/2026_11_12_03_mvp_and_architecture_spec.md">2026_11_12_03_mvp_and_architecture_spec.md</a> (#27) â€” statements S2, S3, S8, S10, S11, S13, S14, S15 (S1, S6 device parts deferred, D6); Steps 1 Architecture document, 2 Screen sizes and input checked by tests, 3 README, ordered list, final check.</p>
+  <p><a href="../features/done/2026_11_12_03_mvp_and_architecture_spec.md">2026_11_12_03_mvp_and_architecture_spec.md</a> (#27) â€” statements S2, S3, S8, S10, S11, S13, S14, S15 (S1, S6 device parts deferred, D6); Steps 1 Architecture document, 2 Screen sizes and input checked by tests, 3 README, ordered list, final check.</p>
 </section>
 
 <section id="semantic-diff"><h2>Semantic diff</h2>
@@ -113,7 +113,7 @@
     <p><strong>Why:</strong> The Godot game had a first playable scene but no architecture document, no checked MVP scope and no proof that its screens fit phone sizes.</p>
     <p><strong>Breaking:</strong> none Â· <strong>Checks:</strong> 6 pass Â· 3 n/a Â· 0 fail</p>
     <table><tr><th>#</th><th>Check</th><th>Result</th></tr><tr><td>C1</td><td>A record exists when it is required (code and tests changed)</td><td>pass</td></tr><tr><td>C2</td><td>The record passes change_record.schema.json (uv run â€¦ jsonschema)</td><td>pass</td></tr><tr><td>C3</td><td>Every S&lt;n&gt; exists in the spec (S2, S3, S8, S10, S11, S13, S14, S15)</td><td>pass</td></tr><tr><td>C4</td><td>Every block&#x27;s object differs Before / After (title rect 437Ã—132 â†’ 328Ã—99; test file added)</td><td>pass</td></tr><tr><td>C5</td><td>Tool-detectable changes have a block (no command, endpoint, setting or dependency changed; the scene property has the ui block)</td><td>pass</td></tr><tr><td>C6</td><td>api / schema changes with contracts</td><td>n/a</td></tr><tr><td>C7</td><td>output changes come with tests (the output block is the new tests)</td><td>pass</td></tr><tr><td>C8</td><td>ui changes with a UI catalog (the Godot game has none)</td><td>n/a</td></tr><tr><td>C9</td><td>Added dependencies have a decision (none added)</td><td>n/a</td></tr></table>
-    <p class="note">Record: <a href="../changes/godot-mvp-03-mvp-and-architecture/change_record.yaml">changes/godot-mvp-03-mvp-and-architecture/change_record.yaml</a></p>
+    <p class="note">Record: <a href="../changes/done/godot-mvp-03-mvp-and-architecture/change_record.yaml">changes/godot-mvp-03-mvp-and-architecture/change_record.yaml</a></p>
   </div>
 
   <article class="card" id="sd-start-screen" data-card="1-start-screen">
@@ -352,7 +352,7 @@ start_screen.tscn added to the root window, 30 frames, root texture saved (base 
  "branch": "feature/godot-mvp",
  "base": "89ada86",
  "head": "d0c9ac2",
- "record": "../changes/godot-mvp-03-mvp-and-architecture/change_record.yaml",
+ "record": "../changes/done/godot-mvp-03-mvp-and-architecture/change_record.yaml",
  "commits": [
   "d0c9ac2",
   "1e23bc5",
@@ -414,7 +414,7 @@ start_screen.tscn added to the root window, 30 frames, root texture saved (base 
   }
  ],
  "specs": [
-  "features/2026_11_12_03_mvp_and_architecture_spec.md"
+  "features/done/2026_11_12_03_mvp_and_architecture_spec.md"
  ]
 }
 </script>

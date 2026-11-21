@@ -1,18 +1,18 @@
 # MVP and Architecture Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #27
-> **Moved from:** [2026_11_12_mvp_and_architecture_spec.md](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1)
+> **Moved from:** [2026_11_12_mvp_and_architecture_spec.md](../../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Opus 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_mvp_and_architecture_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Opus 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_mvp_and_architecture_spec.md (requirements only) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S7 (licences file), S8 (F6–F12 out, F13 only fitting fixes), S9 (same browser), S13 (server connection) revised; S4/S5 marked removed; feature list for the Godot game; server question answered — S15 (keep FastAPI); branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #27 created |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 1.56 M (108 k in · 1.43 M cached · 22 k out) | CHF 1.07 (127 credits) | Part 2 written (3 Steps: standard, standard, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 15:47) |
@@ -20,6 +20,35 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 839 k (41 k in · 785 k cached · 12 k out) | CHF 0.26 (30 credits) | Step 2 done (`usage.ps1 -Agent subagents` from 15:53) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 651 k (54 k in · 590 k cached · 7 k out) | CHF 0.01 (2 credits) | Step 3 done (`usage.ps1 -Agent subagents` from 15:56) |
 | 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 2.16 M (106 k in · 2.03 M cached · 29 k out) | CHF 1.12 (134 credits) | semantic diff written (2 blocks, checks 6 pass · 3 n/a); code review: Approve (0 blocking, 4 should-fix, 3 nit) (`usage.ps1 -Agent subagents` from 15:57) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.54 M (76 k in · 1.45 M cached · 14 k out) | CHF 0.40 (48 credits) | review fixes #1, #2 (D7), #3, #5, #7; commit `Fix review findings (#27)` (`usage.ps1 -Agent subagents` 16:03:42–16:07:00) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.18 M (25 k in · 1.14 M cached · 9 k out) | CHF 0.23 (27 credits) | spec closed (`usage.ps1 -Agent subagents` from 16:07) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.89 M (503 k in · 3.38 M cached · 10 k out) | CHF 2.85 (339 credits) | orchestrator of this spec (main chat, `-Agent main` from 15:46) |
+---
+
+## Cost summary
+
+This feature used 13.15 M tokens, CHF 6.51 (775 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 1.56 M | CHF 1.07 (127 credits) | 6.7 % |
+| implementation | Claude Sonnet 5.5, Claude Haiku 5.5, Claude Opus 5.5 | 9.43 M | CHF 4.32 (514 credits) | 27.1 % |
+| review | Claude Opus 5.5 | 2.16 M | CHF 1.12 (134 credits) | 7.1 % |
+| **Total** | | **13.15 M** | **CHF 6.51 (775 credits)** | **40.8 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 1.33 M | CHF 0.57 (68 credits) | 3.6 % |
+| Step 2 | Claude Sonnet 5.5 | 839 k | CHF 0.26 (30 credits) | 1.6 % |
+| Step 3 | Claude Haiku 5.5 | 651 k | CHF 0.01 (2 credits) | 0.1 % |
+| Review fixes | Claude Sonnet 5.5 | 1.54 M | CHF 0.40 (48 credits) | 2.5 % |
+| CLOSE | Claude Sonnet 5.5 | 1.18 M | CHF 0.23 (27 credits) | 1.4 % |
+| Orchestrator (Steps, review, fixes, close) | Claude Opus 5.5 | 3.89 M | CHF 2.85 (339 credits) | 17.8 % |
+| **Total implementation** | | **9.43 M** | **CHF 4.32 (514 credits)** | **27.1 %** |
+
 ---
 
 # Part 1 · Requirements
@@ -28,29 +57,29 @@
 
 Hack star is a browser game for kids inspired by Brawl Stars, with one twist: **hack codes**
 that give unlimited credits, unlock all fighters and allow 22 power levels instead of 11. This
-spec (Spec 0 in [overall_req.md](../../../.specs/overall_req.md)) defines the minimum playable game that can be
+spec (Spec 0 in [overall_req.md](../../../../.specs/overall_req.md)) defines the minimum playable game that can be
 built in about one day, the feature list (F0…F13), and the technical foundation that the
 other features build on.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1).
-- [overall_req.md](../../../.specs/overall_req.md) — the vision and Spec 0, Spec 1 and Spec 2.
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1).
+- [overall_req.md](../../../../.specs/overall_req.md) — the vision and Spec 0, Spec 1 and Spec 2.
 - No lower-numbered moved spec: this is the first one. The Godot specs before it:
-  [01 Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md) and
-  [02 Move Specs to Godot](done/2026_11_21_02_move_specs_to_godot_spec.md).
+  [01 Godot Setup and First Game](2026_11_21_01_godot_setup_and_first_game_spec.md) and
+  [02 Move Specs to Godot](2026_11_21_02_move_specs_to_godot_spec.md).
 - Spec 01's Godot project in `hack_star_godot/`: Godot 4.7.2 with GDScript, the Compatibility
   renderer and a single-threaded web export; a start screen with **Play**, a 3D arena seen
   from above at an angle with one fighter that moves with the keyboard or a touch joystick;
   GUT tests; the commands in `hack_star_godot/tools/` (`test.ps1`, `lint.ps1`,
   `export_web.ps1`, `serve_web.ps1`, `check_tools.ps1`); install, run, export and play from
-  an iPad in [hack_star_godot/README.md](../../README.md). No server. Its iPad play-test
+  an iPad in [hack_star_godot/README.md](../../../README.md). No server. Its iPad play-test
   (Safari, landscape and portrait, ≥ 30 fps) is still open (spec 01, Deferred Items); only
   the Windows desktop was checked (~60 fps).
 - The existing FastAPI server in `server/src/hack_star_server/` (`/api/hacks`,
   `/api/hacks/redeem`, the room WebSocket `/api/rooms`), used by the Svelte game through the
   Vite proxy (`/api` on the same address as the page); its tests in `server/tests/`.
 - `.specs/kit/` — the spec kit used to write these specs, shared by both games
-  ([AGENTS.md](../../../AGENTS.md)).
+  ([AGENTS.md](../../../../AGENTS.md)).
 
 **New:**
 - ~~The Python server, the Svelte UI and a way to run both locally.~~ (replaced for the
@@ -60,10 +89,10 @@ other features build on.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea and planned specs |
-| [Basic UI spec](2026_11_12_04_basic_ui_spec.md) | F1 |
-| [Hack codes spec](2026_11_12_05_hack_codes_spec.md) | F2 |
-| [Graphics demo spec](2026_11_12_06_graphics_demo_spec.md) | F3 |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
+| [Basic UI spec](../2026_11_12_04_basic_ui_spec.md) | F1 |
+| [Hack codes spec](../2026_11_12_05_hack_codes_spec.md) | F2 |
+| [Graphics demo spec](../2026_11_12_06_graphics_demo_spec.md) | F3 |
 
 ### Investigation: Brawl Stars (the parts that matter for Hack star)
 
@@ -103,23 +132,23 @@ names and logos are copyrighted and are not used.
 | # | Feature | Spec | In MVP |
 |---|---------|------|--------|
 | F0 | Architecture and foundation of the Godot game: architecture document, the existing FastAPI server for rooms and hack codes, runs in the browser on desktop, iPad, phone | this spec | ✅ |
-| F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_04_basic_ui_spec.md) | ✅ |
-| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_05_hack_codes_spec.md) | ✅ |
-| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_06_graphics_demo_spec.md) | ✅ |
-| F4 | First real match: last fighter standing against bots, win or lose | [first match](2026_11_12_07_first_match_spec.md) | ✅ |
-| F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](2026_11_12_08_trophies_spec.md) | ✅ |
-| F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) | later |
-| F7 | Skins shop | [skins shop](2026_11_12_10_skins_shop_spec.md) | later |
-| F8 | Overtime (one more minute without walls) and a Settings screen for bot level and number of bots | [overtime and match options](2026_11_12_11_overtime_and_match_options_spec.md) | later |
-| F9 | More fighters (10) with fighter types and different attacks | [more fighters](2026_11_12_13_more_fighters_spec.md) | later |
-| F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](2026_11_12_12_super_and_hypercharge_spec.md) | later |
-| F11 | Play with up to 2 friends on their own devices | [play with friends](2026_11_12_14_play_with_friends_spec.md) | later |
+| F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](../2026_11_12_04_basic_ui_spec.md) | ✅ |
+| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](../2026_11_12_05_hack_codes_spec.md) | ✅ |
+| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](../2026_11_12_06_graphics_demo_spec.md) | ✅ |
+| F4 | First real match: last fighter standing against bots, win or lose | [first match](../2026_11_12_07_first_match_spec.md) | ✅ |
+| F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](../2026_11_12_08_trophies_spec.md) | ✅ |
+| F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) | later |
+| F7 | Skins shop | [skins shop](../2026_11_12_10_skins_shop_spec.md) | later |
+| F8 | Overtime (one more minute without walls) and a Settings screen for bot level and number of bots | [overtime and match options](../2026_11_12_11_overtime_and_match_options_spec.md) | later |
+| F9 | More fighters (10) with fighter types and different attacks | [more fighters](../2026_11_12_13_more_fighters_spec.md) | later |
+| F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) | later |
+| F11 | Play with up to 2 friends on their own devices | [play with friends](../2026_11_12_14_play_with_friends_spec.md) | later |
 | F12 | A second mode (Gem Grab or another, Mattia to choose) | — | later |
-| F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](2026_11_14_16_bug_fixes_spec.md) | only the fixes that fit what is built (its S0) |
+| F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](../2026_11_14_16_bug_fixes_spec.md) | only the fixes that fit what is built (its S0) |
 
 _"In MVP" is for the Godot game: "(done)" of the Python + Svelte game was removed (S0,
 2026-11-21) — none of F1–F13 is built in Godot yet; the order of work is the
-[ordered list](README.md)._
+[ordered list](../README.md)._
 
 ## 1 · Specs
 
@@ -136,7 +165,7 @@ _"In MVP" is for the Godot game: "(done)" of the Python + Svelte game was remove
 - **S3 — Input:** Everything can be done with touch on iPad and phone, and with mouse and
   keyboard on a desktop.
 - ~~**S4 — Technology:** The server is written in Python and the UI in Svelte (decided in
-  [overall_req.md](../../../.specs/overall_req.md)).~~ (removed: replaced for the Godot game
+  [overall_req.md](../../../../.specs/overall_req.md)).~~ (removed: replaced for the Godot game
   by S12)
 - ~~**S5 — Run locally:** A developer can start the server and the UI on one computer by
   following the README, and play from an iPad or phone on the same Wi-Fi.~~ (removed:
@@ -158,13 +187,13 @@ _"In MVP" is for the Godot game: "(done)" of the Python + Svelte game was remove
   Brawl Stars.
 - **S12 — Technology:** The Godot game is made with Godot 4.7 and written in GDScript,
   exported for the web and played in the browser
-  ([spec 01](done/2026_11_21_01_godot_setup_and_first_game_spec.md)).
+  ([spec 01](2026_11_21_01_godot_setup_and_first_game_spec.md)).
 - **S13 — Architecture document:** The Godot game has an architecture document,
   `hack_star_godot/docs/architecture.md`, that describes how screens, game rules, 3D models,
   saved progress, rooms, the connection to the server (S15) and tests are organised; every
   later spec reads it and keeps it up to date.
 - **S14 — Run locally:** A developer opens, runs, tests, exports and serves the game by
-  following [hack_star_godot/README.md](../../README.md), and plays from an iPad or phone on
+  following [hack_star_godot/README.md](../../../README.md), and plays from an iPad or phone on
   the same Wi-Fi.
 - **S15 — Server for rooms and hack codes:** Rooms and hack codes of the Godot game come from
   the existing FastAPI server (`server/`) — the same rooms and codes as the Python + Svelte
@@ -182,6 +211,14 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** The Godot game has its architecture document, `hack_star_godot/docs/architecture.md` (layout, screens, game rules, 3D models, saved progress, the FastAPI server for rooms and hack codes, art and licences, tests and checks, how-to), and the README and the ordered list point to it. Screen sizes and input are checked by tests: the start screen and the arena fit desktop, iPad and phone in landscape and portrait with the project's own content scale (D7), and Play and Back react to a mouse click and to a real touch event. 25 GUT tests pass; `server/` and `ui/` are unchanged (S15). The device play-test on a real iPad and phone stays with the author (D6, Deferred Items).
+
+**Differs from the plan:** The code review (Approve) found 7 points, all fixed: the touch cases now send `InputEventScreenTouch`; the size tests apply the `canvas_items`/`expand` stretch (new decision D7), which brought the start-screen title back to font size 96 (Step 2 had cut it to 72 for a cut-off no player sees); the architecture document, the Definition of Done, the Step table, Step 3's Notes and the ordered list were corrected; the test reads the arena's corners from the arena script.
+
+**Files:** `hack_star_godot/docs/architecture.md`, `hack_star_godot/tests/test_screen_sizes.gd`, `hack_star_godot/scenes/start_screen.tscn`, `hack_star_godot/README.md`, `hack_star_godot/.specs/features/README.md`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 
 ## 2 · Spec Overview
 
@@ -209,13 +246,13 @@ on 2026-11-12 so work could start; change them with `REQUIREMENTS:` if needed)._
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)).
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)).
 
 ### Decisions
 
 | # | Decision | Why |
 |---|----------|-----|
-| D1 | **`hack_star_godot/docs/architecture.md`** (new folder `docs/`) with the sections: Layout (folders of spec 01, D5), Screens (`scenes/`, scene changes with `change_scene_to_file`), Game rules (`game/`: pure, statically typed scripts with `class_name`, tested headless), 3D models (built in code from primitive meshes; imported models later go to `assets/` with their licence in `LICENSES.md`), Saved progress (D4), Server, hack codes and rooms (D2, D3), Languages (none yet — spec 15), Tests and checks (GUT, `tools/*.ps1`), Spec order (the [ordered list](README.md)), How to… (add a screen, a rule, a test). Parts that later specs build are marked *planned — spec NN* so the document matches the folders at every moment. | S13; the same sections as the root `docs/architecture.md`, so a reader of both games finds the same things in the same place. |
+| D1 | **`hack_star_godot/docs/architecture.md`** (new folder `docs/`) with the sections: Layout (folders of spec 01, D5), Screens (`scenes/`, scene changes with `change_scene_to_file`), Game rules (`game/`: pure, statically typed scripts with `class_name`, tested headless), 3D models (built in code from primitive meshes; imported models later go to `assets/` with their licence in `LICENSES.md`), Saved progress (D4), Server, hack codes and rooms (D2, D3), Languages (none yet — spec 15), Tests and checks (GUT, `tools/*.ps1`), Spec order (the [ordered list](../README.md)), How to… (add a screen, a rule, a test). Parts that later specs build are marked *planned — spec NN* so the document matches the folders at every moment. | S13; the same sections as the root `docs/architecture.md`, so a reader of both games finds the same things in the same place. |
 | D2 | **Server:** the Godot game uses the existing FastAPI API unchanged — `GET /api/hacks`, `POST /api/hacks/redeem`, the WebSocket `/api/rooms` with the room messages of `server/src/hack_star_server/rooms.py` — through Godot's `HTTPRequest` and `WebSocketPeer`. No Godot-only endpoint and no change to `server/` in this spec. | S15: same codes and rooms as the Svelte game; the server and its tests stay as they are. |
 | D3 | **Same address:** the web export reaches the server at `/api` on the address the page came from, as the Svelte game does through the Vite proxy (`ui/vite.config.ts`, port 8180). The local tool that serves `build/web/` and forwards `/api` (HTTP and WebSocket) to the server is built by the first spec that calls the server (05 Hack codes); until then `tools/serve_web.ps1` stays as it is. | No CORS settings in the server, works the same on an iPad over Wi-Fi; nothing is built before a spec needs it. |
 | D4 | **Saved progress (planned):** one JSON file in `user://` (in the browser Godot keeps it in IndexedDB, per device and browser — S9) with a `version` number, read and written by one autoload; its fields are defined by the first spec that saves (05 Hack codes / 08 Trophies). Only described in the document in this spec. | One place for every saved value; the version allows later migrations; matches S9's "same device and browser". |
@@ -315,8 +352,8 @@ Started: 2026-11-21 15:56
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (Safari, landscape and portrait, touch, ≥ 30 fps) — S1, S3, S6, S11 device parts | Needs a person with the devices (D6); open since spec 01 | the author, before the MVP's last spec (08) is closed; `tools\export_web.ps1` + `tools\serve_web.ps1` |
-| Local tool that serves the web export and forwards `/api` (HTTP and WebSocket) to the FastAPI server | No spec calls the server yet (D3) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) |
-| Saved-progress file and its fields | Nothing is saved yet (D4) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](2026_11_12_08_trophies_spec.md) |
+| Local tool that serves the web export and forwards `/api` (HTTP and WebSocket) to the FastAPI server | No spec calls the server yet (D3) | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) |
+| Saved-progress file and its fields | Nothing is saved yet (D4) | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
 
 ---
 
@@ -324,9 +361,9 @@ Started: 2026-11-21 15:56
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-03-mvp-and-architecture.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-03-mvp-and-architecture.html) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 blocking, 4 should-fix, 3 nit |
-| 2026-11-21 | AI assistant (Claude Sonnet 5.5) | fixes | Fixed | findings 1, 2 (D7), 3, 5, 7 fixed with the tests at 25 and the title back at 96; 4 and 6 with CLOSE |
+| 2026-11-21 | AI assistant (Claude Sonnet 5.5) | fixes | Fixed | findings 1, 2 (D7), 3, 5, 7 fixed with the tests at 25 and the title back at 96; 4 and 6 fixed with CLOSE |
 
 ### Code review 2026-11-21
 
@@ -342,9 +379,9 @@ section matches `server/`; `server/` and `ui/` are unchanged (S15).
 | 1 | The "touch" cases (`test_play_reacts_to_touch`, second press in `test_back_reacts_to_mouse_click_and_touch`) push the same `InputEventMouseButton` as the click cases; no touch event is sent, only the `emulate_mouse_from_touch` setting is read — the touch half of S3 is not exercised | code | test | Should-fix | fix now — fixed 2026-11-21 |
 | 2 | D5's SubViewports do not apply the project's `canvas_items` stretch: at 390×844 the test lays out 390 logical px, the game window 1280×2770 (measured). The tests are stricter than reality, and the title 96 → 72 fixes a cut-off no player sees, making the title smaller on every device | spec | spec | Should-fix | plan decision — decided and fixed 2026-11-21 (D7) |
 | 3 | `docs/architecture.md` still says the sub-viewport tests are "planned — this spec, Step 2" (line 48) and its Tests section omits `test_screen_sizes.gd` (S13: kept up to date) | spec | docs | Should-fix | fix now — fixed 2026-11-21 |
-| 4 | Definition of Done: the *Implementation* line is not ticked although all three Steps are ✅ and the checks pass | spec | spec | Should-fix | fix now |
+| 4 | Definition of Done: the *Implementation* line is not ticked although all three Steps are ✅ and the checks pass | spec | spec | Should-fix | fix now — fixed 2026-11-21 (with CLOSE) |
 | 5 | Spec Overview row 3 has its Detail cell twice; Step 3 Notes end with a broken template fragment (", append: **Done (…)** — summary + verifying result. -->") | spec | docs | Nit | fix now — fixed 2026-11-21 |
-| 6 | `.specs/features/README.md`: spec 03's status is *planned*; the legend has *implemented* for a spec whose Steps are done | spec | docs | Nit | fix now |
+| 6 | `.specs/features/README.md`: spec 03's status is *planned*; the legend has *implemented* for a spec whose Steps are done | spec | docs | Nit | fix now — fixed 2026-11-21 (with CLOSE) |
 | 7 | `ARENA_CORNERS` in `tests/test_screen_sizes.gd` is a copy of `scenes/arena.gd`'s constant; reading it from the arena script keeps them from drifting | code | guideline | Nit | fix now — fixed 2026-11-21 |
 
 **Outcome:** Approve (no Blocking) — with follow-ups: findings 1, 3–7 to fix, a decision on 2.
@@ -355,7 +392,7 @@ section matches `server/`; `server/` and `ui/` are unchanged (S15).
 
 - [x] Requirements · Part 1 agreed (S1..S15 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` and `hack_star_godot/docs/architecture.md` updated
+- [x] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` and `hack_star_godot/docs/architecture.md` updated
 - [x] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

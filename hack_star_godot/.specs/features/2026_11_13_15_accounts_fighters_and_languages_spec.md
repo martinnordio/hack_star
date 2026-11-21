@@ -48,7 +48,7 @@ agreed as enough.
 - Play with friends, from [Play with friends](2026_11_12_14_play_with_friends_spec.md), sends
   each player's fighter id, skin and power to the others.
 - All text is in English; the Info page has the game vocabulary.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 

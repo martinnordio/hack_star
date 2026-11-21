@@ -23,7 +23,7 @@ Mattia asked for a **Hypercharge QR code**. In Brawl Stars a fighter charges its
 special attack) by hitting enemies, and a **Hypercharge** makes the Super extra strong for a
 short time. Hack star has neither yet, so this spec adds the Super, the Hypercharge, and a hack
 code that gives Hypercharge. It is F10 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) (it was planned as
+[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) (it was planned as
 part of F8).
 
 **Already in the repository** (reuse, don't rebuild):
@@ -35,7 +35,7 @@ part of F8).
   Training.
 - Fighter types come later with the [more fighters spec](2026_11_12_13_more_fighters_spec.md)
   (each type can have its own Super then); this spec does not need them.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 

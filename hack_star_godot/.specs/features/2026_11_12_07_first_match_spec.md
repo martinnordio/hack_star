@@ -22,7 +22,7 @@
 Hack star can be played: the player runs and shoots in the canyon, but nothing shoots back and
 nobody wins. This spec adds the first real match, a "last fighter standing" fight against bots,
 like Showdown in Brawl Stars. It is F4 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md). The numbers Mattia
+[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md). The numbers Mattia
 still has to choose (see "Questions to Mattia" in [overall_req.md](../../../.specs/overall_req.md)) are
 settings with a default, so his answers change one value each.
 
@@ -32,7 +32,7 @@ settings with a default, so his answers change one value each.
   shots, effects, bushes, camera, target dummies, fighters and skins in 3D.
 - [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the home screen with **Play**; the
   selected fighter and skin; the UI foundation of the Godot game (S12).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   technology, the architecture document `hack_star_godot/docs/architecture.md` and how to run
   the game (S12–S14).
 

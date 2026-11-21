@@ -23,11 +23,11 @@ Mattia: "the players should have up to 2 friends to play". Today Hack star is si
 against bots, all in the browser. Playing with friends means each kid plays on their own device
 (iPad, phone, computer) in the same match, so the Python server must connect the devices (Python + Svelte game; see S0 / spec 03's server question). This
 is the biggest change so far; it is F11 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md).
+[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_play_with_friends_spec.md) (#12).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are, rooms
   included), how to run the game and play from an iPad or phone on the same Wi-Fi (S12–S14),
   and its open question about the server for rooms.
@@ -87,7 +87,7 @@ is the biggest change so far; it is F11 in the
 - **Q3 (Martin) — server for rooms (Godot):** Rooms need a server that connects the devices. Does
   the Godot game use the existing FastAPI server (`server/`) for them, or something in Godot?
   This is the open question of the
-  [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) ("Server for rooms and
+  [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) ("Server for rooms and
   hack codes"); answer it there first. Suggestion: keep the FastAPI server (same rooms and codes
   as the Python game).
 

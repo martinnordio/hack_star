@@ -23,7 +23,7 @@ Kids love skins, especially Legendary ones ("something like a costume"), and in 
 are bought, which makes them special. In Hack star every skin is free to pick today. This spec
 adds a **Shop** where skins are bought with credits, with a "skin of the day" on offer, and makes
 the "unlock everything" hack really unlock every skin. It is F7 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md).
+[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8).
@@ -34,7 +34,7 @@ the "unlock everything" hack really unlock every skin. It is F7 in the
   and every skin" (S5), `INFINITY` unlimited credits.
 - [Unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — credits earned in
   matches, purchases, "UNLOCKED!" celebrations.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 

@@ -23,7 +23,7 @@ Credits and power levels are shown but do nothing: Frosty, Luna and Pixel can on
 with a hack, and power 22 is just a number. This spec lets players earn credits in matches,
 spend them to unlock fighters and upgrade power levels, and makes power levels change health and
 damage in matches — so the hack codes "unlimited credits" and "power 22" really pay off. It is F6
-in the [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md).
+in the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7).
@@ -35,7 +35,7 @@ in the [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md).
 - [First match spec](2026_11_12_07_first_match_spec.md) and
   [trophies spec](2026_11_12_08_trophies_spec.md) — matches, fixed health 3200 and damage
   480, settings, rewards after a match.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 

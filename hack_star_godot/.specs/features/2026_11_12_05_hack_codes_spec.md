@@ -22,16 +22,16 @@
 Hack codes are what makes Hack star different from Brawl Stars: by typing a secret code or
 scanning a QR code, a player gets unlimited credits, all fighters unlocked, and power levels up
 to 22 instead of 11. This is F2 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) and the "hack codes" part
+[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) and the "hack codes" part
 of [overall_req.md](../../../.specs/overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input) and S9 (progress kept on the device) apply here too; the Godot technology,
   the architecture document `hack_star_godot/docs/architecture.md` and how to run the game
   (S12–S14).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — its open question
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — its open question
   "Server for rooms and hack codes" decides whether the hack codes need a server in the Godot game.
 - [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
   with locks and power levels (S4), the fighter screen with skins (S7); the UI foundation of
