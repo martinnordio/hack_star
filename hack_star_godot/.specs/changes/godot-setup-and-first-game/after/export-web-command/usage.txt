@@ -1,0 +1,10 @@
+﻿<#
+.SYNOPSIS
+Exports the game for the web into build\web\.
+
+.DESCRIPTION
+Deletes build\web\, runs `godot --headless --export-release "Web" build/web/index.html` and
+checks that index.html, a .wasm and a .pck exist. Exit code 1 if Godot fails or a file is missing.
+#>
+
+Get-Help syntax: export_web.ps1 [<CommonParameters>]

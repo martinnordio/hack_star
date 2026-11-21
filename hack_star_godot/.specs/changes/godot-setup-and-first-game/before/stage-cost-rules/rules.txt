@@ -1,0 +1,23 @@
+﻿## What the stages write (rules for the stage prompts)
+
+Only when cost tracking is on.
+
+1. **At the start** of a command, note the time (`Started:` for a Step).
+2. **At the end**, run `tools/usage` with that time and your model, then copy:
+   - Stage log columns **Tokens (estimate — see COSTS.md)** and **Cost (<currency>)**:
+     `~379 k (40 k in · 334 k cached · 5 k out)` and `~CHF 0.30 (36 credits)`;
+   - a Step's Done line ends with `· ~<tokens> · ~<currency> <amount>`.
+3. If the script fails or finds no transcript, write `N/A` and say why in the report — never
+   a guessed number.
+4. Every cost number in a spec, the cost list or a pull request comes with the link to this
+   page.
+
+--- implementation/prompt.md (per-Step run):
+   between.
+   - If the agent's permissions deny `git commit` (`.claude/settings.json`, the user's
+     answer), or the tool has no sub-agents with a model choice, do **only Step <n>** and say
+     why.
+3. **Only Step <n>:** that Step on its model (as a sub-agent where possible), then stop; the
+   user commits.
+4. **No:** stop.
+5. **Tools without sub-agents:** at the end of each Step, name the next Step's model:

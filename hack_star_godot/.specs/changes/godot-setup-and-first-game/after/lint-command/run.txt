@@ -1,0 +1,4 @@
+﻿Success: no problems found
+8 files would be left unchanged
+Lint OK.
+exit 0

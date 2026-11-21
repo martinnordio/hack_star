@@ -1,0 +1,11 @@
+﻿Web export OK: <repo>\hack_star_godot\build\web
+  index.apple-touch-icon.png (11,944 bytes)
+  index.audio.position.worklet.js (2,973 bytes)
+  index.audio.worklet.js (7,298 bytes)
+  index.html (5,438 bytes)
+  index.icon.png (5,700 bytes)
+  index.js (279,815 bytes)
+  index.pck (32,076 bytes)
+  index.png (21,443 bytes)
+  index.wasm (39,514,754 bytes)
+exit 0

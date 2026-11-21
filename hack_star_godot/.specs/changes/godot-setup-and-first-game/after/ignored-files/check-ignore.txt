@@ -1,0 +1,6 @@
+﻿git check-ignore -v build/web/index.html .godot/x assets/music/track.mp3 x.tmp scenes/arena.tscn
+hack_star_godot/.gitignore:2:/build/	build/web/index.html
+hack_star_godot/.gitignore:1:/.godot/	.godot/x
+hack_star_godot/.gitignore:3:/assets/music/	assets/music/track.mp3
+hack_star_godot/.gitignore:4:*.tmp	x.tmp
+(scenes/arena.tscn: not ignored)

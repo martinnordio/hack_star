@@ -1,0 +1,24 @@
+﻿
+NAME
+    <repo>\.specs\kit\tools\usage.ps1
+
+SYNOPSIS
+    Tokens and cost of a time range of the AI chat, by the method of COSTS.md.
+
+
+SYNTAX
+    <repo>\.specs\kit\tools\usage.ps1 [-Since] <String> [-Model] <String>
+    [[-Until] <String>] [[-Transcript] <String>] [[-Root] <String>] [[-ContextCap] <Int32>] [-Json]
+    [<CommonParameters>]
+
+
+
+
+
+    -examples".
+    -detailed".
+    <repo>\.specs\kit\tools\usage.ps1 -full".
+
+
+
+

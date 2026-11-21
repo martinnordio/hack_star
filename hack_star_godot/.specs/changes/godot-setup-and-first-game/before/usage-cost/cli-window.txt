@@ -1,0 +1,4 @@
+﻿Tokens: ~0 k (0 k in · 0 k cached · 0 k out)
+Cost: ~CHF 0.00 (0 credits, 0.0 % of Copilot Business)
+Source: estimated from ~\AppData\Roaming\Code\User\workspaceStorage\0984fda66d9c5b49c828cfa464055b20\GitHub.copilot-chat\transcripts\712615a2-db89-4b40-8ad2-d46366640e1f.jsonl · 0 requests
+exit 0

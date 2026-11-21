@@ -1,0 +1,222 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of feature/godot-setup-and-first-game (written by REVIEW:, 2026-11-21).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/" (see finding 4 of the code review).
+version: 1
+branch: feature/godot-setup-and-first-game
+base: a6a0f643
+why: |
+  Hack star is re-implemented in Godot in its own folder, next to the Python + Svelte game.
+  This branch lays the ground: hack_star_godot/ with its own specs, pinned tools that every
+  developer installs, one written rule (AGENTS.md) so that the root kit's commands work on
+  Godot specs, and a first small game (start screen, 3D arena, one fighter) that runs in a
+  browser. It also fixes the kit's cost script, which reported 0 for Copilot CLI sessions.
+spec:
+  path: .specs/features/2026_11_21_01_godot_setup_and_first_game_spec.md
+  statements: [S1, S2, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19]
+changes:
+  - id: start-screen
+    kind: ui
+    change: added
+    object: Start screen (scenes/start_screen.tscn, the main scene)
+    note: Title "Hack star" and a large Play button, centred; Play opens the arena.
+    statements: [S9]
+    examples:
+      - name: landscape-1280x720
+        input: |
+          godot --path hack_star_godot (window 1280 x 720), main scene, 30 frames
+        views: [desktop]
+  - id: arena
+    kind: ui
+    change: added
+    object: Arena (scenes/arena.tscn with fighter.tscn and touch_joystick.tscn)
+    note: Whole arena framed in landscape and portrait; Back top-left, FPS top-right; the fighter slides along an inner wall. Touch joystick hidden on a desktop.
+    statements: [S10, S11]
+    examples:
+      - name: landscape-1280x720
+        input: |
+          change_scene_to_file("res://scenes/arena.tscn"), window 1280 x 720, 60 frames
+        views: [desktop]
+      - name: walk-right-down
+        input: |
+          Input.action_press("move_right") + Input.action_press("move_down"), 60 physics frames
+        views: [desktop]
+      - name: portrait-820x1180
+        input: |
+          same arena, window resized to 820 x 1180 (iPad portrait size)
+        views: [portrait]
+  - id: movement-rule
+    kind: output
+    change: added
+    object: Movement rule (game/movement.gd, class Movement)
+    note: Pure static rule shared by keyboard and joystick; diagonal not faster, no input stops, joystick clamped to length 1.
+    statements: [S10, S12, S16]
+    examples:
+      - name: gut-test-movement
+        input: |
+          hack_star_godot\tools\test.ps1  (section res://tests/test_movement.gd)
+  - id: test-command
+    kind: command
+    change: added
+    object: hack_star_godot\tools\test.ps1
+    note: Imports, runs GUT headless, fails on a Godot error, a failing test or zero tests. Check the stderr handling under Windows PowerShell 5.1 (finding 2).
+    statements: [S12]
+    examples:
+      - name: run
+        input: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\test.ps1
+  - id: lint-command
+    kind: command
+    change: added
+    object: hack_star_godot\tools\lint.ps1
+    note: gdlint + gdformat --check on game/, scenes/, tests/ (never addons/).
+    statements: [S12]
+    examples:
+      - name: run
+        input: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\lint.ps1
+  - id: check-tools-command
+    kind: command
+    change: added
+    object: hack_star_godot\tools\check_tools.ps1
+    note: Compares Godot, export templates, gdtoolkit and GUT with tools/versions.json and prints the install command for anything missing.
+    statements: [S5, S6]
+    examples:
+      - name: run
+        input: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\check_tools.ps1
+  - id: export-web-command
+    kind: command
+    change: added
+    object: hack_star_godot\tools\export_web.ps1
+    note: One command for the web export into build\web\; fails when index.html, a .wasm or a .pck is missing.
+    statements: [S11, S13]
+    examples:
+      - name: run
+        input: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\export_web.ps1
+  - id: serve-web-command
+    kind: command
+    change: added
+    object: hack_star_godot\tools\serve_web.ps1 [-Port 8060]
+    note: Serves build\web\ on all interfaces for the iPad check (D12); not run by the review (it blocks until Ctrl+C).
+    statements: [S11]
+    examples:
+      - name: usage
+        input: |
+          Get-Help tools\serve_web.ps1 / the usage block of the file
+  - id: project-settings
+    kind: config
+    change: added
+    object: hack_star_godot/project.godot
+    note: Godot 4.7 feature, Compatibility renderer (WebGL 2), canvas_items + expand stretch for landscape and portrait, the move_* input actions.
+    statements: [S9, S10, S16, S17]
+    examples:
+      - name: settings
+        input: |
+          project.godot sections and keys; input actions printed by Godot's InputMap
+  - id: web-export-preset
+    kind: config
+    change: added
+    object: hack_star_godot/export_presets.cfg (preset "Web")
+    note: Single-threaded (no cross-origin isolation headers), GUT, tests, specs and tools excluded from the .pck.
+    statements: [S11, S17, S18]
+    examples:
+      - name: preset
+        input: |
+          export_presets.cfg keys of preset.0
+  - id: ignored-files
+    kind: config
+    change: added
+    object: hack_star_godot/.gitignore
+    note: Cache, exports, local music and *.tmp never reach git.
+    statements: [S7, S13]
+    examples:
+      - name: check-ignore
+        input: |
+          git check-ignore -v build/web/index.html .godot/x assets/music/track.mp3 x.tmp scenes/arena.tscn
+  - id: godot-toolchain
+    kind: dependency
+    change: added
+    object: Godot 4.7.2, GUT 9.7.1 (vendored in addons/gut/), gdtoolkit 4.5.0
+    note: Pinned in tools/versions.json; GUT is committed (MIT) so a fresh clone needs no download (D1, D6, D7).
+    statements: [S6, S12, S13, S16, S17]
+    examples:
+      - name: versions
+        input: |
+          tools/versions.json and addons/gut/plugin.cfg
+  - id: spec-nx-submodule
+    kind: dependency
+    change: modified
+    object: .spec-nx submodule (the kit generator)
+    note: Moves to 9e2445b, which carries the same Copilot CLI cost fix as .specs/kit/ (usage.ps1 identical, same hash).
+    statements: [S4]
+    examples:
+      - name: pointer
+        input: |
+          git ls-tree <base|HEAD> .spec-nx
+  - id: godot-spec-rule
+    kind: command
+    change: modified
+    object: 'Kit commands (REQUIREMENTS:, PLAN:, IMPLEMENT:, REVIEW:, CLOSE:, PR:) on a Godot spec - AGENTS.md'
+    note: A spec under hack_star_godot/.specs/ writes its changes, reviews and costs there and uses the Godot checks and guideline. Base has no AGENTS.md.
+    statements: [S2, S4, S15]
+    examples:
+      - name: agents-md
+        input: |
+          AGENTS.md, section "Godot specs"
+  - id: usage-cost
+    kind: output
+    change: modified
+    object: .specs/kit/tools/usage.ps1 result
+    note: A Copilot CLI window is now measured (it was a silent 0 from a VS Code transcript); a window with no request stops with an error instead of 0.
+    statements: [S4]
+    examples:
+      - name: cli-window
+        input: |
+          usage.ps1 -Root C:\repo\hack_star -Since 2026-11-18T12:34:52Z -Until 2026-11-18T12:40:27Z -Model "Claude Opus 5.5"
+      - name: empty-window
+        input: |
+          usage.ps1 -Root C:\repo\hack_star -Since 2026-11-21T03:00:00Z -Until 2026-11-21T03:10:00Z -Model "Claude Opus 5.5"
+  - id: usage-command
+    kind: command
+    change: modified
+    object: .specs/kit/tools/usage.ps1 parameters
+    note: New -Agent all|main|subagents (Copilot CLI logs only); -Transcript default now searches every log of the project.
+    statements: [S4]
+    examples:
+      - name: help
+        input: |
+          Get-Help .specs\kit\tools\usage.ps1
+  - id: stage-cost-rules
+    kind: command
+    change: modified
+    object: 'Cost rules of every stage (COSTS.md "What the stages write", IMPLEMENT: per-Step run)'
+    note: -Until, measured numbers without ~, orchestrator row with -Agent main, N/A only after the script still fails, one run several specs.
+    statements: [S4]
+    examples:
+      - name: rules
+        input: |
+          COSTS.md section "What the stages write" + implementation/prompt.md per-Step run
+breaking: |
+  none for players or the Python + Svelte game. Kit users: usage.ps1 now stops with an error
+  (exit 1) when no request is in the range, where it printed 0 before; a stage that relied on
+  the 0 must pass -Transcript or fix its start time (COSTS.md rule 3).
+review:
+  - question: Why GUT committed in addons/gut/ (259 files) instead of downloaded?
+    answer: |
+      D6: a fresh clone can test without a download (S13); GUT is MIT and excluded from the
+      exported .pck. Its code is vendored and not reviewed here.
+  - question: Is S11 (iPad Safari, >= 30 fps) met?
+    answer: |
+      Not verified yet. The author checked the editor run and the web export on the Windows
+      desktop (~60 fps); the iPad check is in Deferred Items (Step 4).
+  - question: Why does the root kit change on a Godot branch?
+    answer: |
+      The Copilot CLI runs of this spec measured 0 tokens; usage.ps1 and COSTS.md were fixed in
+      spec-nx (9e2445b) and the generated kit was updated with it. Nothing of the Python +
+      Svelte game changes (no server/ or ui/ file in the diff).
+  - question: Why AGENTS.md and not a note in .specs/kit/?
+    answer: |
+      D8: GENERATE KIT --update replaces .specs/kit/; AGENTS.md is read by the Copilot CLI and
+      VS Code. A fresh chat answered the Godot spec paths from it (Step 1 Notes).

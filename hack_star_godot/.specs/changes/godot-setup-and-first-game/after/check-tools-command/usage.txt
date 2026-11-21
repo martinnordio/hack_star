@@ -1,0 +1,13 @@
+﻿<#
+.SYNOPSIS
+Checks that the pinned Godot tools (tools\versions.json) are installed.
+
+.DESCRIPTION
+Finds Godot through $env:GODOT, else `godot` on the PATH, else the winget package folder.
+Checks Godot, the web export templates, gdtoolkit (gdlint) and GUT. GUT lives in
+addons\gut, which Step 2 adds together with project.godot: while project.godot does not
+exist GUT is reported as pending and does not fail the check; once it exists a missing or
+wrong GUT fails. Exit code 1 if anything is missing or has the wrong version.
+#>
+
+Get-Help syntax: check_tools.ps1 [<CommonParameters>]
