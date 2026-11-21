@@ -20,6 +20,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.05 M (27 k in · 2.01 M cached · 13 k out) | CHF 0.33 (40 credits) | Step 2 done (`usage.ps1 -AgentName s05-steps1-4` 17:35:03–17:38:13) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.28 M (65 k in · 4.19 M cached · 33 k out) | CHF 0.76 (91 credits) | Step 3 done (`usage.ps1 -AgentName s05-steps1-4` 17:38:13–17:44:10) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (21 k in · 1.87 M cached · 8 k out) | CHF 0.27 (32 credits) | Step 4 done (`usage.ps1 -AgentName s05-steps1-4` 17:44:10–17:45:49) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.03 M (93 k in · 1.91 M cached · 31 k out) | CHF 1.24 (148 credits) | Step 5 done (`usage.ps1 -AgentName s05-step5` from 17:25:44) |
 
 ---
 
@@ -156,7 +157,7 @@ simplest reading that fits the Godot game._
 | **2** | Server connection | standard (Claude Sonnet 5.5) — one autoload with `HTTPRequest` and a test seam, fixed by D1–D3 | ✅ Done | [→ Step 2](#step-2--server-connection) |
 | **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ✅ Done | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
 | **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ✅ Done | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
-| **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ⬜ Not started | [→ Step 5](#step-5--qr-code-encoder) |
+| **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ✅ Done | [→ Step 5](#step-5--qr-code-encoder) |
 | **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ⬜ Not started | [→ Step 6](#step-6--qr-page-with-savable-images) |
 | **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ⬜ Not started | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
 | **8** | Camera scanning and QR links in the browser | reasoning (Claude Opus 5.5) — JavaScript bridge, camera permissions, an end-to-end browser check with a fake camera | ⬜ Not started | [→ Step 8](#step-8--camera-scanning-and-qr-links-in-the-browser) |
@@ -324,22 +325,24 @@ The game turns a text of up to about 150 characters into a correct QR code matri
 cameras can read (S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/qr_code.gd` (`QrCode`) after D10: byte mode, level M, versions 1–10 chosen by
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/qr_code.gd` (`QrCode`) after D10: byte mode, level M, versions 1–10 chosen by
       length, Reed–Solomon error correction (GF(256)), function patterns, format and version
       information, all 8 masks with the penalty rules; `encode(text)` returns the matrix,
       `size` = 17 + 4 × version; a too-long text returns an empty matrix.
-- [ ] Reference: generate the matrices of three texts (`INFINITY`,
+- [x] Reference: generate the matrices of three texts (`INFINITY`,
       `http://localhost:8060/?hack=OPENSESAME` and a 100-character link) once with
       `uv run --no-project --with segno==<pinned> python` (byte mode, level M, no boost of the
       level), save them as `tests/fixtures/qr_*.txt` (one row per line, `1`/`0`) and write the
       command in the test file's header.
-- [ ] Tests: `tests/test_qr_code.gd` — the three matrices equal the references; versions and
+- [x] Tests: `tests/test_qr_code.gd` — the three matrices equal the references; versions and
       sizes; too long → empty.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 17:46
+
+**Done (2026-11-21 · ~6m · Claude Opus 5.5)** — `game/qr_code.gd` (`QrCode`: `encode`, `version_for`, `size_for_version`; byte mode, level M, versions 1–10, GF(256) Reed–Solomon with interleaved blocks, finder/timing/alignment patterns, format and version information, 8 masks scored with the four penalty rules before format/version are drawn, first mask on a tie, as segno does). Like segno, the padding after the terminator is a full zero byte when the stream already ends on a byte (readers stop at the terminator) — needed to match the reference bit for bit. References made with segno 1.6.6 (command in the test header): `INFINITY` (v1), `http://localhost:8060/?hack=OPENSESAME` (v3), a 100-character link (v6) and, added, a 150-character link (v8) so the version information is checked too; all four match exactly, including the chosen mask. 6 new tests; `tools/test.ps1` 159 passing, exit 0; `tools/lint.ps1` exit 0. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.03 M · CHF 1.24
 
 ---
 
