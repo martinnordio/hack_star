@@ -1,7 +1,7 @@
 # Move Specs to Godot Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `main` (worked on directly, no pull request)
@@ -14,6 +14,7 @@
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 revised: the root kit is used, no Godot kit (Context, S12) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row below | included in the plan row below | Part 1 revised: open questions answered (Worlds moved now from its branch, Bug Fixes own spec, global numbers, `overall_req.md` linked); S1, S7 changed; S13 requirement 0, S14 Godot architecture, S15 Godot UI, S16, S17 (on `main`) added |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.05 M (26 k in · 3.01 M cached · 16 k out) | CHF 0.88 (105 credits) | Part 2 written (also covers the requirements revision above) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 714 k (84 k in · 613 k cached · 17 k out) | CHF 0.74 (88 credits) | Step 1 done |
 
 ---
 
@@ -158,7 +159,7 @@ linked, not copied (S16)._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Ordered list; move 03 MVP and Architecture and 04 Basic UI for Godot | reasoning (Claude Opus 5.5) — Godot architecture and UI statements | ⬜ Not started | [→ Step 1](#step-1--ordered-list-move-03-mvp-and-architecture-and-04-basic-ui-for-godot) |
+| **1** | Ordered list; move 03 MVP and Architecture and 04 Basic UI for Godot | reasoning (Claude Opus 5.5) — Godot architecture and UI statements | ✅ Done | [→ Step 1](#step-1--ordered-list-move-03-mvp-and-architecture-and-04-basic-ui-for-godot) |
 | **2** | Move 05–10 | standard (Claude Sonnet 5.5) — same rules, applied to six specs | ⬜ Not started | [→ Step 2](#step-2--move-0510) |
 | **3** | Move 11–15 | standard (Claude Sonnet 5.5) — same rules, applied to five specs | ⬜ Not started | [→ Step 3](#step-3--move-1115) |
 | **4** | Move 16 Bug Fixes, 17 Fighter Studio, 18 Worlds | standard (Claude Sonnet 5.5) — same rules; S0 variant for bugs; Worlds from its branch | ⬜ Not started | [→ Step 4](#step-4--move-16-bug-fixes-17-fighter-studio-18-worlds) |
@@ -205,18 +206,30 @@ The ordered list exists and the two foundation specs are moved with the Godot ar
 and Godot UI statements (S2–S8, S11, S13–S16).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/.specs/features/README.md` (D9) with all 18 rows (03–18 status
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/.specs/features/README.md` (D9) with all 18 rows (03–18 status
       *to move* until moved).
-- [ ] `2026_11_12_03_mvp_and_architecture_spec.md` from the root original (D2–D7).
-- [ ] `2026_11_12_04_basic_ui_spec.md` from the root original (D2–D6, D8).
-- [ ] Check: both files have the header of D2, S0 first, no Part 2 content, every link
+- [x] `2026_11_12_03_mvp_and_architecture_spec.md` from the root original (D2–D7).
+- [x] `2026_11_12_04_basic_ui_spec.md` from the root original (D2–D6, D8).
+- [x] Check: both files have the header of D2, S0 first, no Part 2 content, every link
       resolves (`Test-Path` from the folder; the GitHub link of D6 not needed here); the
       README lists 03–04 as *requirements*; `git status` shows nothing under the root
       `.specs/`.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 15:20
+
+Links from 03 and 04 to the not-yet-moved specs use their future names (03: 05–14, 16; 04: 06);
+they resolve once Steps 2–4 move them and are checked in Step 5. The feature list of 03 has no
+rows for 15, 17 and 18 (as in the original), so it links only to 04–14 and 16.
+
+**Done (2026-11-21 · ~2m · Claude Opus 5.5)** — ordered list `README.md` (01–18; 03–04
+*requirements*, 05–18 *to move*); 03 moved with S0, S4/S5 struck, S12 Technology, S13
+Architecture document, S14 Run locally and the server open question; 04 moved with S0 and S12
+UI foundation. Check: both headers as D2 (no `Issue:`), first statement S0, only the Part 2
+placeholder below the marker, every relative link resolves with `Test-Path` except the 12
+future targets above; `git status --short .specs` empty. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 714 k (84 k in · 613 k cached · 17 k out) · CHF 0.74 (88 credits)
 
 ---
 
