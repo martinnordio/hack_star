@@ -120,11 +120,10 @@ func fire(direction: Vector2) -> bool:
 	_fighter.rotation.y = Movement.facing_yaw(direction)
 	_fighter.model.play_attack()
 	var shot: Shot = Shot.new()
-	shot.launch(
-		_fighter.muzzle.global_position,
-		Vector3(direction.x, 0.0, direction.y),
-		_fighter.model.main_color
-	)
+	var muzzle: Vector3 = _fighter.muzzle.global_position
+	# The first ray starts at the fighter's body, so a wall or dummy it touches is hit.
+	var body: Vector3 = Vector3(_fighter.global_position.x, muzzle.y, _fighter.global_position.z)
+	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), _fighter.model.main_color, body)
 	_shots.add_child(shot)
 	shot.ended.connect(_on_shot_ended.bind(_fighter.model.main_color))
 	_effects.play(ArenaEffects.FLASH, _fighter.muzzle.global_position, Color(1.0, 0.95, 0.7))

@@ -40,6 +40,20 @@ func test_a_shot_towards_a_wall_ends_at_the_wall() -> void:
 	assert_true(params[1], "hit something")
 
 
+func test_a_shot_launched_inside_a_wall_still_hits_it_from_the_cast_start() -> void:
+	_add_wall()
+	await wait_physics_frames(2)
+	var shot: Shot = Shot.new()
+	shot.launch(
+		Vector3(WALL_X + 0.2, 0.6, 0.0), Vector3.RIGHT, Color.ORANGE, Vector3(2.6, 0.6, 0.0)
+	)
+	add_child_autofree(shot)
+	var params: Array = await _ended(shot)
+	var end: Vector3 = params[0]
+	assert_almost_eq(end.x, WALL_X, 0.01, "stopped at the wall's face")
+	assert_true(params[1], "hit something")
+
+
 func test_without_a_wall_a_shot_ends_after_its_range() -> void:
 	var shot: Shot = _launch(Vector3.BACK)
 	var params: Array = await _ended(shot)

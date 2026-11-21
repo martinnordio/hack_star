@@ -22,11 +22,16 @@ static var _materials: Dictionary = {}
 var direction: Vector3 = Vector3.FORWARD
 var travelled: float = 0.0
 var _done: bool = false
+## Where the first ray starts: behind the muzzle, so a wall or target the muzzle is already
+## inside of is still hit (a ray does not report a shape it starts in).
+var _ray_from: Vector3 = Vector3.ZERO
 
 
 ## Sets where the shot starts, where it flies and its colour; call before adding it to a scene.
-func launch(from: Vector3, toward: Vector3, color: Color) -> void:
+## `cast_from` (default `from`) is where the first ray starts, e.g. the fighter's centre.
+func launch(from: Vector3, toward: Vector3, color: Color, cast_from: Vector3 = Vector3.INF) -> void:
 	position = from
+	_ray_from = from if cast_from == Vector3.INF else cast_from
 	direction = Vector3(toward.x, 0.0, toward.z).normalized()
 	_build(color)
 
@@ -35,10 +40,9 @@ func _physics_process(delta: float) -> void:
 	if _done:
 		return
 	var step: float = minf(Combat.SHOT_SPEED * delta, Combat.SHOT_RANGE - travelled)
-	var from: Vector3 = global_position
-	var to: Vector3 = from + direction * step
+	var to: Vector3 = global_position + direction * step
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
-		from, to, COLLISION_MASK
+		_ray_from, to, COLLISION_MASK
 	)
 	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
 	if not hit.is_empty():
@@ -49,6 +53,7 @@ func _physics_process(delta: float) -> void:
 		_end(true)
 		return
 	global_position = to
+	_ray_from = to
 	travelled += step
 	if travelled >= Combat.SHOT_RANGE - 0.001:
 		_end(false)

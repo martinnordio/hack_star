@@ -26,7 +26,7 @@ const TARGET_RED: Color = Color("e63b2e")
 const TARGET_WHITE: Color = Color("fff4e0")
 const BAR_BACK: Color = Color("2a1d1d")
 
-## Meshes and materials are shared by all dummies (per colour and size).
+## Only the materials are shared by all dummies (per colour); every dummy builds its own meshes.
 static var _materials: Dictionary = {}
 
 @export var respawn_seconds: float = Combat.RESPAWN_SECONDS
