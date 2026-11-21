@@ -46,7 +46,7 @@ horizontal_alignment = 1
 
 [node name="PowerLabel" type="Label" parent="Column"]
 layout_mode = 2
-text = "Power: 1"
+text = "Power 1 / 11"
 horizontal_alignment = 1
 
 [node name="LockLabel" type="Label" parent="Column"]

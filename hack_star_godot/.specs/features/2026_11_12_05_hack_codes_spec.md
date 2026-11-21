@@ -19,6 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 914 k (88 k in · 816 k cached · 10 k out) | CHF 0.33 (40 credits) | Step 1 done (`usage.ps1 -AgentName s05-steps1-4` 17:25:44–17:35:03) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.05 M (27 k in · 2.01 M cached · 13 k out) | CHF 0.33 (40 credits) | Step 2 done (`usage.ps1 -AgentName s05-steps1-4` 17:35:03–17:38:13) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.28 M (65 k in · 4.19 M cached · 33 k out) | CHF 0.76 (91 credits) | Step 3 done (`usage.ps1 -AgentName s05-steps1-4` 17:38:13–17:44:10) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (21 k in · 1.87 M cached · 8 k out) | CHF 0.27 (32 credits) | Step 4 done (`usage.ps1 -AgentName s05-steps1-4` 17:44:10–17:45:49) |
 
 ---
 
@@ -154,7 +155,7 @@ simplest reading that fits the Godot game._
 | **1** | Hack rules and the saved active hacks | standard (Claude Sonnet 5.5) — pure rules, a small JSON file and tests, fixed by D4 and D5 | ✅ Done | [→ Step 1](#step-1--hack-rules-and-the-saved-active-hacks) |
 | **2** | Server connection | standard (Claude Sonnet 5.5) — one autoload with `HTTPRequest` and a test seam, fixed by D1–D3 | ✅ Done | [→ Step 2](#step-2--server-connection) |
 | **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ✅ Done | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
-| **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ⬜ Not started | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
+| **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ✅ Done | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
 | **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ⬜ Not started | [→ Step 5](#step-5--qr-code-encoder) |
 | **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ⬜ Not started | [→ Step 6](#step-6--qr-page-with-savable-images) |
 | **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ⬜ Not started | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
@@ -298,19 +299,21 @@ selectable, power with its maximum 11 or 22; turning hacks off brings the normal
 (S4, S5, S6, S9, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] Home: credits through `Hacks.credits_text` ("Credits: ∞"; check that the default font
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] Home: credits through `Hacks.credits_text` ("Credits: ∞"; check that the default font
       draws ∞, else write "Credits: Unlimited" and note it).
-- [ ] Fighter card and fighter screen: lock state through `GameState.is_unlocked`, power
+- [x] Fighter card and fighter screen: lock state through `GameState.is_unlocked`, power
       through `Hacks.power_text` ("Power 7 / 11" or "Power 7 / 22").
-- [ ] Tests: home shows ∞ with `infinite_credits` and the number without; with `unlock_all`
+- [x] Tests: home shows ∞ with `infinite_credits` and the number without; with `unlock_all`
       no card is locked and Select works for Luna; with `power22` card and fighter screen show
       "/ 22", without "/ 11"; after `reset_hacks()` everything is as in spec 04.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a screenshot of the fighter list
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a screenshot of the fighter list
       with all three hacks active.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 17:44
+
+**Done (2026-11-21 · ~2m · Claude Sonnet 5.5)** — home credits through `Hacks.credits_text`, card and fighter screen power through `Hacks.power_text` (the lock state already followed `GameState.is_unlocked`, which Step 1 tied to the hacks); the existing "Power: 7" texts and tests of spec 04 became "Power 7 / 11" (S6). The default font draws ∞. 6 new tests in `tests/test_hack_effects.gd`; `tools/test.ps1` 153 passing, exit 0; `tools/lint.ps1` exit 0. Screenshots of a windowed run (temporary script in `%TEMP%`, removed) with all three hacks active: fighter list at 1280×720 and 390×844 shows "Power 7 / 22" and nothing cut off, home shows "Credits: ∞". suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 1.90 M · CHF 0.27
 
 ---
 

@@ -29,7 +29,9 @@ func _ready() -> void:
 	_rarity_label.text = fighter["rarity"]
 	_rarity_label.add_theme_color_override("font_color", Rarity.color(fighter["rarity"]))
 	_trophies_label.text = "Trophies: %d" % GameState.trophies[_fighter_id]
-	_power_label.text = "Power: %d" % GameState.power_levels[_fighter_id]
+	_power_label.text = Hacks.power_text(
+		GameState.power_levels[_fighter_id], GameState.active_hacks
+	)
 	_badge.show_for_trophies(GameState.trophies[_fighter_id])
 	_build_skin_buttons(fighter["skins"])
 	_stage.show_fighter(_fighter_id, _skin_id)

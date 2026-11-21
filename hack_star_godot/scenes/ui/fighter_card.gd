@@ -32,7 +32,7 @@ func setup(new_fighter_id: String) -> void:
 	_rarity_label.text = fighter["rarity"]
 	_rarity_label.add_theme_color_override("font_color", Rarity.color(fighter["rarity"]))
 	_trophies_label.text = "Trophies: %d" % GameState.trophies[fighter_id]
-	_power_label.text = "Power: %d" % GameState.power_levels[fighter_id]
+	_power_label.text = Hacks.power_text(GameState.power_levels[fighter_id], GameState.active_hacks)
 	_badge.show_for_trophies(GameState.trophies[fighter_id])
 	var unlocked: bool = GameState.is_unlocked(fighter_id)
 	_lock_label.visible = not unlocked

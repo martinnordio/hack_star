@@ -32,7 +32,7 @@ func test_card_shows_name_rarity_trophies_and_power() -> void:
 	assert_eq(card.get_node("Column/NameLabel").text, "Blaze")
 	assert_eq(card.get_node("Column/RarityLabel").text, "Rare")
 	assert_eq(card.get_node("Column/TrophiesLabel").text, "Trophies: 1240")
-	assert_eq(card.get_node("Column/PowerLabel").text, "Power: 7")
+	assert_eq(card.get_node("Column/PowerLabel").text, "Power 7 / 11")
 
 
 func test_rarity_is_shown_in_its_colour() -> void:

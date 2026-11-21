@@ -44,7 +44,7 @@ func test_shows_the_fighter_and_its_values() -> void:
 	assert_eq(screen.get_node("Margin/Column/Header/Title").text, "Blaze")
 	assert_eq(screen.get_node(BODY + "/Details/RarityLabel").text, "Rare")
 	assert_eq(screen.get_node(BODY + "/Details/TrophiesLabel").text, "Trophies: 1240")
-	assert_eq(screen.get_node(BODY + "/Details/PowerLabel").text, "Power: 7")
+	assert_eq(screen.get_node(BODY + "/Details/PowerLabel").text, "Power 7 / 11")
 	assert_true(screen.get_node(BODY + "/Details/PrestigeBadge").visible)
 	var stage: FighterStage = screen.get_node(BODY + "/FighterStage")
 	assert_eq(stage.model.fighter_id, "blaze")

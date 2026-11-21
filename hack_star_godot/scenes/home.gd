@@ -76,7 +76,7 @@ func _arrange() -> void:
 func _refresh() -> void:
 	var fighter_id: String = GameState.selected_fighter
 	_trophies_label.text = "Trophies: %d" % GameState.total_trophies()
-	_credits_label.text = "Credits: %d" % GameState.credits
+	_credits_label.text = Hacks.credits_text(GameState.credits, GameState.active_hacks)
 	_name_label.text = Fighters.get_fighter(fighter_id)["name"]
 	_badge.show_for_trophies(GameState.trophies[fighter_id])
 	_stage.show_fighter(fighter_id, GameState.selected_skin())
