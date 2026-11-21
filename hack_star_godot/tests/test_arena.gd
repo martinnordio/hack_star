@@ -75,6 +75,20 @@ func test_the_camera_follows_the_fighter() -> void:
 	assert_almost_eq(after.z, before.z, 0.1, "no sideways drift north or south")
 
 
+func test_walking_sets_running_and_standing_clears_it() -> void:
+	var fighter: Fighter = _arena.get_node("Fighter")
+	var model: FighterModel = fighter.get_node("Model")
+	_arena.read_player_input = false
+	await wait_physics_frames(3)
+	assert_false(model.running, "standing still")
+	fighter.input_direction = Vector2.RIGHT
+	await wait_physics_frames(3)
+	assert_true(model.running, "walking")
+	fighter.input_direction = Vector2.ZERO
+	await wait_physics_frames(3)
+	assert_false(model.running, "stopped")
+
+
 ## Where the camera's centre ray meets the ground (y = 0).
 func _camera_look_at(camera: Camera3D) -> Vector3:
 	var forward: Vector3 = -camera.global_basis.z

@@ -133,6 +133,45 @@ func test_idle_animation_can_be_switched_off_for_pictures() -> void:
 	assert_eq(body.transform, before, "the body stays still")
 
 
+func test_running_leans_the_rig_forward_and_bounces_the_body() -> void:
+	var model: FighterModel = _model("blaze")
+	model.idle_enabled = false
+	var rig: Node3D = model.get_node("Rig")
+	var body: Node3D = model.find_child("Body", true, false)
+	model.animate(0.1)
+	assert_eq(rig.rotation.x, 0.0, "idle leaves the rig straight")
+	model.running = true
+	var heights: Array[float] = []
+	for step: int in 8:
+		model.animate(step * 0.05)
+		heights.append(body.position.y)
+		assert_gt(rig.rotation.x, 0.1, "the rig leans forward (+z is the front)")
+		assert_gte(body.position.y, 0.0, "the body only bounces up")
+	assert_gt(heights.max(), 0.05, "the body bounces")
+	assert_gt(heights.max() - heights.min(), 0.05, "the height changes with the steps")
+	model.running = false
+	model.animate(0.1)
+	assert_eq(rig.rotation.x, 0.0, "stopping straightens the rig")
+
+
+func test_play_attack_kicks_the_body_back_and_ends_after_a_quarter_second() -> void:
+	var model: FighterModel = _model("frosty")
+	model.idle_enabled = false
+	var body: Node3D = model.find_child("Body", true, false)
+	assert_eq(model.attack_left, 0.0)
+	model.play_attack()
+	assert_almost_eq(model.attack_left, FighterModel.ATTACK_SECONDS, 0.001)
+	model._process(FighterModel.ATTACK_SECONDS / 2.0)
+	model.animate(0.0)
+	assert_lt(body.position.z, -0.05, "the body kicks back at the middle")
+	assert_lt(body.scale.y, 0.95, "and squashes")
+	model._process(0.3)
+	model.animate(0.0)
+	assert_eq(model.attack_left, 0.0, "the recoil is over after 0.3 s")
+	assert_eq(body.position.z, 0.0, "the body is back")
+	assert_eq(body.scale, Vector3.ONE, "and its shape too")
+
+
 func test_stage_shows_the_fighter_and_keeps_it_in_view() -> void:
 	var stage: FighterStage = STAGE_SCENE.instantiate()
 	stage.size = Vector2(300, 600)

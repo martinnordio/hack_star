@@ -19,6 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 269 k (50 k in · 213 k cached · 5 k out) | CHF 0.17 (20 credits) | Step 1 done (`usage.ps1 -AgentName s06-step1`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.39 M (102 k in · 3.26 M cached · 35 k out) | CHF 1.56 (186 credits) | Step 2 done (`usage.ps1 -AgentName s06-step2` from 18:51) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (101 k in · 1.79 M cached · 16 k out) | CHF 0.49 (59 credits) | Step 3 done (`usage.ps1 -AgentName s06-steps3-4` from 18:59:00 to 19:04:19) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.28 M (30 k in · 1.24 M cached · 10 k out) | CHF 0.25 (30 credits) | Step 4 done (`usage.ps1 -AgentName s06-steps3-4` from 19:04:19 to 19:07:10) |
 
 ---
 
@@ -143,7 +144,7 @@ right joystick)._
 | **1** | Combat rules | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D3 | ✅ Done | [→ Step 1](#step-1--combat-rules) |
 | **2** | Canyon arena | reasoning (Claude Opus 5.5) — graphics-heavy: a bigger arena built in code (rocks, cacti, decoration, light) that must look good and stay fast (D1, D2, D10) | ✅ Done | [→ Step 2](#step-2--canyon-arena) |
 | **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ✅ Done | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
-| **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ⬜ Not started | [→ Step 4](#step-4--run-and-attack-animations) |
+| **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ✅ Done | [→ Step 4](#step-4--run-and-attack-animations) |
 | **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ⬜ Not started | [→ Step 5](#step-5--aiming-and-shooting) |
 | **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ⬜ Not started | [→ Step 6](#step-6--target-dummies) |
 | **7** | Bushes and effects | standard (Claude Sonnet 5.5) — see-through in a bush and small particle pools, fixed by D10 and D11 | ⬜ Not started | [→ Step 7](#step-7--bushes-and-effects) |
@@ -300,15 +301,15 @@ _Add the `Done` line here when the Step is finished._
 The fighter has idle, run and attack animations (S2).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `FighterModel`: `running`, run animation and `play_attack()` after D6; the idle of
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `FighterModel`: `running`, run animation and `play_attack()` after D6; the idle of
       spec 04 unchanged (home, fighter screen and pictures look the same).
-- [ ] `Fighter` sets `Model.running` from its velocity.
-- [ ] Tests: `tests/test_fighter_model.gd` (running leans the `Rig` forward and bounces the
+- [x] `Fighter` sets `Model.running` from its velocity.
+- [x] Tests: `tests/test_fighter_model.gd` (running leans the `Rig` forward and bounces the
       `Body`; idle leaves the `Rig` straight; `play_attack` sets `attack_left`, which is 0
       again after 0.3 s of `_process`); `tests/test_arena.gd` (walking sets `running`,
       standing clears it).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of a running fighter
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of a running fighter
       and of the attack recoil (a few frames apart) for two fighters with different shapes
       (e.g. Blaze and Frosty).
 

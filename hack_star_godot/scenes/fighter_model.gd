@@ -4,6 +4,8 @@ extends Node3D
 ## `setup(fighter_id, skin_id)` builds the fighter; the front faces +Z (towards the stage camera),
 ## the feet stand on y = 0. The idle animation (breathing, sway, flickering flames and screens)
 ## runs in `_process` while `idle_enabled` is true; switch it off for still pictures.
+## While `running` is true the run animation (bounce, forward lean) replaces the idle one;
+## `play_attack()` adds a short recoil on top of either.
 
 const OUTLINE_COLOR: Color = Color(0.086, 0.059, 0.2)
 const OUTLINE_GROW: float = 0.022
@@ -18,6 +20,13 @@ const HEAD_TILT_ANGLE: float = 0.06
 const FLICKER_SPEED: float = 9.0
 const FLICKER_AMOUNT: float = 0.07
 const SPIN_SPEED: float = 0.8
+const RUN_BOUNCE_SPEED: float = 10.0
+const RUN_BOUNCE_HEIGHT: float = 0.12
+const RUN_LEAN_ANGLE: float = 0.18
+const RUN_HEAD_SPEED: float = 2.4
+const ATTACK_SECONDS: float = 0.25
+const ATTACK_KICK: float = 0.18
+const ATTACK_SQUASH: float = 0.14
 
 ## Colours of each fighter's look, per skin. `main` is the colour a player sees most.
 const LOOKS: Dictionary = {
@@ -176,6 +185,10 @@ var skin_id: String = ""
 ## The colour a player sees most on this fighter in this skin.
 var main_color: Color = Color.WHITE
 var time_seconds: float = 0.0
+## Set by the fighter while it walks.
+var running: bool = false
+## Seconds left of the attack recoil; 0 when none plays.
+var attack_left: float = 0.0
 
 var _rig: Node3D
 var _body: Node3D
@@ -192,6 +205,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	attack_left = maxf(attack_left - delta, 0.0)
 	if idle_enabled and _rig != null:
 		time_seconds += delta
 		animate(time_seconds)
@@ -222,13 +236,28 @@ func setup(new_fighter_id: String, new_skin_id: String = Fighters.DEFAULT_SKIN) 
 	animate(time_seconds)
 
 
-## Puts the idle animation at a moment in time (seconds).
+## Starts the short recoil of a shot: the body kicks back and squashes, then springs back.
+func play_attack() -> void:
+	attack_left = ATTACK_SECONDS
+
+
+## Puts the animation at a moment in time (seconds): idle or run, plus the attack recoil.
 func animate(time: float) -> void:
 	if _rig == null:
 		return
-	_body.position.y = sin(time * BREATH_SPEED) * BREATH_HEIGHT
-	_body.rotation.y = sin(time * SWAY_SPEED) * SWAY_ANGLE
-	_head.rotation.z = sin(time * HEAD_TILT_SPEED) * HEAD_TILT_ANGLE
+	var recoil: float = sin((1.0 - attack_left / ATTACK_SECONDS) * PI) if attack_left > 0.0 else 0.0
+	if running:
+		_rig.rotation.x = RUN_LEAN_ANGLE
+		_body.position.y = absf(sin(time * RUN_BOUNCE_SPEED)) * RUN_BOUNCE_HEIGHT
+		_body.rotation.y = 0.0
+		_head.rotation.z = sin(time * RUN_BOUNCE_SPEED * RUN_HEAD_SPEED) * HEAD_TILT_ANGLE
+	else:
+		_rig.rotation.x = 0.0
+		_body.position.y = sin(time * BREATH_SPEED) * BREATH_HEIGHT
+		_body.rotation.y = sin(time * SWAY_SPEED) * SWAY_ANGLE
+		_head.rotation.z = sin(time * HEAD_TILT_SPEED) * HEAD_TILT_ANGLE
+	_body.position.z = -recoil * ATTACK_KICK
+	_body.scale = Vector3(1.0 + recoil * ATTACK_SQUASH, 1.0 - recoil * ATTACK_SQUASH, 1.0)
 	for index: int in _flickers.size():
 		var wave: float = 1.0 + sin(time * FLICKER_SPEED + index * 1.7) * FLICKER_AMOUNT
 		_flickers[index].scale = _flicker_scales[index] * wave
