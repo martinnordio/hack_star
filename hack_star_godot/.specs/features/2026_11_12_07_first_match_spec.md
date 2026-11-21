@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — Step 2 of 7 done
+> **Status:** 🔄 In progress — Step 3 of 7 done
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -18,6 +18,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.48 M (131 k in · 2.32 M cached · 31 k out) | CHF 1.46 (174 credits) | Part 2 written (7 Steps: standard, reasoning, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s07-lead` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 829 k (64 k in · 754 k cached · 12 k out) | CHF 0.30 (35 credits) | Step 1 done (`usage.ps1 -AgentName s07-step1` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 486 k (58 k in · 418 k cached · 10 k out) | CHF 0.48 (57 credits) | Step 2 done (`usage.ps1 -AgentName s07-step2` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.18 M (75 k in · 2.08 M cached · 27 k out) | CHF 0.55 (66 credits) | Step 3 done (`usage.ps1 -AgentName s07-step3` from 20:14:28) |
 ---
 
 # Part 1 · Requirements
@@ -153,7 +154,7 @@ original game's numbers (2.5 m in a bush, the place)._
 |------|-------------|-------------------|--------|--------|
 | **1** | Match rules and settings | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D2–D4 | ✅ Done | [→ Step 1](#step-1--match-rules-and-settings) |
 | **2** | Bot brain | reasoning (Claude Opus 5.5) — tricky logic: sight and bushes, targets, reaction, aim error, chasing, wandering, all testable without a scene (D5) | ✅ Done | [→ Step 2](#step-2--bot-brain) |
-| **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ⬜ Not started | [→ Step 3](#step-3--fighters-that-can-be-hit) |
+| **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ✅ Done | [→ Step 3](#step-3--fighters-that-can-be-hit) |
 | **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ⬜ Not started | [→ Step 4](#step-4--match-arena-with-bots) |
 | **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ⬜ Not started | [→ Step 5](#step-5--match-hud) |
 | **6** | Result screen and Training on home | standard (Claude Sonnet 5.5) — one new screen from the UI foundation and one button (D10, D11) | ⬜ Not started | [→ Step 6](#step-6--result-screen-and-training-on-home) |
@@ -273,24 +274,27 @@ and is knocked out with an effect; a shot never hits its shooter; Training looks
 S4, S5, S12).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/health_bar.gd` (`HealthBar`) and `scenes/damage_number.gd` (`DamageNumber`)
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/health_bar.gd` (`HealthBar`) and `scenes/damage_number.gd` (`DamageNumber`)
       after D7, taken out of `TargetDummy`, which uses them (same look, its tests unchanged).
-- [ ] `Fighter` after D6 (health, `hit`, signals, `heal_step`, `knock_out` with the spin and
+- [x] `Fighter` after D6 (health, `hit`, signals, `heal_step`, `knock_out` with the spin and
       shrink of D7); `ArenaEffects` gets the `KNOCKOUT` pool.
-- [ ] `Shot` after D6 (fighter layer in the mask, the shooter excluded); `Arena.fire_from`
+- [x] `Shot` after D6 (fighter layer in the mask, the shooter excluded); `Arena.fire_from`
       with a cool-down per fighter; `fire(direction)` unchanged for the player.
-- [ ] Tests: `tests/test_fighter_health.gd` (a hit lowers health and shows a number; the bar's
+- [x] Tests: `tests/test_fighter_health.gd` (a hit lowers health and shows a number; the bar's
       fill follows the health; healing starts after 3 s quiet and stops at full; a shot resets
       the quiet time; 0 health → knocked out, hidden after the effect, collision off, further
       hits ignored; a shot from fighter A hits fighter B; a shot never hits its own shooter,
       also point-blank); `tests/test_target_dummy.gd`, `test_arena*.gd` still pass.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the Training arena
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the Training arena
       (dummy bar and damage number look as before) and of a temporary scene with two fighters
       (green and red bars, a red damage number, the knock-out puff).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 20:31
+
+**Done (2026-11-21 · ~10 min · Claude Sonnet 5.5)** — `HealthBar` and `DamageNumber` taken out of `TargetDummy`; `Fighter` with health, `hit`, `heal_step`, `knock_out` (spin and shrink, then hidden), `show_health_bar`; `Shot` hits fighters and never its shooter; `Arena.fire_from` (cool-down per fighter) and `watch_knock_out`; `KNOCKOUT` effect pool. `tools/test.ps1` 271 tests pass, `tools/lint.ps1` exit 0; screenshots at 1280×720 checked (Training dummies look as before; green and red bars, red damage number on the player, red knock-out puff).
+suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.18 M · CHF 0.55
 
 ---
 

@@ -35,7 +35,6 @@ var read_player_input: bool = true
 var _fps_timer: float = 0.0
 var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
-var _last_fire_seconds: float = -INF
 var _mouse_held: bool = false
 var _mouse_position: Vector2 = Vector2.ZERO
 var _dust_left: float = 0.0
@@ -113,25 +112,48 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Fires a shot along `direction` (ground plane, x and z) when the cool-down is over: the
 ## fighter turns that way and recoils, the shot leaves the muzzle. True when it fired.
 func fire(direction: Vector2) -> bool:
+	return fire_from(_fighter, direction, Combat.COOLDOWN)
+
+
+## Like `fire`, for any fighter with its own `cooldown`; a knocked-out fighter does not fire.
+func fire_from(fighter: Fighter, direction: Vector2, cooldown: float) -> bool:
 	var now: float = Time.get_ticks_msec() / 1000.0
-	if direction.is_zero_approx() or not Combat.can_fire(now, _last_fire_seconds):
+	if (
+		fighter.knocked_out
+		or direction.is_zero_approx()
+		or not Combat.can_fire(now, fighter.last_fire_seconds, cooldown)
+	):
 		return false
-	_last_fire_seconds = now
-	_fighter.rotation.y = Movement.facing_yaw(direction)
-	_fighter.model.play_attack()
+	fighter.last_fire_seconds = now
+	fighter.note_action()
+	fighter.rotation.y = Movement.facing_yaw(direction)
+	fighter.model.play_attack()
 	var shot: Shot = Shot.new()
-	var muzzle: Vector3 = _fighter.muzzle.global_position
+	var muzzle: Vector3 = fighter.muzzle.global_position
 	# The first ray starts at the fighter's body, so a wall or dummy it touches is hit.
-	var body: Vector3 = Vector3(_fighter.global_position.x, muzzle.y, _fighter.global_position.z)
-	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), _fighter.model.main_color, body)
+	var body: Vector3 = Vector3(fighter.global_position.x, muzzle.y, fighter.global_position.z)
+	var color: Color = fighter.model.main_color
+	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), color, body, fighter)
 	_shots.add_child(shot)
-	shot.ended.connect(_on_shot_ended.bind(_fighter.model.main_color))
-	_effects.play(ArenaEffects.FLASH, _fighter.muzzle.global_position, Color(1.0, 0.95, 0.7))
+	shot.ended.connect(_on_shot_ended.bind(color))
+	_effects.play(ArenaEffects.FLASH, muzzle, Color(1.0, 0.95, 0.7))
 	return true
 
 
 func _on_shot_ended(end_position: Vector3, _hit: bool, color: Color) -> void:
 	_effects.play(ArenaEffects.SPARKS, end_position, color.lerp(SPARK_COLOR, 0.4))
+
+
+## Plays the knock-out puff in the fighter's colour when it is knocked out.
+func watch_knock_out(fighter: Fighter) -> void:
+	fighter.knocked_out_now.connect(
+		func() -> void:
+			_effects.play(
+				ArenaEffects.KNOCKOUT,
+				fighter.global_position + Vector3.UP * 0.9,
+				fighter.model.main_color
+			)
+	)
 
 
 func _fire_at_mouse() -> void:

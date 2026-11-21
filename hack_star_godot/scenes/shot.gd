@@ -7,8 +7,8 @@ extends Node3D
 
 signal ended(end_position: Vector3, hit_something: bool)
 
-## Physics layers the shot stops at: world (1) and targets (3).
-const COLLISION_MASK: int = 0b101
+## Physics layers the shot stops at: world (1), fighters (2) and targets (3).
+const COLLISION_MASK: int = 0b111
 const RADIUS: float = 0.22
 const CORE_RADIUS: float = 0.12
 const HALO_RADIUS: float = 0.36
@@ -25,13 +25,24 @@ var _done: bool = false
 ## Where the first ray starts: behind the muzzle, so a wall or target the muzzle is already
 ## inside of is still hit (a ray does not report a shape it starts in).
 var _ray_from: Vector3 = Vector3.ZERO
+## The body that fired the shot: its rays never hit it.
+var _exclude: Array[RID] = []
 
 
 ## Sets where the shot starts, where it flies and its colour; call before adding it to a scene.
 ## `cast_from` (default `from`) is where the first ray starts, e.g. the fighter's centre.
-func launch(from: Vector3, toward: Vector3, color: Color, cast_from: Vector3 = Vector3.INF) -> void:
+## The `shooter` is never hit by its own shot.
+func launch(
+	from: Vector3,
+	toward: Vector3,
+	color: Color,
+	cast_from: Vector3 = Vector3.INF,
+	shooter: CollisionObject3D = null
+) -> void:
 	position = from
 	_ray_from = from if cast_from == Vector3.INF else cast_from
+	if shooter != null:
+		_exclude = [shooter.get_rid()]
 	direction = Vector3(toward.x, 0.0, toward.z).normalized()
 	_build(color)
 
@@ -44,6 +55,7 @@ func _physics_process(delta: float) -> void:
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
 		_ray_from, to, COLLISION_MASK
 	)
+	query.exclude = _exclude
 	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
 	if not hit.is_empty():
 		global_position = hit["position"]

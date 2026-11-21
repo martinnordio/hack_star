@@ -9,12 +9,10 @@ extends StaticBody3D
 signal broken
 signal respawned
 
-const BAR_WIDTH: float = 1.1
-const BAR_HEIGHT: float = 0.14
 const BAR_Y: float = 2.3
 const FLASH_SECONDS: float = 0.1
-const NUMBER_SECONDS: float = 0.8
-const NUMBER_RISE: float = 0.8
+const NUMBER_SECONDS: float = DamageNumber.SECONDS
+const NUMBER_COLOR: Color = Color("ffe14a")
 const DEBRIS_GRAVITY: float = 14.0
 const DEBRIS_SECONDS: float = 1.5
 const POP_SECONDS: float = 0.2
@@ -24,7 +22,6 @@ const STRAW_DARK: Color = Color("b98a2e")
 const WOOD: Color = Color("7a4a26")
 const TARGET_RED: Color = Color("e63b2e")
 const TARGET_WHITE: Color = Color("fff4e0")
-const BAR_BACK: Color = Color("2a1d1d")
 
 ## Only the materials are shared by all dummies (per colour); every dummy builds its own meshes.
 static var _materials: Dictionary = {}
@@ -44,13 +41,12 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 @onready var _collision: CollisionShape3D = $Collision
 @onready var _parts: Node3D = $Parts
-@onready var _bar: Node3D = $Bar
-@onready var _bar_fill: MeshInstance3D = $Bar/Fill
+@onready var _bar: HealthBar = $Bar
 
 
 func _ready() -> void:
 	_build_parts()
-	_build_bar()
+	_bar.position = Vector3(0.0, BAR_Y, 0.0)
 	for part: Node in _parts.get_children():
 		_home.append((part as Node3D).transform)
 	_show_health()
@@ -83,7 +79,7 @@ func hit(amount: int) -> void:
 		return
 	health = Combat.take_damage(health, amount)
 	_show_health()
-	_show_number(amount)
+	DamageNumber.spawn(self, Vector3(0.0, BAR_Y + 0.3, 0.0), amount, NUMBER_COLOR)
 	if is_broken():
 		_break()
 	else:
@@ -137,32 +133,8 @@ func _respawn() -> void:
 	respawned.emit()
 
 
-## The bar's fill is as long as the health share and has its colour; it grows from the left.
 func _show_health() -> void:
-	var ratio: float = Combat.health_ratio(health)
-	var quad: QuadMesh = _bar_fill.mesh
-	quad.size = Vector2(maxf(BAR_WIDTH * ratio, 0.001), BAR_HEIGHT)
-	quad.center_offset = Vector3(-BAR_WIDTH / 2.0 + quad.size.x / 2.0, 0.0, 0.01)
-	_bar_fill.material_override = _bar_material(Combat.health_color(ratio))
-
-
-func _show_number(amount: int) -> void:
-	var label: Label3D = Label3D.new()
-	label.text = str(amount)
-	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	label.no_depth_test = true
-	label.shaded = false
-	label.pixel_size = 0.008
-	label.font_size = 72
-	label.outline_size = 18
-	label.modulate = Color("ffe14a")
-	label.outline_modulate = Color("5a1a10")
-	label.position = Vector3(0.0, BAR_Y + 0.3, 0.0)
-	add_child(label)
-	var tween: Tween = label.create_tween().set_parallel(true)
-	tween.tween_property(label, "position:y", BAR_Y + 0.3 + NUMBER_RISE, NUMBER_SECONDS)
-	tween.tween_property(label, "modulate:a", 0.0, NUMBER_SECONDS)
-	tween.chain().tween_callback(label.queue_free)
+	_bar.show_ratio(Combat.health_ratio(health))
 
 
 func _set_flash(on: bool) -> void:
@@ -185,20 +157,6 @@ func _build_parts() -> void:
 			Vector3(0.0, 1.0, 0.44 + 0.012 * index)
 		)
 		ring.rotation.x = PI / 2.0
-
-
-func _build_bar() -> void:
-	_bar.position = Vector3(0.0, BAR_Y, 0.0)
-	var back: MeshInstance3D = MeshInstance3D.new()
-	back.name = "Back"
-	var back_mesh: QuadMesh = QuadMesh.new()
-	back_mesh.size = Vector2(BAR_WIDTH + 0.08, BAR_HEIGHT + 0.08)
-	back.mesh = back_mesh
-	back.material_override = _bar_material(BAR_BACK)
-	back.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_bar.add_child(back)
-	_bar_fill.mesh = QuadMesh.new()
-	_bar_fill.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _part(part_name: String, mesh: Mesh, color: Color, at: Vector3) -> MeshInstance3D:
@@ -242,17 +200,6 @@ static func _material(color: Color) -> StandardMaterial3D:
 		var material: StandardMaterial3D = StandardMaterial3D.new()
 		material.albedo_color = color
 		material.roughness = 1.0
-		_materials[key] = material
-	return _materials[key]
-
-
-static func _bar_material(color: Color) -> StandardMaterial3D:
-	var key: String = "bar %s" % color.to_html()
-	if not _materials.has(key):
-		var material: StandardMaterial3D = StandardMaterial3D.new()
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
-		material.albedo_color = color
 		_materials[key] = material
 	return _materials[key]
 

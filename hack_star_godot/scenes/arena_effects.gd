@@ -7,8 +7,9 @@ extends Node3D
 const DUST: String = "dust"
 const FLASH: String = "flash"
 const SPARKS: String = "sparks"
+const KNOCKOUT: String = "knockout"
 ## How many particle nodes each kind owns.
-const POOL_SIZES: Dictionary = {DUST: 4, FLASH: 3, SPARKS: 4}
+const POOL_SIZES: Dictionary = {DUST: 4, FLASH: 3, SPARKS: 4, KNOCKOUT: 3}
 
 ## Shared by all effects: one unshaded material that takes its colour from the particle.
 static var _material: StandardMaterial3D
@@ -85,6 +86,17 @@ func _make(kind: String) -> CPUParticles3D:
 			particles.scale_amount_min = 1.0
 			particles.scale_amount_max = 2.0
 			particles.mesh = _sphere(FLASH, 0.16)
+		KNOCKOUT:
+			particles.amount = 18
+			particles.lifetime = 0.7
+			particles.explosiveness = 1.0
+			particles.spread = 180.0
+			particles.gravity = Vector3(0.0, 1.5, 0.0)
+			particles.initial_velocity_min = 1.5
+			particles.initial_velocity_max = 4.5
+			particles.scale_amount_min = 1.2
+			particles.scale_amount_max = 2.4
+			particles.mesh = _sphere(KNOCKOUT, 0.22)
 		_:
 			particles.amount = 12
 			particles.lifetime = 0.4
