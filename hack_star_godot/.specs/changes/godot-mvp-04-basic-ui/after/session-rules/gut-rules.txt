@@ -1,0 +1,56 @@
+res://tests/test_fighters.gd
+[0m* test_six_fighters_with_names_and_rarities
+* test_each_fighter_has_two_or_three_skins_with_one_default
+* test_skin_names_and_rarities_of_the_spec
+* test_blaze_rocko_and_turbo_are_unlocked_at_the_start
+* test_lookups_of_unknown_ids_are_empty
+[1m5/5 passed.
+[0m[4m
+res://tests/test_game_state.gd
+[0m* test_starts_from_the_sample_progress
+* test_total_trophies_adds_every_fighter
+* test_select_an_unlocked_fighter_and_skin
+* test_the_choice_of_a_skin_is_kept_per_fighter
+* test_a_locked_fighter_is_refused
+* test_an_unknown_skin_or_fighter_is_refused
+* test_reset_forgets_the_choices
+[1m7/7 passed.
+[0m[4m
+res://tests/test_prestige.gd
+[0m* test_below_1000_is_level_0
+* test_every_1000_trophies_is_one_level
+* test_negative_trophies_are_level_0
+[1m3/3 passed.
+[0m[4m
+res://tests/test_rarity.gd
+[0m* test_five_rarities_in_order
+* test_rank_follows_the_order
+* test_every_rarity_has_its_own_colour
+* test_legendary_is_gold_and_unknown_is_white
+[1m4/4 passed.
+[0m[4m
+res://tests/test_sample_progress.gd
+[0m* test_every_fighter_has_trophies_and_a_power_level
+* test_values_of_the_svelte_game
+* test_one_fighter_has_a_prestige_badge_and_the_player_has_credits
+[1m3/3 passed.
+[0m[4m
+res://tests/test_vocabulary.gd
+[0m* test_has_every_word_of_the_vocabulary
+* test_every_word_has_a_meaning
+[1m2/2 passed.
+[0m
+[33m==============================================
+[0m[33m= Run Summary
+[0m[33m==============================================
+[0m
+Totals
+------
+Scripts              17
+Tests               104
+Passing Tests       104
+Asserts             854
+Time              7.524s
+[32m---- All tests passed! ----
+[0m
+Tests passed: 104.

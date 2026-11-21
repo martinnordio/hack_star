@@ -1,0 +1,163 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 04 on feature/godot-mvp (written by REVIEW:, 2026-11-21).
+# Range: this spec's commits only, ad1fa1a..5585efb (the branch carries specs 03-08 and 16).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/".
+# Screens: real screenshots of a windowed Godot 4.7.2 run (temporary capture script, removed);
+# 1280x720 shots halved to 640x360, 390x844 shots kept at full size.
+version: 1
+branch: feature/godot-mvp
+base: ad1fa1a
+why: |
+  The Godot game opened on a bare start screen with Play and had no fighters, trophies,
+  credits or shared look. Spec 04 brings the first screen that makes kids say "wow" (a big 3D
+  fighter with an entrance, trophies, Prestige, skins), an info page for parents, and the UI
+  foundation (one theme, one way between screens, one Back button, session state) that the
+  later specs reuse.
+spec:
+  path: .specs/features/2026_11_12_04_basic_ui_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14]
+changes:
+  - id: home-screen
+    kind: ui
+    change: modified
+    object: First screen (scenes/start_screen.tscn -> scenes/home.tscn, main scene)
+    note: The start screen becomes the home screen - chosen fighter in 3D (idle), total trophies 1745, credits 500, Prestige 1 badge, Play, Fighters, Info. On a phone in portrait the canvas_items stretch shrinks text and buttons to about a third (finding 3).
+    statements: [S1, S3, S6, S8, S12, S14]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (main screen, entrance already played, 1.5 s, root texture saved, halved)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          godot --path hack_star_godot --resolution 390x844 -s <temporary capture script>
+          (same, full size)
+        views: [phone-portrait]
+  - id: entrance
+    kind: ui
+    change: added
+    object: Wow entrance of the home screen (once per game start, 2.4 s, skippable)
+    note: Fighter falls in spinning, lands with a burst (light, halo, ring, 64 sparkles), title pops at 1.0 s, UI fades in at 1.5 s; "Tap to skip" while it plays.
+    statements: [S2]
+    examples:
+      - name: at-0-5s
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (fresh GameState, home captured 0.5 s after the scene change)
+        views: [desktop]
+      - name: at-0-9s
+        input: |
+          same, captured at 0.9 s (just after the landing at 0.8 s)
+        views: [desktop]
+      - name: at-1-2s
+        input: |
+          same, captured at 1.2 s (title popping in)
+        views: [desktop]
+  - id: arena-back
+    kind: ui
+    change: modified
+    object: Arena HUD Back button (shared BackButton scene, goes to home)
+    note: Same place, now the themed shared button; FPS label takes the theme's label size. The 3D arena itself is unchanged.
+    statements: [S3, S10, S12]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (scenes/arena.tscn, 1 s)
+        views: [desktop]
+  - id: fighter-list
+    kind: ui
+    change: added
+    object: Fighter list (scenes/fighter_list.tscn, Fighters on home)
+    note: Six cards in catalogue order with cached 3D pictures; Blaze with Prestige 1; Frosty, Luna, Pixel greyed with Locked; columns = width / 300.
+    statements: [S4, S6, S10, S11]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (scenes/fighter_list.tscn, 2 s so the pictures are rendered)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          same at 390x844
+        views: [phone-portrait]
+  - id: fighter-screen
+    kind: ui
+    change: added
+    object: Fighter screen with skins and Select (scenes/fighter_screen.tscn)
+    note: Skin buttons with rarity colour, gold frame on Legendary, preview on press; Select disabled and reading Locked for a locked fighter.
+    statements: [S5, S7, S10, S11, S13]
+    examples:
+      - name: blaze-phoenix
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (GameState.selected_skins.blaze = "phoenix", viewed_fighter = "blaze")
+        views: [desktop]
+      - name: luna-locked
+        input: |
+          same with viewed_fighter = "luna" (locked)
+        views: [desktop]
+  - id: info-page
+    kind: ui
+    change: added
+    object: Info page with the vocabulary (scenes/info.tscn, game/vocabulary.gd)
+    note: 24 words in a scrolling list, word in bold, meaning wrapped; Back top-left.
+    statements: [S9, S10, S14]
+    examples:
+      - name: desktop-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          (scenes/info.tscn, 1 s)
+        views: [desktop]
+      - name: phone-portrait-390x844
+        input: |
+          same at 390x844
+        views: [phone-portrait]
+  - id: session-rules
+    kind: output
+    change: added
+    object: Catalogue, rarity, Prestige, sample progress, vocabulary and GameState rules
+    note: Pure rules in game/ and the session autoload; Prestige = trophies / 1000; select() refuses a locked fighter or unknown skin.
+    statements: [S5, S6, S8, S11, S13]
+    examples:
+      - name: gut-rules
+        input: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File tools\test.ps1
+          (sections test_fighters, test_game_state, test_prestige, test_rarity,
+          test_sample_progress, test_vocabulary and the totals)
+  - id: project-settings
+    kind: config
+    change: modified
+    object: project.godot (main scene, autoloads Screens and GameState, default theme)
+    note: Two autoloads and gui/theme/custom; the main scene is home.tscn.
+    statements: [S1, S12, S13]
+    examples:
+      - name: project-godot
+        input: |
+          git show <rev>:hack_star_godot/project.godot, lines main_scene, [autoload], [gui]
+  - id: theme
+    kind: tokens
+    change: added
+    object: Hack star theme (scenes/ui/hack_star_theme.tres)
+    note: Font sizes 28 / 36 / 40 / 48 / 56, label and button colours, variations BigButton, HeadingLabel, SubheadingLabel, BackgroundPanel, CardPanel. SkinButton and PrestigeBadge still style themselves (finding 1).
+    statements: [S12]
+    examples:
+      - name: theme-tokens
+        input: |
+          the font_size, colors and base_type keys of hack_star_theme.tres at the head
+breaking: none
+review:
+  - question: Why does Back on the fighter screen go home and not to the list?
+    answer: |
+      D12: one rule for every Back (D2, D3); Select also goes home so the new fighter shows at
+      once. S10 asks for home.
+  - question: Is anything saved?
+    answer: |
+      No. GameState starts from SampleProgress at every game start (D4, S13); the save file
+      comes with spec 05 or 08. server/ and ui/ are unchanged.
+  - question: Why are the list pictures rendered once and cached?
+    answer: |
+      D7: six live sub-viewports would render six 3D scenes per frame on a phone; the pictures
+      are rendered off-screen once per fighter and skin and kept in GameState.pictures.

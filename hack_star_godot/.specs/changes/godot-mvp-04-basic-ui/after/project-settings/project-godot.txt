@@ -1,0 +1,6 @@
+run/main_scene="res://scenes/home.tscn"
+[autoload]
+Screens="*res://scenes/autoload/screens.gd"
+GameState="*res://scenes/autoload/game_state.gd"
+[gui]
+theme/custom="res://scenes/ui/hack_star_theme.tres"

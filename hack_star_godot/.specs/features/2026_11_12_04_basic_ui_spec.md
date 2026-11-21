@@ -26,6 +26,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.35 M (34 k in · 2.29 M cached · 22 k out) | CHF 0.45 (54 credits) | Step 8 done (`usage.ps1 -Agent subagents` 16:53–16:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.36 M (121 k in · 2.22 M cached · 21 k out) | CHF 0.16 (19 credits) | Step 9 done (`usage.ps1 -Agent subagents` 16:57–17:00) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.45 M (20 k in · 1.42 M cached · 7 k out) | CHF 0.09 (10 credits) | Step 10 done (`usage.ps1 -Agent subagents` 17:01–17:02) |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.35 M (180 k in · 8.11 M cached · 53 k out) | CHF 2.84 (339 credits) | semantic diff written (9 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-04-basic-ui.html)); code review: Approve, 0 Blocking · 4 Should-fix · 4 Nit (`usage.ps1 -Agent subagents` 17:02–17:12) |
 
 ---
 
@@ -510,6 +511,31 @@ Started: 2026-11-21 17:01
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-04-basic-ui.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve (with follow-ups) | 0 Blocking · 4 Should-fix · 4 Nit |
+
+### Code review 2026-11-21
+
+Range `ad1fa1a..5585efb` (this spec's commits only). Ran: `tools/test.ps1` (104 of 104 passed),
+`tools/lint.ps1` (OK); record checked with `change_record.schema.json` (checks 7 pass · 2 n/a ·
+0 fail). Before | After: real screenshots from a windowed Godot 4.7.2 run (temporary capture
+script, removed), the before side from a temporary worktree at `ad1fa1a`. Good: the rules in
+`game/` are pure and tested headless. The skip takes its event, so a tap never also presses
+Play. The list pictures are cached (D7). Premultiplied alpha is handled on stage and card.
+`server/`, `ui/` and `LICENSES.md` are unchanged. There is no debug output and no TODO.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | `SkinButton` sets a font size (28), four background/border colours and five style boxes in code (`scenes/ui/skin_button.gd:6-9, 23, 31-35`). `PrestigeBadge` sets its own panel style and font colour (`scenes/ui/prestige_badge.tscn:22, 27`). D1 and `docs/architecture.md` say screens set no colours or font sizes of their own, except the rarity colours of `Rarity`. Move them into theme variations of `hack_star_theme.tres` | architecture | architecture | Should-fix | fix now |
+| 2 | Fighters, Info, the card's `OpenButton`, the skin buttons, Select and the fighter screen's Back are tested only with `pressed.emit()` (e.g. `tests/test_fighter_screen.gd:115, 121`). This skips input handling and the disabled state. D10 asks for Back by click and touch on every new screen, but the fighter screen has none in `test_screen_sizes.gd`. `docs/architecture.md:176` claims "Play, Info, Back and the cards react to a mouse click and a touch" | code | test | Should-fix | fix now |
+| 3 | Phone portrait 390×844 (windowed run): the `canvas_items` stretch of the 1280-wide base scales the UI by 0.30. Labels are about 9 px high, Play 34 px and Fighters/Info about 26 px tall, card text about 7 px (screenshots in `changes/godot-mvp-04-basic-ui/after/`). D1's "minimum height for a thumb" holds only in base pixels, and the size tests check only "inside". Decide a portrait scale (e.g. `content_scale_factor` by orientation) or a minimum physical size | spec | spec | Should-fix | plan decision |
+| 4 | Definition of Done: the *Implementation* line is not ticked although all 10 Steps are ✅ and the checks pass. `.specs/features/README.md` still lists spec 04 as `planned` | spec | spec | Should-fix | fix now |
+| 5 | `docs/architecture.md:71` says `SampleProgress` holds "unlocks … the Default skins". The start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins | spec | docs | Nit | fix now |
+| 6 | D11 names `Vocabulary.WORDS`, but the code uses `Vocabulary.LIST`, and Step 9's Notes do not mark the deviation | spec | docs | Nit | fix now |
+| 7 | `scenes/info.gd:9` builds the bold word font from `ThemeDB.fallback_font`, not from the theme, so a theme font would not reach the words. A theme variation (e.g. `WordLabel`) keeps D1 | code | guideline | Nit | fix now |
+| 8 | Entrance: the burst sparkles fly beyond the `FighterStage` and are cut at its edge (screenshot `after/entrance/at-1-2s.png`). A smaller spread or a wider stage during the entrance hides the cut | code | spec | Nit | fix now |
+
+**Outcome:** Approve. Nothing is Blocking. Findings 1, 2, 4–8 are fix now; finding 3 needs a plan decision (`PLAN:`).
 
 ---
 
@@ -518,6 +544,6 @@ Started: 2026-11-21 17:01
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — one pull request for `feature/godot-mvp` at the end of the run
