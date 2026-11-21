@@ -18,6 +18,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.39 M (129 k in · 3.23 M cached · 37 k out) | CHF 1.70 (202 credits) | Part 2 written (9 Steps: standard, standard, standard, standard, reasoning, standard, standard, reasoning, light); also the requirements revision and the issue (`usage.ps1 -AgentName s05-lead` from 17:25:44) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 914 k (88 k in · 816 k cached · 10 k out) | CHF 0.33 (40 credits) | Step 1 done (`usage.ps1 -AgentName s05-steps1-4` 17:25:44–17:35:03) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.05 M (27 k in · 2.01 M cached · 13 k out) | CHF 0.33 (40 credits) | Step 2 done (`usage.ps1 -AgentName s05-steps1-4` 17:35:03–17:38:13) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.28 M (65 k in · 4.19 M cached · 33 k out) | CHF 0.76 (91 credits) | Step 3 done (`usage.ps1 -AgentName s05-steps1-4` 17:38:13–17:44:10) |
 
 ---
 
@@ -152,7 +153,7 @@ simplest reading that fits the Godot game._
 |------|-------------|-------------------|--------|--------|
 | **1** | Hack rules and the saved active hacks | standard (Claude Sonnet 5.5) — pure rules, a small JSON file and tests, fixed by D4 and D5 | ✅ Done | [→ Step 1](#step-1--hack-rules-and-the-saved-active-hacks) |
 | **2** | Server connection | standard (Claude Sonnet 5.5) — one autoload with `HTTPRequest` and a test seam, fixed by D1–D3 | ✅ Done | [→ Step 2](#step-2--server-connection) |
-| **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ⬜ Not started | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
+| **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ✅ Done | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
 | **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ⬜ Not started | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
 | **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ⬜ Not started | [→ Step 5](#step-5--qr-code-encoder) |
 | **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ⬜ Not started | [→ Step 6](#step-6--qr-page-with-savable-images) |
@@ -268,22 +269,24 @@ server, the result is celebrated or explained, the active hacks are listed and c
 turned off after confirming (S1, S2, S7, S8, S9, S13, S14).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `Screens.HACK`; **Hack** button on the home screen (after **Info**, same style).
-- [ ] `scenes/hack_screen.tscn` + `.gd` after D6 and the celebration after D7; **QR codes**
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `Screens.HACK`; **Hack** button on the home screen (after **Info**, same style).
+- [x] `scenes/hack_screen.tscn` + `.gd` after D6 and the celebration after D7; **QR codes**
       and **Scan QR code** are in the scene but hidden until Steps 6 and 8 connect them.
-- [ ] Tests: `tests/test_hack_screen.gd` (with `HackServer.fake_responder` and a test save
+- [x] Tests: `tests/test_hack_screen.gd` (with `HackServer.fake_responder` and a test save
       path): " opensesame " → "Unlock everything unlocked!", listed as active, saved;
       "NOPE" → "Unknown code", nothing changes; no server → the S13 message, nothing changes;
       Enter submits; reset asks first, Cancel keeps the hacks, **Turn off** clears them and
       the list says "No hacks active"; home has **Hack** and it opens the hack screen; the
       hack screen joins `tests/test_screen_sizes.gd` (inside, minimum sizes, Back and Hack by
       click and touch).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots (windowed run, under
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots (windowed run, under
       `%TEMP%`) of the hack screen at 1280×720 and 390×844, and during the celebration.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 17:38
+
+**Done (2026-11-21 · ~6m · Claude Sonnet 5.5)** — `Screens.HACK`, **Hack** button on home (the "more" row is now an `HFlowContainer`, so three buttons wrap on a phone), `scenes/hack_screen.tscn` + `.gd` (code field with **Use code** and Enter, message, "Active hacks" list, **Turn all hacks off** with a themed confirmation, celebration: popping message + `CPUParticles2D` star burst of 1.8 s, stars drawn in code); **Scan QR code** and **QR codes** are in the scene, hidden. Added `Hacks.display_name` (the list works without the server) and a `LineEdit`/dialog-title look in the theme. 16 new tests; `tools/test.ps1` 147 passing, exit 0; `tools/lint.ps1` exit 0. Looks checked on screenshots of a windowed run (temporary capture script in `%TEMP%`, removed): hack screen at 1280×720 and 390×844, typed code, celebration at both sizes, confirmation dialog at both sizes, home at 1280×720, 390×844 and 844×390 — nothing cut off, the stars and the message are readable. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 4.28 M · CHF 0.76
 
 ---
 

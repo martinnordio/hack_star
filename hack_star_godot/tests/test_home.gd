@@ -83,6 +83,15 @@ func test_play_opens_the_arena_by_click_and_by_touch() -> void:
 	await _assert_opens("Play", Screens.ARENA, PLAY_PATH)
 
 
+func test_hack_is_always_visible_and_opens_the_hack_screen() -> void:
+	GameState.entrance_played = true
+	var screen: Control = _show_home()
+	var button: Button = screen.get_node("Margin/Column/Body/Controls/MoreRow/HackButton")
+	assert_true(button.visible)
+	assert_eq(button.text, "Hack")
+	await _assert_opens("Hack", Screens.HACK, "Margin/Column/Body/Controls/MoreRow/HackButton")
+
+
 # --- Entrance (S2) ----------------------------------------------------------------------------
 
 

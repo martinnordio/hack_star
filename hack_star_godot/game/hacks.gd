@@ -23,6 +23,19 @@ static func is_known(hack_id: String) -> bool:
 	return hack_id in ids()
 
 
+## The name shown in the list of active hacks; the same names the server gives, kept here so
+## the list also works without the server.
+static func display_name(hack_id: String) -> String:
+	match hack_id:
+		INFINITE_CREDITS:
+			return "Unlimited credits"
+		UNLOCK_ALL:
+			return "Unlock everything"
+		POWER22:
+			return "Power 22"
+	return hack_id
+
+
 ## A typed code as the server expects it: no surrounding spaces, upper case.
 static func normalize_code(text: String) -> String:
 	return text.strip_edges().to_upper()

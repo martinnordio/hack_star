@@ -47,3 +47,9 @@ func test_power_22_raises_the_maximum_and_shows_it() -> void:
 func test_known_ids() -> void:
 	assert_true(Hacks.is_known("power22"))
 	assert_false(Hacks.is_known("hypercharge"))
+
+
+func test_every_known_hack_has_a_name_for_the_list() -> void:
+	assert_eq(Hacks.display_name(Hacks.INFINITE_CREDITS), "Unlimited credits")
+	assert_eq(Hacks.display_name(Hacks.UNLOCK_ALL), "Unlock everything")
+	assert_eq(Hacks.display_name(Hacks.POWER22), "Power 22")

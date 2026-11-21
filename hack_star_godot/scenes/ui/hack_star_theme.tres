@@ -1,5 +1,53 @@
 [gd_resource type="Theme" format=3]
 
+[sub_resource type="StyleBoxFlat" id="Window_border"]
+content_margin_left = 16.0
+content_margin_top = 56.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.16, 0.14, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.42, 0.27, 0.85, 1)
+
+[sub_resource type="StyleBoxFlat" id="LineEdit_normal"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.1, 0.1, 0.18, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.42, 0.27, 0.85, 1)
+
+[sub_resource type="StyleBoxFlat" id="LineEdit_focus"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.1, 0.1, 0.18, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.62, 0.5, 1, 1)
+
 [sub_resource type="StyleBoxFlat" id="Button_normal"]
 content_margin_left = 32.0
 content_margin_top = 20.0
@@ -240,4 +288,13 @@ SubheadingLabel/base_type = &"Label"
 SubheadingLabel/font_sizes/font_size = 40
 Label/colors/font_color = Color(0.94, 0.95, 1, 1)
 Label/font_sizes/font_size = 28
+LineEdit/font_sizes/font_size = 36
+Window/colors/title_color = Color(0.94, 0.95, 1, 1)
+Window/constants/title_height = 48
+Window/font_sizes/title_font_size = 28
+Window/styles/embedded_border = SubResource("Window_border")
+Window/styles/embedded_unfocused_border = SubResource("Window_border")
+LineEdit/styles/focus = SubResource("LineEdit_focus")
+LineEdit/styles/normal = SubResource("LineEdit_normal")
+LineEdit/styles/read_only = SubResource("LineEdit_normal")
 Panel/styles/panel = SubResource("Panel_card")

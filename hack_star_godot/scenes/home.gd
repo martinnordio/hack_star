@@ -1,6 +1,6 @@
 extends Control
 ## The home screen: the chosen fighter and skin, the player's trophies and credits, the
-## fighter's Prestige, **Play**, **Fighters** and **Info**.
+## fighter's Prestige, **Play**, **Fighters**, **Info** and **Hack**.
 ## At each game start it first plays the entrance: the fighter drops in with a bounce, a light
 ## burst and sparkles, the title pops in; a click, a touch or a key skips to the end state.
 
@@ -32,6 +32,7 @@ var _effects: Node3D
 @onready var _play_button: Button = $Margin/Column/Body/Controls/PlayButton
 @onready var _fighters_button: Button = $Margin/Column/Body/Controls/MoreRow/FightersButton
 @onready var _info_button: Button = $Margin/Column/Body/Controls/MoreRow/InfoButton
+@onready var _hack_button: Button = $Margin/Column/Body/Controls/MoreRow/HackButton
 @onready var _flash: ColorRect = $Flash
 @onready var _skip_hint: Label = $SkipHint
 
@@ -40,6 +41,7 @@ func _ready() -> void:
 	_play_button.pressed.connect(_on_play_pressed)
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)
+	_hack_button.pressed.connect(_on_hack_pressed)
 	resized.connect(_arrange)
 	_title.resized.connect(_center_title_pivot)
 	_arrange()
@@ -94,6 +96,10 @@ func _on_fighters_pressed() -> void:
 
 func _on_info_pressed() -> void:
 	Screens.go_to(Screens.INFO)
+
+
+func _on_hack_pressed() -> void:
+	Screens.go_to(Screens.HACK)
 
 
 static func _is_skip(event: InputEvent) -> bool:

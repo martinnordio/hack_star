@@ -96,9 +96,10 @@ size_flags_horizontal = 4
 theme_type_variation = &"BigButton"
 text = "Play"
 
-[node name="MoreRow" type="HBoxContainer" parent="Margin/Column/Body/Controls"]
+[node name="MoreRow" type="HFlowContainer" parent="Margin/Column/Body/Controls"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 12
 alignment = 1
 
 [node name="FightersButton" type="Button" parent="Margin/Column/Body/Controls/MoreRow"]
@@ -110,6 +111,11 @@ text = "Fighters"
 custom_minimum_size = Vector2(260, 80)
 layout_mode = 2
 text = "Info"
+
+[node name="HackButton" type="Button" parent="Margin/Column/Body/Controls/MoreRow"]
+custom_minimum_size = Vector2(260, 80)
+layout_mode = 2
+text = "Hack"
 
 [node name="Flash" type="ColorRect" parent="."]
 visible = false

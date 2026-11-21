@@ -7,6 +7,7 @@ const HOME_SCENE: PackedScene = preload("res://scenes/home.tscn")
 const LIST_SCENE: PackedScene = preload("res://scenes/fighter_list.tscn")
 const FIGHTER_SCENE: PackedScene = preload("res://scenes/fighter_screen.tscn")
 const INFO_SCENE: PackedScene = preload("res://scenes/info.tscn")
+const HACK_SCENE: PackedScene = preload("res://scenes/hack_screen.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const MIN_BUTTON_HEIGHT: float = 44.0
@@ -70,6 +71,7 @@ func test_home_fits_every_size() -> void:
 		"Margin/Column/Body/Controls/PlayButton",
 		"Margin/Column/Body/Controls/MoreRow/FightersButton",
 		"Margin/Column/Body/Controls/MoreRow/InfoButton",
+		"Margin/Column/Body/Controls/MoreRow/HackButton",
 		"SkipHint",
 	]
 	for label: String in SIZES:
@@ -162,6 +164,48 @@ func test_back_on_the_info_page_reacts_to_mouse_click_and_touch() -> void:
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
 	UiInput.touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
+
+
+func test_hack_screen_fits_every_size() -> void:
+	var paths: Array[String] = [
+		"Margin/Column/Header/BackButton",
+		"Margin/Column/Header/Title",
+		"Margin/Column/Scroll/Content/CodeRow/CodeEdit",
+		"Margin/Column/Scroll/Content/CodeRow/UseButton",
+		"Margin/Column/Scroll/Content/Message",
+		"Margin/Column/Scroll/Content/ActiveTitle",
+		"Margin/Column/Scroll/Content/ActiveList",
+		"Margin/Column/Scroll/Content/ResetButton",
+	]
+	for label: String in SIZES:
+		var size: Vector2i = SIZES[label]
+		var shown: Array = await _show_in_viewport(HACK_SCENE, size)
+		var screen: Control = shown[1]
+		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
+		var scroll: ScrollContainer = screen.get_node("Margin/Column/Scroll")
+		_assert_inside(scroll, visible_rect, "%s scroll" % label)
+		var content: Control = scroll.get_node("Content")
+		assert_lte(content.size.x, scroll.size.x + 0.5, "%s content fits the width" % label)
+		for path: String in paths:
+			var control: Control = screen.get_node(path)
+			var rect: Rect2 = control.get_global_rect()
+			var in_width: bool = rect.position.x >= -0.5 and rect.end.x <= visible_rect.end.x + 0.5
+			assert_true(in_width, "%s %s %s fits the width" % [label, path, rect])
+		shown[0].queue_free()
+
+
+func test_back_and_use_code_on_the_hack_screen_react_to_mouse_click_and_touch() -> void:
+	var shown: Array = await _show_in_viewport(HACK_SCENE, Vector2i(390, 844))
+	var back: Button = shown[1].get_node("Margin/Column/Header/BackButton")
+	var use: Button = shown[1].get_node("Margin/Column/Scroll/Content/CodeRow/UseButton")
+	_drop_handlers(back)
+	_drop_handlers(use)
+	for button: Button in [back, use]:
+		watch_signals(button)
+		UiInput.click(shown[0], button)
+		assert_signal_emit_count(button, "pressed", 1, "a click presses %s" % button.text)
+		UiInput.touch(shown[0], button)
+		assert_signal_emit_count(button, "pressed", 2, "a touch presses %s" % button.text)
 
 
 func test_arena_fits_every_size() -> void:
@@ -260,6 +304,7 @@ func test_buttons_and_text_have_a_minimum_size_at_every_size() -> void:
 		"list": LIST_SCENE,
 		"fighter": FIGHTER_SCENE,
 		"info": INFO_SCENE,
+		"hack": HACK_SCENE,
 		"arena": ARENA_SCENE,
 	}
 	for label: String in SIZES:
