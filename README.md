@@ -10,6 +10,8 @@ A top-down arena browser game for kids, with **hack codes** that give unlimited
 credits, unlock every fighter and allow power levels up to 22. It runs on a desktop, iPad and
 phone browser. Made by Martin Nordio and Mattia Nordio.
 
+The Godot version of the game lives in [hack_star_godot/](hack_star_godot/).
+
 - Vision: [.specs/overall_req.md](.specs/overall_req.md)
 - Feature list and MVP scope: [MVP and architecture spec](.specs/features/done/2026_11_12_mvp_and_architecture_spec.md)
 - All specs: [.specs/features/](.specs/features/)

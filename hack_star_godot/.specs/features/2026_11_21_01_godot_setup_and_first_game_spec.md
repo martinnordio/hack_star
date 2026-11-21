@@ -17,6 +17,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.64 M (49 k in · 1.58 M cached · 13 k out) | CHF 0.44 (52 credits) | Step 2 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.45 M (97 k in · 2.32 M cached · 34 k out) | CHF 1.37 (163 credits) | Step 3 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.21 M (86 k in · 3.11 M cached · 20 k out) | CHF 0.65 (78 credits) | Step 4 done except the iPad check |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 3.51 M (110 k in · 3.36 M cached · 37 k out) | CHF 0.19 (23 credits) | Step 5 done |
 
 ---
 
@@ -143,7 +144,7 @@ _None._
 | **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ✅ Done | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
 | **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ✅ Done | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
 | **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | 🔄 In progress — iPad check by the author | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
-| **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 5](#step-5--readme-licences-final-check) |
+| **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 5](#step-5--readme-licences-final-check) | [→ Step 5](#step-5--readme-licences-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -352,25 +353,43 @@ The Godot folder is documented and licensed, the root README points to it, and t
 still passes all its checks; the first game uses no server (S1, S5, S7, S8, S14, S15, S19).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/README.md`: what it is; install step by step on Windows (D1, D6, D7,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/README.md`: what it is; install step by step on Windows (D1, D6, D7,
       export templates); run in the editor; `tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
       `export_web.ps1`, `serve_web.ps1`; play on an iPad; resources outside the folder (D13);
       how to write a Godot spec (the rule of `AGENTS.md`, D8) and the cost list (D9); the
       MIT licence of the repository (`../LICENSE`) and the fan-project disclaimer.
-- [ ] `hack_star_godot/LICENSES.md`: own art built in code (D10); Godot Engine (MIT,
+- [x] `hack_star_godot/LICENSES.md`: own art built in code (D10); Godot Engine (MIT,
       © Godot Engine contributors) credited; GUT (MIT) in `addons/gut/`.
-- [ ] Root `README.md`: one line that the Godot version lives in
+- [x] Root `README.md`: one line that the Godot version lives in
       [hack_star_godot/](hack_star_godot/) with a link.
-- [ ] Check the Godot folder: `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`,
+- [x] Check the Godot folder: `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`,
       `tools/export_web.ps1` pass; follow the README's install part on the written steps
       once more and fix any gap.
-- [ ] Check the root game is unchanged (S1): `cd server; uv run pytest`, `cd ui; npm test`,
+- [x] Check the root game is unchanged (S1): `cd server; uv run pytest`, `cd ui; npm test`,
       `npm run check`, `npm run build` pass; `git diff --stat main` shows changes only in
       `hack_star_godot/`, `AGENTS.md` and the one README line.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 14:20
+
+- Written: `hack_star_godot/README.md` (install, commands, editor and browser, iPad, controls,
+  resources, specs and costs, licence and disclaimer) and `hack_star_godot/LICENSES.md`; the
+  root `README.md` gets one line after the intro. The README install steps were checked
+  against the scripts: the template download URL returns 200; the extraction snippet was run
+  on a fake `.tpz` (it extracts the three files and removes the archive); `serve_web.ps1`
+  answered 200 for `index.html` and `index.wasm`. Link check (Test-Path): all relative links
+  resolve. The README now says that scripts may need `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+- GUT's copyright line is quoted from `addons/gut/LICENSE.md`. GUT also ships three fonts under
+  the OFL; `addons/gut/fonts/OFL.txt` names only Anonymous Pro's copyright, so the other two
+  font copyrights are not listed (the file has no line for them).
+- S19: no `HTTPRequest`, `WebSocket`, socket or HTTP code in `scenes/` or `game/`.
+- Checks: `check_tools.ps1` all OK (exit 0); `test.ps1` 15 of 15 passed (exit 0); `lint.ps1`
+  OK (exit 0); `export_web.ps1` OK (exit 0). Root: `uv run pytest` 45 passed; `npm test` 267
+  passed (28 files); `npm run check` 0 errors; `npm run build` OK (exit 0).
+- `git diff --stat main`: changes only in `hack_star_godot/`, `.specs/kit/` (the cost-script fix, already committed on this branch), `AGENTS.md` and the one line in `README.md`.
+
+**Done (2026-11-21 · ~5m · Claude Haiku 5.5)** — `hack_star_godot/README.md` and `LICENSES.md` written, one line in the root README. All Godot checks (`check_tools`, `test` 15/15, `lint`, `export_web`) and the root game's checks (`pytest` 45, `npm test` 267, `npm run check`, `npm run build`) pass. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 3.51 M (110 k in · 3.36 M cached · 37 k out) · CHF 0.19 (23 credits)
 
 ---
 
