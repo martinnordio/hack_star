@@ -33,7 +33,7 @@ try {
 
     # Windows PowerShell 5.1 turns Godot's stderr lines into terminating errors under 'Stop'.
     $ErrorActionPreference = 'Continue'
-    $output = & $godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gprefix=test_ -gexit 2>&1 |
+    $output = & $godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gprefix=test_ -gpre_run_script=res://tests/pre_run_hook.gd -gexit 2>&1 |
         ForEach-Object { $_.ToString() }
     $exitCode = $LASTEXITCODE
     $ErrorActionPreference = 'Stop'

@@ -79,7 +79,7 @@ func test_activate_a_hack_saves_it_and_a_new_start_loads_it() -> void:
 	assert_true(FileAccess.file_exists(TEST_SAVE))
 	GameState.reset()
 	assert_eq(GameState.active_hacks, [], "reset does not read the file")
-	GameState.active_hacks = GameState._load_hacks()
+	GameState.load_saved()
 	assert_eq(GameState.active_hacks, [Hacks.POWER22])
 
 
@@ -99,11 +99,15 @@ func test_unlock_all_makes_a_locked_fighter_selectable_and_reset_brings_the_rule
 	assert_eq(GameState.active_hacks, [])
 	assert_false(GameState.is_unlocked("pixel"))
 	assert_false(GameState.select("pixel", "default"))
-	assert_eq(GameState._load_hacks(), [], "the cleared list is saved")
+	assert_eq(_saved_hacks(), [], "the cleared list is saved")
 
 
 func test_reset_empties_the_hacks_in_memory_without_saving() -> void:
 	GameState.activate_hack(Hacks.INFINITE_CREDITS)
 	GameState.reset()
 	assert_eq(GameState.active_hacks, [])
-	assert_eq(GameState._load_hacks(), [Hacks.INFINITE_CREDITS])
+	assert_eq(_saved_hacks(), [Hacks.INFINITE_CREDITS])
+
+
+func _saved_hacks() -> Array[String]:
+	return SaveData.from_json(FileAccess.get_file_as_string(TEST_SAVE))["hacks"]

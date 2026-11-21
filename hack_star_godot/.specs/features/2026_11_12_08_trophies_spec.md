@@ -18,6 +18,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.40 M (119 k in · 2.25 M cached · 26 k out) | CHF 1.32 (157 credits) | Part 2 written (7 Steps: standard, reasoning, standard, standard, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s08-lead` from 21:49:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 392 k (52 k in · 335 k cached · 5 k out) | CHF 0.18 (21 credits) | Step 1 done (`usage.ps1 -AgentName s08-step1` from 21:49:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 862 k (43 k in · 811 k cached · 8 k out) | CHF 0.45 (53 credits) | Step 2 done (`usage.ps1 -AgentName s08-step2` from 21:49:57) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.04 M (48 k in · 978 k cached · 10 k out) | CHF 0.27 (32 credits) | Step 3 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:01:47" -Until "2026-11-21 22:06:30"`) |
 ---
 
 # Part 1 · Requirements
@@ -151,7 +152,7 @@ kept, S11)._
 |------|-------------|-------------------|--------|--------|
 | **1** | Trophy rules and settings | standard (Claude Sonnet 5.5) — pure rules and tests, numbers fixed by D1 and D2 | ✅ Done | [→ Step 1](#step-1--trophy-rules-and-settings) |
 | **2** | Save file version 2 | reasoning (Claude Opus 5.5) — a new saved format with versioning, migration of the spec 05 file and checks of every field (D3) | ✅ Done | [→ Step 2](#step-2--save-file-version-2) |
-| **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ⬜ Not started | [→ Step 3](#step-3--progress-loaded-and-saved) |
+| **3** | Progress loaded and saved | standard (Claude Sonnet 5.5) — `GameState` reads and writes the file of Step 2, tests kept away from the player's file (D4, D7) | ✅ Done | [→ Step 3](#step-3--progress-loaded-and-saved) |
 | **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ⬜ Not started | [→ Step 4](#step-4--trophies-after-a-match) |
 | **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ⬜ Not started | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
 | **6** | MVP flow check | standard (Claude Sonnet 5.5) — one end-to-end test across the screens of specs 04–08 (D9) | ⬜ Not started | [→ Step 6](#step-6--mvp-flow-check) |
@@ -258,18 +259,25 @@ reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · ~862 k · ~CHF 0.45 (53 c
 use their own file (S3, S11, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `tests/pre_run_hook.gd` and the `-gpre_run_script` argument in `tools/test.ps1` after D7
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `tests/pre_run_hook.gd` and the `-gpre_run_script` argument in `tools/test.ps1` after D7
       (the script still parses with `[System.Management.Automation.Language.Parser]::ParseFile`).
-- [ ] `GameState` after D4: `load_saved()`, `save()`, saving after `activate_hack`,
+- [x] `GameState` after D4: `load_saved()`, `save()`, saving after `activate_hack`,
       `reset_hacks` and a successful `select`; `award_trophies` after D5 (used in Step 4).
-- [ ] Tests (D9): new `test_game_state_save.gd`; `test_game_state.gd`, `test_hack_effects.gd`
+- [x] Tests (D9): new `test_game_state_save.gd`; `test_game_state.gd`, `test_hack_effects.gd`
       and `test_hack_screen.gd` still pass.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; after a test run the player's own
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; after a test run the player's own
       `user://hack_star_save.json` is unchanged (its time stamp, or absent if it was absent).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 22:02
+
+**Done (2026-11-21 · ~5 min · Claude Sonnet 5.5)** — `GameState.load_saved`, `save` (after
+`activate_hack`, `reset_hacks`, `select`) and `award_trophies`; `tests/pre_run_hook.gd` passed
+by `tools/test.ps1`; `test_game_state.gd` and `test_hack_screen.gd` read the file with
+`SaveData` instead of the removed `_load_hacks`. `tools/test.ps1` 324 tests passed,
+`tools/lint.ps1` OK, `test.ps1` parses, the player's `hack_star_save.json` stays absent ·
+suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · ~1.04 M · ~CHF 0.27 (32 credits)
 
 ---
 

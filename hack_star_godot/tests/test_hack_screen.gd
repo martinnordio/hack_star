@@ -60,7 +60,7 @@ func test_a_correct_code_unlocks_lists_and_saves_the_hack() -> void:
 	assert_true(GameState.has_hack(Hacks.UNLOCK_ALL))
 	assert_eq(_listed(screen), ["Unlock everything"])
 	assert_eq(screen.get_node(EDIT_PATH).text, "", "the code is cleared")
-	assert_eq(GameState._load_hacks(), [Hacks.UNLOCK_ALL], "saved")
+	assert_eq(_saved_hacks(), [Hacks.UNLOCK_ALL], "saved")
 	assert_not_null(screen.get_node_or_null("Stars"), "the celebration plays")
 
 
@@ -99,7 +99,7 @@ func test_a_code_accepted_after_back_was_pressed_is_still_activated() -> void:
 	screen.free()
 	await wait_seconds(0.4)
 	assert_true(GameState.has_hack(Hacks.UNLOCK_ALL))
-	assert_eq(GameState._load_hacks(), [Hacks.UNLOCK_ALL], "saved")
+	assert_eq(_saved_hacks(), [Hacks.UNLOCK_ALL], "saved")
 
 
 func test_enter_and_the_button_submit_the_code() -> void:
@@ -165,7 +165,7 @@ func test_reset_asks_first_cancel_keeps_the_hacks_and_turn_off_clears_them() -> 
 	assert_eq(GameState.active_hacks, [])
 	assert_eq(_listed(screen), ["No hacks active"])
 	assert_true(screen.get_node(RESET_PATH).disabled)
-	assert_eq(GameState._load_hacks(), [], "saved")
+	assert_eq(_saved_hacks(), [], "saved")
 
 
 func test_back_goes_home_by_click_and_by_touch() -> void:
@@ -245,3 +245,7 @@ func test_the_code_of_a_qr_link_is_redeemed_when_the_screen_opens() -> void:
 	assert_eq(screen.get_node(MESSAGE_PATH).text, "Unlock everything unlocked!")
 	assert_true(GameState.has_hack(Hacks.UNLOCK_ALL))
 	assert_eq(GameState.start_code, "", "redeemed once")
+
+
+func _saved_hacks() -> Array[String]:
+	return SaveData.from_json(FileAccess.get_file_as_string(TEST_SAVE))["hacks"]

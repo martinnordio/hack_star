@@ -1,8 +1,8 @@
 extends Node
 ## What the player has and has chosen while the game is open: trophies, power levels, unlocked
 ## fighters, credits, the chosen fighter and skin, and whether the entrance has played.
-## It starts from `SampleProgress` at every game start. Only the active hacks are saved
-## (`SaveData`); spec 08 saves the rest.
+## It starts from `SampleProgress` and lays the saved progress over it (`load_saved`); the whole
+## progress and the active hacks are saved in one file (`SaveData`).
 
 var trophies: Dictionary[String, int] = {}
 var power_levels: Dictionary[String, int] = {}
@@ -15,7 +15,7 @@ var viewed_fighter: String = ""
 var entrance_played: bool = false
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
-## Where the active hacks are saved; a test points it to a file under `user://test/`.
+## Where the progress and the hacks are saved; a test points it to a file under `user://test/`.
 var save_path: String = "user://hack_star_save.json"
 ## The fighter pictures of the list, rendered once per game start (see `FighterPictures`).
 var pictures: Dictionary[String, Texture2D] = {}
@@ -31,7 +31,7 @@ var last_result: Dictionary = {}
 
 func _ready() -> void:
 	reset()
-	active_hacks = _load_hacks()
+	load_saved()
 	if OS.has_feature("web"):
 		start_code = _take_start_code()
 
@@ -71,6 +71,7 @@ func select(fighter_id: String, skin_id: String) -> bool:
 		return false
 	selected_fighter = fighter_id
 	selected_skins[fighter_id] = skin_id
+	save()
 	return true
 
 
@@ -90,7 +91,7 @@ func activate_hack(hack_id: String) -> bool:
 	if not Hacks.is_known(hack_id) or has_hack(hack_id):
 		return false
 	active_hacks.append(hack_id)
-	_save_hacks()
+	save()
 	return true
 
 
@@ -106,22 +107,56 @@ func redeem_code(text: String) -> Dictionary:
 ## Turns all hacks off and saves; the normal rules are back.
 func reset_hacks() -> void:
 	active_hacks = []
-	_save_hacks()
+	save()
 
 
-func _load_hacks() -> Array[String]:
+## Lays the saved file over the sample progress: the hacks and the saved trophies, power levels,
+## skins, unlocked fighters, credits and chosen fighter. A missing, broken or newer file leaves
+## the sample progress without hacks.
+func load_saved() -> void:
 	if not FileAccess.file_exists(save_path):
-		return []
-	return SaveData.from_json(FileAccess.get_file_as_string(save_path))["hacks"]
+		return
+	var saved: Dictionary = SaveData.from_json(FileAccess.get_file_as_string(save_path))
+	active_hacks = saved["hacks"]
+	var progress: Dictionary = saved["progress"]
+	trophies.merge(progress.get("trophies", {}), true)
+	power_levels.merge(progress.get("power_levels", {}), true)
+	selected_skins.merge(progress.get("selected_skins", {}), true)
+	for fighter_id: String in progress.get("unlocked", []):
+		if not fighter_id in unlocked:
+			unlocked.append(fighter_id)
+	credits = progress.get("credits", credits)
+	var chosen: String = progress.get("selected_fighter", "")
+	if unlocked.has(chosen):
+		selected_fighter = chosen
+		viewed_fighter = chosen
 
 
-func _save_hacks() -> void:
+## Writes the hacks and the progress to `save_path`.
+func save() -> void:
 	DirAccess.make_dir_recursive_absolute(save_path.get_base_dir())
 	var file: FileAccess = FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
 		push_warning("Could not save %s (error %d)" % [save_path, FileAccess.get_open_error()])
 		return
-	file.store_string(SaveData.to_json(active_hacks, {}))
+	var progress: Dictionary = {
+		"trophies": trophies,
+		"power_levels": power_levels,
+		"unlocked": unlocked,
+		"credits": credits,
+		"selected_fighter": selected_fighter,
+		"selected_skins": selected_skins,
+	}
+	file.store_string(SaveData.to_json(active_hacks, progress))
+
+
+## Gives the fighter the trophies of a match result (`Trophies.reward` with the match
+## settings), saves at once and returns the reward.
+func award_trophies(fighter_id: String, outcome: Match.Result) -> Dictionary:
+	var reward: Dictionary = Trophies.reward(trophies[fighter_id], outcome, match_settings)
+	trophies[fighter_id] = reward["after"]
+	save()
+	return reward
 
 
 # Reads `?hack=` from the page address and removes it, so a reload does not redeem it again.
