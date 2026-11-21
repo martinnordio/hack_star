@@ -16,6 +16,7 @@ param(
     [string] $Root = '.',
     [int] $ContextCap = 200000,
     [ValidateSet('all', 'main', 'subagents')] [string] $Agent = 'all',
+    [string[]] $AgentName,
     [switch] $Json
 )
 $ErrorActionPreference = 'Stop'
@@ -74,6 +75,16 @@ function Measure-Log([string] $path) {
     $t = @{ kind = $kind; requests = 0; input = [long]0; cached = [long]0; output = [long]0; credits = $null; models = @(); main = $null; sub = $null }
     if ($kind -eq 'cli') {
         $nano = [double]0; $models = @{}; $split = @{ main = [double]0; sub = [double]0 }
+        # -AgentName: the ids of the sub-agents started under those display names.
+        $named = $null
+        if ($AgentName) {
+            $named = @{}
+            foreach ($raw in $lines) {
+                if (-not $raw.StartsWith('{"type":"subagent.started"')) { continue }
+                $s = $raw | ConvertFrom-Json
+                if ($AgentName -contains $s.data.agentDisplayName) { $named[$s.agentId] = $true }
+            }
+        }
         foreach ($raw in $lines) {
             if (-not $raw.StartsWith('{"type":"session.usage_record"')) { continue }
             $ts = Get-Stamp $raw
@@ -81,6 +92,7 @@ function Measure-Log([string] $path) {
             $record = $raw | ConvertFrom-Json
             # Requests of sub-agents carry the sub-agent's id; the main agent's have none.
             $isSub = [bool]$record.PSObject.Properties['agentId'] -and [bool]$record.agentId
+            if ($null -ne $named -and -not ($isSub -and $named.ContainsKey($record.agentId))) { continue }
             $u = $record.data.usage
             $n = [double]0
             if ($u.copilotUsage -and $null -ne $u.copilotUsage.totalNanoAiu) {
@@ -206,8 +218,8 @@ if ($null -eq $t -or $t.requests -eq 0) {
     throw "No AI requests found between $sinceUtc and $(if ($Until) { $untilUtc } else { 'now' }) for $rootPath. Logs checked:`n$list`nCheck the start time, or pass -Transcript <file> (Copilot CLI: ~/.copilot/session-state/<session>/events.jsonl)."
 }
 $vscode = $t.kind -eq 'vscode'
-if ($Agent -ne 'all' -and $t.kind -ne 'cli') {
-    throw "-Agent $Agent needs a Copilot CLI log (only it marks the requests of sub-agents); $Transcript is a $($t.kind) log."
+if (($Agent -ne 'all' -or $AgentName) -and $t.kind -ne 'cli') {
+    throw "-Agent / -AgentName need a Copilot CLI log (only it marks the requests of sub-agents); $Transcript is a $($t.kind) log."
 }
 
 function Get-Prices {
