@@ -24,7 +24,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | 4.16 M (385 k in · 3.77 M cached · 7 k out) | CHF 2.36 (282 credits) | issue #25 created; the author's desktop check recorded, the iPad check deferred (Step 4) |
 | 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 5.47 M (180 k in · 5.23 M cached · 61 k out) | CHF 2.65 (317 credits) | semantic diff written; code review: Approve (0 blocking, 4 should-fix, 6 nit) |
 | 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 762 k (26 k in · 729 k cached · 7 k out) | CHF 0.18 (21 credits) | spec closed |
-
+| 2026-11-21 | pr | `PR:` | Claude Haiku 5.5 | 473 k (54 k in · 410 k cached · 10 k out) | CHF 0.03 (3 credits) | pull request opened |
 ## Cost summary
 
 This feature used 35.27 M tokens, CHF 15.01 (1788 credits) — measured from the Copilot CLI session log, see [COSTS.md](../../../../.specs/kit/COSTS.md). CHF is the sum of the Stage log cost cells; credits and tokens are sums of the rows; shares are credits ÷ 1900 (Copilot Business).
