@@ -31,7 +31,7 @@ collecting trophies or get from special hack codes that can be used again after 
   spawn points), read for the movement limits; overtime removes its walls and bushes. Today's
   arena becomes the first free world in Small. In the Godot game: spec 01's arena and
   [graphics demo spec](done/2026_11_12_06_graphics_demo_spec.md),
-  [first match spec](2026_11_12_07_first_match_spec.md) and
+  [first match spec](done/2026_11_12_07_first_match_spec.md) and
   [overtime and match options spec](2026_11_12_11_overtime_and_match_options_spec.md).
 - **Play** and **Training** start the same arena in a different mode (spec 07).
 - [Play with friends spec](2026_11_12_14_play_with_friends_spec.md) — the host sends the match

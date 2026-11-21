@@ -571,7 +571,7 @@ Started: 2026-11-21 19:46
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (both sticks, ≥ 30 frames per second, arena within 5 s after Play) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
-| Shots that hurt fighters, winning and losing | The demo has no rules on purpose (Context) | [07 First match](../2026_11_12_07_first_match_spec.md) |
+| Shots that hurt fighters, winning and losing | The demo has no rules on purpose (Context) | [07 First match](2026_11_12_07_first_match_spec.md) |
 | Super attacks | Not part of the demo | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
 | More arenas and moving targets | One arena with still dummies (S11) | a later spec (not in the ordered list yet) |
 | Translations of new text | English only (S12, D12) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |

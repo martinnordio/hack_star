@@ -27,7 +27,7 @@ minute without walls**. This is F8 in the
 
 **Already in the repository** (reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) (#9).
-- [First match spec](2026_11_12_07_first_match_spec.md) — the match (countdown, timer,
+- [First match spec](done/2026_11_12_07_first_match_spec.md) — the match (countdown, timer,
   results), the match settings with the bot levels easy/medium/hard, the arena with its walls,
   the bots.
 - [Trophies spec](2026_11_12_08_trophies_spec.md) and

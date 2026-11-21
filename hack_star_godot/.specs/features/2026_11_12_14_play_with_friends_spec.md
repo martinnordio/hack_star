@@ -31,7 +31,7 @@ is the biggest change so far; it is F11 in the
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are, rooms
   included), how to run the game and play from an iPad or phone on the same Wi-Fi (S12–S14),
   and its open question about the server for rooms.
-- [First match spec](2026_11_12_07_first_match_spec.md) and
+- [First match spec](done/2026_11_12_07_first_match_spec.md) and
   [overtime and match options spec](2026_11_12_11_overtime_and_match_options_spec.md) — the
   match rules, bots, the number of bots and the bot level in the Settings, overtime.
 - Saved progress per device (no login) — each kid keeps their own fighters and trophies (specs

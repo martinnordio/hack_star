@@ -106,7 +106,7 @@
 </section>
 
 <section id="spec-context"><h2>Spec context</h2>
-  <p><a href="../features/2026_11_12_07_first_match_spec.md">2026_11_12_07_first_match_spec.md</a> (issue #31) — statements S1–S16; Steps 1–7, all ✅
+  <p><a href="../features/done/2026_11_12_07_first_match_spec.md">2026_11_12_07_first_match_spec.md</a> (issue #31) — statements S1–S16; Steps 1–7, all ✅
   (1 match rules and settings, 2 bot brain, 3 fighters that can be hit, 4 match arena with bots, 5 match HUD, 6 result screen and Training on home,
   7 final check, README and architecture). Decisions D1–D13. The device play-test (S13) stays with the author (spec 03, D6; Deferred Items).</p>
 </section>
@@ -120,8 +120,8 @@ dummy arena of spec 06. The numbers Mattia still has to choose are settings in o
     <p><strong>Breaking:</strong> Play no longer opens the dummy arena: it starts a match; the dummy arena is now Training.
 Nothing saved changes; no server call. · <strong>Checks:</strong> 6 pass · 3 n/a · 0 fail</p>
     <table><tr><th>#</th><th>Check</th><th>Result</th></tr><tr><td>C1</td><td>A record exists when it is required</td><td>pass</td></tr><tr><td>C2</td><td>The record passes change_record.schema.json</td><td>pass (jsonschema)</td></tr><tr><td>C3</td><td>Every S&lt;n&gt; exists in the linked spec</td><td>pass (S1–S16)</td></tr><tr><td>C4</td><td>Every block&#x27;s object really differs Before / After</td><td>pass (play-performance: same 60 fps cap, the object - what Play opens - differs)</td></tr><tr><td>C5</td><td>Changes a tool can detect have a block</td><td>pass (Shot mask, Screens, GameState, home buttons: settings; HudLabel: hud-theme; no command or dependency changed)</td></tr><tr><td>C6</td><td>api / schema changes come with API contracts / data model</td><td>n/a (no API, nothing saved)</td></tr><tr><td>C7</td><td>output / api / command changes of code come with test changes</td><td>pass (test_match_settings, test_match, test_bot_brain, test_combat, test_fighter_health, test_match_arena, test_match_hud, test_result_screen, test_home, test_screen_sizes_match)</td></tr><tr><td>C8</td><td>ui / tokens changes come with UI catalog / looks</td><td>n/a (the Godot game has no UI catalog)</td></tr><tr><td>C9</td><td>Added dependencies have a plan decision</td><td>n/a (no dependency added)</td></tr></table>
-    <p class="note">Record: <a href="../changes/godot-mvp-07-first-match/change_record.yaml">change_record.yaml</a> · pull-request text:
-    <a href="../changes/godot-mvp-07-first-match/semantic_diff.md">semantic_diff.md</a>. Before from a temporary worktree at 369a9f2, After at ec6f78d;
+    <p class="note">Record: <a href="../changes/done/godot-mvp-07-first-match/change_record.yaml">change_record.yaml</a> · pull-request text:
+    <a href="../changes/done/godot-mvp-07-first-match/semantic_diff.md">semantic_diff.md</a>. Before from a temporary worktree at 369a9f2, After at ec6f78d;
     screens from a windowed Godot 4.7.2 run with a temporary capture script, outputs from a temporary headless script (both removed).</p>
   </div>
   <article class="card" id="sd-home-screen" data-card="1-home-screen"><h3><span class="badge">ui</span> Home screen - a Training button next to Fighters, Info and Hack <span class="badge modified">modified</span></h3><p class="note">MoreRow gets Training first; on a phone the four buttons wrap into two rows of two. Play now starts a match, Training opens the dummy arena (D11). · S1, S12, S16</p><p><strong>home-1280x720</strong></p><pre class="input">godot --path hack_star_godot --resolution 1280x720 -s &lt;temporary capture script&gt;
@@ -190,7 +190,7 @@ server/ and ui/ are unchanged (git diff --stat 369a9f2..ec6f78d -- server ui is 
  "branch": "feature/godot-mvp",
  "base": "369a9f2",
  "head": "ec6f78d",
- "record": "../changes/godot-mvp-07-first-match/change_record.yaml",
+ "record": "../changes/done/godot-mvp-07-first-match/change_record.yaml",
  "commits": [
   "ec6f78d",
   "348a4dd",
@@ -272,7 +272,7 @@ server/ and ui/ are unchanged (git diff --stat 369a9f2..ec6f78d -- server ui is 
   }
  ],
  "specs": [
-  "features/2026_11_12_07_first_match_spec.md"
+  "features/done/2026_11_12_07_first_match_spec.md"
  ]
 }
 </script>

@@ -1,18 +1,18 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — all 7 Steps done; reviewed (Approve, 3 Should-fix · 6 Nit); close next
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #31
-> **Moved from:** [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5)
+> **Moved from:** [2026_11_12_first_match_spec.md](../../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_first_match_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_first_match_spec.md (requirements only) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S3, S6, S8, S9, S12, S13 revised; S14 (controls), S15 (English) and S16 (what worked before) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #31 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.48 M (131 k in · 2.32 M cached · 31 k out) | CHF 1.46 (174 credits) | Part 2 written (7 Steps: standard, reasoning, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s07-lead` from 20:14:28) |
@@ -23,7 +23,42 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (107 k in · 2.70 M cached · 18 k out) | CHF 0.60 (71 credits) | Step 5 done (`usage.ps1 -AgentName s07-steps5-6 -Until 20:59:30` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.97 M (194 k in · 4.75 M cached · 25 k out) | CHF 1.02 (121 credits) | Step 6 done (`usage.ps1 -AgentName s07-steps5-6 -Since 20:59:30 -Until 21:24:18`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.18 M (106 k in · 2.05 M cached · 21 k out) | CHF 0.06 (8 credits) | Step 7 done (`usage.ps1 -AgentName s07-step7` from 20:14:28); checks: `check_tools`, `test` (298 pass), `lint`, `export_web` all exit 0 |
-| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.22 M (190 k in · 7.97 M cached · 55 k out) | CHF 3.06 (365 credits) | semantic diff written (8 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-07-first-match.html)); code review: Approve, 0 Blocking · 3 Should-fix · 6 Nit (`usage.ps1 -AgentName s07-review` from 20:14:28) |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.22 M (190 k in · 7.97 M cached · 55 k out) | CHF 3.06 (365 credits) | semantic diff written (8 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../../review/2026-11-21_godot-mvp-07-first-match.html)); code review: Approve, 0 Blocking · 3 Should-fix · 6 Nit (`usage.ps1 -AgentName s07-review` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.04 M (88 k in · 1.94 M cached · 13 k out) | CHF 0.46 (55 credits) | review fixes #1–#4, #8, #9 and the decisions D14 (#5), D15 (#6), D16 (#7); commit `Fix review findings (#31)` (`usage.ps1 -AgentName s07-close` 20:14:28–21:45:09) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.71 M (33 k in · 1.67 M cached · 10 k out) | CHF 0.29 (35 credits) | spec closed (`usage.ps1 -AgentName s07-close` from 21:45:09) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 415 k (227 k in · 181 k cached · 7 k out) | CHF 0.55 (65 credits) | spec runner (coordination) (`usage.ps1 -AgentName s07-runner` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 521 k (0 k in · 520 k cached · 1 k out) | CHF 0.10 (12 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 20:14:28) |
+---
+
+## Cost summary
+
+This feature used 31.00 M tokens, CHF 10.22 (1218 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Sonnet 5.5, Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 2.48 M | CHF 1.46 (174 credits) | 9.2 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 20.30 M | CHF 5.70 (679 credits) | 35.7 % |
+| review | Claude Opus 5.5 | 8.22 M | CHF 3.06 (365 credits) | 19.2 % |
+| **Total** | | **31.00 M** | **CHF 10.22 (1218 credits)** | **64.1 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 829 k | CHF 0.30 (35 credits) | 1.8 % |
+| Step 2 | Claude Opus 5.5 | 486 k | CHF 0.48 (57 credits) | 3.0 % |
+| Step 3 | Claude Sonnet 5.5 | 2.18 M | CHF 0.55 (66 credits) | 3.5 % |
+| Step 4 | Claude Opus 5.5 | 2.14 M | CHF 1.29 (154 credits) | 8.1 % |
+| Step 5 | Claude Sonnet 5.5 | 2.83 M | CHF 0.60 (71 credits) | 3.7 % |
+| Step 6 | Claude Sonnet 5.5 | 4.97 M | CHF 1.02 (121 credits) | 6.4 % |
+| Step 7 | Claude Haiku 5.5 | 2.18 M | CHF 0.06 (8 credits) | 0.4 % |
+| Review fixes | Claude Sonnet 5.5 | 2.04 M | CHF 0.46 (55 credits) | 2.9 % |
+| CLOSE | Claude Sonnet 5.5 | 1.71 M | CHF 0.29 (35 credits) | 1.8 % |
+| Spec runner (coordination) | Claude Sonnet 5.5 | 415 k | CHF 0.55 (65 credits) | 3.4 % |
+| Orchestrator (main chat) | Claude Opus 5.5 | 521 k | CHF 0.10 (12 credits) | 0.6 % |
+| **Total implementation** | | **20.30 M** | **CHF 5.70 (679 credits)** | **35.7 %** |
+
 ---
 
 # Part 1 · Requirements
@@ -33,22 +68,22 @@
 Hack star can be played: the player runs and shoots in the canyon, but nothing shoots back and
 nobody wins. This spec adds the first real match, a "last fighter standing" fight against bots,
 like Showdown in Brawl Stars. It is F4 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md). The numbers Mattia
-still has to choose (see "Questions to Mattia" in [overall_req.md](../../../.specs/overall_req.md)) are
+[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md). The numbers Mattia
+still has to choose (see "Questions to Mattia" in [overall_req.md](../../../../.specs/overall_req.md)) are
 settings with a default, so his answers change one value each.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5)
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5)
   — its numbers (fighters 3200 health = 7 hits of 480, healing 13 % of full health per second
   after 3 s, a fighter in a bush seen only within 2.5 m, the bot levels easy / medium / hard)
   and its flow (countdown, timer, knock-out order, place = fighters still in + 1) are the model.
-- [Graphics demo spec](done/2026_11_12_06_graphics_demo_spec.md) — the canyon arena, controls,
+- [Graphics demo spec](2026_11_12_06_graphics_demo_spec.md) — the canyon arena, controls,
   shots, effects, bushes, camera, target dummies, fighters and skins in 3D.
-- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the home screen with **Play**; the
+- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the home screen with **Play**; the
   selected fighter and skin; the UI foundation of the Godot game (S12).
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — the hacks change nothing in the
+- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — the hacks change nothing in the
   arena (its S12).
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   technology, the architecture document `hack_star_godot/docs/architecture.md` and how to run
   the game (S12–S14); S6 (30 frames per second) and D6 (the device play-test stays with the
   author).
@@ -72,8 +107,8 @@ settings with a default, so his answers change one value each.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea, planned specs and the questions to Mattia |
-| [README](../../README.md) (Godot game) | How to install, run and play the Godot game |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea, planned specs and the questions to Mattia |
+| [README](../../../README.md) (Godot game) | How to install, run and play the Godot game |
 
 ## 1 · Specs
 
@@ -132,12 +167,12 @@ settings with a default, so his answers change one value each.
   "the nearest target" of a tap becomes a bot in a match.)_
 - **S15 — Language:** All new text (countdown, timer, fighters left, the results, the buttons)
   is in English; translations come with
-  [spec 15](2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet, `docs/architecture.md`.)_
 - **S16 — What worked before:** Home, the fighter list, the fighter screen, the info page, the
   hack screen and the QR page work as before; **Back** in a match goes home at any time without
   a result; a match changes no trophies, credits or unlocks (trophies come with
-  [spec 08](2026_11_12_08_trophies_spec.md)), and the hacks change nothing in a match (spec 05,
+  [spec 08](../2026_11_12_08_trophies_spec.md)), and the hacks change nothing in a match (spec 05,
   S12). _(added 2026-11-21: the match is shared with the screens of specs 01–06.)_
 
 ### Open questions
@@ -153,6 +188,13 @@ original game's numbers (2.5 m in a bush, the place)._
 
 # Part 2 · Plan
 
+## Closing summary
+
+**Built:** **Play** on the home screen starts a first match in the canyon of spec 06 (`match.tscn`, `MatchArena`): a 3-2-1-FIGHT! countdown during which nobody moves, then 2 minutes against three easy bots (the fighter, skin and controls of the player as in Training). Everyone has 3200 health (7 hits of 480), a green bar for the player and red bars for the bots, white damage numbers on bots and red ones on the player, and heals slowly after 3 quiet seconds. The bots see 8 m (2.5 m when you stand in a bush), react late, aim with an error, shoot slowly and fight each other too; a knocked-out fighter spins, shrinks and leaves. The HUD shows the countdown, the timer (red in the last 10 s, on a dark backing) and "Fighters left". The match ends on your knock-out (Defeat with your place), when only you are left (Victory) or at time up (a draw); after 1.5 s the result screen shows the result with **Play again** and **Home**. A **Training** button on home opens the demo arena of spec 06 unchanged. The rules are pure and tested (`MatchSettings`, `Match`, `BotBrain`, the new `Combat` functions); the settings live in `game/match_settings.gd`. Nothing is saved and no server is called.
+
+**Differs from the plan:** The code review (Approve, 0 Blocking · 3 Should-fix · 6 Nit) was handled: findings 1–4, 8 and 9 (wording in README, architecture and `home.gd`, a table row, a blank line) are fixed; three decisions were added with tests or screenshots: D14 (once the match is over, fighters take no more hits, so a shot in flight cannot knock the player out after a Victory), D15 (the place is only counted for a knocked-out player, else 1) and D16 (a dark backing under the red timer, checked at 1280×720 and 844×390). Nothing else differs.
+
+**Files:** `hack_star_godot/game/` (`match_settings`, `match`, `bot_brain`, `combat`, `arena_layout`), `hack_star_godot/scenes/` (`match.tscn`, `match_arena`, `arena`, `fighter`, `health_bar`, `damage_number`, `target_dummy`, `arena_effects`, `result_screen`, `home`), `hack_star_godot/tests/`, `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 ## 2 · Spec Overview
 
 | Step | Description | Model (suggested) | Status | Detail |
@@ -183,7 +225,7 @@ original game's numbers (2.5 m in a bush, the place)._
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0. Nothing in `server/` or `ui/`
 > changes, and a match calls no server (D12). `gdlint` allows at most 20 public tests per
 > file: new tests go into new files where a file is full (e.g. `test_screen_sizes.gd` has 16).
@@ -433,10 +475,10 @@ suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (a full match with 3 bots at ≥ 30 frames per second, both sticks) and the browser check of the web export | Needs a person with the devices and a browser (spec 03, D6) | the author, before spec 08 is closed |
-| Trophies and credits for a result | Not part of the first match (S16) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
-| Overtime and choosing match length, bot count and level in the game; address overrides of the settings (`?seconds=…`) | The defaults are set in code (S10, D12) | [11 Overtime and match options](2026_11_12_11_overtime_and_match_options_spec.md) |
-| Bot Supers and Hypercharge | Not part of the first match | [12 Super and hypercharge](2026_11_12_12_super_and_hypercharge_spec.md) |
-| Translations of new text | English only (S15, D12) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Trophies and credits for a result | Not part of the first match (S16) | [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| Overtime and choosing match length, bot count and level in the game; address overrides of the settings (`?seconds=…`) | The defaults are set in code (S10, D12) | [11 Overtime and match options](../2026_11_12_11_overtime_and_match_options_spec.md) |
+| Bot Supers and Hypercharge | Not part of the first match | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
+| Translations of new text | English only (S15, D12) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 
 ---
 
@@ -444,7 +486,7 @@ suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-07-first-match.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-07-first-match.html) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 3 Should-fix · 6 Nit |
 
 ### Code review 2026-11-21
@@ -462,18 +504,22 @@ in `server/` or `ui/` changed.
 
 | # | Finding | Layer | Class | Severity | Target |
 |---|---------|-------|-------|----------|--------|
-| 1 | `README.md:114` says a bot in a bush "is only seen from 2.5 m away". S6 and D5 say the other direction: bots do not see a fighter in a bush beyond 2.5 m; a bot in a bush stays visible to the player, only see-through (`BotBrain.can_see`, `MatchArena._drive_bot`). Fix: "Bots see you in a bush only within 2.5 m; a bot in a bush turns see-through, like you." | spec | docs | Should-fix | fix now |
-| 2 | `docs/architecture.md:91-93`: a blank line after the new `bot_brain.gd` row splits the Game rules table; the rows `fighters.gd` … `qr_code.gd` lose their header and render as plain text. Remove the blank line | architecture | docs | Should-fix | fix now |
-| 3 | `docs/architecture.md` Screens table: the `target_dummy.tscn` row is there twice (lines 48 and 55); the `match.tscn` row (43) says "1.5 s after the end it stores `GameState.last_result`" (stored at once, leaves after 1.5 s, `match_arena.gd:159-175`); the `arena_effects.gd` row (49) does not name the `KNOCKOUT` pool (D7) | architecture | docs | Nit | fix now |
-| 4 | Edited sentences: `scenes/home.gd:3` starts "## The fighter's Prestige" mid-description; `docs/architecture.md:41` has "the title "Hack star", The chosen fighter"; `README.md:93-94` lists the home buttons without **Training** | code | docs | Nit | fix now |
-| 5 | Hits after the end: once `Match` is `OVER`, `Fighter.hit` still applies damage (`fighter.gd:83-92`), so a bot shot already in flight can knock out the player during the 1.5 s wait after a Victory (puff, the player vanishes) while the result screen says Victory; `Match.knock_out` ignores it, so the result is right. Decide whether fighters stop taking hits (or shots are cleared) when the match is over, with a test | code | spec | Should-fix | plan decision |
-| 6 | With `time_up_result` "defeat" (not the default) the place is `fighters_left()` with the player counted (`match.gd:108-112`): time up with nobody out gives "You finished 4th" (record block *match-rules*). D4 says only "a defeat with the place"; decide the place at time up and write it into D4 | spec | spec | Nit | plan decision |
-| 7 | The red timer (`Combat.COLOR_RED` with the `HudLabel` outline) sits over the red-orange rock at the top centre and is hard to read in the last 10 s, most at 844×390 (record block *match-fight*). D9 fixes the red; decide a backdrop (dark panel) or a lighter red | code | spec | Nit | plan decision |
-| 8 | Spec Overview table, Step 7 row: the Detail cell is written twice (seven cells in a six-column table) | spec | docs | Nit | fix now |
-| 9 | `scenes/target_dummy.tscn:4`: the blank line between the `ext_resource` lines and the first `sub_resource` was removed by hand; Godot writes it back on the next save (a noise diff later) | scan | guideline | Nit | fix now |
+| 1 | `README.md:114` says a bot in a bush "is only seen from 2.5 m away". S6 and D5 say the other direction: bots do not see a fighter in a bush beyond 2.5 m; a bot in a bush stays visible to the player, only see-through (`BotBrain.can_see`, `MatchArena._drive_bot`). Fix: "Bots see you in a bush only within 2.5 m; a bot in a bush turns see-through, like you." | spec | docs | Should-fix | fix now — fixed 2026-11-21 |
+| 2 | `docs/architecture.md:91-93`: a blank line after the new `bot_brain.gd` row splits the Game rules table; the rows `fighters.gd` … `qr_code.gd` lose their header and render as plain text. Remove the blank line | architecture | docs | Should-fix | fix now — fixed 2026-11-21 |
+| 3 | `docs/architecture.md` Screens table: the `target_dummy.tscn` row is there twice (lines 48 and 55); the `match.tscn` row (43) says "1.5 s after the end it stores `GameState.last_result`" (stored at once, leaves after 1.5 s, `match_arena.gd:159-175`); the `arena_effects.gd` row (49) does not name the `KNOCKOUT` pool (D7) | architecture | docs | Nit | fix now — fixed 2026-11-21 |
+| 4 | Edited sentences: `scenes/home.gd:3` starts "## The fighter's Prestige" mid-description; `docs/architecture.md:41` has "the title "Hack star", The chosen fighter"; `README.md:93-94` lists the home buttons without **Training** | code | docs | Nit | fix now — fixed 2026-11-21 |
+| 5 | Hits after the end: once `Match` is `OVER`, `Fighter.hit` still applies damage (`fighter.gd:83-92`), so a bot shot already in flight can knock out the player during the 1.5 s wait after a Victory (puff, the player vanishes) while the result screen says Victory; `Match.knock_out` ignores it, so the result is right. Decide whether fighters stop taking hits (or shots are cleared) when the match is over, with a test | code | spec | Should-fix | plan decision — D14, fixed 2026-11-21 |
+| 6 | With `time_up_result` "defeat" (not the default) the place is `fighters_left()` with the player counted (`match.gd:108-112`): time up with nobody out gives "You finished 4th" (record block *match-rules*). D4 says only "a defeat with the place"; decide the place at time up and write it into D4 | spec | spec | Nit | plan decision — D15, fixed 2026-11-21 |
+| 7 | The red timer (`Combat.COLOR_RED` with the `HudLabel` outline) sits over the red-orange rock at the top centre and is hard to read in the last 10 s, most at 844×390 (record block *match-fight*). D9 fixes the red; decide a backdrop (dark panel) or a lighter red | code | spec | Nit | plan decision — D16, fixed 2026-11-21 |
+| 8 | Spec Overview table, Step 7 row: the Detail cell is written twice (seven cells in a six-column table) | spec | docs | Nit | fix now — fixed 2026-11-21 |
+| 9 | `scenes/target_dummy.tscn:4`: the blank line between the `ext_resource` lines and the first `sub_resource` was removed by hand; Godot writes it back on the next save (a noise diff later) | scan | guideline | Nit | fix now — fixed 2026-11-21 |
 
 **Outcome:** Approve — no Blocking finding; findings 1–4, 8, 9 to fix now, 5–7 need a plan
 decision (runner) before `CLOSE:`.
+
+**After the fixes (2026-11-21, commit `Fix review findings (#31)`):** findings 1–4, 8, 9 are
+fixed; findings 5 (D14), 6 (D15) and 7 (D16) are decided and fixed with tests and screenshots;
+no finding is open.
 
 ---
 
@@ -483,5 +529,5 @@ decision (runner) before `CLOSE:`.
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

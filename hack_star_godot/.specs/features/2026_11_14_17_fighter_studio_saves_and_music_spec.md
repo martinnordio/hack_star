@@ -40,7 +40,7 @@ review to the same page.
   level and number of bots saved in the Settings.
 - [Play with friends spec](2026_11_12_14_play_with_friends_spec.md) — friends in a room see
   each other's fighter and skin.
-- [First match spec](2026_11_12_07_first_match_spec.md) — rewards are given only when a match
+- [First match spec](done/2026_11_12_07_first_match_spec.md) — rewards are given only when a match
   ends.
 - [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — the QR page asks for a code every time
   (a lock for kids, not security).

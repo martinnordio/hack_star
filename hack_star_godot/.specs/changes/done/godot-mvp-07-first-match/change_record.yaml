@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# yaml-language-server: $schema=../../../../../.specs/kit/review/change_record.schema.json
 # Change record of spec 07 on feature/godot-mvp (written by REVIEW:, 2026-11-21).
 # Range: this spec's commits only, 369a9f2..ec6f78d (the branch carries specs 03-08 and 16).
 # spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
@@ -15,7 +15,7 @@ why: |
   healing, knock-outs, a countdown, a timer, a result screen, and Training on home for the
   dummy arena of spec 06. The numbers Mattia still has to choose are settings in one place.
 spec:
-  path: .specs/features/2026_11_12_07_first_match_spec.md
+  path: .specs/features/done/2026_11_12_07_first_match_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16]
 changes:
   - id: home-screen
