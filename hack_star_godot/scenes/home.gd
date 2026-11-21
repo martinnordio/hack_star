@@ -1,6 +1,6 @@
 extends Control
 ## The home screen: the chosen fighter and skin, the player's trophies and credits, the
-## The fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**.
+## fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**.
 ## At each game start it first plays the entrance: the fighter drops in with a bounce, a light
 ## burst and sparkles, the title pops in; a click, a touch or a key skips to the end state.
 

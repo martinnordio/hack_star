@@ -160,6 +160,8 @@ func _store_result_when_over() -> void:
 	if match_state.phase != Match.Phase.OVER or _end_left >= 0.0:
 		return
 	_end_left = END_WAIT_SECONDS
+	for fighter: Fighter in fighters:
+		fighter.invulnerable = true
 	GameState.last_result = {
 		"outcome": match_state.result,
 		"place": match_state.place,

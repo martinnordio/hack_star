@@ -23,6 +23,8 @@ const KNOCK_OUT_SPINS: float = 2.0
 var input_direction: Vector2 = Vector2.ZERO
 var health: float = MatchSettings.FIGHTER_HEALTH
 var knocked_out: bool = false
+## Set when the match is over: the result is final, so hits do nothing any more.
+var invulnerable: bool = false
 ## When the fighter was last hit or fired (seconds of the game clock); healing waits for it.
 var last_action_seconds: float = 0.0
 ## When the fighter last fired (the arena's cool-down).
@@ -79,9 +81,10 @@ func _process(delta: float) -> void:
 		visible = false
 
 
-## Takes `amount` damage; ignored once knocked out. At 0 health the fighter is knocked out.
+## Takes `amount` damage; ignored once knocked out or invulnerable. At 0 health the fighter is
+## knocked out.
 func hit(amount: int) -> void:
-	if knocked_out:
+	if knocked_out or invulnerable:
 		return
 	health = maxf(health - amount, 0.0)
 	last_action_seconds = _now()

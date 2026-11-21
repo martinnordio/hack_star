@@ -90,7 +90,7 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
 
 1. Start Godot and choose **Import**; select `hack_star_godot\project.godot`; then **Import & Edit**.
 2. Press **F5** (Run Project). The home screen plays a short entrance (a click, a touch or a key
-   skips it) and then shows your fighter, trophies, credits, **Hack star**, **Play**,
+   skips it) and then shows your fighter, trophies, credits, **Hack star**, **Play**, **Training**,
    **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
    [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
 3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
@@ -111,7 +111,7 @@ dummies: your fighter and three bots, each at its own start point.
    number. A fighter that is not hit and does not shoot for 3 seconds slowly gets its health back.
 3. **Bots:** they walk around, go for the nearest opponent they can see and shoot at it. They
    fight each other too. On "easy" they react late, miss more often and shoot more slowly. A bot
-   in a bush is hard to see: it is only seen from 2.5 m away, and it turns see-through, like you.
+   in a bush is hard to see: it only sees you in a bush within 2.5 m, and a bot in a bush turns see-through, like you.
 4. **Knock-out:** a fighter with no health left is knocked out and leaves the arena. The label
    top-right shows "Fighters left".
 5. **Timer:** 2:00 at the top of the screen, red in the last 10 seconds.

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/target_dummy.gd" id="1_dummy"]
 [ext_resource type="Script" path="res://scenes/health_bar.gd" id="2_bar"]
+
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_body"]
 radius = 0.5
 height = 2.0

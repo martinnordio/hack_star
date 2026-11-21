@@ -73,13 +73,13 @@ func test_time_up_with_bots_left_is_a_draw() -> void:
 	assert_eq(match_state.timer_text(), "0:00")
 
 
-func test_time_up_can_be_a_defeat_with_a_place() -> void:
+func test_time_up_as_a_defeat_is_place_1_as_nobody_knocked_the_player_out() -> void:
 	_settings.time_up_result = MatchSettings.TIME_UP_DEFEAT
 	var match_state: Match = _fighting()
 	match_state.knock_out(2)
 	match_state.advance(120.0)
 	assert_eq(match_state.result, Match.Result.DEFEAT)
-	assert_eq(match_state.place, 3)
+	assert_eq(match_state.place, 1, "the player was never knocked out")
 
 
 func test_fighters_left_and_a_second_knock_out_counts_once() -> void:

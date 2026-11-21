@@ -12,7 +12,8 @@ const RED_TIMER_SECONDS: float = 10.0
 
 var phase: Phase = Phase.COUNTDOWN
 var result: Result = Result.NONE
-## The player's place: 1 for a victory, else the fighters still in when it is knocked out + 1.
+## The player's place: the fighters still in when it is knocked out + 1; 1 when it never was
+## (a victory, or time up).
 var place: int = 0
 ## Fighter indices in the order they were knocked out.
 var knock_out_order: Array[int] = []
@@ -107,7 +108,7 @@ func _fight_seconds() -> float:
 
 func _time_up() -> void:
 	if _settings.time_up_result == MatchSettings.TIME_UP_DEFEAT:
-		_finish(Result.DEFEAT, fighters_left())
+		_finish(Result.DEFEAT, 1)
 	else:
 		_finish(Result.TIME_UP, 0)
 
