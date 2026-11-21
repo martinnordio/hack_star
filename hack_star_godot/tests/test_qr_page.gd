@@ -57,6 +57,14 @@ func test_without_the_server_the_page_says_so() -> void:
 	assert_eq(page.get_node(ROWS_PATH).get_child_count(), 0)
 
 
+func test_a_link_too_long_for_a_qr_code_is_not_saved() -> void:
+	_answer(200, LIST_BODY)
+	var page: Control = await _show_page()
+	assert_eq(page.save_image("X".repeat(300)), "")
+	page._on_save_pressed("X".repeat(300), page.get_node(MESSAGE_PATH))
+	assert_eq(page.get_node(MESSAGE_PATH).text, "Could not save the image.")
+
+
 func test_save_image_writes_a_png_that_is_the_qr_code_of_the_link() -> void:
 	_answer(200, LIST_BODY)
 	var page: Control = await _show_page()

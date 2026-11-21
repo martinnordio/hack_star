@@ -25,7 +25,10 @@ func _ready() -> void:
 		_message.text = "Can't reach the hack server. Try again later."
 		_message.add_theme_color_override("font_color", ERROR_COLOR)
 		return
-	_message.text = "Scan a code with the camera, or save its image."
+	_message.text = (
+		"Scan a code with the camera, or save its image. "
+		+ "To use it on a phone, open this page at the Wi-Fi address, not localhost."
+	)
 	var hacks: Array[Dictionary] = []
 	hacks.assign(result["hacks"])
 	for hack: Dictionary in hacks:
@@ -44,9 +47,10 @@ static func game_address() -> String:
 ## Saves the QR image of a hack code: a download in the web export, else a PNG in
 ## `save_folder`. Returns the path of the file, or an empty string for a download or a failure.
 func save_image(code: String) -> String:
-	var png: PackedByteArray = (
-		QrImage.image_for(Hacks.link(game_address(), code)).save_png_to_buffer()
-	)
+	var image: Image = QrImage.image_for(Hacks.link(game_address(), code))
+	if image == null:
+		return ""
+	var png: PackedByteArray = image.save_png_to_buffer()
 	var file_name: String = "hack-%s.png" % code.to_lower()
 	if OS.has_feature("web"):
 		JavaScriptBridge.download_buffer(png, file_name, "image/png")
@@ -106,7 +110,9 @@ func _build_row(hack: Dictionary) -> Control:
 func _on_save_pressed(code: String, saved: Label) -> void:
 	var path: String = save_image(code)
 	saved.visible = true
-	if OS.has_feature("web"):
+	if QrImage.image_for(Hacks.link(game_address(), code)) == null:
+		saved.text = "Could not save the image."
+	elif OS.has_feature("web"):
 		saved.text = "Image downloaded."
 	elif path.is_empty():
 		saved.text = "Could not save the image."

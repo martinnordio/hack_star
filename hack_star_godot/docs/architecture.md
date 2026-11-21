@@ -45,7 +45,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | `info.tscn` | `info.gd` | The info page (**Info** on home; Back goes home): a title and a scrolling list with one row per word of `Vocabulary`, the word in the `WordLabel` style (bold) and its meaning wrapped |
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame |
 | `touch_joystick.tscn` | `touch_joystick.gd` (`TouchJoystick`) | On-screen joystick, visible only on a touch screen; its `direction` has length ≤ 1 |
-| `hack_screen.tscn` | `hack_screen.gd` (`HackScreen`) | The hack screen (**Hack** on home; Back goes home): a code field with **Use** and **Scan QR code** (`QrScanner`); the server checks every code through `HackServer`; the messages "<name> unlocked!" (with a short celebration), "Unknown code" and "Can't reach the hack server"; the list of active hacks or "No hacks active"; **Turn all hacks off** (with a confirmation); **QR codes** opens `qr_page.tscn`. A code from a `?hack=` link is redeemed once when the game opens |
+| `hack_screen.tscn` | `hack_screen.gd` | The hack screen (**Hack** on home; Back goes home): a code field with **Use code** and **Scan QR code** (`QrScanner`); the server checks every code through `HackServer`; the messages "<name> unlocked!" (with a short celebration), "Unknown code" and "Can't reach the hack server"; the list of active hacks or "No hacks active"; **Turn all hacks off** (with a confirmation); **QR codes** opens `qr_page.tscn`. A code from a `?hack=` link is redeemed once when the game opens |
 | `qr_page.tscn` | `qr_page.gd` (`QrPage`) | The QR codes (**QR codes** on the hack screen; Back goes home): one card per hack code from `GET /api/hacks`, with a large QR code of the game's address and `?hack=<CODE>` (`QrImage`) and **Save image** (a download in the browser, else a PNG in `user://`) |
 
 **Camera and screen sizes (S2, S11).** The arena camera looks down at 55° from behind and above
@@ -105,7 +105,8 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   of a `?hack=` link. It starts from `SampleProgress` at every game start; the active hacks are
   read from and written to the save file (see *Saved progress*). `select(fighter_id, skin_id)`
   refuses a locked fighter or an unknown skin. `activate_hack(id)` and `reset_hacks()` save at
-  once.
+  once; `redeem_code(text)` checks a code with `HackServer` and activates the hack, so a code
+  accepted after Back still counts.
 - **Server:** the autoload `HackServer` (`scenes/autoload/hack_server.gd`) has `redeem(code)` and
   `list_hacks()`, both `await`-able, on `HTTPRequest` with a timeout of 8 s. Each returns a
   `Dictionary` whose `status` is `ok`, `unknown` or `no_server` (see *Server, hack codes and
@@ -147,7 +148,7 @@ If a later spec imports art, it goes to `assets/` with its licence written in
 [LICENSES.md](../LICENSES.md) (the packs of the Python + Svelte game, Quaternius and Kenney,
 are CC0). No Supercell art, names or logos are used (S7).
 
-## Saved progress (*planned — spec 05 / spec 08*)
+## Saved progress (*hack file: done, spec 05; more fields: planned — spec 08*)
 
 The save file is one JSON file, `user://hack_star_save.json` (spec 05, D5), with `{"version": 1,
 "hacks": [...]}`: the active hacks, as ids. It is read and written by **the autoload

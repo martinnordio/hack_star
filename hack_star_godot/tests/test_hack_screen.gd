@@ -88,6 +88,20 @@ func test_without_the_server_nothing_changes_and_it_can_be_tried_again() -> void
 	assert_true(GameState.has_hack(Hacks.POWER22))
 
 
+func test_a_code_accepted_after_back_was_pressed_is_still_activated() -> void:
+	HackServer.fake_responder = func(_method: String, _url: String, _sent: String) -> Dictionary:
+		await get_tree().create_timer(0.2).timeout
+		return {"status": 200, "body": OPEN_BODY}
+	var screen: Control = HACK_SCREEN.instantiate()
+	add_child(screen)
+	screen.submit("opensesame")
+	await wait_process_frames(2)
+	screen.free()
+	await wait_seconds(0.4)
+	assert_true(GameState.has_hack(Hacks.UNLOCK_ALL))
+	assert_eq(GameState._load_hacks(), [Hacks.UNLOCK_ALL], "saved")
+
+
 func test_enter_and_the_button_submit_the_code() -> void:
 	_answer(200, '{"id": "power22", "code": "POWER22", "name": "Power 22"}')
 	var screen: Control = _show_screen()

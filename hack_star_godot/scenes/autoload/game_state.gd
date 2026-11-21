@@ -87,6 +87,15 @@ func activate_hack(hack_id: String) -> bool:
 	return true
 
 
+## Checks a code with the server and, when it is right, turns its hack on. This lives here, not
+## in a screen, so a code accepted while the screen is closed (Back) still counts.
+func redeem_code(text: String) -> Dictionary:
+	var result: Dictionary = await HackServer.redeem(text)
+	if result["status"] == HackServer.STATUS_OK:
+		activate_hack(result["id"])
+	return result
+
+
 ## Turns all hacks off and saves; the normal rules are back.
 func reset_hacks() -> void:
 	active_hacks = []
@@ -102,8 +111,10 @@ func _load_hacks() -> Array[String]:
 func _save_hacks() -> void:
 	DirAccess.make_dir_recursive_absolute(save_path.get_base_dir())
 	var file: FileAccess = FileAccess.open(save_path, FileAccess.WRITE)
-	if file != null:
-		file.store_string(SaveData.to_json(active_hacks))
+	if file == null:
+		push_warning("Could not save %s (error %d)" % [save_path, FileAccess.get_open_error()])
+		return
+	file.store_string(SaveData.to_json(active_hacks))
 
 
 # Reads `?hack=` from the page address and removes it, so a reload does not redeem it again.

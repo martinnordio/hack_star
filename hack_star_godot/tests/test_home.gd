@@ -9,6 +9,11 @@ func before_each() -> void:
 	GameState.reset()
 
 
+func after_each() -> void:
+	HackServer.fake_responder = Callable()
+	GameState.start_code = ""
+
+
 func _show_home() -> Control:
 	var screen: Control = autofree(HOME.instantiate())
 	add_child(screen)
@@ -102,7 +107,6 @@ func test_a_game_opened_from_a_qr_link_goes_to_the_hack_screen() -> void:
 	await wait_process_frames(2)
 	assert_eq(GameState.start_code, "", "the hack screen took the code")
 	await UiInput.close(self, shown)
-	HackServer.fake_responder = Callable()
 
 
 # --- Entrance (S2) ----------------------------------------------------------------------------

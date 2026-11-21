@@ -144,7 +144,7 @@ may ask to allow Python through the firewall on private networks.
 
 ## Hack codes
 
-On the home screen, **Hack** opens the hack screen. Type a code and press **Use** (or Enter), or
+On the home screen, **Hack** opens the hack screen. Type a code and press **Use code** (or Enter), or
 press **Scan QR code** and point the camera at a QR code (in the browser). The server checks the
 code; any letter case and spaces around it are fine.
 
@@ -159,7 +159,9 @@ rules back. The hacks do not expire yet (spec 16), and the codes `HYPERCHARGE` a
 "Unknown code" until their specs (12 and 17) add them. Nothing is bought with credits yet (specs 09
 and 10), and power levels do not change matches yet (spec 09).
 
-**QR codes:** the **QR codes** button on the hack screen opens a page with a QR code for each
+**QR codes:** open the QR page from the Wi-Fi address of this computer
+(`http://<this computer's IPv4 address>:8060`), not from `localhost`: the game puts the address
+of the page into every QR code, and a phone cannot open `localhost`. The **QR codes** button on the hack screen opens a page with a QR code for each
 code. Scan it with the camera app or with **Scan QR code** in the game: the link opens the game
 with the code, which is redeemed once. **Save image** saves the picture as a PNG (a download in
 the browser, or a file in the user folder on the computer), for printing.

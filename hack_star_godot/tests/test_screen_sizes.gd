@@ -22,6 +22,10 @@ const SIZES: Dictionary = {
 }
 
 
+func after_each() -> void:
+	HackServer.fake_responder = Callable()
+
+
 ## The window's content scale as the project sets it (`canvas_items`, `expand`, and the content
 ## scale factor of `UiScale`): the scene is laid out in a rectangle of the base aspect or
 ## wider/taller, then scaled to the window.
@@ -238,7 +242,6 @@ func test_qr_page_fits_every_size() -> void:
 			"%s first QR code %s fits the width" % [label, rect]
 		)
 		shown[0].queue_free()
-	HackServer.fake_responder = Callable()
 
 
 func test_back_on_the_qr_page_reacts_to_mouse_click_and_touch() -> void:
@@ -252,7 +255,6 @@ func test_back_on_the_qr_page_reacts_to_mouse_click_and_touch() -> void:
 	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
 	UiInput.touch(shown[0], button)
 	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
-	HackServer.fake_responder = Callable()
 
 
 func test_arena_fits_every_size() -> void:

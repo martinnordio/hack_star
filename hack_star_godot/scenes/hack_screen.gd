@@ -67,13 +67,12 @@ func submit(text: String) -> void:
 	_set_busy(true)
 	_message.text = "Checking…"
 	_message.add_theme_color_override("font_color", MESSAGE_COLOR)
-	var result: Dictionary = await HackServer.redeem(text)
+	var result: Dictionary = await GameState.redeem_code(text)
 	if not is_inside_tree():
 		return
 	_set_busy(false)
 	match result["status"]:
 		HackServer.STATUS_OK:
-			GameState.activate_hack(result["id"])
 			_code_edit.text = ""
 			_refresh()
 			_celebrate("%s unlocked!" % result["name"])
