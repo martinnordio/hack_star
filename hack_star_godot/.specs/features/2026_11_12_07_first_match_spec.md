@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — Step 1 of 7 done
+> **Status:** 🔄 In progress — Step 2 of 7 done
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -17,6 +17,7 @@
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #31 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.48 M (131 k in · 2.32 M cached · 31 k out) | CHF 1.46 (174 credits) | Part 2 written (7 Steps: standard, reasoning, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s07-lead` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 829 k (64 k in · 754 k cached · 12 k out) | CHF 0.30 (35 credits) | Step 1 done (`usage.ps1 -AgentName s07-step1` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 486 k (58 k in · 418 k cached · 10 k out) | CHF 0.48 (57 credits) | Step 2 done (`usage.ps1 -AgentName s07-step2` from 20:14:28) |
 ---
 
 # Part 1 · Requirements
@@ -151,7 +152,7 @@ original game's numbers (2.5 m in a bush, the place)._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Match rules and settings | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D2–D4 | ✅ Done | [→ Step 1](#step-1--match-rules-and-settings) |
-| **2** | Bot brain | reasoning (Claude Opus 5.5) — tricky logic: sight and bushes, targets, reaction, aim error, chasing, wandering, all testable without a scene (D5) | ⬜ Not started | [→ Step 2](#step-2--bot-brain) |
+| **2** | Bot brain | reasoning (Claude Opus 5.5) — tricky logic: sight and bushes, targets, reaction, aim error, chasing, wandering, all testable without a scene (D5) | ✅ Done | [→ Step 2](#step-2--bot-brain) |
 | **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ⬜ Not started | [→ Step 3](#step-3--fighters-that-can-be-hit) |
 | **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ⬜ Not started | [→ Step 4](#step-4--match-arena-with-bots) |
 | **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ⬜ Not started | [→ Step 5](#step-5--match-hud) |
@@ -244,9 +245,9 @@ after a delay, chases and fights the nearest one, misses more on easy and wander
 nobody (S2, S6, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/bot_brain.gd` (`BotBrain`) after D5.
-- [ ] Tests: `tests/test_bot_brain.gd` (with a seeded generator): `can_see` in and out of
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/bot_brain.gd` (`BotBrain`) after D5.
+- [x] Tests: `tests/test_bot_brain.gd` (with a seeded generator): `can_see` in and out of
       sight, a fighter in a bush seen at 2 m but not at 3 m; no shot during the reaction time,
       then a shot; moves towards a visible opponent far away, backs off when closer than 3 m;
       does not chase a fighter hidden in a far bush (wanders instead); picks the nearest of two
@@ -254,10 +255,13 @@ nobody (S2, S6, S11).
       0.35 rad, on hard up to 0.08 rad; no aim beyond `SHOT_RANGE`; a new wander point after
       it is reached or after 1 s without progress; every wander point is free
       (`ArenaLayout.is_free`).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 20:28
+
+**Done (2026-11-21 · ~3 min · Claude Opus 5.5)** — `BotBrain` (`can_see` with the bush rule, nearest visible target with reaction delay, chase / back off / sidestep, aim error, wander to free points with 4 s and 1 s-stuck limits) and `tests/test_bot_brain.gd` (16 tests, seeded generator). `tools/test.ps1` 263 tests pass, `tools/lint.ps1` exit 0.
+suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 486 k · CHF 0.48
 
 ---
 
