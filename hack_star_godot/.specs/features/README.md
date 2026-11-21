@@ -24,7 +24,7 @@ Update the status of a spec here whenever it changes.
 | 01 | [Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | — (Godot spec) | closed |
 | 02 | [Move Specs to Godot](done/2026_11_21_02_move_specs_to_godot_spec.md) | — (Godot spec) | closed |
 | 03 | [MVP and Architecture](done/2026_11_12_03_mvp_and_architecture_spec.md) | [2026_11_12_mvp_and_architecture_spec.md](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1) | closed |
-| 04 | [Basic UI](2026_11_12_04_basic_ui_spec.md) | [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2) | planned |
+| 04 | [Basic UI](done/2026_11_12_04_basic_ui_spec.md) | [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2) | closed |
 | 05 | [Hack Codes](2026_11_12_05_hack_codes_spec.md) | [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3) | requirements |
 | 06 | [Graphics Demo](2026_11_12_06_graphics_demo_spec.md) | [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4) | requirements |
 | 07 | [First Match](2026_11_12_07_first_match_spec.md) | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | requirements |

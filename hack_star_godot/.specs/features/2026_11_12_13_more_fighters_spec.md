@@ -26,7 +26,7 @@ the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md)
 
 **Already in the repository** (reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_more_fighters_spec.md) (#10).
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the 6 fighters (Blaze, Rocko, Turbo, Frosty,
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the 6 fighters (Blaze, Rocko, Turbo, Frosty,
   Luna, Pixel) with rarity and skins, their 3D looks and portraits.
 - [First match spec](2026_11_12_07_first_match_spec.md) — match rules (one kind of shot for
   everyone) and bots; [unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) —

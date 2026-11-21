@@ -37,7 +37,7 @@ agreed as enough.
   player starts with 500 credits and sample trophies.
 - The Settings screen with bot level and number of bots, saved per device, from
   [Overtime and match options](2026_11_12_11_overtime_and_match_options_spec.md).
-- The fighters with their rarities, skins and 3D looks from [Basic UI](2026_11_12_04_basic_ui_spec.md);
+- The fighters with their rarities, skins and 3D looks from [Basic UI](done/2026_11_12_04_basic_ui_spec.md);
   Blaze, Rocko and Turbo are unlocked at the start. The 4 fighters and the 5 types (Tank,
   Sharpshooter, Speedy, Thrower, Spreader) come from
   [More fighters](2026_11_12_13_more_fighters_spec.md), so there are 10 fighters.

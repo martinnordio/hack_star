@@ -27,7 +27,7 @@ the "unlock everything" hack really unlock every skin. It is F7 in the
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8).
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the skins of the fighters with their
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the skins of the fighters with their
   rarities (Default, Epic, Mythic, Legendary), their 3D looks and portraits, the skin choice on
   the fighter screen (S7) and the chosen skins in the saved progress.
 - [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter

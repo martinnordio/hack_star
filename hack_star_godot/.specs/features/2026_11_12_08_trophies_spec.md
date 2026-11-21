@@ -30,7 +30,7 @@ first playable version (F0–F5) is complete.
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6).
 - [First match spec](2026_11_12_07_first_match_spec.md) — matches with a result (victory,
   defeat with place, time's up) and the result screen; match settings.
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — trophies per fighter in the saved
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — trophies per fighter in the saved
   progress, total trophies on home, the Prestige badge on home, list and fighter screen.
 - [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how

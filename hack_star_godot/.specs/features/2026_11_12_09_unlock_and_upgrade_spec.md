@@ -30,7 +30,7 @@ in the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.
 - [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — `INFINITY` (credits shown as ∞),
   `OPENSESAME` (all unlocked), `POWER22` (max power 22). Its S12 said power 22 only changes
   what is shown "until F6" — this spec is F6.
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — credits (500 at start), power levels and
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — credits (500 at start), power levels and
   unlocked fighters in the saved progress; fighter list and fighter screen.
 - [First match spec](2026_11_12_07_first_match_spec.md) and
   [trophies spec](2026_11_12_08_trophies_spec.md) — matches, fixed health 3200 and damage

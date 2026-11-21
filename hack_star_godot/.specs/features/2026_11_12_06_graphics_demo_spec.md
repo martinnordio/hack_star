@@ -31,7 +31,7 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
   screens, input), S6 (30 frames per second), S7 (own art) apply here too; the graphics
   options investigated there; the Godot technology, the architecture document
   `hack_star_godot/docs/architecture.md` and how to run the game (S12–S14).
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the Play button (S3) opens this demo; the
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the Play button (S3) opens this demo; the
   selected fighter and skin (S5, S7); the UI foundation of the Godot game (S12).
 - Spec 01's Godot project
   ([01 Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md)):

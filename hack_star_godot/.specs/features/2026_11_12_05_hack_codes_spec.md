@@ -33,7 +33,7 @@ of [overall_req.md](../../../.specs/overall_req.md).
   (S12–S14).
 - [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — its open question
   "Server for rooms and hack codes" decides whether the hack codes need a server in the Godot game.
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
   with locks and power levels (S4), the fighter screen with skins (S7); the UI foundation of
   the Godot game (S12).
 

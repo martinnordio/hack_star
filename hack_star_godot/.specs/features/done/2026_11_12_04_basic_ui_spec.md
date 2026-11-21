@@ -1,18 +1,18 @@
 # Basic UI Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #28
-> **Moved from:** [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2)
+> **Moved from:** [2026_11_12_basic_ui_spec.md](../../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Opus 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_basic_ui_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Opus 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_basic_ui_spec.md (requirements only) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S1, S2, S3 (arena instead of "Coming soon"), S4, S5, S7, S8 (sample credits), S10 revised; S13 (choice kept while the game is open) and S14 (English) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #28 created |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.32 M (130 k in · 2.16 M cached · 30 k out) | CHF 1.34 (160 credits) | Part 2 written (10 Steps: standard, standard, reasoning, reasoning, standard, reasoning, standard, standard, light, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 16:09) |
@@ -26,11 +26,45 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.35 M (34 k in · 2.29 M cached · 22 k out) | CHF 0.45 (54 credits) | Step 8 done (`usage.ps1 -Agent subagents` 16:53–16:57) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.36 M (121 k in · 2.22 M cached · 21 k out) | CHF 0.16 (19 credits) | Step 9 done (`usage.ps1 -Agent subagents` 16:57–17:00) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.45 M (20 k in · 1.42 M cached · 7 k out) | CHF 0.09 (10 credits) | Step 10 done (`usage.ps1 -Agent subagents` 17:01–17:02) |
-| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.35 M (180 k in · 8.11 M cached · 53 k out) | CHF 2.84 (339 credits) | semantic diff written (9 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-04-basic-ui.html)); code review: Approve, 0 Blocking · 4 Should-fix · 4 Nit (`usage.ps1 -Agent subagents` 17:02–17:12) |
+| 2026-11-21 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.35 M (180 k in · 8.11 M cached · 53 k out) | CHF 2.84 (339 credits) | semantic diff written (9 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../../review/2026-11-21_godot-mvp-04-basic-ui.html)); code review: Approve, 0 Blocking · 4 Should-fix · 4 Nit (`usage.ps1 -Agent subagents` 17:02–17:12) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 8.26 M (142 k in · 8.06 M cached · 54 k out) | CHF 1.43 (171 credits) | review fixes #1, #2, #3 (D13 minimum sizes: UiScale + UiScaler), #5–#8; commit `Fix review findings (#28)` (`usage.ps1 -Agent subagents` 17:12:44–17:22) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.98 M (15 k in · 1.95 M cached · 8 k out) | CHF 0.26 (32 credits) | spec closed (`usage.ps1 -Agent subagents` from 17:22:25) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.51 M (2.52 M in · 1.99 M cached · 8 k out) | CHF 11.01 (1313 credits) | orchestrator of this spec (main chat, `-Agent main` from 16:09) |
 
 ---
 
+## Cost summary
+
+This feature used 50.43 M tokens, CHF 24.30 (2901 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 2.32 M | CHF 1.34 (160 credits) | 8.4 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 39.76 M | CHF 20.12 (2402 credits) | 126.4 % |
+| review | Claude Opus 5.5 | 8.35 M | CHF 2.84 (339 credits) | 17.8 % |
+| **Total** | | **50.43 M** | **CHF 24.30 (2901 credits)** | **152.7 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 1.97 M | CHF 0.58 (69 credits) | 3.6 % |
+| Step 2 | Claude Sonnet 5.5 | 717 k | CHF 0.17 (21 credits) | 1.1 % |
+| Step 3 | Claude Opus 5.5 | 3.57 M | CHF 1.78 (213 credits) | 11.2 % |
+| Step 4 | Claude Opus 5.5 | 4.36 M | CHF 1.45 (173 credits) | 9.1 % |
+| Step 5 | Claude Sonnet 5.5 | 2.04 M | CHF 0.52 (62 credits) | 3.3 % |
+| Step 6 | Claude Opus 5.5 | 3.50 M | CHF 1.60 (191 credits) | 10.1 % |
+| Step 7 | Claude Sonnet 5.5 | 2.69 M | CHF 0.62 (74 credits) | 3.9 % |
+| Step 8 | Claude Sonnet 5.5 | 2.35 M | CHF 0.45 (54 credits) | 2.8 % |
+| Step 9 | Claude Haiku 5.5 | 2.36 M | CHF 0.16 (19 credits) | 1.0 % |
+| Step 10 | Claude Haiku 5.5 | 1.45 M | CHF 0.09 (10 credits) | 0.5 % |
+| Review fixes | Claude Sonnet 5.5 | 8.26 M | CHF 1.43 (171 credits) | 9.0 % |
+| CLOSE | Claude Sonnet 5.5 | 1.98 M | CHF 0.26 (32 credits) | 1.7 % |
+| Orchestrator (main chat, Steps, review, fixes, close) | Claude Opus 5.5 | 4.51 M | CHF 11.01 (1313 credits) | 69.1 % |
+| **Total implementation** | | **39.76 M** | **CHF 20.12 (2402 credits)** | **126.4 %** |
+
+---
 # Part 1 · Requirements
 
 ## Context
@@ -38,20 +72,20 @@
 The first screen has to make kids say "wow" and feel like Brawl Stars: a big animated fighter,
 trophies, the Prestige badge and cool skins. It also needs an info page explaining the words
 kids use, so adults can understand them. This is F1 / Spec 1 in
-[overall_req.md](../../../.specs/overall_req.md).
+[overall_req.md](../../../../.specs/overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2).
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — browser, screen sizes,
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2).
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — browser, screen sizes,
   input, own art and smooth animation (S1–S3, S6, S7) apply here too; Brawl Stars investigation
   and feature list; the Godot technology, the architecture document
   `hack_star_godot/docs/architecture.md` and how to run the game (S12–S14).
 - Spec 01's Godot project
-  ([01 Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md)):
+  ([01 Godot Setup and First Game](2026_11_21_01_godot_setup_and_first_game_spec.md)):
   a start screen with **Play** that opens a 3D arena seen from above at an angle with one
   fighter, moved with the keyboard or a touch joystick; Godot 4.7.2 with GDScript, the
   Compatibility renderer, a single-threaded web export, GUT tests and the commands in
-  `hack_star_godot/tools/` ([hack_star_godot/README.md](../../README.md)).
+  `hack_star_godot/tools/` ([hack_star_godot/README.md](../../../README.md)).
 - Checked 2026-11-21 (S0) in the code: `scenes/start_screen.tscn` (main scene: title
   "Hack star" and **Play**, which opens `scenes/arena.tscn`); the arena's **Back** returns to
   the start screen; one fighter built from primitive meshes in `scenes/fighter.tscn`; screens
@@ -68,7 +102,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
 
 ## 1 · Specs
 
@@ -90,7 +124,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   does not play it again. _(revised 2026-11-21: "the first time" made testable — once per
   game start — and a key added for the desktop.)_
 - **S3 — Play button:** Tapping **Play** opens the 3D arena with the fighter of spec 01 (the
-  arena that the [graphics demo spec](2026_11_12_06_graphics_demo_spec.md) builds on); its
+  arena that the [graphics demo spec](../2026_11_12_06_graphics_demo_spec.md) builds on); its
   **Back** returns to the home screen. _(revised 2026-11-21: the Godot game already has the
   arena of spec 01, so Play keeps opening it instead of showing "Coming soon".)_
 - **S4 — Fighter list:** A **Fighters** button opens a list of all 6 fighters (S11), each
@@ -131,14 +165,14 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   screens (colours, text styles, buttons, the Back button), one way to go from screen to
   screen that later specs reuse, and layouts that fit desktop, iPad and phone in landscape
   and portrait, with touch and mouse; it is written down in
-  `hack_star_godot/docs/architecture.md` ([spec 03](done/2026_11_12_03_mvp_and_architecture_spec.md)).
+  `hack_star_godot/docs/architecture.md` ([spec 03](2026_11_12_03_mvp_and_architecture_spec.md)).
 - **S13 — Choice kept while playing:** The chosen fighter and skin stay chosen while the game
   is open (after the arena, the list or the info page and back); after a reload the game
   starts again from the sample progress (S8). Saving between visits comes with the first spec
   that saves (05 or 08, `docs/architecture.md`). _(added 2026-11-21: the Godot game saves
   nothing yet.)_
 - **S14 — Language:** All new text is in English; translations come with
-  [spec 15](2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet, `docs/architecture.md`.)_
 
 ### Vocabulary for the info page
@@ -174,7 +208,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 
 _None. Answered 2026-11-12: 3D look; the game invents the fighters (S11). Sound is left out
 of this spec (see Deferred Items in the plan of the
-[original spec](../../../.specs/features/done/2026_11_12_basic_ui_spec.md)). S0 check
+[original spec](../../../../.specs/features/done/2026_11_12_basic_ui_spec.md)). S0 check
 2026-11-21: no new question; the revisions above follow the Godot game as built._
 
 <!-- spec-nx:plan -->
@@ -183,6 +217,13 @@ of this spec (see Deferred Items in the plan of the
 
 # Part 2 · Plan
 
+## Closing summary
+
+**Built:** The Godot game now opens on a home screen with the chosen fighter large and idle-animated in 3D, "Hack star", total trophies, credits, the Prestige badge and a big **Play** button that opens the arena; the first home of a game start plays a skippable entrance of 2.4 s (fighter drop, light burst, sparkles, title pop). **Fighters** opens a scrolling list of the 6 fighters (picture rendered once and cached, rarity, trophies, power level, Prestige; locked fighters greyed with "Locked"); a card opens the fighter screen with the fighter in 3D, its 14 skins' looks (Legendary skins with a gold frame and glow), and **Select**, which makes an unlocked fighter and skin the home fighter for as long as the game is open. **Info** opens the 24-word vocabulary. Every screen but home has the same Back button; all screens share one theme (`hack_star_theme.tres`, `Screens`, `GameState`, `FighterStage`, `UiScale`). 111 GUT tests pass, `lint.ps1`, `check_tools.ps1` and `export_web.ps1` pass; `server/`, `ui/` and `LICENSES.md` are unchanged. The device play-test (iPad and phone, ≥ 30 fps on home and the list) stays with the author (spec 03, D6, Deferred Items).
+
+**Differs from the plan:** The code review (Approve, 8 points) was fixed: the skin button's and the Prestige badge's colours, sizes and frames moved into theme variations (D1); the info page's bold word is the `WordLabel` variation; cards, skin buttons, Select, Fighters, Info, Play and every Back are tested with real mouse clicks and `InputEventScreenTouch` (`tests/ui_input.gd`); the entrance sparkles stay inside the stage; the docs and D11 (`Vocabulary.LIST`) were corrected. New decision **D13 — minimum sizes**: at every size every button is at least 44 px tall and every text at least 14 px on the screen — `UiScale` raises the total scale to at least 0.6 with the content scale factor, set by the autoload `UiScaler` (phone portrait 0.30 → 0.60, phone landscape 0.54 → 0.60, others unchanged); the fighter-card picture is 200 px instead of 260 px so the first card fits a phone in landscape. Checked by `test_screen_sizes.gd` at the five sizes and on a phone-portrait screenshot.
+
+**Files:** `hack_star_godot/scenes/` (`home`, `fighter_list`, `fighter_screen`, `info`, `fighter_model`, `ui/`, `autoload/`), `hack_star_godot/game/` (`fighters`, `rarity`, `prestige`, `sample_progress`, `vocabulary`, `ui_scale`), `hack_star_godot/tests/`, `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`, `hack_star_godot/project.godot`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 ## 2 · Spec Overview
 
 | Step | Description | Model (suggested) | Status | Detail |
@@ -216,7 +257,7 @@ of this spec (see Deferred Items in the plan of the
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0; nothing in `server/` or `ui/`
 > changes.
 
@@ -499,12 +540,12 @@ Started: 2026-11-21 17:01
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](2026_11_12_08_trophies_spec.md) |
-| The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](2026_11_12_06_graphics_demo_spec.md) (its S2) |
-| **Hack** button on the home screen | F2 | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) (its S1) |
-| Unlocking fighters with credits | F6 | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Music and sound effects with a mute button | Left out of this spec (Open questions) | [17 Fighter studio, saves and music](2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
-| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) / [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](../2026_11_12_06_graphics_demo_spec.md) (its S2) |
+| **Hack** button on the home screen | F2 | [05 Hack codes](../2026_11_12_05_hack_codes_spec.md) (its S1) |
+| Unlocking fighters with credits | F6 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| Music and sound effects with a mute button | Left out of this spec (Open questions) | [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
+| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | Play-test on a real iPad and phone (touch, ≥ 30 fps on home and the list) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
 
 ---
@@ -513,7 +554,7 @@ Started: 2026-11-21 17:01
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-04-basic-ui.html) |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-04-basic-ui.html) |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff | Approve (with follow-ups) | 0 Blocking · 4 Should-fix · 4 Nit |
 | 2026-11-21 | AI assistant (Claude Sonnet 5.5) | fixes | Fixed | findings 1, 2, 3 (D13), 5, 6, 7, 8 fixed with 111 tests passing and `lint.ps1` OK; 4 fixed with CLOSE |
 
@@ -546,7 +587,7 @@ Play. The list pictures are cached (D7). Premultiplied alpha is handled on stage
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
+- [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted — one pull request for `feature/godot-mvp` at the end of the run
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)
