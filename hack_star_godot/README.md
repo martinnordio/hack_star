@@ -5,7 +5,7 @@ This folder holds the Godot version of Hack star: a re-implementation with the
 It is the first basic game so far: a home screen, a fighter list with six fighters (each with
 its skins), a fighter screen, an info page with the words of the game, a 3D canyon arena where
 your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
-codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the canyon against bots, with health, healing, a timer and a result. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the canyon against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -121,9 +121,32 @@ dummies: your fighter and three bots, each at its own start point.
    starts a new match; **Home** goes home. **Back** in a match goes home at any time, with no
    result.
 
-A match changes no trophies, credits or unlocks, and the hacks change nothing in a match. The
-match settings (match length, number of bots, bot level, health, healing, bush sight) are the
-values at the top of `game/match_settings.gd`; change a value there and the next match uses it.
+A match changes no credits or unlocks, and the hacks change nothing in a match. The trophies
+change as described in [Trophies and Prestige](#trophies-and-prestige). The match settings (match
+length, number of bots, bot level, health, healing, bush sight, trophies per win and per
+defeat) are the values at the top of `game/match_settings.gd`; change a value there and the next
+match uses it.
+
+## Trophies and Prestige
+
+Every match changes the trophies of the fighter you played with (the home fighter):
+
+| Result | Trophies |
+|--------|----------|
+| Victory (the last fighter standing) | +10 |
+| Defeat (you are knocked out) | 0 |
+| Time's up (a draw) | 0 |
+
+The result screen shows the change, the count "trophies / next Prestige" and a bar from the
+last Prestige to the next one; the count goes up from the old total. A fighter reaches a new
+**Prestige** level at every 1000 trophies (Prestige 1 at 1000, Prestige 2 at 2000, and so on); a
+new Prestige is celebrated on the result screen, and the home screen, the fighter list and the
+fighter screen show a Prestige badge from 1000 trophies. A defeat never takes a fighter below its
+last Prestige. The numbers are `trophies_per_win` and `trophies_per_defeat` in
+`game/match_settings.gd`; the Prestige size is `TROPHIES_PER_LEVEL` in `game/prestige.gd`.
+
+The trophies of each fighter are saved with the match (see **Saved** below), so they are there
+after a reload.
 
 ## Commands
 
@@ -192,11 +215,13 @@ code. Scan it with the camera app or with **Scan QR code** in the game: the link
 with the code, which is redeemed once. **Save image** saves the picture as a PNG (a download in
 the browser, or a file in the user folder on the computer), for printing.
 
-**Saved:** the active hacks, and nothing else yet. The game keeps them in one file,
-`hack_star_save.json`: in the browser, in the browser's storage for this address (so on the same
+**Saved:** the progress and the active hacks, in one file, `hack_star_save.json`: the trophies,
+power levels, unlocked fighters, credits, the chosen fighter and skins, and the hacks. The game
+saves each change at once. The file is in the browser's storage for this address (so on the same
 device and browser only); on the computer, in `%APPDATA%\Godot\app_userdata\Hack star\`. To clear
-them, press **Turn all hacks off** on the hack screen and confirm; or delete that file while the
-game is closed.
+the hacks only, press **Turn all hacks off** on the hack screen and confirm. To start fresh (the
+sample progress, no hacks), delete that file while the game is closed, or in the browser clear
+the site's data for this address.
 
 ## Play on an iPad or a phone
 

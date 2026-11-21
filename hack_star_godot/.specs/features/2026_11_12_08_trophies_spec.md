@@ -22,6 +22,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 565 k (14 k in · 545 k cached · 7 k out) | CHF 0.13 (15 credits) | Step 4 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:06:30" -Until "2026-11-21 22:09:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.58 M (40 k in · 2.52 M cached · 17 k out) | CHF 0.44 (52 credits) | Step 5 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:09:00" -Until "2026-11-21 22:14:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.46 M (19 k in · 1.44 M cached · 9 k out) | CHF 0.23 (28 credits) | Step 6 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:14:00" -Until "2026-11-21 22:18:00"`) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.78 M (106 k in · 2.65 M cached · 21 k out) | CHF 0.07 (9 credits) | Step 7 done (`usage.ps1 -AgentName s08-step7 -Since "2026-11-21 21:49:57"`) |
 ---
 
 # Part 1 · Requirements
@@ -159,7 +160,7 @@ kept, S11)._
 | **4** | Trophies after a match | standard (Claude Sonnet 5.5) — one call at the end of the match and its tests (D5) | ✅ Done | [→ Step 4](#step-4--trophies-after-a-match) |
 | **5** | Result screen trophies and Prestige | standard (Claude Sonnet 5.5) — a new part of an existing screen with a count-up and a celebration, checked on screenshots (D6) | ✅ Done | [→ Step 5](#step-5--result-screen-trophies-and-prestige) |
 | **6** | MVP flow check | standard (Claude Sonnet 5.5) — one end-to-end test across the screens of specs 04–08 (D9) | ✅ Done | [→ Step 6](#step-6--mvp-flow-check) |
-| **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
+| **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 7](#step-7--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -375,28 +376,30 @@ together) is re-checked, and the README and the architecture describe trophies, 
 the saved progress (S10, S13, S14, all statements).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/docs/architecture.md`: Game rules (`trophies.gd`, the new `Prestige`
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/docs/architecture.md`: Game rules (`trophies.gd`, the new `Prestige`
       functions, the trophy settings of `MatchSettings`, `save_data.gd` version 2), Screens
       (the result screen's trophy part and celebration; `MatchArena` gives the trophies),
       UI foundation (`GameState`: `load_saved`, `save`, `award_trophies`, `last_result.reward`),
       *Saved progress* (version 2, the fields, the migration of version 1, no longer
       *planned*; the heading updated), Tests (the new files and the pre-run hook); the line
       "Later specs add their rules here … trophies (specs 08, …)" updated.
-- [ ] `hack_star_godot/README.md`: trophies and Prestige after a match (+10 for a win, 0 for a
+- [x] `hack_star_godot/README.md`: trophies and Prestige after a match (+10 for a win, 0 for a
       defeat or time-up, the Prestige floor, the result screen), where the trophy settings
       are (`game/match_settings.gd`), what is saved and where (and how to start fresh: delete
       the save file), and that the MVP (F0–F5) is complete.
-- [ ] Re-check spec 03 S8: F0–F5 are playable together (`test_mvp_flow.gd` passes; the
+- [x] Re-check spec 03 S8: F0–F5 are playable together (`test_mvp_flow.gd` passes; the
       feature list rows F0–F5 are built); write the result into Notes.
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); `git diff --stat` of this spec shows nothing in `server/` or `ui/`.
-- [ ] Note in Notes that the device play-tests of specs 04–07 and this one (iPad and phone:
+- [x] Note in Notes that the device play-tests of specs 04–07 and this one (iPad and phone:
       touch, ≥ 30 frames per second, a full match, the trophies after a reload in the same
       browser) and the browser check stay with the author (spec 03, D6, Deferred Items).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 22:17
+
+**Done (2026-11-21 · ~15 min · Claude Haiku 5.5)** — `docs/architecture.md`: the game rules (`trophies.gd`, `Prestige.floor_of`/`next_at`, the trophy settings of `MatchSettings`, `save_data.gd` version 2), the screens (the result screen's trophy part and celebration; `MatchArena` gives the trophies with `award_trophies`), the `GameState` session state (`load_saved`, `save`, `award_trophies`, `last_result.reward`), *Saved progress* (version 2, the fields, the migration of version 1; heading no longer *planned*), the tests (the trophy and save files, `pre_run_hook.gd`) and the "later specs" line. `README.md`: trophies and Prestige (+10 win, 0 defeat or time-up, the Prestige floor, the result screen), where the settings are, what is saved and where (fresh start: delete the save file), and that F0–F5 are complete; "a match changes no trophies" corrected. Spec 03 S8 re-check: `tests/test_mvp_flow.gd` passes (one test: home → hack → fighter → match → result with trophies → home → fresh load of the saved progress), and the feature rows F0–F5 of spec 03 are ✅. Checks: `tools/check_tools.ps1` exit 0 (All pinned tools OK), `tools/test.ps1` exit 0 (342 tests passed), `tools/lint.ps1` exit 0 (gdlint and gdformat OK), `tools/export_web.ps1` exit 0 (web export built). `server/` and `ui/` unchanged. Not done by the AI, stays with the author (Deferred Items): the device play-tests of specs 04–08 (iPad and phone: touch, ≥ 30 frames per second, a full match, the trophies after a reload in the same browser) and the browser check (spec 03, D6). suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · ~2.78 M · ~CHF 0.07 (9 credits)
 
 ---
 

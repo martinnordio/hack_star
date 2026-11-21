@@ -17,7 +17,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | `project.godot` | The project: main scene `scenes/home.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
 | `scenes/` | Screens and objects: each `.tscn` with the script of the same name |
 | `scenes/ui/` | Shared UI parts: the theme (`hack_star_theme.tres`), the Back button, the fighter stage and pictures, the fighter card and skin button, the Prestige badge |
-| `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen), `GameState` (what the player has and has chosen, with the active hacks saved), `HackServer` (the calls to the server, see *Server, hack codes and rooms*) and `UiScaler` (the content scale factor of the window, see *Minimum sizes* below) |
+| `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen), `GameState` (what the player has and has chosen, with the progress and the active hacks saved), `HackServer` (the calls to the server, see *Server, hack codes and rooms*) and `UiScaler` (the content scale factor of the window, see *Minimum sizes* below) |
 | `game/` | Game rules: plain scripts without scene access |
 | `tests/` | GUT tests, `test_<name>.gd` |
 | `tools/` | PowerShell scripts: `check_tools.ps1`, `test.ps1`, `lint.ps1`, `export_web.ps1`, `serve_web.ps1` (the local setup, with `serve_web.py` and `make_cert.py`), `godot.ps1` (finds Godot), the pinned versions in `versions.json` |
@@ -40,8 +40,8 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 |-------|--------|------|
 | `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the match, `match.tscn`), **Training** (opens the arena, `arena.tscn`), **Fighters** (opens `fighter_list.tscn`), **Info** (opens `info.tscn`) and **Hack** (opens `hack_screen.tscn`). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
 | `arena.tscn` | `arena.gd` (`Arena`) | The 3D arena (**Training**): the canyon (`canyon.gd`, `Canyon`, built in code from `ArenaLayout`), one fighter (`Fighter`, with its `FighterModel`), three target dummies (`@export var training`, true here), the shots, the effects, a following camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick (left), the aim stick `AimJoystick` (right, drag or tap to fire) and the FPS label (top-right) |
-| `match.tscn` | `match_arena.gd` (`MatchArena`) | The match (**Play**), an inheriting scene of `arena.tscn` with the same canyon, player, camera, sticks, Back and FPS label, `training = false` (no dummies). `MatchArena` adds the bots (one `Fighter` each at the next of `ArenaLayout.STARTS`, driven by a `BotBrain` each), the `Match` flow (countdown lock, fight, knock-outs, the end) and the match HUD: `Hud/MatchHud` with `CountdownLabel` (centre), `TimerLabel` (top-centre, red in the last 10 s, on a dark rounded backing) and `FightersLeftLabel` (top-right, under the FPS label). A tap on the right stick fires at the nearest live bot. When the match is over it makes every fighter invulnerable and stores `GameState.last_result` at once, and 1.5 s later goes to the result screen |
-| `result_screen.tscn` | `result_screen.gd` | The result (after a match; no result → home): the heading "Victory!", "Defeat" or "Time's up!" and its line ("You are the last one standing!", "You finished 3rd", "It's a draw"), the player's fighter and skin in a `FighterStage`, **Play again** (opens `match.tscn`) and **Home**. Wide screens put the fighter left, tall screens use one column |
+| `match.tscn` | `match_arena.gd` (`MatchArena`) | The match (**Play**), an inheriting scene of `arena.tscn` with the same canyon, player, camera, sticks, Back and FPS label, `training = false` (no dummies). `MatchArena` adds the bots (one `Fighter` each at the next of `ArenaLayout.STARTS`, driven by a `BotBrain` each), the `Match` flow (countdown lock, fight, knock-outs, the end) and the match HUD: `Hud/MatchHud` with `CountdownLabel` (centre), `TimerLabel` (top-centre, red in the last 10 s, on a dark rounded backing) and `FightersLeftLabel` (top-right, under the FPS label). A tap on the right stick fires at the nearest live bot. When the match is over it makes every fighter invulnerable and stores `GameState.last_result` at once (with the trophies: `GameState.award_trophies(fighter, result)` gives the player's fighter `Trophies.reward` and saves; the reward is kept in `last_result["reward"]`), and 1.5 s later goes to the result screen |
+| `result_screen.tscn` | `result_screen.gd` | The result (after a match; no result → home): the heading "Victory!", "Defeat" or "Time's up!" and its line ("You are the last one standing!", "You finished 3rd", "It's a draw"), the player's fighter and skin in a `FighterStage`, the trophy part (`TrophyPanel`, from `last_result["reward"]`, shown only when there is a reward): the change ("+10", or "0"), the count "trophies / next Prestige" and a bar from the last Prestige to the next one, counting up from the old total over 1 s (`COUNT_SECONDS`; a tap jumps to the end); a new Prestige in the match gives a celebration (`Celebration`: "PRESTIGE n!", the `PrestigeBadge` and a short burst), once the count reaches it. **Play again** (opens `match.tscn`) and **Home**. Wide screens put the fighter left, tall screens use one column |
 | `shot.gd` | `shot.gd` (`Shot`) | A shot of the arena: a glowing sphere that flies at `Combat.SHOT_SPEED` and stops at the first wall, rock, fighter or dummy (ray casts, D8, D6: the shooter's own RID is excluded), or after `SHOT_RANGE`; it emits `ended` and frees itself |
 | `health_bar.gd` | `health_bar.gd` (`HealthBar`) | The health bar above a fighter or a dummy: two billboard quads; `show_ratio(ratio)` sets the fill and the colour (`Combat.health_color`), or `fixed_color` when set (green for the player and red for bots in a match, D7) |
 | `damage_number.gd` | `damage_number.gd` (`DamageNumber`) | The rising damage number, `DamageNumber.spawn(parent, at, amount, color)`; white for hits on bots, red for hits on the player, the dummies' colour in Training (D7) |
@@ -86,21 +86,22 @@ without a scene.
 | `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`), the camera's smoothing towards the fighter (`follow`) |
 | `combat.gd` (`Combat`) | The combat rules (D3 of specs 06 and 07): the numbers (`SHOT_SPEED` 16 m/s, `SHOT_RANGE` 9 m, `COOLDOWN` 0.35 s, `DAMAGE` 480, `DUMMY_HEALTH` 2400, `RESPAWN_SECONDS` 5, `AIM_DEAD_ZONE` 0.3, `TAP_SECONDS` 0.25), `can_fire(now, last_fire, cooldown)` (bots pass `COOLDOWN × level.cooldown`), `take_damage`, `is_broken`, `health_ratio(health, max_health)` and `health_color` (green, yellow below half, red below a quarter), `heal(health, max_health, quiet_seconds, delta, delay, per_second)` (no healing before the delay, never above full), `release_aim` (a drag or a tap, or no shot), `nearest_target` and `ground_point` (where a mouse ray meets the ground) |
 | `arena_layout.gd` (`ArenaLayout`) | The canyon as data (D2): the size 20 × 26 m (`SIZE`), the border and the rock blocks (`WALLS`), the cactus patches (`BUSHES`), the decoration spots without collision (`DECORATION`), the three dummy spots (`DUMMIES`), the start point (`START`, near the camera side) and the nine match start points (`STARTS`: the first is `START`, the others spread over the canyon, free of walls and bushes, at least 4 m apart); `in_bush(point)` and `is_free(point, radius)` (the spots lie clear of walls, `tests/test_arena_layout.gd`) |
-| `match_settings.gd` (`MatchSettings`) | The settings of a match in one place (D2 of spec 07): `match_seconds` 120, `bot_count` 3 (1–8, clamped), `bot_level` "easy", `time_up_result` "draw" (or "defeat"), `bots_fight_each_other`, `countdown_seconds` 3, `fighter_health` 3200 (7 hits of 480), `heal_delay` 3 s, `heal_per_second` 0.13, `bush_sight` 2.5 m, and `LEVELS` (easy, medium, hard: reaction, aim error, cool-down and speed factors, sight; `level(name)`, an unknown name gives easy). `GameState.match_settings` holds the instance the next match reads at its start; it is not saved |
+| `match_settings.gd` (`MatchSettings`) | The settings of a match in one place (D2 of spec 07): `match_seconds` 120, `bot_count` 3 (1–8, clamped), `bot_level` "easy", `time_up_result` "draw" (or "defeat"), `bots_fight_each_other`, `countdown_seconds` 3, `fighter_health` 3200 (7 hits of 480), `heal_delay` 3 s, `heal_per_second` 0.13, `bush_sight` 2.5 m, `trophies_per_win` 10 and `trophies_per_defeat` 0 (spec 08; never negative, the defeat number is never above 0), and `LEVELS` (easy, medium, hard: reaction, aim error, cool-down and speed factors, sight; `level(name)`, an unknown name gives easy). `GameState.match_settings` holds the instance the next match reads at its start; it is not saved |
+| `trophies.gd` (`Trophies`) | The trophies of a match result (spec 08, D5): `change_for(outcome, settings)` (`trophies_per_win` for a victory, `trophies_per_defeat` for a defeat, 0 for a time-up that is a draw); `reward(before, outcome, settings)` gives `{before, after, change, prestige_before, prestige_after}`, where `after` is never below the last Prestige floor of `before` (a defeat cannot lose a Prestige) |
 | `match.gd` (`Match`) | The match flow (D4 of spec 07), no scene: `Match.new(settings, fighter_count)` (fighter 0 is the player); `advance(delta)`; the phases `COUNTDOWN`, `FIGHT` and `OVER`; `countdown_text()` ("3", "2", "1", then "FIGHT!"), `can_act()`, `seconds_left()`, `timer_text()` and `timer_red()` (last 10 s); `knock_out(index)` (records `knock_out_order`, ends the match on the player or on the last bot); `fighters_left()`, `is_alive(index)`; the `result` (`VICTORY`, `DEFEAT`, `TIME_UP`) and `place` (fighters left + 1 at the player's knock-out, else 1: a victory, or time up); `ordinal(n)` ("3rd") |
 | `bot_brain.gd` (`BotBrain`) | One bot's decisions (D5 of spec 07), pure, with a `RandomNumberGenerator` the tests seed: `can_see(from, at, in_bush, sight, bush_sight)` (a fighter in a bush is seen only within 2.5 m; walls do not block sight); `think(now, me, opponents, level)` returns `{move, aim}`: the nearest visible opponent, a reaction delay for a new target, closing in, backing off within 3 m or sidestepping, an aim turned by a random error within `aim_error`, and wandering to a free point of `ArenaLayout` when nobody is seen |
 
 | `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
 | `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
-| `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies |
+| `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies; `floor_of(trophies)` (the trophies of the last Prestige, 0 below 1000) and `next_at(trophies)` (the trophies of the next one) |
 | `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
 | `vocabulary.gd` (`Vocabulary`) | The 24 words of the info page with their one-sentence meanings (`LIST`); English until spec 15 |
 | `hacks.gd` (`Hacks`) | The hack rules (spec 05): the ids `infinite_credits`, `unlock_all` and `power22` and their names (`ids`, `is_known`, `display_name`); a typed or scanned code (`normalize_code`, `code_from_scan`, `code_from_address`); the QR link of a code (`link`); the effects: `credits_text` and `spend` (unlimited credits), `is_fighter_unlocked` (unlock everything), `max_power` and `power_text` (power 22). A hack changes no trophies, unlocks or power levels |
-| `save_data.gd` (`SaveData`) | The save file's JSON, `{"version": 1, "hacks": [...]}` (`to_json`, `from_json`): a missing, broken or newer file gives no hacks, and ids the game does not know are dropped |
+| `save_data.gd` (`SaveData`) | The save file's JSON, `{"version": 2, "hacks": [...], "progress": {...}}` (`to_json`, `from_json`; `VERSION` 2): a version 1 file gives its hacks and an empty progress; a missing, broken or newer file gives no hacks and an empty progress. Every field is checked and the ones that fail are left out (unknown fighters, hacks and skins, wrong types, numbers out of range), so the game fills them from the sample progress |
 | `qr_code.gd` (`QrCode`) | A QR code encoder (ISO/IEC 18004, byte mode, level M, versions 1–10): a text in, a matrix of booleans out; the quiet zone is added by `QrImage` |
 
 Later specs add their rules here, one script per rule, with a test next to it in `tests/`:
-trophies and unlocks (specs 08, 09), the hypercharge and creator codes (12, 17). The rules of the
+unlocks and upgrades (spec 09), the hypercharge and creator codes (12, 17). The rules of the
 Svelte game in `ui/src/lib/game/` are the model, translated to GDScript.
 
 ## UI foundation (S12)
@@ -124,9 +125,11 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   power levels, unlocked fighters, credits, the selected fighter and skins, `viewed_fighter`,
   `entrance_played`, the active hacks (`active_hacks`), the cached `pictures`, the `start_code`
   of a `?hack=` link, `match_settings` (a `MatchSettings`, session only, read at the start of
-  each match) and `last_result` (`{outcome, place, fighter, skin}` of the last match, session only,
-  set at its end; spec 08 will read it for trophies). It starts from `SampleProgress` at every game start; the active hacks are
-  read from and written to the save file (see *Saved progress*). `select(fighter_id, skin_id)`
+  each match) and `last_result` (`{outcome, place, fighter, skin, reward}` of the last match,
+  session only, set at its end; `reward` is the `Trophies.reward` dictionary). It starts from `SampleProgress` at every game start; `load_saved()` lays the saved
+  progress and hacks over it, and the progress is saved with `save()` (see *Saved progress*).
+  `award_trophies(fighter_id, outcome)` gives a fighter the trophies of a match and saves at
+  once. `select(fighter_id, skin_id)`
   refuses a locked fighter or an unknown skin. `activate_hack(id)` and `reset_hacks()` save at
   once; `redeem_code(text)` checks a code with `HackServer` and activates the hack, so a code
   accepted after Back still counts.
@@ -190,18 +193,22 @@ position every physics frame, so a thin wall is never missed at 16 m/s (D8); it 
 too, and `Shot.launch` takes the shooter, whose RID is excluded from every ray, so a fighter never
 hits itself (spec 07, D6). The dummies are on layer 3 and do not look for anything (mask 0).
 
-## Saved progress (*hack file: done, spec 05; more fields: planned — spec 08*)
+## Saved progress (*done: specs 05 and 08*)
 
-The save file is one JSON file, `user://hack_star_save.json` (spec 05, D5), with `{"version": 1,
-"hacks": [...]}`: the active hacks, as ids. It is read and written by **the autoload
-`GameState`** only (`save_path`, `_load_hacks`, `_save_hacks`), so no screen touches the file;
-the rules of the format are in `SaveData`. `version` lets later specs migrate it: a newer file
-gives no hacks rather than a wrong one. In the browser, Godot keeps `user://` in the browser's
-IndexedDB, so progress stays on the same device and in the same browser; on Windows the desktop
-run keeps it in `%APPDATA%\Godot\app_userdata\Hack star\`. There is no login and nothing is
-shared between devices. Spec 08 adds trophies, unlocked fighters and the selection (a new
-`version` when the fields change); until then only the active hacks are saved (*Deferred Items*
-of spec 05).
+The save file is one JSON file, `user://hack_star_save.json` (spec 05, D5), with
+`{"version": 2, "hacks": [...], "progress": {...}}` (spec 08, D4): the active hacks, as ids, and
+the progress: `trophies` and `power_levels` per fighter, `unlocked` fighters, `credits`,
+`selected_fighter` and `selected_skins` per fighter. It is read and written by **the autoload
+`GameState`** only (`save_path`, `load_saved`, `save`), so no screen touches the file; the rules
+of the format are in `SaveData`. `version` lets later specs migrate it: a version 1 file (only
+the hacks) gives its hacks and the sample progress, and a newer file gives no hacks and the sample
+progress rather than a wrong one. Every field is checked when it is read; a wrong one is left
+out and the sample progress fills it. `GameState.save()` runs at each change (a selection, a hack,
+a match's trophies). In the browser, Godot keeps `user://` in the browser's IndexedDB, so
+progress stays on the same device and in the same browser; on Windows the desktop run keeps it in
+`%APPDATA%\Godot\app_userdata\Hack star\`. There is no login and nothing is shared between devices.
+Credits, unlocks and power upgrades that change with play are saved as fields but not yet changed
+by play (spec 09).
 
 ## Server, hack codes and rooms (*hack codes: done, spec 05; rooms: planned — spec 14*)
 
@@ -265,7 +272,15 @@ and the bots' brains without a scene; `test_combat.gd` also checks the fighters'
 shooter; `test_match_arena.gd` checks the match scene (start points, bots, the countdown lock, a
 tap on a bot, the results, Back); `test_match_hud.gd` and `test_result_screen.gd` check the HUD and
 the result screen; `test_home.gd` checks **Play** and **Training**; `test_screen_sizes_match.gd`
-checks the match HUD and the result screen at the five sizes, with mouse and touch. Run
+checks the match HUD and the result screen at the five sizes, with mouse and touch. The trophies
+(spec 08): `test_trophies.gd` and `test_prestige.gd` check the rules (the change, the floor of the
+last Prestige); `test_match_trophies.gd` checks the award at the end of a match;
+`test_result_trophies.gd` the trophy part of the result screen; `test_save_data_v2.gd`,
+`test_save_data.gd` and `test_game_state_save.gd` the save file (version 2, the version 1
+migration, the progress kept between a restart and the fields checked); `test_mvp_flow.gd` plays
+F0–F5 in one run (see *Spec order*). Every test saves to `user://test/run_save.json`, never to the
+player's file: the pre-run hook `tests/pre_run_hook.gd` sets `GameState.save_path` and starts from
+the sample progress. Run
 them headless, from the `hack_star_godot` folder:
 
 | Command | What |
@@ -288,7 +303,10 @@ and the on-screen keyboard, spec 05 D6) — is done by the author with `export_w
 
 The specs are in [.specs/features/README.md](../.specs/features/README.md). The MVP (S8) is
 specs 03–08, which bring F0–F5 of the feature list; the later specs follow the feature list
-(S10). Each spec needs only features of specs with a lower number. The Godot specs live in
+(S10). F0–F5 are built and play together: `tests/test_mvp_flow.gd` goes through home, a hack
+code, the fighter list and screen, a match, the result with its trophies and home again, then
+loads the progress of a fresh start from the same file. Each spec needs only features of specs
+with a lower number. The Godot specs live in
 `hack_star_godot/.specs/`, not in the root `.specs/` ([AGENTS.md](../../AGENTS.md)).
 
 ## How to…
