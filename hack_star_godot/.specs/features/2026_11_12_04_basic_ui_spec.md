@@ -18,6 +18,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.32 M (130 k in · 2.16 M cached · 30 k out) | CHF 1.34 (160 credits) | Part 2 written (10 Steps: standard, standard, reasoning, reasoning, standard, reasoning, standard, standard, light, light); also the requirements revision and the issue (`usage.ps1 -Agent subagents` from 16:09) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.97 M (91 k in · 1.86 M cached · 20 k out) | CHF 0.58 (69 credits) | Step 1 done (`usage.ps1 -Agent subagents` 16:14–16:17) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 717 k (15 k in · 692 k cached · 10 k out) | CHF 0.17 (21 credits) | Step 2 done (`usage.ps1 -Agent subagents` 16:17–16:19) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.57 M (135 k in · 3.40 M cached · 38 k out) | CHF 1.78 (213 credits) | Step 3 done (`usage.ps1 -Agent subagents` 16:19–16:26) |
 
 ---
 
@@ -179,7 +180,7 @@ of this spec (see Deferred Items in the plan of the
 |------|-------------|-------------------|--------|--------|
 | **1** | UI foundation: shared theme, screen navigation, Back button | standard (Claude Sonnet 5.5) — a theme, an autoload and a small scene, fixed by D1–D3 | ✅ Done | [→ Step 1](#step-1--ui-foundation-shared-theme-screen-navigation-back-button) |
 | **2** | Fighter catalogue, Prestige and sample progress | standard (Claude Sonnet 5.5) — data and pure rules with tests, all values given by S8, S11 and D5 | ✅ Done | [→ Step 2](#step-2--fighter-catalogue-prestige-and-sample-progress) |
-| **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ⬜ Not started | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
+| **3** | 3D fighter models with idle animation | reasoning (Claude Opus 5.5) — 3D fighters: six recognisable shapes from primitives | ✅ Done | [→ Step 3](#step-3--3d-fighter-models-with-idle-animation) |
 | **4** | Skins and the Legendary glow | reasoning (Claude Opus 5.5) — graphics-heavy: 14 looks, glow and sparkles that stay smooth on the web | ⬜ Not started | [→ Step 4](#step-4--skins-and-the-legendary-glow) |
 | **5** | Home screen | standard (Claude Sonnet 5.5) — replaces the start screen with a layout the plan describes | ⬜ Not started | [→ Step 5](#step-5--home-screen) |
 | **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ⬜ Not started | [→ Step 6](#step-6--wow-entrance) |
@@ -291,17 +292,19 @@ Each of the 6 fighters has its own recognisable 3D shape and colours in its Defa
 an idle animation (S1 idle, S11).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/fighter_model.tscn` + `.gd` (`FighterModel`) after D6, Default skins only;
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/fighter_model.tscn` + `.gd` (`FighterModel`) after D6, Default skins only;
       idle animation (breathing, sway) that can be switched off for pictures.
-- [ ] `scenes/ui/fighter_stage.tscn` + `.gd` after D7 (camera, light, one `FighterModel`).
-- [ ] Tests: `tests/test_fighter_model.gd` — every fighter builds without errors, has at
+- [x] `scenes/ui/fighter_stage.tscn` + `.gd` after D7 (camera, light, one `FighterModel`).
+- [x] Tests: `tests/test_fighter_model.gd` — every fighter builds without errors, has at
       least the parts of its idea (e.g. Luna's ray gun, Pixel's screen face) as named nodes,
       and two fighters never have the same main colour; the idle animation moves the model.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the six fighters
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots of the six fighters
       from a windowed run (D10) look like their ideas in S11.
 
 ### Notes
+Started: 2026-11-21 16:19
+**Done (2026-11-21 · ~7m · Claude Opus 5.5)** — `FighterModel` (`scenes/fighter_model.tscn` + `.gd`): the six fighters in their Default skin built in code from primitive meshes with toon materials and an outline (inverted hull), with named idea parts (Blaze `FlameHair`/`Fireball`, Rocko `RockBlocks`, Turbo `Helmet`/`Visor`, Frosty `Fur`/`Horns`, Luna `Ears`/`Tail`/`RayGun`, Pixel `ScreenFace`/`Antenna`), colours per skin in `LOOKS` (Step 4 adds the skins), idle breathing, sway, head tilt and flicker in `_process` (`idle_enabled` off for pictures); `FighterStage` (`scenes/ui/fighter_stage.tscn` + `.gd`): a transparent sub-viewport with its own world, camera, key and rim light; the camera keeps the width on a tall stage and the height on a wide one. `tests/test_fighter_model.gd` (7 tests). `tools/test.ps1`: 60 tests passed; `tools/lint.ps1`: exit 0; screenshots of the six fighters from a windowed run: Blaze a girl with flame hair, skirt and fireball; Rocko a block golem with yellow eyes and moss; Turbo with yellow helmet, visor and scarf; Frosty a white yeti with ice horns; Luna a grey cat in a purple suit with a ray gun; Pixel a robot with a pixel smile on its screen and an antenna. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 3.57 M tokens · CHF 1.78 (213 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---

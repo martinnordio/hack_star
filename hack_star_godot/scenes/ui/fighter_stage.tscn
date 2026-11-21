@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/fighter_stage.gd" id="1_stage"]
+[ext_resource type="PackedScene" path="res://scenes/fighter_model.tscn" id="2_model"]
+
+[sub_resource type="Environment" id="Environment_stage"]
+background_mode = 1
+background_color = Color(0, 0, 0, 0)
+ambient_light_source = 2
+ambient_light_color = Color(0.8, 0.82, 1, 1)
+ambient_light_energy = 0.55
+
+[node name="FighterStage" type="SubViewportContainer"]
+custom_minimum_size = Vector2(240, 300)
+stretch = true
+script = ExtResource("1_stage")
+
+[node name="Viewport" type="SubViewport" parent="."]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+msaa_3d = 2
+size = Vector2i(240, 300)
+render_target_update_mode = 4
+
+[node name="Environment" type="WorldEnvironment" parent="Viewport"]
+environment = SubResource("Environment_stage")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="Viewport"]
+rotation = Vector3(-0.6, 0.5, 0)
+light_energy = 1.1
+
+[node name="RimLight" type="DirectionalLight3D" parent="Viewport"]
+rotation = Vector3(-0.4, 3.74, 0)
+light_color = Color(0.6, 0.75, 1, 1)
+light_energy = 0.5
+
+[node name="Camera" type="Camera3D" parent="Viewport"]
+position = Vector3(0, 1.9, 6.3)
+rotation = Vector3(-0.079, 0, 0)
+fov = 30.0
+
+[node name="FighterModel" parent="Viewport" instance=ExtResource("2_model")]
