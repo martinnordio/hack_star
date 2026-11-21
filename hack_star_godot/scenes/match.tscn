@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/arena.tscn" id="1_arena"]
+[ext_resource type="Script" path="res://scenes/match_arena.gd" id="2_match"]
+
+[node name="Match" instance=ExtResource("1_arena")]
+script = ExtResource("2_match")
+training = false
+
+[node name="Bots" type="Node3D" parent="." index="7"]

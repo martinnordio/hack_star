@@ -1,7 +1,7 @@
 # First Match Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — Step 3 of 7 done
+> **Status:** 🔄 In progress — Step 4 of 7 done
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-mvp`
@@ -19,6 +19,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 829 k (64 k in · 754 k cached · 12 k out) | CHF 0.30 (35 credits) | Step 1 done (`usage.ps1 -AgentName s07-step1` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 486 k (58 k in · 418 k cached · 10 k out) | CHF 0.48 (57 credits) | Step 2 done (`usage.ps1 -AgentName s07-step2` from 20:14:28) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.18 M (75 k in · 2.08 M cached · 27 k out) | CHF 0.55 (66 credits) | Step 3 done (`usage.ps1 -AgentName s07-step3` from 20:14:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.14 M (112 k in · 2.00 M cached · 29 k out) | CHF 1.29 (154 credits) | Step 4 done (`usage.ps1 -AgentName s07-step4` from 20:14:28) |
 ---
 
 # Part 1 · Requirements
@@ -155,7 +156,7 @@ original game's numbers (2.5 m in a bush, the place)._
 | **1** | Match rules and settings | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D2–D4 | ✅ Done | [→ Step 1](#step-1--match-rules-and-settings) |
 | **2** | Bot brain | reasoning (Claude Opus 5.5) — tricky logic: sight and bushes, targets, reaction, aim error, chasing, wandering, all testable without a scene (D5) | ✅ Done | [→ Step 2](#step-2--bot-brain) |
 | **3** | Fighters that can be hit | standard (Claude Sonnet 5.5) — health, bar, damage number, healing and knock-out on the existing `Fighter`, a small extraction from `TargetDummy` (D6, D7) | ✅ Done | [→ Step 3](#step-3--fighters-that-can-be-hit) |
-| **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ⬜ Not started | [→ Step 4](#step-4--match-arena-with-bots) |
+| **4** | Match arena with bots | reasoning (Claude Opus 5.5) — a new scene inheriting the arena, start points, bots driven by their brains, countdown lock, tap on bots, the end of the match (D1, D8) | ✅ Done | [→ Step 4](#step-4--match-arena-with-bots) |
 | **5** | Match HUD | standard (Claude Sonnet 5.5) — three labels fed by `Match`, checked on screenshots (D9) | ⬜ Not started | [→ Step 5](#step-5--match-hud) |
 | **6** | Result screen and Training on home | standard (Claude Sonnet 5.5) — one new screen from the UI foundation and one button (D10, D11) | ⬜ Not started | [→ Step 6](#step-6--result-screen-and-training-on-home) |
 | **7** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 7](#step-7--final-check-readme-and-architecture) |
@@ -307,12 +308,12 @@ be knocked out, a tap fires at the nearest bot, and the match ends (S1, S2, S3, 
 S14).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `ArenaLayout.STARTS` (9 points, D8); `Arena` after D1 (`class_name Arena`, `training`).
-- [ ] `scenes/match.tscn` (inherits `arena.tscn`) and `scenes/match_arena.gd` (`MatchArena`)
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `ArenaLayout.STARTS` (9 points, D8); `Arena` after D1 (`class_name Arena`, `training`).
+- [x] `scenes/match.tscn` (inherits `arena.tscn`) and `scenes/match_arena.gd` (`MatchArena`)
       after D8; `Screens.MATCH`. Until Step 6 the end of the match goes home (the result is
       already stored in `GameState.last_result`, D10).
-- [ ] Tests: `tests/test_arena_layout.gd` (9 start points, free, not in a bush, ≥ 4 m apart);
+- [x] Tests: `tests/test_arena_layout.gd` (9 start points, free, not in a bush, ≥ 4 m apart);
       `tests/test_match_arena.gd` (with `GameState.match_settings` and a seeded generator:
       3 bots by default, none is the player's fighter, each at its own start point, no
       dummies; during the countdown keys and a mouse click neither move nor fire, and the bots
@@ -321,12 +322,15 @@ S14).
       left → Defeat, place 3; with 3 s and the player in a far bush → Time's up; a tap on the
       aim stick fires at the nearest bot; a bot in a bush is see-through; Back goes home without
       a result); `test_arena.gd` (Training still has 3 dummies and no bots).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720 and 390×844
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720 and 390×844
       during a fight: bots with their own 3D look, shots in their colours, bars above every
       fighter; the FPS label of a windowed desktop run with 3 bots is noted.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 20:42
+
+**Done (2026-11-21 · ~8 min · Claude Opus 5.5)** — `Arena` (`class_name`, `training`, `player_can_act`, `tap_targets`), `ArenaLayout.STARTS` (9 points), `match.tscn` inheriting the arena with `MatchArena` (bots from a seeded shuffle at their start points, `BotBrain` per bot with a stable id, countdown lock, healing, see-through in bushes, tap on the nearest bot, `GameState.last_result`, home after 1.5 s until Step 6), `Screens.MATCH`; `tests/test_match_arena.gd` (9 tests), STARTS and Training tests; the knock-out test of `test_fighter_health.gd` no longer depends on the damage number's 0.8 s life. `tools/test.ps1` 282 tests pass, `tools/lint.ps1` exit 0; screenshots at 1280×720 and 390×844 checked (four fighters in their own 3D looks, green and red bars, a blue shot, a white damage number); windowed desktop run with 3 bots: FPS 60.
+suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.14 M · CHF 1.29
 
 ---
 

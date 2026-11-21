@@ -22,6 +22,18 @@ func test_dummy_spots_are_free() -> void:
 		assert_true(ArenaLayout.is_free(spot, DUMMY_RADIUS), "dummy at %s is free" % spot)
 
 
+func test_nine_start_points_free_out_of_bushes_and_apart() -> void:
+	assert_eq(ArenaLayout.STARTS.size(), 9)
+	assert_eq(ArenaLayout.STARTS[0], ArenaLayout.START, "the player's start comes first")
+	for i: int in ArenaLayout.STARTS.size():
+		var spot: Vector2 = ArenaLayout.STARTS[i]
+		assert_true(ArenaLayout.is_free(spot, FIGHTER_RADIUS), "start %s is free" % spot)
+		assert_false(ArenaLayout.in_bush(spot), "start %s is not in a bush" % spot)
+		for j: int in range(i + 1, ArenaLayout.STARTS.size()):
+			var apart: float = spot.distance_to(ArenaLayout.STARTS[j])
+			assert_gte(apart, 4.0, "%s and %s are 4 m apart" % [spot, ArenaLayout.STARTS[j]])
+
+
 func test_bushes_do_not_overlap_walls() -> void:
 	for bush: Rect2 in ArenaLayout.BUSHES:
 		assert_true(ArenaLayout.bounds().encloses(bush), "%s inside the arena" % bush)

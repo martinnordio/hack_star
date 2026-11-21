@@ -231,6 +231,17 @@ func test_arena_has_back_button_and_joystick() -> void:
 	assert_not_null(_arena.get_node("Hud/TouchJoystick"))
 
 
+func test_training_has_three_dummies_and_no_bots() -> void:
+	assert_true(_arena.training, "the arena scene is the Training arena")
+	assert_eq(_arena.get_node("Dummies").get_child_count(), 3, "three dummies")
+	assert_false(_arena.has_node("Bots"), "no bots")
+	var fighters: int = 0
+	for child: Node in _arena.get_children():
+		if child is Fighter:
+			fighters += 1
+	assert_eq(fighters, 1, "only the player")
+
+
 func test_arena_has_fps_label_top_right() -> void:
 	var label: Label = _arena.get_node("Hud/FpsLabel")
 	assert_true(label.text.begins_with("FPS: "), "label shows the frame rate")

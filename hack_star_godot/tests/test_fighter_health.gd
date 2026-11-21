@@ -96,9 +96,10 @@ func test_no_health_knocks_the_fighter_out_and_it_ignores_further_hits() -> void
 	assert_false(_fighter.health_bar().visible, "no bar")
 	await wait_seconds(Fighter.KNOCK_OUT_SECONDS + 0.2)
 	assert_false(_fighter.visible, "hidden after the effect")
+	var numbers: int = _numbers(_fighter).size()
 	_fighter.hit(Combat.DAMAGE)
 	assert_eq(_fighter.health, 0.0, "stays at 0")
-	assert_eq(_numbers(_fighter).size(), 1, "no new number")
+	assert_eq(_numbers(_fighter).size(), numbers, "no new number")
 	assert_signal_emit_count(_fighter, "hurt", 1)
 
 

@@ -1,6 +1,8 @@
+class_name Arena
 extends Node3D
 ## The arena: the canyon (`Canyon`, built from `ArenaLayout`), one fighter, a camera above
-## and behind it, and the HUD.
+## and behind it, and the HUD. With `training` (the Training arena) the three target dummies
+## stand in it; `MatchArena` (`match.tscn`) inherits the scene for a match.
 ## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); the mouse
 ## (aim and click) and the right stick (`AimJoystick`, drag and release or a quick tap) fire
 ## shots (`Shot`) under the rules of `game/combat.gd`.
@@ -29,6 +31,9 @@ const DUST_INTERVAL: float = 0.25
 const DUST_COLOR: Color = Color(1.0, 0.98, 0.9, 0.85)
 const SPARK_COLOR: Color = Color(1.0, 0.95, 0.7)
 
+## Only the Training arena places the target dummies.
+@export var training: bool = true
+
 ## When false, the fighter keeps the `input_direction` set from outside (tests).
 var read_player_input: bool = true
 
@@ -54,10 +59,11 @@ func _ready() -> void:
 	_fighter.position = Vector3(ArenaLayout.START.x, 0.0, ArenaLayout.START.y)
 	_fighter.set_look(GameState.selected_fighter, GameState.selected_skin())
 	_aim_joystick.released.connect(_on_aim_released)
-	for spot: Vector2 in ArenaLayout.DUMMIES:
-		var dummy: TargetDummy = DUMMY_SCENE.instantiate()
-		dummy.position = Vector3(spot.x, 0.0, spot.y)
-		_dummies.add_child(dummy)
+	if training:
+		for spot: Vector2 in ArenaLayout.DUMMIES:
+			var dummy: TargetDummy = DUMMY_SCENE.instantiate()
+			dummy.position = Vector3(spot.x, 0.0, spot.y)
+			_dummies.add_child(dummy)
 	_camera_target = _wanted_camera_target()
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
@@ -86,6 +92,9 @@ func _physics_process(_delta: float) -> void:
 	_fighter.model.set_see_through(
 		ArenaLayout.in_bush(Vector2(_fighter.position.x, _fighter.position.z))
 	)
+	if not player_can_act():
+		_fighter.input_direction = Vector2.ZERO
+		return
 	if not read_player_input:
 		return
 	var keys: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -112,7 +121,26 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Fires a shot along `direction` (ground plane, x and z) when the cool-down is over: the
 ## fighter turns that way and recoils, the shot leaves the muzzle. True when it fired.
 func fire(direction: Vector2) -> bool:
+	if not player_can_act():
+		return false
 	return fire_from(_fighter, direction, Combat.COOLDOWN)
+
+
+## Whether the player may move and fire now; always in Training, a match locks it outside the
+## fight.
+func player_can_act() -> bool:
+	return true
+
+
+## Where a quick tap of the aim stick may aim: the dummies still standing.
+func tap_targets() -> Array[Vector2]:
+	var targets: Array[Vector2] = []
+	for target: Node in get_tree().get_nodes_in_group("targets"):
+		if target.has_method("is_broken") and target.call("is_broken"):
+			continue
+		var at: Vector3 = (target as Node3D).global_position
+		targets.append(Vector2(at.x, at.z))
+	return targets
 
 
 ## Like `fire`, for any fighter with its own `cooldown`; a knocked-out fighter does not fire.
@@ -176,16 +204,10 @@ func _on_aim_released(direction: Vector2, held_seconds: float) -> void:
 	fire(aim)
 
 
-## A quick tap fires at the nearest target (a dummy still standing) in range, else straight
-## ahead.
+## A quick tap fires at the nearest of `tap_targets` in range, else straight ahead.
 func _tap_direction() -> Vector2:
 	var from: Vector2 = Vector2(_fighter.position.x, _fighter.position.z)
-	var targets: Array[Vector2] = []
-	for target: Node in get_tree().get_nodes_in_group("targets"):
-		if target.has_method("is_broken") and target.call("is_broken"):
-			continue
-		var at: Vector3 = (target as Node3D).global_position
-		targets.append(Vector2(at.x, at.z))
+	var targets: Array[Vector2] = tap_targets()
 	var nearest: int = Combat.nearest_target(from, targets, Combat.SHOT_RANGE)
 	if nearest >= 0 and not targets[nearest].is_equal_approx(from):
 		return targets[nearest] - from

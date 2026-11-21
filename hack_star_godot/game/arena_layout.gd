@@ -48,6 +48,19 @@ const DECORATION: Array[Dictionary] = [
 const DUMMIES: Array[Vector2] = [Vector2(-4.0, -2.5), Vector2(4.0, -2.5), Vector2(0.0, -9.0)]
 ## Where the fighter starts, near the camera side.
 const START: Vector2 = Vector2(0.0, 9.5)
+## The start points of a match: the player's (`START`) first, then one per bot, spread over
+## the canyon, free of rocks and bushes, at least 4 m apart.
+const STARTS: Array[Vector2] = [
+	START,
+	Vector2(0.0, -10.5),
+	Vector2(-7.5, -1.0),
+	Vector2(7.5, -1.0),
+	Vector2(-4.0, -5.5),
+	Vector2(4.0, -5.5),
+	Vector2(6.5, 9.5),
+	Vector2(-3.5, 2.5),
+	Vector2(3.5, 2.5),
+]
 
 
 ## The arena's whole area, border walls included.

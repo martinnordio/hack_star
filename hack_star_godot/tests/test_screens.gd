@@ -11,7 +11,8 @@ func test_each_screen_constant_names_an_existing_scene() -> void:
 		Screens.FIGHTER,
 		Screens.INFO,
 		Screens.HACK,
-		Screens.QR
+		Screens.QR,
+		Screens.MATCH
 	]:
 		assert_true(ResourceLoader.exists(path), "%s exists" % path)
 		assert_true(load(path) is PackedScene, "%s is a scene" % path)

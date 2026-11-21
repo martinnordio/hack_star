@@ -24,6 +24,9 @@ var pictures: Dictionary[String, Texture2D] = {}
 var start_code: String = ""
 ## The numbers the next match reads at its start; session only, not saved.
 var match_settings: MatchSettings = MatchSettings.new()
+## The end of the last match, `{outcome (Match.Result), place, fighter, skin}`, or empty;
+## session only, not saved.
+var last_result: Dictionary = {}
 
 
 func _ready() -> void:
@@ -47,6 +50,7 @@ func reset() -> void:
 	entrance_played = false
 	pictures = {}
 	match_settings = MatchSettings.new()
+	last_result = {}
 	# In memory only, so a developer's own save file never changes what a test sees.
 	active_hacks = []
 
