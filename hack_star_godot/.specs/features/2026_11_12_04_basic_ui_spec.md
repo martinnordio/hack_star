@@ -24,6 +24,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.50 M (124 k in · 3.35 M cached · 32 k out) | CHF 1.60 (191 credits) | Step 6 done (`usage.ps1 -Agent subagents` 16:39–16:45) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.69 M (88 k in · 2.57 M cached · 26 k out) | CHF 0.62 (74 credits) | Step 7 done (`usage.ps1 -Agent subagents` 16:46–16:53) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.35 M (34 k in · 2.29 M cached · 22 k out) | CHF 0.45 (54 credits) | Step 8 done (`usage.ps1 -Agent subagents` 16:53–16:57) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.36 M (121 k in · 2.22 M cached · 21 k out) | CHF 0.16 (19 credits) | Step 9 done (`usage.ps1 -Agent subagents` 16:57–17:00) |
 
 ---
 
@@ -191,7 +192,7 @@ of this spec (see Deferred Items in the plan of the
 | **6** | Wow entrance | reasoning (Claude Opus 5.5) — graphics-heavy: timed 3D animation with particles, skippable | ✅ Done | [→ Step 6](#step-6--wow-entrance) |
 | **7** | Fighter list | standard (Claude Sonnet 5.5) — a grid of cards with cached 3D pictures (D7) | ✅ Done | [→ Step 7](#step-7--fighter-list) |
 | **8** | Fighter screen with skins and Select | standard (Claude Sonnet 5.5) — one screen reusing the model and the state | ✅ Done | [→ Step 8](#step-8--fighter-screen-with-skins-and-select) |
-| **9** | Info page | light (Claude Haiku 5.5) — a word list and a scrolling page | ⬜ Not started | [→ Step 9](#step-9--info-page) |
+| **9** | Info page | light (Claude Haiku 5.5) — a word list and a scrolling page | ✅ Done | [→ Step 9](#step-9--info-page) |
 | **10** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -443,16 +444,18 @@ Started: 2026-11-21 16:53
 S10).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/vocabulary.gd` (D11) with the 24 words and meanings of Part 1.
-- [ ] `scenes/info.tscn` + `.gd` (`Screens.INFO`): title, a `ScrollContainer` with one row per
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/vocabulary.gd` (D11) with the 24 words and meanings of Part 1.
+- [x] `scenes/info.tscn` + `.gd` (`Screens.INFO`): title, a `ScrollContainer` with one row per
       word (word in bold style, meaning wrapped); Back button; **Info** on home enabled.
-- [ ] Tests: `tests/test_vocabulary.gd` (≥ 24 words, each with a non-empty meaning, every word
+- [x] Tests: `tests/test_vocabulary.gd` (≥ 24 words, each with a non-empty meaning, every word
       of Part 1 present); `tests/test_info.gd` (one row per word; Back goes home);
       `test_screen_sizes.gd` adds the info page (the list scrolls, Back stays visible).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
+Started: 2026-11-21 16:57
+**Done (2026-11-21 · ~4m · Claude Haiku 5.5)** — `game/vocabulary.gd` (`Vocabulary`, `LIST` of the 24 words with their one-sentence meanings from the spec); `scenes/info.tscn` + `info.gd` (title, Back, a scrolling `Rows` box built with one row per word: the word in an emboldened default font, the meaning wrapped); `Screens.INFO`; **Info** on home enabled (`home.tscn`, `home.gd`). Tests: `tests/test_vocabulary.gd` (24 words in order, meanings non-empty), `tests/test_info.gd` (one row per word, bold word and wrapped meaning, Back goes home), `test_home.gd` (Info opens the page; replaces the "waits for its step" test), `test_screens.gd` (INFO), `test_screen_sizes.gd` (info page fits five sizes, the list scrolls, Back by click and touch). `tools/test.ps1`: 104 tests passed; `tools/lint.ps1`: exit 0. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.36 M tokens · CHF 0.16 (19 credits)
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
