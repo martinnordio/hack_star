@@ -22,6 +22,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (21 k in · 1.87 M cached · 8 k out) | CHF 0.27 (32 credits) | Step 4 done (`usage.ps1 -AgentName s05-steps1-4` 17:44:10–17:45:49) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.03 M (93 k in · 1.91 M cached · 31 k out) | CHF 1.24 (148 credits) | Step 5 done (`usage.ps1 -AgentName s05-step5` from 17:25:44) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.97 M (106 k in · 2.84 M cached · 24 k out) | CHF 0.66 (79 credits) | Step 6 done (`usage.ps1 -AgentName s05-steps6-7` 17:25:44–18:00:26) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.73 M (27 k in · 2.68 M cached · 19 k out) | CHF 0.44 (52 credits) | Step 7 done (`usage.ps1 -AgentName s05-steps6-7` 18:00:26–18:04:27) |
 
 ---
 
@@ -160,7 +161,7 @@ simplest reading that fits the Godot game._
 | **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ✅ Done | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
 | **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ✅ Done | [→ Step 5](#step-5--qr-code-encoder) |
 | **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ✅ Done | [→ Step 6](#step-6--qr-page-with-savable-images) |
-| **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ⬜ Not started | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
+| **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ✅ Done | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
 | **8** | Camera scanning and QR links in the browser | reasoning (Claude Opus 5.5) — JavaScript bridge, camera permissions, an end-to-end browser check with a fake camera | ⬜ Not started | [→ Step 8](#step-8--camera-scanning-and-qr-links-in-the-browser) |
 | **9** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 9](#step-9--final-check-readme-and-architecture) |
 
@@ -379,11 +380,11 @@ One documented command serves the web export and makes the server's `/api` reach
 same address, over HTTP or HTTPS, on this computer and on the Wi-Fi (S13, S15).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `tools/serve_web.py` and the new `tools/serve_web.ps1` (`-Port`, `-ApiUrl`, `-Https`)
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `tools/serve_web.py` and the new `tools/serve_web.ps1` (`-Port`, `-ApiUrl`, `-Https`)
       after D3; `tools/make_cert.py`; `build/cert/` git-ignored (already under `build/`).
-- [ ] If the forward target is down, `/api` answers 502, so the game shows the S13 message.
-- [ ] Check: both `.ps1` parse with `[System.Management.Automation.Language.Parser]::ParseFile`;
+- [x] If the forward target is down, `/api` answers 502, so the game shows the S13 message.
+- [x] Check: both `.ps1` parse with `[System.Management.Automation.Language.Parser]::ParseFile`;
       with `cd server; uv run hack-star-server` and `tools/serve_web.ps1` running:
       `curl http://localhost:8060/` returns `index.html`, `curl http://localhost:8060/api/hacks`
       returns the server's list, `POST /api/hacks/redeem` with `{"code":"nope"}` returns 404,
@@ -394,7 +395,9 @@ same address, over HTTP or HTTPS, on this computer and on the Wi-Fi (S13, S15).
       exit 0.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 18:00
+
+**Done (2026-11-21 · ~4m · Claude Sonnet 5.5)** — `tools/serve_web.py` (standard library: serves `build/web/` with `Cache-Control: no-store`, forwards every `/api` request with `http.client`, answers 502 `{"detail": "The hack server is not reachable"}` when the server is down, turns a WebSocket upgrade into a two-way byte tunnel; `--cert`/`--key` give https with the handshake done per connection), `tools/make_cert.py` (self-signed certificate for `localhost`, `127.0.0.1` and this computer's Wi-Fi addresses into `build/cert/`, kept while valid and covering the addresses), new `tools/serve_web.ps1` (`-Port`, `-ApiUrl`, `-Https`), `cryptography` 50.0.2 pinned in `tools/versions.json`. Both `.ps1` parse (0 errors). With `uv run hack-star-server` and `serve_web.ps1` running: `curl http://localhost:8060/` 200, `/api/hacks` returned the server's list, `POST /api/hacks/redeem` `{"code":"nope"}` 404, `ws://localhost:8060/api/rooms` answered `create` with a `room` message (websockets 17.4); the same over `-Https` with `curl -k` and `wss://`; with the server stopped `/api/hacks` gave 502. All processes stopped by id, ports 8060 and 8180 free. `tools/check_tools.ps1`, `tools/lint.ps1` and `tools/test.ps1` (165 passing) exit 0. Open: the README describes the command in Step 9; the iPad over Wi-Fi was not tried. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.73 M · CHF 0.44
 
 ---
 
