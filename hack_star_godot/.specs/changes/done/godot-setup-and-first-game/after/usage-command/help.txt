@@ -1,0 +1,24 @@
+﻿
+NAME
+    <repo>\.specs\kit\tools\usage.ps1
+
+SYNOPSIS
+    Tokens and cost of a time range of the AI chat, by the method of COSTS.md.
+    Without -Transcript it checks every chat log of this project written since -Since
+    (Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions) and
+    uses the one with the most requests in the range. It stops with an error when it finds none.
+
+
+SYNTAX
+    <repo>\.specs\kit\tools\usage.ps1 [-Since] <String> [-Model] <String> [[-Until] <String>]
+    [[-Transcript] <String>] [[-Root] <String>] [[-ContextCap] <Int32>] [[-Agent] <String>] [-Json]
+    [<CommonParameters>]
+
+
+
+
+
+
+
+
+

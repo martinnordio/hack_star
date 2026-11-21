@@ -1,0 +1,2 @@
+﻿git cat-file -e a6a0f643:AGENTS.md
+fatal: path 'AGENTS.md' exists on disk, but not in 'a6a0f643'

@@ -1,0 +1,9 @@
+﻿<#
+.SYNOPSIS
+Lints and format-checks the GDScript of game\, scenes\ and tests\ (never addons\).
+
+.DESCRIPTION
+Runs gdlint and `gdformat --check` on the folders that exist. Exit code 1 if either fails.
+#>
+
+Get-Help syntax: lint.ps1 [<CommonParameters>]

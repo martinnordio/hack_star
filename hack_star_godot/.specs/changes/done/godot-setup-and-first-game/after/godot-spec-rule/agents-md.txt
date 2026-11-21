@@ -1,0 +1,18 @@
+﻿## Godot specs
+
+When a spec is for the Godot game (it lives, or must live, in `hack_star_godot/.specs/`):
+
+- **Create and keep it in `hack_star_godot/.specs/features/`** (`features/done/` once closed).
+  A new Godot spec never goes into the root `.specs/`.
+- Write `changes/`, `review/`, `costs.md` and `features/done/` under `hack_star_godot/.specs/`,
+  never in the root `.specs/`.
+- Use the root kit's prompts (`.specs/kit/`), but replace the Python and Svelte parts:
+  - guideline: `hack_star_godot/.specs/guidelines/gdscript.md` (GDScript, Godot 4.7);
+  - checks: `hack_star_godot/tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` (and
+    `tools/check_tools.ps1` for the pinned tools) instead of `pytest` / `npm`;
+  - run, install and export steps: `hack_star_godot/README.md`.
+- Costs: run `.specs/kit/tools/usage.ps1` from the **repository root**; build the Godot cost
+  list with `.specs/kit/tools/costs_ledger.ps1 -Root hack_star_godot -CostsLink ../../.specs/kit/COSTS.md`.
+  `hack_star_godot/.specs/spec-nx.json` holds only a copy of the root `cost` block; keep the two
+  equal.
+- Nothing of the Python + Svelte game changes for a Godot spec.

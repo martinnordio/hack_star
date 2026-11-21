@@ -1,0 +1,10 @@
+﻿<#
+.SYNOPSIS
+Runs the GUT tests of the Godot project headless.
+
+.DESCRIPTION
+Imports the project, then runs every tests\test_*.gd with GUT. Exit code 1 if Godot fails,
+a test fails, or no test ran.
+#>
+
+Get-Help syntax: test.ps1 [<CommonParameters>]

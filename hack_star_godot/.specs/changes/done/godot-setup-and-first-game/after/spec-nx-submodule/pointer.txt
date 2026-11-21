@@ -1,0 +1,4 @@
+﻿160000 commit 9e2445b84ac12e7fc9c7b241baa744cc95acdb9b	.spec-nx
+
+git -C .spec-nx log --oneline 1d72273..9e2445b:
+9e2445b Count Copilot CLI costs; no silent N/A

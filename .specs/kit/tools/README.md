@@ -56,23 +56,26 @@ file.
 |-----------|---------|
 | `-Since` | Start of the range: the stage's or Step's start time (local time or ISO with `Z`) |
 | `-Until` | End of the range (default: now) |
-| `-Model` | The model that ran, as named in the tool's model list or in `cost.prices` |
-| `-Transcript` | The chat transcript (default: the newest one of VS Code Copilot or of Claude Code for this project) |
+| `-Model` | The model that ran, as named in the tool's model list or in `cost.prices` (a Copilot CLI log names its models itself) |
+| `-Transcript` | The chat log (default: of all logs of this project written since `-Since` — Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions — the one with the most requests in the range) |
 | `-Root` | The project root (default: the current folder) |
 | `-ContextCap` | Context size at which the chat is assumed to be summarized (default 200000) |
+| `-Agent` | `all` (default), `main` (only the chat's own requests) or `subagents` (only its sub-agents') — Copilot CLI logs only; a `Split:` line always shows both parts |
 | `-Json` | One JSON line instead of the three text lines |
 
 ```
 .specs/kit/tools/usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5"
 ```
 
-Output (`~` = estimated):
+Output (`~` = estimated; measured numbers have none):
 
 ```
 Tokens: ~1.34 M (18 k in · 1.31 M cached · 11 k out)
 Cost: ~CHF 0.48 (57 credits, 3.0 % of Copilot Business)
-Source: estimated from <transcript> · 17 requests
+Source: estimated from <transcript> · 17 requests · Claude Opus 5.5
 ```
+
+With no request in the range it stops with an error that lists the logs it checked.
 
 `costs_ledger.ps1` rebuilds `.specs/costs.md` — every spec in
 `.specs/features/` and `done/` with its tokens and cost per stage, per Step and in total, and

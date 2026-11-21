@@ -49,8 +49,15 @@ compute by hand.
 
 | Tool | Tokens are | How |
 |------|------------|-----|
+| Copilot CLI (also the VS Code "agent host" chats it runs) | **measured** | The session log (`~/.copilot/session-state/<session>/events.jsonl`) records every model request with its tokens and the AI credits billed (`session.usage_record`), sub-agents included; the script adds them up. No price list needed. |
 | Claude Code | **measured** | The session file (`~/.claude/projects/<project>/*.jsonl`) logs the tokens of every model response; each response is counted once. |
 | VS Code Copilot | **estimated** (`~`) | The chat transcript has the text of every turn but no token counts, so the script estimates them (below). |
+
+Without `-Transcript`, the script checks every log of **this project** (CLI sessions whose
+folder is the project or inside it, VS Code chats of this workspace, Claude Code sessions)
+written since the start time, and uses the one with the most requests in the time range. It
+names that log in its `Source:` line. If it finds no request, it **stops with an error** and
+lists the logs it checked — it never reports 0.
 
 **The estimate**, for every model request in the time range of the stage or Step:
 
@@ -68,7 +75,11 @@ compute by hand.
 
 Known limits: 4 characters per token is an average; the real system prompt size is unknown;
 the real summary point is unknown; a cold cache after a break costs more than counted; work of
-sub-agents may be missing from the transcript.
+sub-agents may be missing from the transcript. **VS Code transcripts hold no tool results**
+(only `"success": true`), so file contents, test and terminal output are not counted — the
+estimate can be several times too low. The model list has only the list price, so requests
+billed at a higher tier (for example Claude Haiku above ~100 k prompt tokens, 5×) are counted
+too low. Measured numbers (Copilot CLI, Claude Code) have none of these limits.
 
 ## Where prices and values come from
 
@@ -84,11 +95,25 @@ sub-agents may be missing from the transcript.
 Only when cost tracking is on.
 
 1. **At the start** of a command, note the time (`Started:` for a Step).
-2. **At the end**, run `tools/usage` with that time and your model, then copy:
+2. **At the end**, run `tools/usage` with that time and your model (and `-Until` when the
+   command is over before the next one starts), then copy:
    - Stage log columns **Tokens (estimate — see COSTS.md)** and **Cost (<currency>)**:
-     `~379 k (40 k in · 334 k cached · 5 k out)` and `~CHF 0.30 (36 credits)`;
+     `~379 k (40 k in · 334 k cached · 5 k out)` and `~CHF 0.30 (36 credits)` — measured
+     numbers have no `~`;
    - a Step's Done line ends with `· ~<tokens> · ~<currency> <amount>`.
-3. If the script fails or finds no transcript, write `N/A` and say why in the report — never
-   a guessed number.
-4. Every cost number in a spec, the cost list or a pull request comes with the link to this
+   A Step run by a sub-agent is counted from the sub-agent's start to its end; the script
+   includes the sub-agent's requests. In a **per-Step run** with a Copilot CLI log, measure
+   each Step with `-Agent subagents` over its sub-agent's time, and add one Stage log row
+   for the **orchestrator** (the chat that starts the sub-agents, checks and commits) with
+   `-Agent main` over the whole run — so Steps plus orchestrator equal the run's total and
+   nothing is counted twice or left out. The `Split:` line shows both parts.
+3. **Never leave the cells empty, and never guess.** If the script stops with an error, read
+   it: fix the start time, or pass the right log with `-Transcript` (for the Copilot CLI:
+   `~/.copilot/session-state/<session>/events.jsonl`; the current session's folder is the
+   newest one whose `workspace.yaml` names this project). Only if it still fails, write `N/A`
+   and copy the script's error into the Note column and the report. `—` (dash) is only for a
+   command that used no model.
+4. **One run, several specs:** when one command writes several specs, the first spec's row
+   gets the numbers and the others say `included in <spec>`, so nothing is counted twice.
+5. Every cost number in a spec, the cost list or a pull request comes with the link to this
    page.

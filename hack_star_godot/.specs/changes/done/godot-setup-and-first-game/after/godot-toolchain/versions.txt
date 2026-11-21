@@ -1,0 +1,11 @@
+﻿tools/versions.json:
+{
+  "godot": "4.7.2",
+  "gut": "9.7.1",
+  "gdtoolkit": "4.5.0"
+}
+
+addons/gut/plugin.cfg: version="9.7.1"
+addons/gut/: 259 files committed (vendored, MIT)
+gdtoolkit: uv tool (not in the repository)
+Godot: winget package (not in the repository)

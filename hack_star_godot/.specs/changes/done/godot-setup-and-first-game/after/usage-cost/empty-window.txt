@@ -1,0 +1,5 @@
+﻿No AI requests found between 2026-11-21T03:00:00.000Z and 2026-11-21T03:10:00.000Z for <repo>. Logs checked:
+  ~\.copilot\session-state\<session>\events.jsonl
+Check the start time, or pass -Transcript <file> (Copilot CLI: ~/.copilot/session-state/<session>/events.jsonl).
+At <repo>\.specs\kit\tools\usage.ps1:206 char:5
+exit 1

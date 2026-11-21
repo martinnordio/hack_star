@@ -1,0 +1,20 @@
+﻿config_version=5
+[application]
+config/name="Hack star"
+run/main_scene="res://scenes/start_screen.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+[editor_plugins]
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+[input]
+move_left = A - Physical, Left (deadzone 0.20000000298023)
+move_right = D - Physical, Right (deadzone 0.20000000298023)
+move_up = W - Physical, Up (deadzone 0.20000000298023)
+move_down = S - Physical, Down (deadzone 0.20000000298023)
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

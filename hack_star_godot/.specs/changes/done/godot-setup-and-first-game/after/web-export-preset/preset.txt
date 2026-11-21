@@ -1,0 +1,9 @@
+﻿name="Web"
+platform="Web"
+export_filter="all_resources"
+exclude_filter="addons/gut/*, tests/*, .specs/*, tools/*, build/*"
+export_path="build/web/index.html"
+variant/extensions_support=false
+variant/thread_support=false
+html/canvas_resize_policy=2
+progressive_web_app/enabled=false

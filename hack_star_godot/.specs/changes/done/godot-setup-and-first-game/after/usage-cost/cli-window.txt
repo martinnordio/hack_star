@@ -1,0 +1,5 @@
+﻿Tokens: 2.12 M (101 k in · 1.99 M cached · 27 k out)
+Cost: CHF 1.20 (143 credits, 7.5 % of Copilot Business)
+Source: measured from ~\.copilot\session-state\<session>\events.jsonl · 28 requests · Claude Opus 5.5, Claude Sonnet 5.5
+Split: main agent 2 credits · sub-agents 141 credits
+exit 0

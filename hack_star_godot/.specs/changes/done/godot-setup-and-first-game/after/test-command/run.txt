@@ -1,0 +1,54 @@
+﻿---  GUT  ---
+[1m[INFO]:  [0musing [~/AppData/Roaming/Godot/app_userdata/Hack star] for temporary output.
+Godot version:  4.7.2
+GUT version:  9.7.1
+[4m
+
+res://tests/test_arena.gd
+[0m* test_arena_has_fighter_camera_and_walls
+* test_camera_frames_the_whole_arena
+* test_arena_has_back_button_and_joystick
+* test_arena_has_fps_label_top_right
+* test_fighter_stops_at_east_wall
+[33m    --- Awaiting 150 physics frames  ---
+[0m[1m5/5 passed.
+[0m[4m
+
+res://tests/test_movement.gd
+[0m* test_straight_right_moves_along_x_at_speed
+* test_up_moves_away_from_camera
+* test_diagonal_is_not_faster
+* test_no_input_stops
+* test_step_scales_with_delta
+* test_joystick_length_is_clamped
+* test_joystick_inside_keeps_partial_length
+* test_facing_yaw_turns_forward_towards_direction
+[1m8/8 passed.
+[0m[4m
+
+res://tests/test_start_screen.gd
+[0m* test_scene_loads_and_shows_title
+* test_scene_has_play_button
+[1m2/2 passed.
+[0m
+
+
+
+[33m==============================================
+[0m[33m= Run Summary
+[0m[33m==============================================
+[0m
+Totals
+------
+Scripts               3
+Tests                15
+Passing Tests        15
+Asserts              43
+Time              2.91s
+
+
+[32m---- All tests passed! ----
+[0m
+Tests passed: 15.
+
+exit 0
