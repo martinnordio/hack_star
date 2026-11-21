@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_14_1_fighter_studio_saves_and_music_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_14_1_fighter_studio_saves_and_music_spec.md (requirements only) |
 
 ---
 
@@ -28,7 +28,7 @@ screen, which does not update after a rename or an account switch. To choose the
 adds the basics of a hidden developer page and a developer mode; spec 2 adds the graphics
 review to the same page.
 
-**Already in the repository** (reuse, don't rebuild):
+**Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_14_1_fighter_studio_saves_and_music_spec.md) (#19).
 - [Bug fixes spec](2026_11_14_16_bug_fixes_spec.md) — created-fighter collection, stable
   ids, account saving and cross-tab sync; this spec builds on it.
@@ -223,7 +223,7 @@ review to the same page.
   `hack_star_godot/assets/music/` (spec 01, D13), and are never committed. No document of the
   repository names tracks; it lists the recommended licences and what each needs, and says that
   whoever adds a track must check its licence on its source page and is responsible for it.
-  This replaces the shipped tracks and the repository credits of S20, S22 and S35.
+  This replaces the shipped tracks and the repository credits of S20, S22 and S31.
 - **S37 — Music tools only on this computer (Godot):** Every action of the developer page's
   music tools (list, play, choose, unchoose, delete) works only on the developer's own computer
   that runs the Godot game from the project folder; on other devices, for example an iPad on the
@@ -237,6 +237,12 @@ review to the same page.
   Suggestion: the developer page runs from the Godot editor or a desktop run on the developer's
   computer, where it can read and delete files in the music folder; the web export has no music
   tools, but plays the tracks the developer has chosen on that computer.
+  The answer changes S24/S25 (developer mode "in this browser", the page by address `/?dev`) and
+  S26/S27 (candidate files kept in the project, the list kept in the repository — already in
+  conflict with S36).
+
+_Answered on 2026-11-14 (original spec): candidate tracks come from both sources: made by us
+with a free tool, and free-music libraries under CC0 or CC BY._
 
 <!-- spec-nx:plan -->
 

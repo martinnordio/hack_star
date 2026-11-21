@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_13_accounts_fighters_and_languages_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_13_accounts_fighters_and_languages_spec.md (requirements only) |
 
 ---
 
@@ -25,7 +25,7 @@ Parents want to start over (reset) and to keep the printed QR codes away from th
 it is in one spec, as the user asked.
 
 The QR password and the hack codes are visible in the public source on GitHub and through
-`GET /api/hacks`: the password keeps kids from printing the codes, it is not real security —
+`GET /api/hacks` (Python + Svelte game; see S0 / spec 03's server question): the password keeps kids from printing the codes, it is not real security —
 agreed as enough.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):

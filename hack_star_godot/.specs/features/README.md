@@ -3,7 +3,7 @@
 The specs of the Godot game, in the order they are worked on. 01 and 02 are Godot specs;
 03–18 are the finished specs of the Python + Svelte game, moved here with their requirements
 only (Part 1), numbered in the order the features were built
-([2026_11_21_02_move_specs_to_godot_spec.md](2026_11_21_02_move_specs_to_godot_spec.md)).
+([2026_11_21_02_move_specs_to_godot_spec.md](done/2026_11_21_02_move_specs_to_godot_spec.md)).
 Each spec only needs features of specs with a lower number.
 
 **How to work through it:** take the first spec that is not *closed*, then
@@ -20,7 +20,7 @@ Update the status of a spec here whenever it changes.
 | Order | Spec | Moved from | Status |
 |-------|------|------------|--------|
 | 01 | [Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | — (Godot spec) | closed |
-| 02 | [Move Specs to Godot](2026_11_21_02_move_specs_to_godot_spec.md) | — (Godot spec) | planned |
+| 02 | [Move Specs to Godot](done/2026_11_21_02_move_specs_to_godot_spec.md) | — (Godot spec) | closed |
 | 03 | [MVP and Architecture](2026_11_12_03_mvp_and_architecture_spec.md) | [2026_11_12_mvp_and_architecture_spec.md](../../../.specs/features/done/2026_11_12_mvp_and_architecture_spec.md) (#1) | requirements |
 | 04 | [Basic UI](2026_11_12_04_basic_ui_spec.md) | [2026_11_12_basic_ui_spec.md](../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2) | requirements |
 | 05 | [Hack Codes](2026_11_12_05_hack_codes_spec.md) | [2026_11_12_hack_codes_spec.md](../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3) | requirements |

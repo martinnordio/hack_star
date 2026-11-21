@@ -68,7 +68,7 @@ existing Python + Svelte game. This first spec prepares the ground: the folder w
 specs, the tools every developer installs, the resources that live outside the
 folder, and a first small game that runs, so that the existing features can then be built
 again one spec at a time
-([2026_11_21_02_move_specs_to_godot_spec.md](../2026_11_21_02_move_specs_to_godot_spec.md)).
+([2026_11_21_02_move_specs_to_godot_spec.md](2026_11_21_02_move_specs_to_godot_spec.md)).
 
 **Already in the repository** (reuse, don't rebuild):
 - The Python + Svelte game: FastAPI server in `server/`, Svelte 5 + TypeScript UI in `ui/`,

@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_play_with_friends_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_play_with_friends_spec.md (requirements only) |
 
 ---
 
@@ -21,11 +21,11 @@
 
 Mattia: "the players should have up to 2 friends to play". Today Hack star is single-player
 against bots, all in the browser. Playing with friends means each kid plays on their own device
-(iPad, phone, computer) in the same match, so the Python server must connect the devices. This
+(iPad, phone, computer) in the same match, so the Python server must connect the devices (Python + Svelte game; see S0 / spec 03's server question). This
 is the biggest change so far; it is F11 in the
 [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md).
 
-**Already in the repository** (reuse, don't rebuild):
+**Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_play_with_friends_spec.md) (#12).
 - [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are, rooms

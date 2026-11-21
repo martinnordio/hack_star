@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_hack_codes_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_hack_codes_spec.md (requirements only) |
 
 ---
 
@@ -31,6 +31,8 @@ of [overall_req.md](../../../.specs/overall_req.md).
   screens, input) and S9 (progress kept on the device) apply here too; the Godot technology,
   the architecture document `hack_star_godot/docs/architecture.md` and how to run the game
   (S12–S14).
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — its open question
+  "Server for rooms and hack codes" decides whether the hack codes need a server in the Godot game.
 - [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
   with locks and power levels (S4), the fighter screen with skins (S7); the UI foundation of
   the Godot game (S12).

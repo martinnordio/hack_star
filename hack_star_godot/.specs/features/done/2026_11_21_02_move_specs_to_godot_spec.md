@@ -1,17 +1,17 @@
 # Move Specs to Godot Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on `main`
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `main` (worked on directly, no pull request)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 written, in the same run as spec 01 |
-| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](done/2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 revised: the root kit is used, no Godot kit (Context, S12) |
+| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 written, in the same run as spec 01 |
+| 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | included in [01](2026_11_21_01_godot_setup_and_first_game_spec.md) | Part 1 revised: the root kit is used, no Godot kit (Context, S12) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row below | included in the plan row below | Part 1 revised: open questions answered (Worlds moved now from its branch, Bug Fixes own spec, global numbers, `overall_req.md` linked); S1, S7 changed; S13 requirement 0, S14 Godot architecture, S15 Godot UI, S16, S17 (on `main`) added |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.05 M (26 k in · 3.01 M cached · 16 k out) | CHF 0.88 (105 credits) | Part 2 written (also covers the requirements revision above) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 714 k (84 k in · 613 k cached · 17 k out) | CHF 0.74 (88 credits) | Step 1 done |
@@ -20,8 +20,34 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.69 M (72 k in · 1.59 M cached · 26 k out) | CHF 0.50 (60 credits) | Step 4 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 946 k (85 k in · 839 k cached · 22 k out) | CHF 0.03 (3 credits) | Step 5 done |
 | 2026-11-21 | review | `REVIEW:` / `CODE REVIEW:` | Claude Opus 5.5 | 2.60 M (126 k in · 2.44 M cached · 36 k out) | CHF 1.55 (185 credits) | review page written; code review: Approve (0 blocking, 3 should-fix, 5 nit) |
+| 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.13 M (68 k in · 1.05 M cached · 13 k out) | CHF 0.34 (40 credits) | review fixes #1–#6, #8; spec closed |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.93 M (490 k in · 6.43 M cached · 14 k out) | CHF 3.37 (401 credits) | orchestrator of the per-Step run, review, fixes and close: starting the sub-agents, checks, commits, push (`usage.ps1 -Agent main` from 15:20) |
 ---
 
+## Cost summary
+
+This feature used 18.51 M tokens, CHF 8.17 (972 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 3.05 M | CHF 0.88 (105 credits) | 5.5 % |
+| implementation | Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 | 12.86 M | CHF 5.74 (682 credits) | 35.9 % |
+| review | Claude Opus 5.5 | 2.60 M | CHF 1.55 (185 credits) | 9.7 % |
+| **Total** | | **18.51 M** | **CHF 8.17 (972 credits)** | **51.2 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Opus 5.5 | 714 k | CHF 0.74 (88 credits) | 4.6 % |
+| Step 2 | Claude Sonnet 5.5 | 801 k | CHF 0.41 (49 credits) | 2.6 % |
+| Step 3 | Claude Sonnet 5.5 | 653 k | CHF 0.35 (41 credits) | 2.2 % |
+| Step 4 | Claude Sonnet 5.5 | 1.69 M | CHF 0.50 (60 credits) | 3.2 % |
+| Step 5 | Claude Haiku 5.5 | 946 k | CHF 0.03 (3 credits) | 0.2 % |
+| Review fixes and CLOSE | Claude Sonnet 5.5 | 1.13 M | CHF 0.34 (40 credits) | 2.1 % |
+| Orchestrator (Steps, review, fixes, close) | Claude Opus 5.5 | 6.93 M | CHF 3.37 (401 credits) | 21.1 % |
+| **Total implementation** | | **12.86 M** | **CHF 5.74 (682 credits)** | **35.9 %** |
 # Part 1 · Requirements
 
 ## Context
@@ -31,10 +57,10 @@ studying its code. Every finished spec of the root `.specs/features/done/` is co
 `hack_star_godot/.specs/features/` with its requirements only (Part 1), numbered in the order
 the features were built, so that the plan and implementation stages can then run on them one
 after the other. It needs the folder, and the rule for Godot specs with the root kit, from
-[2026_11_21_01_godot_setup_and_first_game_spec.md](done/2026_11_21_01_godot_setup_and_first_game_spec.md).
+[2026_11_21_01_godot_setup_and_first_game_spec.md](2026_11_21_01_godot_setup_and_first_game_spec.md).
 
 **Already in the repository:**
-- 17 finished specs in [.specs/features/done/](../../../.specs/features/done/). Each has a
+- 17 finished specs in [.specs/features/done/](../../../../.specs/features/done/). Each has a
   header, a Stage log, Part 1 · Requirements, the marker `<!-- spec-nx:plan -->` and Part 2 ·
   Plan (Steps with Done lines, Decisions, Review Log, Definition of Done); the later ones also
   have a Cost summary above Part 1.
@@ -68,7 +94,7 @@ after the other. It needs the folder, and the rule for Godot specs with the root
   so not moved: the specs still in `.specs/features/` (graphics review, art tools research,
   originality review, device and end-to-end testing, model experiment, and two stale copies
   of *More Fighters* and *Super and Hypercharge*).
-- The plan stage ([.specs/kit/plan/prompt.md](../../../.specs/kit/plan/prompt.md)) only
+- The plan stage ([.specs/kit/plan/prompt.md](../../../../.specs/kit/plan/prompt.md)) only
   plans a spec whose Part 1 has no open questions and whose Part 2 is the placeholder below
   the marker.
 
@@ -143,7 +169,7 @@ after the other. It needs the folder, and the rule for Godot specs with the root
   layouts that fit desktop, iPad and phone in landscape and portrait — in addition to its
   screens (home, fighters, skins, info).
 - **S16 — Links to the overall game idea:** Links to `overall_req.md` point to the root
-  [.specs/overall_req.md](../../../.specs/overall_req.md); it is not copied.
+  [.specs/overall_req.md](../../../../.specs/overall_req.md); it is not copied.
 - **S17 — On `main`:** The move is done on `main`, committed after each Step, without a pull
   request; the moved specs have no issue yet.
 
@@ -159,6 +185,13 @@ linked, not copied (S16)._
 
 # Part 2 · Plan
 
+## Closing summary
+
+**Built:** The Godot game now has its own spec set: the ordered list `hack_star_godot/.specs/features/README.md` (01–18) and 16 specs (03–18) moved from the Python + Svelte game, each with the Godot header, a Stage log row, S0 (check the spec against the Godot game before planning) and its statements adapted where D3 says so; 03 and 04 got the Godot architecture and UI statements, 18 was moved from its branch. The root `.specs/` is unchanged (S9). The code review (Approve) found 8 points; #1–#6 and #8 are fixed, #7 is a Deferred Item.
+
+**Differs from the plan:** Steps 2–4 and the final check found nothing to change; the work was on `main` without a pull request (S17), so the pull-request line of the Definition of Done is not applicable. The review fixes and the closing ran in one run after the code review.
+
+**Files:** `hack_star_godot/.specs/features/README.md`, `hack_star_godot/.specs/features/2026_11_12_03` … `2026_11_16_18` (16 moved specs), `hack_star_godot/.specs/costs.md`, `hack_star_godot/README.md` (Specs section), `hack_star_godot/.specs/review/2026-11-21_main-move-specs-to-godot.html` and `index.html`; this spec, now in `done/`.
 ## 2 · Spec Overview
 
 | Step | Description | Model (suggested) | Status | Detail |
@@ -259,7 +292,7 @@ Only the documentation statements named the Python + Svelte documents (08 S9, 09
 each is struck through and replaced at the end of the list (08 S10, 09 S12, 10 S12). Python and
 Svelte file paths were removed from *Already in the repository*; the lists of documents point to
 `hack_star_godot/docs/architecture.md` (not written yet, so not a link) and
-[hack_star_godot/README.md](../../README.md). 06 also lists spec 01's Godot arena. No links to
+[hack_star_godot/README.md](../../../README.md). 06 also lists spec 01's Godot arena. No links to
 not-yet-moved specs.
 
 **Done (2026-11-21 · ~2m · Claude Sonnet 5.5)** — 05–10 moved, README rows 05–10 set to
@@ -364,6 +397,7 @@ Started: 2026-11-21 15:32
 |------|--------|------------------|
 | Create GitHub issues for the moved specs | Not needed to move them (S17); each gets its issue when it is planned | each moved spec, at `CREATE ISSUE:` |
 | Run S0 of each moved spec | It belongs to that spec, before its plan | 03 … 18 |
+| Re-point 18's *Moved from* link from the blob on `feature/worlds-and-world-coins` to `main` (review finding #7) | The branch is not merged yet; the link breaks when it is merged and deleted | when `feature/worlds-and-world-coins` is merged or deleted |
 
 ---
 
@@ -371,8 +405,9 @@ Started: 2026-11-21 15:32
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff (specs and documents only: summary and highlights, no change record, no PR text — S17) | [review page](../review/2026-11-21_main-move-specs-to-godot.html) | — |
+| 2026-11-21 | AI assistant (Claude Opus 5.5) | semantic diff (specs and documents only: summary and highlights, no change record, no PR text — S17) | [review page](../../review/2026-11-21_main-move-specs-to-godot.html) | — |
 | 2026-11-21 | AI assistant (Claude Opus 5.5) | diff `c2ff04c..5cccaae` (16 moved specs, ordered list, README, costs) | Approve | 0 blocking · 3 should-fix · 5 nit |
+| 2026-11-21 | AI assistant (Claude Sonnet 5.5) | review fixes | fixed | #1–#6, #8 |
 
 ### Code review 2026-11-21
 
@@ -383,14 +418,14 @@ against the branch copy) — only the documented changes differ; root `.specs/` 
 
 | # | Finding | Layer | Class | Severity | Target |
 |---|---------|-------|-------|----------|--------|
-| 1 | Definition of Done: the *Implementation* line is not ticked although Steps 1–5 are ✅ Done and Step 5's checks passed | spec | spec | Should-fix | fix now |
-| 2 | `features/README.md`: row 02 says *planned* although all Steps are done (should be *implemented*, S11) | spec | docs | Should-fix | fix now |
-| 3 | 17 Q1 (music tools in Godot) does not name the statements its answer changes: S24/S25 (developer mode "in this browser", page by address `/?dev`) and S26/S27 (candidate files in the project, list in the repository — already in conflict with S36, inherited from the original S32) | spec | spec | Should-fix | fix now |
-| 4 | Context/feature-list text still names the Python server unmarked: 03 F0 ("server, UI") next to "No server."; 14 Context ("the Python server must connect the devices"); 15 Context (`GET /api/hacks`); 05 has no pointer to 03's question "Server for rooms and hack codes" | spec | docs | Nit | fix now |
-| 5 | 17 S36 replaces "the repository credits of S20, S22 and S35", but the new S35 has no repository credits (should be S20, S22 or the struck S31) | spec | docs | Nit | fix now |
-| 6 | 17: the answered note of the original Open questions (candidate tracks made by us or from CC0 / CC BY libraries) was dropped when Q1 was added | spec | docs | Nit | fix now |
-| 7 | 18 *Moved from* links to the blob on `feature/worlds-and-world-coins`; it breaks when that branch is merged and deleted — point it to `main` then | spec | docs | Nit | deferred |
-| 8 | "(found by the requirements stage — reuse, don't rebuild)" kept in 03–15, "(reuse, don't rebuild)" in 16–18; one wording | scan | docs | Nit | fix now |
+| 1 | Definition of Done: the *Implementation* line is not ticked although Steps 1–5 are ✅ Done and Step 5's checks passed | spec | spec | Should-fix | fix now — fixed 2026-11-21 |
+| 2 | `features/README.md`: row 02 says *planned* although all Steps are done (should be *implemented*, S11) | spec | docs | Should-fix | fix now — fixed 2026-11-21 |
+| 3 | 17 Q1 (music tools in Godot) does not name the statements its answer changes: S24/S25 (developer mode "in this browser", page by address `/?dev`) and S26/S27 (candidate files in the project, list in the repository — already in conflict with S36, inherited from the original S32) | spec | spec | Should-fix | fix now — fixed 2026-11-21 |
+| 4 | Context/feature-list text still names the Python server unmarked: 03 F0 ("server, UI") next to "No server."; 14 Context ("the Python server must connect the devices"); 15 Context (`GET /api/hacks`); 05 has no pointer to 03's question "Server for rooms and hack codes" | spec | docs | Nit | fix now — fixed 2026-11-21 |
+| 5 | 17 S36 replaces "the repository credits of S20, S22 and S35", but the new S35 has no repository credits (should be S20, S22 or the struck S31) | spec | docs | Nit | fix now — fixed 2026-11-21 |
+| 6 | 17: the answered note of the original Open questions (candidate tracks made by us or from CC0 / CC BY libraries) was dropped when Q1 was added | spec | docs | Nit | fix now — fixed 2026-11-21 |
+| 7 | 18 *Moved from* links to the blob on `feature/worlds-and-world-coins`; it breaks when that branch is merged and deleted — point it to `main` then | spec | docs | Nit | deferred (see Deferred Items) |
+| 8 | "(found by the requirements stage — reuse, don't rebuild)" kept in 03–15, "(reuse, don't rebuild)" in 16–18; one wording | scan | docs | Nit | fix now — fixed 2026-11-21 |
 
 **Good:** identical S0 in all 16 specs; every struck statement names its successor and the
 reason; the server question is asked once (03) and referenced (14 Q3); 03 S12–S14 and 04 S12
@@ -404,7 +439,7 @@ match D7/D8; no broken link; Step notes document every deviation.
 
 - [x] Requirements · Part 1 agreed (S1..S17 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; all 16 specs moved and checked; root `.specs/` unchanged
+- [x] Implementation · every Step's tasks checked; all 16 specs moved and checked; root `.specs/` unchanged
 - [x] Review · review page written in `hack_star_godot/.specs/review/`; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
-- [ ] Pull request · not used — worked on `main` (S17)
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Pull request · not applicable — worked on `main`, no pull request (S17)

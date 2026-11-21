@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_16_worlds_and_world_coins_spec.md on the branch feature/worlds-and-world-coins (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_16_worlds_and_world_coins_spec.md on the branch feature/worlds-and-world-coins (requirements only) |
 
 ---
 
@@ -25,7 +25,7 @@ feel different and bigger worlds mean more running. The free worlds come in smal
 and bigger sizes are unlocked with a new currency, **world coins**, which players earn by
 collecting trophies or get from special hack codes that can be used again after 30 days.
 
-**Already in the repository** (reuse, don't rebuild):
+**Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](https://github.com/martinnordio/hack_star/blob/feature/worlds-and-world-coins/.specs/features/done/2026_11_16_worlds_and_world_coins_spec.md) (#24, on the branch `feature/worlds-and-world-coins`).
 - One arena, `CANYON` (30 × 24, with walls, bushes, decorations, Training dummies, start and
   spawn points), read for the movement limits; overtime removes its walls and bushes. Today's

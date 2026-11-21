@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_14_bug_fixes_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_14_bug_fixes_spec.md (requirements only) |
 
 ---
 
@@ -23,7 +23,7 @@ This spec collects the bugs that players report (mostly Mattia and his friends) 
 together in one branch. Each reported bug gets its own group of statements below; new bugs are
 added with `REQUIREMENTS: 2026_11_14_16_bug_fixes_spec.md — <bug>` until the plan is written.
 
-**Already in the repository** (reuse, don't rebuild):
+**Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17).
 - [Accounts, fighters and languages spec](2026_11_13_15_accounts_fighters_and_languages_spec.md) —
   the created fighter, its price and its lock: creating is free the first time, every change

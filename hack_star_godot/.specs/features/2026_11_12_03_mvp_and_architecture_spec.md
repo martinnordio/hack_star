@@ -11,7 +11,7 @@
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Opus 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_mvp_and_architecture_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Opus 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_mvp_and_architecture_spec.md (requirements only) |
 
 ---
 
@@ -30,7 +30,7 @@ other features build on.
 - [overall_req.md](../../../.specs/overall_req.md) — the vision and Spec 0, Spec 1 and Spec 2.
 - No lower-numbered moved spec: this is the first one. The Godot specs before it:
   [01 Godot Setup and First Game](done/2026_11_21_01_godot_setup_and_first_game_spec.md) and
-  [02 Move Specs to Godot](2026_11_21_02_move_specs_to_godot_spec.md).
+  [02 Move Specs to Godot](done/2026_11_21_02_move_specs_to_godot_spec.md).
 - Spec 01's Godot project in `hack_star_godot/`: Godot 4.7.2 with GDScript, the Compatibility
   renderer and a single-threaded web export; a start screen with **Play**, a 3D arena seen
   from above at an angle with one fighter that moves with the keyboard or a touch joystick;
@@ -90,7 +90,7 @@ names and logos are copyrighted and are not used.
 
 | # | Feature | Spec | In MVP |
 |---|---------|------|--------|
-| F0 | Architecture and foundation: server, UI, runs on desktop, iPad, phone | this spec | ✅ |
+| F0 | Architecture and foundation: server, UI, runs on desktop, iPad, phone (Python + Svelte game; see S0 / spec 03's server question) | this spec | ✅ |
 | F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_04_basic_ui_spec.md) | ✅ |
 | F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_05_hack_codes_spec.md) | ✅ |
 | F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_06_graphics_demo_spec.md) | ✅ |
