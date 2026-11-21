@@ -3,8 +3,9 @@
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
 It is the first basic game so far: a home screen, a fighter list with six fighters (each with
-its skins), a fighter screen, an info page with the words of the game and a 3D arena with one
-fighter. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+its skins), a fighter screen, an info page with the words of the game, a 3D arena with one
+fighter, and the hack codes: a hack screen to type or scan a code, the three hacks, and a QR
+code page. The hack codes are checked by the FastAPI server in `server/`. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -12,18 +13,19 @@ fighter. The Python + Svelte game in the rest of the repository is unchanged; se
 |--------|------|
 | `project.godot` | The Godot project (open this file in the editor) |
 | `scenes/` | Screens and objects (`.tscn`) with their scripts |
-| `game/` | Pure rules (movement, fighters, Prestige, rarity, sample progress, vocabulary) without scenes |
+| `game/` | Pure rules (movement, fighters, Prestige, rarity, sample progress, vocabulary, hacks, save file, QR code) without scenes |
 | `tests/` | Automated tests (GUT) |
 | `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |
 | `addons/gut/` | GUT 9.7.1, the test tool, with its licence |
 | `tools/` | PowerShell scripts for the checks, export and serving |
+| `web/` | Browser scripts copied into the web export: the camera QR scanner and jsQR (with its licence) |
 | `build/` | Web export (created by the scripts, git-ignored) |
 | `.specs/` | Specs of this game (see [Specs](#specs)) |
 
 Read [docs/architecture.md](docs/architecture.md) before you work on a spec, and keep it up to
-date in the spec that changes it. Rooms and hack codes will come from the FastAPI server in
-`server/` of the repository, the same server as the Svelte game; the Godot game does not have
-its own.
+date in the spec that changes it. The hack codes come from the FastAPI server in `server/` of
+the repository, the same server as the Svelte game (rooms will too); the Godot game does not
+have its own.
 
 ## Install on Windows
 
@@ -89,11 +91,13 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
 1. Start Godot and choose **Import**; select `hack_star_godot\project.godot`; then **Import & Edit**.
 2. Press **F5** (Run Project). The home screen plays a short entrance (a click, a touch or a key
    skips it) and then shows your fighter, trophies, credits, **Hack star**, **Play**,
-   **Fighters** and **Info**.
+   **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
+   [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
 3. **Play** opens the arena. **Fighters** lists the six fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
-   the home fighter. **Info** explains the words of the game. Every screen has **Back**
-   (top-left) that returns to the home screen.
+   the home fighter. **Info** explains the words of the game. **Hack** opens the hack screen
+   (see [Hack codes](#hack-codes)). Every screen has **Back** (top-left) that returns to the home
+   screen.
 
 ## Commands
 
@@ -105,23 +109,79 @@ Run them from the `hack_star_godot` folder.
 | `.\tools\test.ps1` | Runs the GUT tests headless (without the editor); fails if a test fails |
 | `.\tools\lint.ps1` | Runs `gdlint` and `gdformat --check` on `game/`, `scenes/` and `tests/` |
 | `.\tools\export_web.ps1` | Exports the game for the web into `build\web\` |
-| `.\tools\serve_web.ps1` | Serves `build\web\` on port 8060 until you press Ctrl+C |
+| `.\tools\serve_web.ps1` | Serves `build\web\` on port 8060 and forwards `/api` to the hack server; options in [Run the hack server and the web game](#run-the-hack-server-and-the-web-game) |
 
-## Play in a browser
+## Run the hack server and the web game
 
-1. `.\tools\export_web.ps1`
-2. `.\tools\serve_web.ps1`
-3. Open <http://localhost:8060> in a desktop browser.
+The hack codes are checked by the FastAPI server in `server/` (the same server as the Svelte
+game). Run it in its own PowerShell window, from the `server` folder of the repository:
 
-## Play on an iPad
+```powershell
+cd ..\server
+uv run hack-star-server
+```
+
+It listens on port 8180. Keep it running. Then, in the `hack_star_godot` folder:
+
+```powershell
+.\tools\export_web.ps1
+.\tools\serve_web.ps1
+```
+
+`serve_web.ps1` serves the web export on port 8060 and forwards every `/api` request to the
+server, so the page and the server share one address and the game needs no setup. It prints the
+addresses to open: this computer (`http://localhost:8060`) and, for an iPad or a phone on the
+same Wi-Fi, `http://<this computer's IPv4 address>:8060`. It runs until you press Ctrl+C.
+
+| Option | Default | What |
+|--------|---------|------|
+| `-Port <n>` | `8060` | The port of the web game |
+| `-ApiUrl <url>` | `http://127.0.0.1:8180` | Where the hack server listens; `/api` requests go there |
+| `-Https` | off | Serves `https://` with a self-signed certificate, made once into `build\cert\` (git-ignored). The camera of the browser needs `https://` on an iPad or a phone; the browser warns once, so accept the certificate |
+
+Without the server the game says "Can't reach the hack server" and `/api` answers 502. Windows
+may ask to allow Python through the firewall on private networks.
+
+## Hack codes
+
+On the home screen, **Hack** opens the hack screen. Type a code and press **Use** (or Enter), or
+press **Scan QR code** and point the camera at a QR code (in the browser). The server checks the
+code; any letter case and spaces around it are fine.
+
+| Code | Hack | Effect |
+|------|------|--------|
+| `INFINITY` | Unlimited credits | Credits never run out (the home screen shows ∞) |
+| `OPENSESAME` | Unlock everything | Every fighter and every skin is unlocked |
+| `POWER22` | Power 22 | Power levels go up to 22 instead of 11 (shown as "Power 7 / 22") |
+
+A hack never changes trophies, unlocks or power levels; turning all hacks off brings the normal
+rules back. The hacks do not expire yet (spec 16), and the codes `HYPERCHARGE` and `CREATOR` say
+"Unknown code" until their specs (12 and 17) add them. Nothing is bought with credits yet (specs 09
+and 10), and power levels do not change matches yet (spec 09).
+
+**QR codes:** the **QR codes** button on the hack screen opens a page with a QR code for each
+code. Scan it with the camera app or with **Scan QR code** in the game: the link opens the game
+with the code, which is redeemed once. **Save image** saves the picture as a PNG (a download in
+the browser, or a file in the user folder on the computer), for printing.
+
+**Saved:** the active hacks, and nothing else yet. The game keeps them in one file,
+`hack_star_save.json`: in the browser, in the browser's storage for this address (so on the same
+device and browser only); on the computer, in `%APPDATA%\Godot\app_userdata\Hack star\`. To clear
+them, press **Turn all hacks off** on the hack screen and confirm; or delete that file while the
+game is closed.
+
+## Play on an iPad or a phone
 
 1. Connect the iPad and the computer to the same Wi-Fi.
-2. On the computer: `.\tools\export_web.ps1`, then `.\tools\serve_web.ps1`. It prints an
-   address such as `http://192.168.1.20:8060`.
+2. Start the server (see [Run the hack server and the web game](#run-the-hack-server-and-the-web-game)),
+   then on the computer: `.\tools\export_web.ps1`, then `.\tools\serve_web.ps1 -Https`. It prints
+   an address such as `https://192.168.1.20:8060`.
 3. If Windows asks, allow Python through the firewall on private networks.
-4. On the iPad, open that address in Safari.
-5. Check landscape and portrait, the touch joystick, and that the frames per second label
-   (top-right) shows 30 or more.
+4. On the iPad, open that address in Safari and accept the self-signed certificate once. Without
+   `-Https` the page works, but the in-game camera does not (the browser needs `https://`); typing
+   a code still works.
+5. Check landscape and portrait, the touch joystick, that the frames per second label (top-right)
+   shows 30 or more, and a hack code typed and scanned.
 
 ## Controls
 

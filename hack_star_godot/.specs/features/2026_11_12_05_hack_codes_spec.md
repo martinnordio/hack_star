@@ -24,6 +24,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.97 M (106 k in · 2.84 M cached · 24 k out) | CHF 0.66 (79 credits) | Step 6 done (`usage.ps1 -AgentName s05-steps6-7` 17:25:44–18:00:26) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.73 M (27 k in · 2.68 M cached · 19 k out) | CHF 0.44 (52 credits) | Step 7 done (`usage.ps1 -AgentName s05-steps6-7` 18:00:26–18:04:27) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.32 M (139 k in · 6.15 M cached · 34 k out) | CHF 2.18 (260 credits) | Step 8 done (`usage.ps1 -AgentName s05-step8` from 17:25:44) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.84 M (101 k in · 1.71 M cached · 27 k out) | CHF 0.05 (6 credits) | Step 9 done (`usage.ps1 -AgentName s05-step9` from 17:25:44) |
 
 ---
 
@@ -164,7 +165,7 @@ simplest reading that fits the Godot game._
 | **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ✅ Done | [→ Step 6](#step-6--qr-page-with-savable-images) |
 | **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ✅ Done | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
 | **8** | Camera scanning and QR links in the browser | reasoning (Claude Opus 5.5) — JavaScript bridge, camera permissions, an end-to-end browser check with a fake camera | ✅ Done | [→ Step 8](#step-8--camera-scanning-and-qr-links-in-the-browser) |
-| **9** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 9](#step-9--final-check-readme-and-architecture) |
+| **9** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 9](#step-9--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -444,26 +445,30 @@ Everything that worked before still works, all Godot checks pass, and the README
 architecture describe hack codes, the save file and the local web setup (all statements).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/docs/architecture.md`: Layout (`web/`), Screens (hack screen, QR page,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/docs/architecture.md`: Layout (`web/`), Screens (hack screen, QR page,
       **Hack** on home, `?hack=`), Game rules (`Hacks`, `SaveData`, `QrCode`), UI foundation
       (`HackServer`, `QrScanner`, `QrImage`; `GameState` with active hacks), *Saved progress*
       (the file of D5, no longer only planned; spec 08 adds its fields), *Server, hack codes
       and rooms* (the calls are used now; the local setup of D3 replaces "until then"), Art and
       licences (jsQR), Tests.
-- [ ] `hack_star_godot/README.md`: the hack screen, the three codes, the QR page, how to run
+- [x] `hack_star_godot/README.md`: the hack screen, the three codes, the QR page, how to run
       the server and `tools/serve_web.ps1` (with `-Https` for the camera on an iPad), what is
       saved and how to clear it (Turn all hacks off).
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); parse every changed `.ps1` with
       `[System.Management.Automation.Language.Parser]::ParseFile`; `cd server; uv run pytest`
       passes (the server is unchanged).
-- [ ] `git diff --stat` of this spec shows nothing in `server/` or `ui/`.
-- [ ] Note in Notes that the device play-test (iPad and phone: scan with the in-game camera
+- [x] `git diff --stat` of this spec shows nothing in `server/` or `ui/`.
+- [x] Note in Notes that the device play-test (iPad and phone: scan with the in-game camera
       over `-Https`, scan with the camera app, typing with the on-screen keyboard) stays with
       the author (spec 03, D6, Deferred Items).
 
 ### Notes
+Started: 2026-11-21 18:16
+
+**Done (2026-11-21 · ~3m · Claude Haiku 5.5)** — `docs/architecture.md` (layout with `web/`, the hack screen and QR page, the hack rules, `SaveData`, `QrCode`, the UI parts `HackServer`/`QrScanner`/`QrImage` and the active hacks in `GameState`, *Saved progress* as built, *Server, hack codes and rooms* with the local setup, jsQR in the licences, tests) and `README.md` (the hack screen, the three codes, the QR page, *Run the hack server and the web game* with `serve_web.ps1` options `-Port`, `-ApiUrl`, `-Https`, the iPad steps, what is saved and how to clear it with **Turn all hacks off**). Checks: `tools/check_tools.ps1`, `test.ps1` (172 passing), `lint.ps1`, `export_web.ps1` all exit 0; `cd server; uv run pytest` 45 passed; the four `.ps1` files parse with 0 errors; `git diff` of `server/` and `ui/` is empty. The device play-test (iPad and phone: in-game camera over `-Https`, camera app with a QR link, on-screen keyboard) stays with the author (D6, Deferred Items). suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 1.84 M · CHF 0.05
+
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
 ---
@@ -493,7 +498,7 @@ architecture describe hack codes, the save file and the local web setup (all sta
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
+- [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [ ] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)
