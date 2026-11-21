@@ -39,7 +39,11 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | Scene | Script | What |
 |-------|--------|------|
 | `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the arena) and **Fighters** (opens `fighter_list.tscn`) and **Info** (opens `info.tscn`) and **Hack** (opens `hack_screen.tscn`). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
-| `arena.tscn` | `arena.gd` | The 3D arena (floor, walls, inner walls), one fighter, the camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick and the FPS label (top-right) |
+| `arena.tscn` | `arena.gd` | The 3D arena (**Play**): the canyon (`canyon.gd`, `Canyon`, built in code from `ArenaLayout`), one fighter (`Fighter`, with its `FighterModel`), three target dummies, the shots, the effects, a following camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick (left), the aim stick `AimJoystick` (right, drag or tap to fire) and the FPS label (top-right) |
+| `shot.gd` | `shot.gd` (`Shot`) | A shot of the arena: a glowing sphere that flies at `Combat.SHOT_SPEED` and stops at the first wall, rock or dummy (ray casts, D8), or after `SHOT_RANGE`; it emits `ended` and frees itself |
+| `target_dummy.tscn` | `target_dummy.gd` (`TargetDummy`) | A straw dummy (a `StaticBody3D` on the targets layer): health bar, damage number, flash on a hit; it breaks apart at 0 and comes back after `respawn_seconds` |
+| `arena_effects.gd` | `arena_effects.gd` (`ArenaEffects`) | Small pools of one-shot `CPUParticles3D` in the arena: dust, muzzle flash and hit sparks, restarted by `play(kind, position, color)` |
+| `fighter_model.tscn` | `fighter_model.gd` (`FighterModel`) | The fighter's 3D figure with its skins, the idle, run and attack animations and the see-through in a bush (see *3D models*) |
 | `fighter_list.tscn` | `fighter_list.gd` | The fighter list (**Fighters** on home; Back goes home): a scrolling grid, columns follow the width, of `ui/fighter_card.tscn` cards — picture, name, rarity in its colour, trophies, power level, Prestige badge; locked fighters greyed out with "Locked". A card opens the fighter screen |
 | `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (opened from a card; the fighter comes from `GameState.viewed_fighter`): the fighter in a `FighterStage`, name, rarity, trophies, power level, Prestige badge and one `ui/skin_button.tscn` per skin (Legendary skins with a gold frame); choosing a skin previews it; **Select** (`GameState.select`) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked". Back goes home |
 | `info.tscn` | `info.gd` | The info page (**Info** on home; Back goes home): a title and a scrolling list with one row per word of `Vocabulary`, the word in the `WordLabel` style (bold) and its meaning wrapped |
@@ -48,16 +52,23 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | `hack_screen.tscn` | `hack_screen.gd` | The hack screen (**Hack** on home; Back goes home): a code field with **Use code** and **Scan QR code** (`QrScanner`); the server checks every code through `HackServer`; the messages "<name> unlocked!" (with a short celebration), "Unknown code" and "Can't reach the hack server"; the list of active hacks or "No hacks active"; **Turn all hacks off** (with a confirmation); **QR codes** opens `qr_page.tscn`. A code from a `?hack=` link is redeemed once when the game opens |
 | `qr_page.tscn` | `qr_page.gd` (`QrPage`) | The QR codes (**QR codes** on the hack screen; Back goes home): one card per hack code from `GET /api/hacks`, with a large QR code of the game's address and `?hack=<CODE>` (`QrImage`) and **Save image** (a download in the browser, else a PNG in `user://`) |
 
-**Camera and screen sizes (S2, S11).** The arena camera looks down at 55° from behind and above
-(3D, seen from above at an angle) and moves back until the four top corners of the walls are
-inside the screen with a margin, so the arena fits landscape and portrait. It does this again
-on every `size_changed` of the viewport. The UI uses anchors and containers, not fixed pixel
-positions, so it fits a desktop, an iPad and a phone; `tests/test_screen_sizes.gd` checks this in sub-viewports
-of five sizes (desktop, iPad and phone, landscape and portrait) with the project's own content scale (`canvas_items`, `expand`), as a player sees it.
+**Camera and screen sizes (S2, S11, D5).** The arena camera looks down at 55° from behind and
+above (3D, seen from above at an angle). It follows the fighter: its look-at point moves towards
+the fighter (1 m ahead) with exponential smoothing (`Movement.follow`, rate 6/s), and its
+distance is set on every `size_changed` of the viewport so that a box of ±7 m (x) and ±5 m (z)
+around the fighter fits the screen, landscape or portrait. There is no clamping at the arena's
+edges. The UI uses anchors and containers, not fixed pixel positions, so it fits a desktop, an
+iPad and a phone; `tests/test_screen_sizes.gd` checks this in sub-viewports of five sizes
+(desktop, iPad and phone, landscape and portrait) with the project's own content scale (`canvas_items`, `expand`), as a player sees it.
 
-**Input (S3).** Keyboard through the input actions of `project.godot`; touch through
+**Input (S3, D7).** Keyboard through the input actions of `project.godot`; touch through
 `TouchJoystick` (`InputEventScreenTouch` and `InputEventScreenDrag`); buttons work with the
-mouse and with a touch (Godot emulates the mouse from touch).
+mouse and with a touch (Godot emulates the mouse from touch). The arena reads the mouse in
+`_unhandled_input`: a left click fires at the mouse's ground point (`Combat.ground_point`) and
+holding it keeps firing; mouse events made from touches are ignored, so a click on **Back** or a
+touch on a stick never fires. The right stick is a second `TouchJoystick` (`Hud/AimJoystick`)
+whose `released(direction, held_seconds)` goes to `Combat.release_aim`: a drag past the dead
+zone fires that way, a quick tap fires at the nearest dummy in range (else straight ahead).
 
 ## Game rules (`game/`)
 
@@ -67,7 +78,9 @@ without a scene.
 
 | Script | What |
 |--------|------|
-| `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`) |
+| `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`), the camera's smoothing towards the fighter (`follow`) |
+| `combat.gd` (`Combat`) | The arena's combat rules of spec 07 (D3): the numbers (`SHOT_SPEED` 16 m/s, `SHOT_RANGE` 9 m, `COOLDOWN` 0.35 s, `DAMAGE` 480, `DUMMY_HEALTH` 2400, `RESPAWN_SECONDS` 5, `AIM_DEAD_ZONE` 0.3, `TAP_SECONDS` 0.25), `can_fire`, `take_damage`, `is_broken`, `health_ratio` and `health_color` (green, yellow below half, red below a quarter), `release_aim` (a drag or a tap, or no shot), `nearest_target` and `ground_point` (where a mouse ray meets the ground) |
+| `arena_layout.gd` (`ArenaLayout`) | The canyon as data (D2): the size 20 × 26 m (`SIZE`), the border and the rock blocks (`WALLS`), the cactus patches (`BUSHES`), the decoration spots without collision (`DECORATION`), the three dummy spots (`DUMMIES`) and the start point (`START`, near the camera side); `in_bush(point)` and `is_free(point, radius)` (the spots lie clear of walls, `tests/test_arena_layout.gd`) |
 | `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
 | `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies |
@@ -136,17 +149,34 @@ sizes.
 
 ## 3D models
 
-There are no imported models, textures or fonts. The arena, walls and fighter are built from
-Godot's primitive meshes (box, capsule, sphere) and plain materials, in the scene files (S7,
-S11). Fighters are built the same way by `FighterModel` (`scenes/fighter_model.tscn` + `.gd`):
-the six fighters with their own shapes and idea parts (named nodes, e.g. Luna's `RayGun`), and
-the 14 skins in `FighterModel.LOOKS`. The four Legendary skins add a halo and sparkles
-(`LegendaryGlow`). The idle animation (breathing, sway, flicker) can be switched off for still
-pictures. Like the Svelte game's `ui/src/lib/models/`, but in code.
+There are no imported models, textures or fonts. The canyon (sand floor, rock walls, cacti,
+decoration), the dummies, the shots and the effects are built in code from Godot's primitive
+meshes (box, cylinder, sphere, capsule) and plain materials: the canyon by `Canyon` from
+`ArenaLayout` at `_ready` (a `MultiMeshInstance3D` for the sand tiles, toon-like materials, a
+sun with shadows), the dummies by `TargetDummy`, the shots by `Shot`, the dust, flash and sparks
+by `ArenaEffects` (`CPUParticles3D`, no `GPUParticles3D`). The fighter is `fighter.tscn` with its
+`FighterModel` on the `Model` node (the same figure as in the fighter screen). Fighters are built the same way by
+`FighterModel` (`scenes/fighter_model.tscn` + `.gd`): the six fighters with their own shapes and
+idea parts (named nodes, e.g. Luna's `RayGun`), and the 14 skins in `FighterModel.LOOKS`. The four
+Legendary skins add a halo and sparkles (`LegendaryGlow`). The idle animation (breathing, sway,
+flicker) can be switched off for still pictures. `FighterModel` also has the run and attack
+animations (D6): `running` switches the idle to a run (a bounce, a forward lean, a faster head
+bob) and `play_attack()` runs a 0.25 s recoil on top of it (`attack_left`). In a bush
+(`set_see_through`, D11) the fighter's materials are swapped for alpha copies (alpha 0.45); the
+Compatibility renderer does not show `GeometryInstance3D.transparency`, as the screenshots
+showed. Like the Svelte game's `ui/src/lib/models/`, but in code.
 
 If a later spec imports art, it goes to `assets/` with its licence written in
 [LICENSES.md](../LICENSES.md) (the packs of the Python + Svelte game, Quaternius and Kenney,
 are CC0). No Supercell art, names or logos are used (S7).
+
+## Physics layers (D13)
+
+The layers are named in `project.godot`: 1 `world` (floor, walls, rocks), 2 `fighter`, 3
+`targets` (the dummies). The fighter is on layer 2 and its mask is world + targets (5), so it
+cannot walk through a wall, a rock or a dummy. A shot (`Shot.COLLISION_MASK`, world + targets)
+casts a ray from its last to its next position every physics frame, so a thin wall is never
+missed at 16 m/s (D8). The dummies are on layer 3 and do not look for anything (mask 0).
 
 ## Saved progress (*hack file: done, spec 05; more fields: planned — spec 08*)
 
@@ -199,17 +229,22 @@ that adds an asset.
 
 ## Tests and checks
 
-Tests are GUT 9.7.1 files in `tests/`: `test_movement.gd` checks `game/movement.gd`;
-`test_fighters.gd`, `test_prestige.gd`, `test_rarity.gd`, `test_sample_progress.gd`,
+Tests are GUT 9.7.1 files in `tests/`: `test_movement.gd` checks `game/movement.gd` (also `follow`);
+`test_combat.gd` checks the combat rules and `test_arena_layout.gd` the canyon layout (start,
+dummies and bushes free of walls, `in_bush`); `test_fighters.gd`, `test_prestige.gd`, `test_rarity.gd`, `test_sample_progress.gd`,
 `test_vocabulary.gd` and `test_game_state.gd` check the rules and the session (the active hacks,
 saved to a file under `user://test/`); `test_hacks.gd`, `test_save_data.gd` and `test_qr_code.gd`
 check the hack rules, the save file and the QR encoder (against `tests/fixtures/`);
 `test_hack_server.gd` checks `HackServer` with a fake responder, so no test uses the network;
 `test_hack_effects.gd` checks the effects on the screens; `test_fighter_model.gd` checks the 3D
-fighters; `test_home.gd`, `test_fighter_list.gd`, `test_fighter_screen.gd`, `test_info.gd`,
-`test_back_button.gd`, `test_arena.gd`, `test_touch_joystick.gd`, `test_hack_screen.gd` and
-`test_qr_page.gd` check the scenes, `test_qr_scanner.gd` the camera messages; `test_screens.gd` checks the screen constants and
-`go_to`; `test_screen_sizes.gd` checks that every screen fits five screen sizes and that Play,
+fighters (the run and attack animations); `test_home.gd`, `test_fighter_list.gd`, `test_fighter_screen.gd`, `test_info.gd`,
+`test_back_button.gd`, `test_hack_screen.gd` and `test_qr_page.gd` check the scenes, `test_qr_scanner.gd` the camera messages;
+`test_arena.gd` checks the arena (the walls from the layout, the selected fighter's model, the
+camera following, the mouse and the aim stick firing, Back), `test_arena_dummies.gd` the dummies
+in the arena (a shot lowers one, a tap aims at the nearest), `test_target_dummy.gd` a dummy alone,
+`test_shot.gd` a shot (it ends at a wall or after its range), `test_arena_effects.gd` the effect
+pools and the see-through in a bush, and `test_touch_joystick.gd` the stick and its `released` signal; `test_screens.gd` checks the screen constants and
+`go_to`; `test_screen_sizes.gd` checks that every screen fits five screen sizes (the arena with its aim stick) and that Play,
 Info, Back, the cards, the skin buttons and Select react to a mouse click and a touch (real input
 pushed with `tests/ui_input.gd`); `test_ui_scale.gd` checks the scale factor. Run
 them headless, from the `hack_star_godot` folder:

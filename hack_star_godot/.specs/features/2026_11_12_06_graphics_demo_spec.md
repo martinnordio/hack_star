@@ -23,6 +23,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.31 M (135 k in · 4.14 M cached · 40 k out) | CHF 1.94 (231 credits) | Step 5 done (`usage.ps1 -AgentName s06-step5`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.83 M (101 k in · 2.70 M cached · 25 k out) | CHF 0.65 (77 credits) | Step 6 done (`usage.ps1 -AgentName s06-steps6-7` from 19:21:59 to 19:36:40) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.15 M (56 k in · 4.07 M cached · 26 k out) | CHF 0.67 (80 credits) | Step 7 done (`usage.ps1 -AgentName s06-steps6-7` from 19:36:40 to 19:45:28) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 1.61 M (93 k in · 1.49 M cached · 18 k out) | CHF 0.03 (4 credits) | Step 8 done (`usage.ps1 -AgentName s06-step8` from 18:42:18); the windowed FPS and browser check moved to Deferred Items |
 ---
 
 # Part 1 · Requirements
@@ -150,7 +151,7 @@ right joystick)._
 | **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ✅ Done | [→ Step 5](#step-5--aiming-and-shooting) |
 | **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ✅ Done | [→ Step 6](#step-6--target-dummies) |
 | **7** | Bushes and effects | standard (Claude Sonnet 5.5) — see-through in a bush and small particle pools, fixed by D10 and D11 | ✅ Done | [→ Step 7](#step-7--bushes-and-effects) |
-| **8** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks, measuring the frame rate and updating two documents | ⬜ Not started | [→ Step 8](#step-8--final-check-readme-and-architecture) |
+| **8** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks, measuring the frame rate and updating two documents | ✅ Done | [→ Step 8](#step-8--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -465,26 +466,44 @@ Everything that worked before still works, the demo is smooth, all Godot checks 
 README and the architecture describe the demo (S10, S13, all statements).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/docs/architecture.md`: Screens (the arena: canyon, fighter, aim stick,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/docs/architecture.md`: Screens (the arena: canyon, fighter, aim stick,
       dummies, effects, following camera instead of "the whole arena"), Game rules
       (`Combat`, `ArenaLayout`, `Movement.follow`), 3D models (the canyon, dummies, shots and
       effects built in code; the run and attack animations), the new scenes (`Canyon`, `Shot`,
       `TargetDummy`, `ArenaEffects`), the physics layers (D13), Tests.
-- [ ] `hack_star_godot/README.md`: how to play the demo (keys, mouse, left and right stick,
+- [x] `hack_star_godot/README.md`: how to play the demo (keys, mouse, left and right stick,
       tap; dummies; bushes) in *Controls*.
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); `git diff --stat` of this spec shows nothing in `server/` or `ui/`.
 - [ ] A windowed desktop run and the web export in a desktop browser (`tools/serve_web.ps1`):
       the FPS label while running and shooting (≥ 30) and the time from **Play** to a playable
       arena (≤ 5 s) noted; home, fighter list, fighter screen, info, hack screen and QR page
-      open as before (S13).
-- [ ] Note in Notes that the device play-test (iPad and phone: both sticks, ≥ 30 frames per
+      open as before (S13). **Not run in this Step:** moved to Deferred Items.
+- [x] Note in Notes that the device play-test (iPad and phone: both sticks, ≥ 30 frames per
       second, the arena within 5 s after Play) stays with the author (spec 03, D6, Deferred
       Items).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-21 19:46
+
+- The checks all exit 0: `tools/check_tools.ps1` (all pinned tools OK), `tools/test.ps1` (224
+  tests passed, 32 scripts), `tools/lint.ps1` (gdlint and gdformat: no problems in 71 files),
+  `tools/export_web.ps1` (web export OK in `build\web`, git-ignored).
+- `README.md`: the intro names the canyon arena, the dummies and the bushes; *Controls* lists
+  the keys, the mouse (aim, hold to fire), the left and right sticks (drag, tap), the dummies,
+  the bushes, Back, the entrance and the FPS label.
+- `docs/architecture.md`: Screens (the canyon arena, the following camera, the aim stick, the
+  new objects `Shot`, `TargetDummy`, `ArenaEffects`), Game rules (`Combat`, `ArenaLayout`,
+  `Movement.follow`), 3D models (the canyon, dummies, shots and effects built in code; the run
+  and attack animations; the see-through in a bush), a new *Physics layers (D13)* section, and
+  Tests (the spec 06 test files).
+- Not done in this Step: the windowed desktop run and the browser check of the web export
+  (FPS while running and shooting, time from Play to the arena, the other screens). This agent
+  has no display or browser session; it moved to Deferred Items for the author's play-test.
+- No change in `server/` or `ui/`; the export output (`build/`) is git-ignored.
+
+**Done (2026-11-21 · ~7 min · Claude Haiku 5.5)** — final check and documents: `README.md` and `docs/architecture.md` updated; `tools/check_tools.ps1`, `tools/test.ps1` (224 tests passed), `tools/lint.ps1` and `tools/export_web.ps1` all exit 0. The windowed FPS and browser check are open (Deferred Items). suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 1.61 M tokens · CHF 0.03 (4 credits)
 
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
 
@@ -499,6 +518,7 @@ _Add the `Done` line here when the Step is finished._
 | Super attacks | Not part of the demo | [12 Super and hypercharge](2026_11_12_12_super_and_hypercharge_spec.md) |
 | More arenas and moving targets | One arena with still dummies (S11) | a later spec (not in the ordered list yet) |
 | Translations of new text | English only (S12, D12) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Windowed FPS run and browser check of the web export (FPS ≥ 30 while running and shooting; Play to the arena ≤ 5 s; home, fighter list, fighter screen, info, hack screen and QR page open as before) | Needs a display and a desktop browser; not run in Step 8 (the checks and the export pass) | the author, with the device play-test (spec 03, D6) |
 
 ---
 
@@ -513,7 +533,7 @@ _Add the `Done` line here when the Step is finished._
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
+- [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [ ] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

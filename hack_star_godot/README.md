@@ -3,9 +3,9 @@
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
 It is the first basic game so far: a home screen, a fighter list with six fighters (each with
-its skins), a fighter screen, an info page with the words of the game, a 3D arena with one
-fighter, and the hack codes: a hack screen to type or scan a code, the three hacks, and a QR
-code page. The hack codes are checked by the FastAPI server in `server/`. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+its skins), a fighter screen, an info page with the words of the game, a 3D canyon arena where
+your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
+codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -187,11 +187,20 @@ game is closed.
 
 ## Controls
 
-- **Computer:** WASD or the arrow keys move the fighter.
-- **iPad and phone:** the touch joystick (bottom-left) moves the fighter. It appears only on a
-  touch screen.
+- **Computer:** WASD or the arrow keys move the fighter. The mouse aims: the fighter turns
+  towards the pointer and a left click fires; hold the button to keep firing (the shots come
+  with a short cool-down).
+- **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
+  (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
+  the nearest dummy in range (straight ahead when none is in range). A thin line on the ground
+  shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
+- **Dummies:** three straw dummies stand in the arena. A shot takes off part of the health bar
+  and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.
+- **Bushes:** in a cactus patch the fighter turns see-through, so you can look at the ground
+  and the cacti behind it. Shots stop at the rocks and walls, and at the dummies.
 - **Back** (top-left) returns to the home screen.
 - **Entrance:** a click, a touch or a key (for example Space) skips the entrance of the home screen.
+- **Frame rate:** the label top-right shows the frames per second of the arena.
 
 ## Resources outside the folder
 
