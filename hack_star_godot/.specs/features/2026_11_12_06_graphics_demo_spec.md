@@ -18,6 +18,7 @@
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 3.35 M (144 k in · 3.16 M cached · 37 k out) | CHF 1.76 (210 credits) | Part 2 written (8 Steps: standard, reasoning, standard, standard, reasoning, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s06-lead` from 18:42:18) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 269 k (50 k in · 213 k cached · 5 k out) | CHF 0.17 (20 credits) | Step 1 done (`usage.ps1 -AgentName s06-step1`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.39 M (102 k in · 3.26 M cached · 35 k out) | CHF 1.56 (186 credits) | Step 2 done (`usage.ps1 -AgentName s06-step2` from 18:51) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (101 k in · 1.79 M cached · 16 k out) | CHF 0.49 (59 credits) | Step 3 done (`usage.ps1 -AgentName s06-steps3-4` from 18:59:00 to 19:04:19) |
 
 ---
 
@@ -141,7 +142,7 @@ right joystick)._
 |------|-------------|-------------------|--------|--------|
 | **1** | Combat rules | standard (Claude Sonnet 5.5) — pure rules and their tests, numbers fixed by D3 | ✅ Done | [→ Step 1](#step-1--combat-rules) |
 | **2** | Canyon arena | reasoning (Claude Opus 5.5) — graphics-heavy: a bigger arena built in code (rocks, cacti, decoration, light) that must look good and stay fast (D1, D2, D10) | ✅ Done | [→ Step 2](#step-2--canyon-arena) |
-| **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ⬜ Not started | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
+| **3** | Your fighter and the following camera | standard (Claude Sonnet 5.5) — reuses `FighterModel` and the camera math of spec 01, fixed by D4 and D5 | ✅ Done | [→ Step 3](#step-3--your-fighter-and-the-following-camera) |
 | **4** | Run and attack animations | standard (Claude Sonnet 5.5) — two more animation states on the existing rig (D6) | ⬜ Not started | [→ Step 4](#step-4--run-and-attack-animations) |
 | **5** | Aiming and shooting | reasoning (Claude Opus 5.5) — mouse and touch at the same time (emulated mouse, GUI clicks), a second stick, a tap rule, shots with ray casts (D7, D8) | ⬜ Not started | [→ Step 5](#step-5--aiming-and-shooting) |
 | **6** | Target dummies | standard (Claude Sonnet 5.5) — one small scene with a health bar, a damage number and a respawn timer (D9) | ⬜ Not started | [→ Step 6](#step-6--target-dummies) |
@@ -273,18 +274,18 @@ The selected fighter and skin stand in the arena, and the camera follows them sm
 screen size; Back still goes home (S2, S3, S7, S9, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `Fighter` after D4 (`Model`, `Muzzle`, `set_look`); `arena.gd` sets the look from
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `Fighter` after D4 (`Model`, `Muzzle`, `set_look`); `arena.gd` sets the look from
       `GameState` in `_ready`.
-- [ ] Following camera after D5 in `arena.gd` (`ARENA_CORNERS` and the whole-arena framing
+- [x] Following camera after D5 in `arena.gd` (`ARENA_CORNERS` and the whole-arena framing
       removed).
-- [ ] Tests: `tests/test_arena.gd` (with `GameState.select("rocko", "crystal")` the fighter's
+- [x] Tests: `tests/test_arena.gd` (with `GameState.select("rocko", "crystal")` the fighter's
       model is Rocko in Crystal; the model faces the walking direction; after walking east for
       1 s the camera's look-at point moved east; Back goes home);
       `tests/test_screen_sizes.gd` (`test_arena_fits_every_size`: Back, joystick and FPS label
       inside, and the fighter's feet and head in view at the five sizes, also after walking
       into the north-east corner).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; screenshots at 1280×720, 390×844
       and 844×390 with two different fighters (one Legendary skin): the whole fighter visible,
       the camera does not jump.
 

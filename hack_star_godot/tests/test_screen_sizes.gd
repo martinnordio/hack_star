@@ -10,7 +10,6 @@ const INFO_SCENE: PackedScene = preload("res://scenes/info.tscn")
 const HACK_SCENE: PackedScene = preload("res://scenes/hack_screen.tscn")
 const QR_SCENE: PackedScene = preload("res://scenes/qr_page.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
-const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const MIN_BUTTON_HEIGHT: float = 44.0
 const MIN_TEXT_SIZE: float = 14.0
 const SIZES: Dictionary = {
@@ -267,13 +266,30 @@ func test_arena_fits_every_size() -> void:
 		var joystick: TouchJoystick = arena.get_node("Hud/TouchJoystick")
 		_assert_inside(joystick, visible_rect, "%s joystick" % label)
 		_assert_inside(arena.get_node("Hud/FpsLabel"), visible_rect, "%s FPS label" % label)
-		var camera: Camera3D = arena.get_node("Camera")
-		for corner: Vector3 in ArenaScript.ARENA_CORNERS:
-			assert_true(
-				visible_rect.has_point(camera.unproject_position(corner)),
-				"%s corner %s in view" % [label, corner]
-			)
+		var fighter: Fighter = arena.get_node("Fighter")
+		_assert_fighter_in_view(arena, visible_rect, "%s at the start" % label)
+		# Between the rocks, then into the north-east corner; the camera catches up.
+		arena.read_player_input = false
+		for leg: Array in [[Vector2.RIGHT, 0.5], [Vector2.UP, 3.2], [Vector2.RIGHT, 1.5]]:
+			fighter.input_direction = leg[0]
+			await wait_seconds(leg[1])
+		fighter.input_direction = Vector2.UP
+		await wait_seconds(1.5)
+		fighter.input_direction = Vector2.ZERO
+		await wait_seconds(1.5)
+		assert_lt(fighter.position.z, -9.0, "%s the fighter is in the north" % label)
+		assert_gt(fighter.position.x, 7.5, "%s the fighter is in the east" % label)
+		_assert_fighter_in_view(arena, visible_rect, "%s in the corner" % label)
 		shown[0].queue_free()
+
+
+func _assert_fighter_in_view(arena: Node3D, visible_rect: Rect2, label: String) -> void:
+	var camera: Camera3D = arena.get_node("Camera")
+	var fighter: Fighter = arena.get_node("Fighter")
+	var feet: Vector2 = camera.unproject_position(fighter.global_position)
+	var head: Vector2 = camera.unproject_position(fighter.global_position + Vector3(0, 1.9, 0))
+	assert_true(visible_rect.has_point(feet), "%s feet %s in view" % [label, feet])
+	assert_true(visible_rect.has_point(head), "%s head %s in view" % [label, head])
 
 
 func test_play_reacts_to_mouse_click() -> void:

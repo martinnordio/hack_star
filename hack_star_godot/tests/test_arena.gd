@@ -1,7 +1,6 @@
 extends GutTest
 
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
-const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 ## Inner face of the east border wall.
 const EAST_WALL_INNER_X: float = 9.0
 ## The fighter's collision capsule.
@@ -44,14 +43,42 @@ func test_walls_are_built_from_the_layout() -> void:
 		assert_almost_eq(body.global_position.y, box.size.y / 2.0, 0.001, "on the floor")
 
 
-func test_camera_frames_the_whole_arena() -> void:
+func test_the_selected_fighter_stands_in_the_arena() -> void:
+	GameState.select("rocko", "crystal")
+	var arena: Node3D = ARENA_SCENE.instantiate()
+	add_child_autofree(arena)
+	var model: FighterModel = arena.get_node("Fighter/Model")
+	assert_eq(model.fighter_id, "rocko")
+	assert_eq(model.skin_id, "crystal")
+	assert_not_null(arena.get_node("Fighter/Muzzle"), "the fighter has a muzzle")
+
+
+func test_the_model_faces_the_walking_direction() -> void:
+	var fighter: Fighter = _arena.get_node("Fighter")
+	_arena.read_player_input = false
+	fighter.input_direction = Vector2.RIGHT
+	await wait_physics_frames(10)
+	var model: Node3D = fighter.get_node("Model")
+	assert_almost_eq(model.global_basis.z, Vector3.RIGHT, Vector3.ONE * 0.01, "front points east")
+
+
+func test_the_camera_follows_the_fighter() -> void:
 	var camera: Camera3D = _arena.get_node("Camera")
-	var view: Rect2 = _arena.get_viewport().get_visible_rect()
-	for corner: Vector3 in ArenaScript.ARENA_CORNERS:
-		assert_true(view.has_point(camera.unproject_position(corner)), "%s in view" % corner)
-	for corner: Vector3 in ArenaScript.ARENA_CORNERS:
-		assert_almost_eq(absf(corner.x), ArenaLayout.SIZE.x / 2.0, 0.001, "corner x")
-		assert_almost_eq(absf(corner.z), ArenaLayout.SIZE.y / 2.0, 0.001, "corner z")
+	var fighter: Fighter = _arena.get_node("Fighter")
+	_arena.read_player_input = false
+	var before: Vector3 = _camera_look_at(camera)
+	fighter.input_direction = Vector2.RIGHT
+	await wait_seconds(1.0)
+	var after: Vector3 = _camera_look_at(camera)
+	assert_gt(after.x, before.x + 2.0, "the look-at point moved east")
+	assert_lt(after.x, fighter.global_position.x + 0.01, "the camera is not ahead of the fighter")
+	assert_almost_eq(after.z, before.z, 0.1, "no sideways drift north or south")
+
+
+## Where the camera's centre ray meets the ground (y = 0).
+func _camera_look_at(camera: Camera3D) -> Vector3:
+	var forward: Vector3 = -camera.global_basis.z
+	return camera.global_position + forward * (camera.global_position.y / -forward.y)
 
 
 func test_arena_has_back_button_and_joystick() -> void:
