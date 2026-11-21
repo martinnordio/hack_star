@@ -5,6 +5,7 @@
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-21
 > **Branch:** `feature/godot-setup-and-first-game`
+> **Issue:** #25
 
 ## Stage log
 
@@ -19,6 +20,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.08 M (88 k in · 2.97 M cached · 20 k out) | CHF 0.61 (72 credits) | Step 4 done except the iPad check |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 3.53 M (112 k in · 3.38 M cached · 37 k out) | CHF 0.12 (14 credits) | Step 5 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.51 M (640 k in · 6.85 M cached · 21 k out) | CHF 4.18 (498 credits) | orchestrator of the per-Step run (Steps 1–5): starting each Step's sub-agent, checking its result, the new-chat check, commits (`usage.ps1 -Agent main`; the Step rows are `-Agent subagents` over each sub-agent's own time) |
+| 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | 4.16 M (385 k in · 3.77 M cached · 7 k out) | CHF 2.36 (282 credits) | issue #25 created; the author's desktop check recorded, the iPad check deferred (Step 4) |
 
 ---
 
@@ -144,7 +146,7 @@ _None._
 | **1** | Folder, rule for Godot specs, pinned tools | standard (Claude Sonnet 5.5) — files and scripts a clear plan describes | ✅ Done | [→ Step 1](#step-1--folder-rule-for-godot-specs-pinned-tools) |
 | **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ✅ Done | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
 | **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ✅ Done | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
-| **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | 🔄 In progress — iPad check by the author | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
+| **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | 🔜 Deferred — done except the iPad check (Deferred Items) | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
 | **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ✅ Done | [→ Step 5](#step-5--readme-licences-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -332,7 +334,7 @@ Safari on an iPad at 30 frames per second or more; the browser is the only targe
 - [x] Check: `tools/export_web.ps1` succeeds from a clean `build/`; in a desktop browser
       (integrated browser) start screen → Play → walk → Back, no errors in the console;
       `git status` shows nothing under `build/` or `.godot/`.
-- [ ] On a real iPad (by the author): Safari, landscape and portrait, touch joystick, the label shows ≥ 30 fps — result in the Notes.
+- [ ] On a real iPad (by the author): Safari, landscape and portrait, touch joystick, the label shows ≥ 30 fps — result in the Notes. → 🔜 deferred (see Deferred Items); the author tested on the Windows desktop only.
 
 ### Notes
 Started: 2026-11-21 14:14
@@ -344,6 +346,8 @@ Started: 2026-11-21 14:14
 - **How the author runs the iPad check:** `tools\export_web.ps1`, then `tools\serve_web.ps1`; open the printed address `http://<address>:8060` in Safari on the iPad, on the same Wi-Fi as the computer (Windows Firewall may ask to allow Python — allow it on the private network). Check landscape and portrait, the touch joystick, and that the label shows ≥ 30 fps; write the result here.
 
 **Done except the iPad check (2026-11-21 · ~6m · Claude Sonnet 5.5)** — `export_presets.cfg`, `tools/export_web.ps1`, `tools/serve_web.ps1`, the FPS label in `scenes/arena.tscn` / `arena.gd`, a test in `tests/test_arena.gd`. `tools/test.ps1` 15/15 passed, `tools/lint.ps1` OK, `tools/export_web.ps1` OK from a clean `build/`, desktop Chromium start → Play → walk → Back with 0 console errors, `git status` clean of `build/` and `.godot/`. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 3.08 M (88 k in · 2.97 M cached · 20 k out) · CHF 0.61 (72 credits)
+
+- **Author's check (2026-11-21 14:45, person):** on the Windows desktop — the editor run and the web export in a desktop browser — the game runs: start screen, Play, walking, walls, Back; the label showed ~60 fps; all OK. **Not tested on a real iPad**: that task is deferred (Deferred Items), so S11's iPad part is not verified yet.
 
 ---
 
@@ -398,6 +402,7 @@ Started: 2026-11-21 14:20
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
+| Step 4: play-test on a real iPad in Safari (landscape, portrait, touch joystick, ≥ 30 fps) — S11's iPad part | The author tested on the Windows desktop only (2026-11-21) | before or with the first moved spec; `tools\export_web.ps1` + `tools\serve_web.ps1` |
 | Native Windows, iPad or phone apps | Browser only for now (S18) | a later Godot spec |
 | Rooms and hack codes over the network (FastAPI server or Godot's own) | No server in this spec (S19) | moved *MVP and Architecture* / *Play with Friends* specs (spec 02) |
 | Music player and the developer page's music tools | No music in this spec (D13) | moved *Fighter Studio, Saves and Music* spec |
