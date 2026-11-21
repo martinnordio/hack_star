@@ -8,6 +8,7 @@ const LIST_SCENE: PackedScene = preload("res://scenes/fighter_list.tscn")
 const FIGHTER_SCENE: PackedScene = preload("res://scenes/fighter_screen.tscn")
 const INFO_SCENE: PackedScene = preload("res://scenes/info.tscn")
 const HACK_SCENE: PackedScene = preload("res://scenes/hack_screen.tscn")
+const QR_SCENE: PackedScene = preload("res://scenes/qr_page.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const ArenaScript: GDScript = preload("res://scenes/arena.gd")
 const MIN_BUTTON_HEIGHT: float = 44.0
@@ -176,6 +177,7 @@ func test_hack_screen_fits_every_size() -> void:
 		"Margin/Column/Scroll/Content/ActiveTitle",
 		"Margin/Column/Scroll/Content/ActiveList",
 		"Margin/Column/Scroll/Content/ResetButton",
+		"Margin/Column/Scroll/Content/QrButton",
 	]
 	for label: String in SIZES:
 		var size: Vector2i = SIZES[label]
@@ -206,6 +208,51 @@ func test_back_and_use_code_on_the_hack_screen_react_to_mouse_click_and_touch() 
 		assert_signal_emit_count(button, "pressed", 1, "a click presses %s" % button.text)
 		UiInput.touch(shown[0], button)
 		assert_signal_emit_count(button, "pressed", 2, "a touch presses %s" % button.text)
+
+
+func test_qr_page_fits_every_size() -> void:
+	HackServer.fake_responder = func(_method: String, _url: String, _sent: String) -> Dictionary:
+		return {
+			"status": 200,
+			"body":
+			(
+				'[{"id": "infinite_credits", "code": "INFINITY", "name": "Unlimited credits"},'
+				+ '{"id": "power22", "code": "POWER22", "name": "Power 22"}]'
+			)
+		}
+	for label: String in SIZES:
+		var size: Vector2i = SIZES[label]
+		var shown: Array = await _show_in_viewport(QR_SCENE, size)
+		var screen: Control = shown[1]
+		await wait_process_frames(2)
+		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
+		_assert_inside(screen.get_node("Margin/Column/Header/BackButton"), visible_rect, label)
+		var scroll: ScrollContainer = screen.get_node("Margin/Column/Scroll")
+		_assert_inside(scroll, visible_rect, "%s scroll" % label)
+		var content: Control = scroll.get_node("Content")
+		assert_lte(content.size.x, scroll.size.x + 0.5, "%s content fits the width" % label)
+		var first: Control = content.get_node("Rows").get_child(0)
+		var rect: Rect2 = first.get_global_rect()
+		assert_true(
+			rect.position.x >= -0.5 and rect.end.x <= visible_rect.end.x + 0.5,
+			"%s first QR code %s fits the width" % [label, rect]
+		)
+		shown[0].queue_free()
+	HackServer.fake_responder = Callable()
+
+
+func test_back_on_the_qr_page_reacts_to_mouse_click_and_touch() -> void:
+	HackServer.fake_responder = func(_method: String, _url: String, _sent: String) -> Dictionary:
+		return {"status": 0, "body": ""}
+	var shown: Array = await _show_in_viewport(QR_SCENE, Vector2i(390, 844))
+	var button: Button = shown[1].get_node("Margin/Column/Header/BackButton")
+	_drop_handlers(button)
+	watch_signals(button)
+	UiInput.click(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 1, "a click presses Back")
+	UiInput.touch(shown[0], button)
+	assert_signal_emit_count(button, "pressed", 2, "a touch presses Back")
+	HackServer.fake_responder = Callable()
 
 
 func test_arena_fits_every_size() -> void:
@@ -305,6 +352,7 @@ func test_buttons_and_text_have_a_minimum_size_at_every_size() -> void:
 		"fighter": FIGHTER_SCENE,
 		"info": INFO_SCENE,
 		"hack": HACK_SCENE,
+		"qr": QR_SCENE,
 		"arena": ARENA_SCENE,
 	}
 	for label: String in SIZES:

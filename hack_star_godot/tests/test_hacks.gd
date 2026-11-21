@@ -44,6 +44,12 @@ func test_power_22_raises_the_maximum_and_shows_it() -> void:
 	assert_eq(Hacks.power_text(7, _power), "Power 7 / 22")
 
 
+func test_a_qr_link_carries_the_code_and_reads_back_as_the_code() -> void:
+	var link: String = Hacks.link("http://localhost:8060/", " power22 ")
+	assert_eq(link, "http://localhost:8060/?hack=POWER22")
+	assert_eq(Hacks.code_from_scan(link), "POWER22")
+
+
 func test_known_ids() -> void:
 	assert_true(Hacks.is_known("power22"))
 	assert_false(Hacks.is_known("hypercharge"))

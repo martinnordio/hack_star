@@ -166,7 +166,12 @@ func test_back_goes_home_by_click_and_by_touch() -> void:
 		await UiInput.close(self, shown)
 
 
-func test_qr_and_scan_buttons_are_hidden_until_they_are_connected() -> void:
-	var screen: Control = _show_screen()
-	assert_false(screen.get_node("Margin/Column/Scroll/Content/ScanButton").visible)
-	assert_false(screen.get_node("Margin/Column/Scroll/Content/QrButton").visible)
+func test_scan_is_hidden_until_it_is_connected_and_qr_codes_opens_the_qr_page() -> void:
+	_answer(0, "")
+	var opened: Dictionary = await UiInput.open(self, HACK_SCREEN)
+	var content: Node = opened["screen"].get_node("Margin/Column/Scroll/Content")
+	assert_false(content.get_node("ScanButton").visible)
+	UiInput.click(opened["viewport"], content.get_node("QrButton"))
+	var shown: Node = await UiInput.settle(self, opened)
+	assert_eq(shown.scene_file_path, Screens.QR, "QR codes opens the QR page")
+	await UiInput.close(self, shown)

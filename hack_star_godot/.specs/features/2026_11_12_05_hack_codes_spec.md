@@ -21,6 +21,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 4.28 M (65 k in · 4.19 M cached · 33 k out) | CHF 0.76 (91 credits) | Step 3 done (`usage.ps1 -AgentName s05-steps1-4` 17:38:13–17:44:10) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.90 M (21 k in · 1.87 M cached · 8 k out) | CHF 0.27 (32 credits) | Step 4 done (`usage.ps1 -AgentName s05-steps1-4` 17:44:10–17:45:49) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.03 M (93 k in · 1.91 M cached · 31 k out) | CHF 1.24 (148 credits) | Step 5 done (`usage.ps1 -AgentName s05-step5` from 17:25:44) |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.97 M (106 k in · 2.84 M cached · 24 k out) | CHF 0.66 (79 credits) | Step 6 done (`usage.ps1 -AgentName s05-steps6-7` 17:25:44–18:00:26) |
 
 ---
 
@@ -158,7 +159,7 @@ simplest reading that fits the Godot game._
 | **3** | Hack screen: type, feedback, active hacks, reset | standard (Claude Sonnet 5.5) — one screen with the shared UI parts and a short celebration (D6, D7) | ✅ Done | [→ Step 3](#step-3--hack-screen-type-feedback-active-hacks-reset) |
 | **4** | Hack effects on home, list and fighter screen | standard (Claude Sonnet 5.5) — small changes in three screens through the rules of Step 1 | ✅ Done | [→ Step 4](#step-4--hack-effects-on-home-list-and-fighter-screen) |
 | **5** | QR code encoder | reasoning (Claude Opus 5.5) — tricky logic: QR versions, Reed–Solomon, masks, checked against a reference | ✅ Done | [→ Step 5](#step-5--qr-code-encoder) |
-| **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ⬜ Not started | [→ Step 6](#step-6--qr-page-with-savable-images) |
+| **6** | QR page with savable images | standard (Claude Sonnet 5.5) — one screen that draws the encoder's matrix (D10) | ✅ Done | [→ Step 6](#step-6--qr-page-with-savable-images) |
 | **7** | Local web setup: serve the export and forward `/api` | standard (Claude Sonnet 5.5) — a small stdlib proxy and a PowerShell wrapper, fixed by D3 | ⬜ Not started | [→ Step 7](#step-7--local-web-setup-serve-the-export-and-forward-api) |
 | **8** | Camera scanning and QR links in the browser | reasoning (Claude Opus 5.5) — JavaScript bridge, camera permissions, an end-to-end browser check with a fake camera | ⬜ Not started | [→ Step 8](#step-8--camera-scanning-and-qr-links-in-the-browser) |
 | **9** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 9](#step-9--final-check-readme-and-architecture) |
@@ -353,23 +354,24 @@ From the hack screen an adult opens the QR page with a large QR code for each ha
 be saved as a PNG image (S10, S13).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `scenes/ui/qr_image.gd` and `scenes/qr_page.tscn` + `.gd` after D10 (`Screens.QR`,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `scenes/ui/qr_image.gd` and `scenes/qr_page.tscn` + `.gd` after D10 (`Screens.QR`,
       Back goes home; **QR codes** on the hack screen opens it); links after D9.
-- [ ] **Save image**: PNG download on the web, a file in `user://` elsewhere (path shown).
-- [ ] Tests: `tests/test_qr_page.gd` (fake responder: three rows with name, code and a
+- [x] **Save image**: PNG download on the web, a file in `user://` elsewhere (path shown).
+- [x] Tests: `tests/test_qr_page.gd` (fake responder: three rows with name, code and a
       texture of the right size; `hypercharge` from the server not shown; no server → the S13
       message; **Save image** writes a PNG outside the web); the QR page joins
       `tests/test_screen_sizes.gd`.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a screenshot of the QR page at
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a screenshot of the QR page at
       1280×720 and 390×844, and a phone camera or a QR reader (for example jsQR in Node, or
       `zbarimg` if installed) reads a saved PNG as the link of D9.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 17:56
+
+**Done (2026-11-21 · ~5m · Claude Sonnet 5.5)** — `scenes/ui/qr_image.gd` (`QrImage`: black on white, 4-module quiet zone, 8 px per module), `scenes/qr_page.tscn` + `.gd` (`QrPage`, `Screens.QR`, Back goes home): the known hacks of `HackServer.list_hacks()` as cards with name, code, a 320 px QR image of the D9 link (`Hacks.link`) and **Save image** (PNG download in the web export, else `user://hack-<code>.png` with its path shown); no server → the S13 message. **QR codes** on the hack screen is now visible and opens the page. 6 new tests (`test_qr_page.gd`, `Hacks.link`, the QR page in `test_screen_sizes.gd`, `QR`/`HACK` in `test_screens.gd`); `tools/test.ps1` 165 passing, exit 0; `tools/lint.ps1` exit 0. Looks checked on screenshots of a windowed run (temporary capture script in `%TEMP%`, removed): the QR page at 1280×720 (three cards side by side) and 390×844 (one column, scrolled to the end) — nothing cut off. The three saved PNGs were read with jsQR 1.4.0 in Node (`ui/node_modules`): `http://localhost:8060/?hack=INFINITY`, `…OPENSESAME`, `…POWER22`. Open: the **Save image** download in the browser is checked in Step 8's browser run. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.97 M · CHF 0.66
 
 ---
-
 ## Step 7 — Local web setup: serve the export and forward `/api`
 
 ### Goal

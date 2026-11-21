@@ -34,6 +34,7 @@ func _ready() -> void:
 	_code_edit.text_submitted.connect(submit)
 	_use_button.pressed.connect(_on_use_pressed)
 	_reset_button.pressed.connect(_on_reset_pressed)
+	_qr_button.pressed.connect(_on_qr_pressed)
 	_confirm.confirmed.connect(_on_reset_confirmed)
 	_message.resized.connect(_center_message_pivot)
 	_refresh()
@@ -64,6 +65,10 @@ func submit(text: String) -> void:
 
 func _on_use_pressed() -> void:
 	submit(_code_edit.text)
+
+
+func _on_qr_pressed() -> void:
+	Screens.go_to(Screens.QR)
 
 
 func _on_reset_pressed() -> void:

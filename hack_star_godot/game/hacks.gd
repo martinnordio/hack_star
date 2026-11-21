@@ -58,6 +58,11 @@ static func code_from_scan(text: String) -> String:
 	return ""
 
 
+## The text of a hack's QR code: the game's address with the code (D9 of spec 05).
+static func link(game_address: String, code: String) -> String:
+	return "%s?%s=%s" % [game_address, CODE_PARAMETER, normalize_code(code).uri_encode()]
+
+
 ## "Credits: 321", or the unlimited sign with the hack.
 static func credits_text(credits: int, hacks: Array[String]) -> String:
 	return "Credits: %s" % (UNLIMITED_TEXT if INFINITE_CREDITS in hacks else str(credits))
