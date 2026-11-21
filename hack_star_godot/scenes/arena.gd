@@ -19,20 +19,33 @@ const ARENA_CORNERS: Array[Vector3] = [
 ## Free border around the arena as a share of the screen; more at the top for the Back button.
 const FRAME_MARGIN: float = 0.03
 const FRAME_TOP_MARGIN: float = 0.12
+## The FPS label (only while the first game is being checked) refreshes this often.
+const FPS_LABEL_INTERVAL: float = 0.25
 
 ## When false, the fighter keeps the `input_direction` set from outside (tests).
 var read_player_input: bool = true
+
+var _fps_timer: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
 @onready var _camera: Camera3D = $Camera
 @onready var _joystick: TouchJoystick = $Hud/TouchJoystick
 @onready var _back_button: Button = $Hud/BackButton
+@onready var _fps_label: Label = $Hud/FpsLabel
 
 
 func _ready() -> void:
 	_back_button.pressed.connect(_on_back_pressed)
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
+	_update_fps_label()
+
+
+func _process(delta: float) -> void:
+	_fps_timer += delta
+	if _fps_timer >= FPS_LABEL_INTERVAL:
+		_fps_timer = 0.0
+		_update_fps_label()
 
 
 func _physics_process(_delta: float) -> void:
@@ -69,3 +82,7 @@ func _corners_inside(allowed: Rect2) -> bool:
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file(START_SCREEN)
+
+
+func _update_fps_label() -> void:
+	_fps_label.text = "FPS: %d" % Engine.get_frames_per_second()

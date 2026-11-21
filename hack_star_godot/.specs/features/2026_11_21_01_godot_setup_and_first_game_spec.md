@@ -16,6 +16,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.12 M (54 k in · 1.06 M cached · 10 k out) | CHF 0.36 (43 credits) | Step 1 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.64 M (49 k in · 1.58 M cached · 13 k out) | CHF 0.44 (52 credits) | Step 2 done |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.45 M (97 k in · 2.32 M cached · 34 k out) | CHF 1.37 (163 credits) | Step 3 done |
+| 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.21 M (86 k in · 3.11 M cached · 20 k out) | CHF 0.65 (78 credits) | Step 4 done except the iPad check |
 
 ---
 
@@ -141,7 +142,7 @@ _None._
 | **1** | Folder, rule for Godot specs, pinned tools | standard (Claude Sonnet 5.5) — files and scripts a clear plan describes | ✅ Done | [→ Step 1](#step-1--folder-rule-for-godot-specs-pinned-tools) |
 | **2** | Godot project, start screen, test and lint | standard (Claude Sonnet 5.5) — scaffolding with tests | ✅ Done | [→ Step 2](#step-2--godot-project-start-screen-test-and-lint) |
 | **3** | 3D arena with a fighter, keyboard and touch | reasoning (Claude Opus 5.5) — 3D scene, camera and input, graphics-heavy | ✅ Done | [→ Step 3](#step-3--3d-arena-with-a-fighter-keyboard-and-touch) |
-| **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | ⬜ Not started | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
+| **4** | Web export and play in the browser | standard (Claude Sonnet 5.5) — export settings and scripts with a clear check | 🔄 In progress — iPad check by the author | [→ Step 4](#step-4--web-export-and-play-in-the-browser) |
 | **5** | README, licences, final check | light (Claude Haiku 5.5) — docs and running the checks | ⬜ Not started | [→ Step 5](#step-5--readme-licences-final-check) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -317,23 +318,30 @@ One command exports the game for the web and the game plays in a desktop browser
 Safari on an iPad at 30 frames per second or more; the browser is the only target (S11, S13, S18).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `export_presets.cfg`: preset `Web`, Thread Support off (D4), export path
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `export_presets.cfg`: preset `Web`, Thread Support off (D4), export path
       `build/web/index.html`; committed (it holds no secrets).
-- [ ] `tools/export_web.ps1`: `godot --headless --path . --export-release "Web"
+- [x] `tools/export_web.ps1`: `godot --headless --path . --export-release "Web"
       build/web/index.html`; fails when `index.html`, `.wasm` or `.pck` is missing.
-- [ ] `tools/serve_web.ps1` (D12): serves `build/web/` on port 8060 on the local network and
+- [x] `tools/serve_web.ps1` (D12): serves `build/web/` on port 8060 on the local network and
       prints `http://<this computer's address>:8060`.
-- [ ] A small frames-per-second label in the arena (top-right), on in the exported game
+- [x] A small frames-per-second label in the arena (top-right), on in the exported game
       while this spec is being checked; a later spec may hide it.
-- [ ] Check: `tools/export_web.ps1` succeeds from a clean `build/`; in a desktop browser
+- [x] Check: `tools/export_web.ps1` succeeds from a clean `build/`; in a desktop browser
       (integrated browser) start screen → Play → walk → Back, no errors in the console;
-      **on a real iPad (by the author):** Safari, landscape and portrait, touch joystick,
-      the label shows ≥ 30 fps — result written in the Notes; `git status` shows nothing
-      under `build/` or `.godot/`.
+      `git status` shows nothing under `build/` or `.godot/`.
+- [ ] On a real iPad (by the author): Safari, landscape and portrait, touch joystick, the label shows ≥ 30 fps — result in the Notes.
 
 ### Notes
-<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-21 14:14
+
+- `export_presets.cfg`: preset `Web` (`variant/thread_support=false`, `variant/extensions_support=false`, export path `build/web/index.html`); `addons/gut`, `tests`, `.specs`, `tools` and `build` are excluded from the `.pck`. `tools/export_web.ps1` deletes `build/web/`, imports, exports and fails (exit 1) when Godot fails or `index.html`, a `.wasm` or a `.pck` is missing; the export prints no ERROR / WARNING lines (`index.wasm` 39.5 MB, `index.pck` 31 KB).
+- `tools/serve_web.ps1` runs `uv run --no-project python -m http.server 8060 --bind 0.0.0.0 --directory build/web` and prints `http://<LAN IPv4>:8060` (the adapter with a default gateway) and `http://localhost:8060`.
+- FPS label: `Hud/FpsLabel` in `arena.tscn` (top-right), `arena.gd` shows `FPS: <Engine.get_frames_per_second()>` four times a second; `tests/test_arena.gd` checks that it exists and is anchored top-right.
+- Desktop browser check: Playwright (installed only in a temporary folder, deleted afterwards) drove headless Chromium (`--use-gl=swiftshader`, WebGL 2) against `tools/serve_web.ps1` at 1280 × 720. Console: Godot 4.7.2 banner, `OpenGL ES 3.0 (WebGL 2.0) - Compatibility`, `single-threaded`; **0 errors**; only a `CONTEXT_LOST_WEBGL` warning at page start and the Chromium "GPU stall due to ReadPixels" warnings (software rendering). Screenshots: start screen with "Hack star" and **Play**; after Play the whole arena, the fighter, **Back** top-left and `FPS: 15` top-right (software GL, not meaningful); after D and S held 1 s each the fighter had walked to the south-east corner; after **Back** the start screen again.
+- **How the author runs the iPad check:** `tools\export_web.ps1`, then `tools\serve_web.ps1`; open the printed address `http://<address>:8060` in Safari on the iPad, on the same Wi-Fi as the computer (Windows Firewall may ask to allow Python — allow it on the private network). Check landscape and portrait, the touch joystick, and that the label shows ≥ 30 fps; write the result here.
+
+**Done except the iPad check (2026-11-21 · ~7m · Claude Sonnet 5.5)** — `export_presets.cfg`, `tools/export_web.ps1`, `tools/serve_web.ps1`, the FPS label in `scenes/arena.tscn` / `arena.gd`, a test in `tests/test_arena.gd`. `tools/test.ps1` 15/15 passed, `tools/lint.ps1` OK, `tools/export_web.ps1` OK from a clean `build/`, desktop Chromium start → Play → walk → Back with 0 console errors, `git status` clean of `build/` and `.godot/`. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 3.21 M (86 k in · 3.11 M cached · 20 k out) · CHF 0.65 (78 credits)
 
 ---
 

@@ -44,6 +44,13 @@ func test_arena_has_back_button_and_joystick() -> void:
 	assert_not_null(_arena.get_node("Hud/TouchJoystick"))
 
 
+func test_arena_has_fps_label_top_right() -> void:
+	var label: Label = _arena.get_node("Hud/FpsLabel")
+	assert_true(label.text.begins_with("FPS: "), "label shows the frame rate")
+	assert_eq(label.anchor_left, 1.0, "label is anchored to the right")
+	assert_eq(label.anchor_top, 0.0, "label is anchored to the top")
+
+
 func test_fighter_stops_at_east_wall() -> void:
 	var fighter: Fighter = _arena.get_node("Fighter")
 	_arena.read_player_input = false
