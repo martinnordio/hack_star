@@ -134,8 +134,120 @@ If one limit is not met, keep the GLB outside the repository and use fallback A 
 
 ## Trial (B6)
 
-One drawing goes through the main workflow, done by the author with his own accounts on free
-use only. The step-by-step for the author and the results are added by spec 09, Step 19.
+One drawing goes through the main workflow, done by the author with his own accounts on **free
+use only** (no subscription, no paid credits). The drawing is the one of Beatbolt (Mattia's
+`character_drawing_01`), so the result can be compared with the shapes version already in the
+game. **Status: waiting for the author** (spec 09, Step 19).
+
+### Before you start (5 min)
+
+1. Make a folder **outside the repository**: `%USERPROFILE%\hack_star_drawings\trial\`. Every
+   file of the trial goes there; nothing of it is committed by you.
+2. Use the cleaned photo `%USERPROFILE%\hack_star_drawings\character_drawing_01_clean.png`
+   (re-encoded by Claude, no metadata).
+3. Note the start time.
+4. Meshy: sign in with **your** account on the **Free** plan (no card). Send an e-mail to
+   `support@meshy.ai` asking to opt out of training on your inputs and outputs (terms § 2.9).
+   Never click *Publish* / *Share to Community*.
+5. Google Flow: open <https://labs.google/fx/tools/flow> in Chrome or Edge with **your** Google
+   account (18+, age verified). In the main menu, switch **"Help improve Flow"** off. Note your
+   remaining Flow credits (profile picture → credits).
+
+### Step A — Google Flow: a clean front view (10 min)
+
+1. New project → create an **image** (Nano Banana) → add `character_drawing_01_clean.png` as the
+   reference image (ingredient).
+2. Paste this prompt:
+
+   > Redraw the character from the reference image as a clean, full-body character sheet for a
+   > 3D model: **front view**, standing straight in an **A-pose** (arms slightly away from the
+   > body, legs apart), facing the camera, whole body visible from hair to shoes, centred, on a
+   > **plain white background**, no shadow, no text, no other objects. Keep the character
+   > exactly as drawn: a chibi kid with a big round head, spiky purple and navy hair with one
+   > pink streak, big dark-blue eyes and serious brows, large white over-ear headphones with
+   > teal cups, an orange mark and a small red light on the right cup, a white jacket with teal
+   > collar, hem and stripe, a round teal shoulder pad with an orange edge, one black
+   > fingerless glove, the other arm a long white tube arm cannon with an orange ring, navy
+   > trousers, black shoes. **Toon style**: flat colours, two tones of shading, thick dark
+   > outlines, like a cartoon game character. Same colours as the drawing.
+
+3. Generate (it shows the credit cost first). If needed, try once more or fix one detail with
+   the lasso and a short request (for example "make the arm cannon straight and white").
+4. Optional (for your own check only): ask for "the same character from the side and from the
+   back, same pose, same style, white background".
+5. Download the best front view as `%USERPROFILE%\hack_star_drawings\trial\flow_front.png`
+   (and `flow_side.png`, `flow_back.png` if made). Take a screenshot of the Flow page with the
+   result: `trial\screen_flow.png`. Note the Flow credits used.
+
+### Step B — Meshy: image to 3D (10 min)
+
+1. *Model* → **Image to 3D** → upload `flow_front.png`.
+2. Settings: model **Meshy 6 Lite** (the free plan can download it; 10 credits) — if the free plan
+   offers *Meshy 6* or *Smart Topology* **and** lets you download it, you may try it instead and
+   note it; **Pose: A-Pose**; *Image Enhancement* on; **License: CC BY 4.0** (the free plan's).
+   If the panel has a *Poly Count*, set **8,000** (limit 10,000 triangles, B5).
+3. Generate; rotate the model and check it from all sides. Screenshots: front, side, back →
+   `trial\screen_meshy_front.png`, `…_side.png`, `…_back.png`.
+4. If the model is grey (no colours): *AI Texturing* (10 credits) with the prompt
+   *"toon style, flat colours as in the reference image, white jacket with teal trim, purple
+   and navy hair, white headphones with teal cups, navy trousers, black shoes"*, texture size
+   **1024** if you can choose.
+5. Generate at most **3 models** in total (≤ 60 credits) so the 100 monthly credits are enough.
+
+### Step C — Meshy: rig, animate, download (5 min)
+
+1. *Animate* → select the model → **Rig** (0 credits; humanoid).
+2. From the free motions add (0 credits each): an **idle**, a **run** (or walk) and one
+   **attack-like** clip (punch, shoot or throw). Screenshot `trial\screen_meshy_animate.png`.
+3. **Download** → Format **GLB**, Animation **All Added**, skeleton template as offered (Mixamo
+   default) → save as `%USERPROFILE%\hack_star_drawings\trial\beatbolt_meshy.glb`.
+4. Note the remaining Meshy credits and the end time.
+
+### Step D — Mattia's preference (5 min)
+
+Show Mattia the Meshy screenshots next to the shapes version in the game (home and fighter
+screen, or `%LOCALAPPDATA%\hack_star\screens\09\step16\`). Ask: *"Which one is more your
+drawing, and which one do you want in the game?"* — write down his words.
+
+### What to send back to Claude
+
+Put the files in `%USERPROFILE%\hack_star_drawings\trial\` and tell Claude in the chat:
+
+- `beatbolt_meshy.glb` (and its size in MB),
+- the screenshots (`screen_flow.png`, `screen_meshy_*.png`) and `flow_front.png`,
+- the time you needed (start → end) and for each step,
+- credits used: Google Flow (before / after) and Meshy (before / after), and that no paid plan
+  was used,
+- which Meshy model and settings you used, and whether the free plan allowed the GLB download,
+- problems (blocked prompts, errors, missing download, wrong colours, broken hands …),
+- Mattia's preference (Meshy or shapes) in his words,
+- that the Meshy opt-out e-mail was sent and nothing was published to the Community.
+
+Claude then fills the table below, checks the [fit limits](#fit-for-the-game-b5) and, only if
+Mattia prefers it **and** the licence allows it (CC BY 4.0 with the credit line), imports it
+(spec 09, Step 19); otherwise the files stay outside the repository and the reason is written
+here.
+
+### Trial results
+
+| Item | Result |
+|------|--------|
+| Date of the trial | |
+| Drawing | Beatbolt (`character_drawing_01`) |
+| Google Flow: what came out | |
+| Google Flow: credits used (free daily credits) | |
+| Meshy: model and settings | |
+| Meshy: what came out (shape, colours, details) | |
+| Meshy: credits used (free plan) | |
+| GLB size (MB) and triangles | |
+| Rig and clips (idle, run, attack) | |
+| Time: author (Flow, Meshy, total) | |
+| Time: Claude (import) | |
+| Problems | |
+| Fit limits (B5) met? | |
+| Licence (CC BY 4.0, credit Meshy) | |
+| Mattia's preference | |
+| Decision: imported or not, and why | |
 
 ## Sources
 

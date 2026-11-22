@@ -33,6 +33,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 18.96 M (132 k in · 18.75 M cached · 74 k out) | CHF 4.94 (589 credits) | Step 16 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:19:28 to 15:44:13) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.84 M (31 k in · 5.78 M cached · 24 k out) | CHF 1.50 (179 credits) | Step 17 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:44:41 to 15:57:30) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.49 M (114 k in · 2.36 M cached · 15 k out) | CHF 1.13 (135 credits) | Step 18 done (`usage.ps1 -AgentName s09g-steps18-20` from 15:58:18 to 16:03:41) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 434 k (4 k in · 427 k cached · 3 k out) | CHF 0.14 (17 credits) | Step 19 prepared, trial deferred (`usage.ps1 -AgentName s09g-steps18-20` from 16:04:13 to 16:06:57) |
 
 ---
 
@@ -349,7 +350,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **16** | Drawn fighter in the game | reasoning (Claude Opus 5.5) — S1; reading the drawing and building a recognisable fighter from shapes (D14) | ✅ Done | [→ Step 16](#step-16--drawn-fighter-in-the-game) |
 | **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ✅ Done | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
 | **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ✅ Done | [→ Step 18](#step-18--tool-recommendation-document) |
-| **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | ⬜ Not started | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
+| **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | 🔜 Deferred | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
 | **20** | Final check, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the side-by-side verdict and the documents | ⬜ Not started | [→ Step 20](#step-20--final-check-readme-and-architecture) |
 
 **Who does what:** Steps 1–13, 15–18 and 20 are done by the agent. **Step 14 is a gate:** it
@@ -845,14 +846,17 @@ recorded, and it joins the game only if its licence allows it and Mattia prefers
 **Needs the author.**
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Send the author the trial steps from `docs/drawing_tools.md` (free use only; Meshy free plan = CC BY 4.0, credit Meshy); wait — *waiting for the author* in Notes.
+- [x] Record the start time in Notes below.
+- [x] Send the author the trial steps from `docs/drawing_tools.md` (free use only; Meshy free plan = CC BY 4.0, credit Meshy); wait — *waiting for the author* in Notes.
 - [ ] Record in the document: what came out, time, credits used, problems.
 - [ ] If Mattia prefers it to the Step 16 version and the licence allows: import the GLB (size and triangle limits of B5, D5 outline, A4 animations), credit in `LICENSES.md`; else keep the files out of the repository and say why.
 - [ ] Check: the trial section of the document is filled; if imported, `test.ps1`, `lint.ps1`, `export_web.ps1` exit 0 and the export size noted (D16).
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 16:04
+**Waiting for the author** (B6, D17): the trial needs the author's own Google Flow and Meshy accounts, which the agent does not have; nothing of the trial is invented. Prepared in `docs/drawing_tools.md` § *Trial (B6)*: before-you-start (folder `%USERPROFILE%\hack_star_drawings\trial\` outside the repository, the cleaned photo `character_drawing_01_clean.png` of Beatbolt, Meshy Free plan without card, the training opt-out e-mail to support@meshy.ai, never publish to the Meshy Community, Flow's *Help improve Flow* off), Step A Google Flow (the prompt to paste: front view, A-pose, whole body, plain white background, toon style with flat colours and thick outlines, Beatbolt's shapes and colours), Step B Meshy Image to 3D (Meshy 6 Lite, Pose A-Pose, licence CC BY 4.0, poly count 8,000 if offered — limit 10,000, AI Texturing at 1024 if grey, at most 3 models ≤ 60 credits), Step C rig (0 credits), idle + run + attack-like clip, download **GLB** with all clips as `beatbolt_meshy.glb`, Step D Mattia's preference next to the Step 16 screenshots, the list of what to send back (GLB and size, screenshots, time per step, Flow and Meshy credits before/after, model and settings, problems, Mattia's words, opt-out sent) and an empty *Trial results* table. The remaining tasks (record the result, import or not, check) wait for the author's files; the item is in **Deferred Items**. No game file changed; `tools/test.ps1` 468 tests passed, `tools/lint.ps1` exit 0.
+**Done — agent part only, trial deferred (2026-11-22 · ~3 min · Claude Opus 5.5)** — trial instructions, prompts, settings, what to send back and the empty results table in `docs/drawing_tools.md`; Deferred Items row added. `tools/test.ps1` 468 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 434 k tokens · CHF 0.14 (17 credits)
 
 ---
 
@@ -886,6 +890,7 @@ workflows (G1, G14, G15, G16, W5, S2, S3, S4, S5, S6).
 | The new texts in every game language | S6: English until then | [Accounts, Fighters and Languages](2026_11_22_15_accounts_fighters_and_languages_spec.md) (spec 15) |
 | Overtime and closing walls in Glimmer Isles | W4: they come with spec 11 for every world | [Overtime and Match Options](2026_11_22_11_overtime_and_match_options_spec.md) (spec 11) |
 | Mattia's confirmation "this is my drawing" for Beatbolt (A3), from the Step 16 screenshots in `%LOCALAPPDATA%\hack_star\screens\09\step16\` | Needs the author and Mattia; the agent cannot ask them and does not invent the answer | This spec, Step 20 / author |
+| The B6 trial with Google Flow + Meshy (free use) and the possible import of its GLB (Step 19; instructions in `docs/drawing_tools.md` § *Trial (B6)*) | Needs the author's own Google Flow and Meshy accounts (and Mattia's preference); the agent has neither | This spec's follow-up by the author / a later spec |
 
 ---
 
