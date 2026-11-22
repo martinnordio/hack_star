@@ -13,6 +13,14 @@ const HACKED_MAX_POWER: int = 22
 const UNLIMITED_TEXT: String = "∞"
 const CODE_PARAMETER: String = "hack"
 
+## How long a hack lasts, in seconds; the same numbers as the server's `duration_seconds`
+## (`server/src/hack_star_server/hacks.py`, 72 h or none) — keep the two equal.
+const DAY_SECONDS: int = 86400
+const HOUR_SECONDS: int = 3600
+const TIMED_SECONDS: int = 3 * DAY_SECONDS
+## The `until` of a hack that never turns off.
+const FOREVER: int = 0
+
 
 ## The ids of the hacks the game knows.
 static func ids() -> Array[String]:
@@ -34,6 +42,53 @@ static func display_name(hack_id: String) -> String:
 		POWER22:
 			return "Power 22"
 	return hack_id
+
+
+## How long a hack stays on after it is entered: `TIMED_SECONDS` for a 3-day hack, `FOREVER`
+## for a hack that never turns off. A new hack is one or the other by its entry here.
+static func duration_seconds(hack_id: String) -> int:
+	match hack_id:
+		INFINITE_CREDITS, UNLOCK_ALL:
+			return TIMED_SECONDS
+	return FOREVER
+
+
+static func is_timed(hack_id: String) -> bool:
+	return duration_seconds(hack_id) != FOREVER
+
+
+## The Unix time (seconds) a hack entered at `now` turns off, or `FOREVER`.
+static func until_for(hack_id: String, now: int) -> int:
+	if not is_timed(hack_id):
+		return FOREVER
+	return now + duration_seconds(hack_id)
+
+
+static func is_expired(until: int, now: int) -> bool:
+	return until != FOREVER and until <= now
+
+
+## "Lasts for ever", "2 days 5 hours left", "1 day left", "5 hours left" or "Less than 1 hour
+## left"; whole hours, rounded down.
+@warning_ignore("integer_division")
+static func time_left_text(until: int, now: int) -> String:
+	if until == FOREVER:
+		return "Lasts for ever"
+	var hours: int = maxi(until - now, 0) / HOUR_SECONDS
+	var days: int = hours / 24
+	hours %= 24
+	if days == 0 and hours == 0:
+		return "Less than 1 hour left"
+	var parts: PackedStringArray = []
+	if days > 0:
+		parts.append(_count(days, "day"))
+	if hours > 0:
+		parts.append(_count(hours, "hour"))
+	return "%s left" % " ".join(parts)
+
+
+static func _count(amount: int, unit: String) -> String:
+	return "%d %s%s" % [amount, unit, "" if amount == 1 else "s"]
 
 
 ## A typed code as the server expects it: no surrounding spaces, upper case.

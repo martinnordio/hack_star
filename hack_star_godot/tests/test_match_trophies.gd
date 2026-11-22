@@ -55,7 +55,7 @@ func _open_match(bot_count: int = 1) -> MatchArena:
 
 func _saved_trophies(fighter_id: String) -> int:
 	var text: String = FileAccess.get_file_as_string(TEST_SAVE)
-	return SaveData.from_json(text)["progress"]["trophies"][fighter_id]
+	return SaveData.from_json(text, GameState.now())["progress"]["trophies"][fighter_id]
 
 
 func test_a_victory_gives_ten_trophies_saved_before_the_result_screen() -> void:

@@ -1,7 +1,7 @@
 # Bug Fixes Spec
 
 > **Author:** Martin Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/godot-mvp`
@@ -16,6 +16,7 @@
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked against specs 01–08; S4, S6, S16, S22 revised; S1–S3, S7–S15, S20, S21 moved to spec 15 (S16's CREATOR part too, its HYPERCHARGE part to spec 12, S19's bought things to specs 09 and 10, added there at the end of Part 1); S19 correct by design (a test); S23 (English), S24 (documentation, Godot), S25 (what worked before) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-22 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #33 created (no parent) |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 4.12 M (216 k in · 3.86 M cached · 43 k out) | CHF 2.27 (271 credits) | Part 2 written (5 Steps: reasoning, standard, standard, reasoning, light); also the requirements revision, the moved statements in specs 09, 10, 12 and 15, and the issue (`usage.ps1 -AgentName s16-lead` from 08:20:24) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.17 M (69 k in · 2.08 M cached · 23 k out) | CHF 1.02 (121 credits) | Step 1 done (`usage.ps1 -AgentName s16-step1` from 08:20:24) |
 ---
 
 # Part 1 · Requirements
@@ -227,7 +228,7 @@ maximum of 15)._
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Timed hack rules and save file version 3 | reasoning (Claude Opus 5.5) — a new saved format with a migration that starts the 3 days, checks of every field and a clock (D1, D2) | ⬜ Not started | [→ Step 1](#step-1--timed-hack-rules-and-save-file-version-3) |
+| **1** | Timed hack rules and save file version 3 | reasoning (Claude Opus 5.5) — a new saved format with a migration that starts the 3 days, checks of every field and a clock (D1, D2) | ✅ Done | [→ Step 1](#step-1--timed-hack-rules-and-save-file-version-3) |
 | **2** | Hacks turn off by themselves | standard (Claude Sonnet 5.5) — `GameState` keeps the end times, checks them and keeps the chosen fighter usable; the match keeps its fighter (D3, D4) | ⬜ Not started | [→ Step 2](#step-2--hacks-turn-off-by-themselves) |
 | **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ⬜ Not started | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--progress-across-tabs) |
@@ -284,19 +285,20 @@ keeps each hack with its end time and a revision; older files keep their hacks, 
 3 days from the first start of this version (S16, S17, S18, S25).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `Hacks` after D1 (durations, `until_for`, `is_expired`, `time_left_text`).
-- [ ] `SaveData` version 3 after D2 (`to_json(hacks, progress, revision)`, `from_json(text, now)`,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `Hacks` after D1 (durations, `until_for`, `is_expired`, `time_left_text`).
+- [x] `SaveData` version 3 after D2 (`to_json(hacks, progress, revision)`, `from_json(text, now)`,
       the migration of versions 1 and 2, the checks of `until` and `revision`).
-- [ ] Keep `GameState` working with the new `SaveData` (pass the clock's now, keep
+- [x] Keep `GameState` working with the new `SaveData` (pass the clock's now, keep
       `active_hacks` as the list of ids; the hacks are still never turned off here — Step 2);
       update the callers and the tests of `SaveData` (`test_save_data.gd`, `test_save_data_v2.gd`).
-- [ ] Tests (D8): the hack time rules and `test_save_data_v3.gd`.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a spec 08 save file (version 2) loads
+- [x] Tests (D8): the hack time rules and `test_save_data_v3.gd`.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a spec 08 save file (version 2) loads
       with its hacks and progress.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 08:35
+**Done (2026-11-22 · ~5 min · Claude Opus 5.5)** — `Hacks` has the time rules of D1 (`DAY_SECONDS`, `HOUR_SECONDS`, `TIMED_SECONDS`, `FOREVER`, `duration_seconds`, `is_timed`, `until_for`, `is_expired`, `time_left_text`); `SaveData` writes version 3 (`to_json(hacks, progress, revision)`, `from_json(text, now)`: versions 1 and 2 give each hack `until_for(id, now)`, version 3 checks ids, doubles, `until` (for ever → 0, too far ahead → cut, expired kept) and `revision`); `GameState` keeps `hack_until` next to `active_hacks`, a `clock` (`now()`), and the file's revision (+1 on each save) — hacks still never turn off (Step 2); callers and tests of `SaveData` updated; new `test_hack_times.gd` (4) and `test_save_data_v3.gd` (10). `tools/test.ps1` 357/357 passed (exit 0), `tools/lint.ps1` exit 0, `tools/check_tools.ps1` exit 0; a version 2 file loads with its hacks and progress (`test_save_data_v3`, `test_save_data_v2`, `test_game_state_save`). suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.17 M · CHF 1.02 (121 credits)
 
 ---
 

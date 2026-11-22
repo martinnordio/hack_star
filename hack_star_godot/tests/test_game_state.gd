@@ -110,4 +110,7 @@ func test_reset_empties_the_hacks_in_memory_without_saving() -> void:
 
 
 func _saved_hacks() -> Array[String]:
-	return SaveData.from_json(FileAccess.get_file_as_string(TEST_SAVE))["hacks"]
+	var text: String = FileAccess.get_file_as_string(TEST_SAVE)
+	var hacks: Array[String] = []
+	hacks.assign(SaveData.from_json(text, GameState.now())["hacks"].keys())
+	return hacks

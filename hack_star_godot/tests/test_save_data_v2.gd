@@ -1,5 +1,6 @@
 extends GutTest
 
+const NOW: int = 1_764_000_000
 const PROGRESS: Dictionary = {
 	"trophies": {"blaze": 1250, "rocko": 420, "turbo": 85, "frosty": 0, "luna": 0, "pixel": 7},
 	"power_levels": {"blaze": 7, "rocko": 4, "turbo": 2, "frosty": 1, "luna": 1, "pixel": 3},
@@ -11,35 +12,37 @@ const PROGRESS: Dictionary = {
 
 
 func test_round_trip_keeps_hacks_and_progress() -> void:
-	var hacks: Array[String] = ["power22"]
-	var loaded: Dictionary = SaveData.from_json(SaveData.to_json(hacks, PROGRESS))
-	assert_eq(loaded["hacks"], hacks)
+	var hacks: Dictionary[String, int] = {"power22": 0}
+	var loaded: Dictionary = SaveData.from_json(SaveData.to_json(hacks, PROGRESS, 1), NOW)
+	assert_eq_deep(loaded["hacks"], hacks)
 	assert_eq_deep(loaded["progress"], PROGRESS)
 
 
-func test_the_file_has_version_2() -> void:
-	var text: String = SaveData.to_json([] as Array[String], {})
-	assert_eq(JSON.parse_string(text)["version"], 2.0)
+func test_a_version_2_file_keeps_its_hacks_and_its_progress() -> void:
+	var text: String = JSON.stringify({"version": 2, "hacks": ["power22"], "progress": PROGRESS})
+	var loaded: Dictionary = SaveData.from_json(text, NOW)
+	assert_eq(loaded["hacks"].keys(), ["power22"])
+	assert_eq_deep(loaded["progress"], PROGRESS)
 
 
 func test_a_version_1_file_keeps_its_hacks_with_an_empty_progress() -> void:
 	var text: String = '{"version": 1, "hacks": ["power22"], "progress": {"credits": 9}}'
-	var loaded: Dictionary = SaveData.from_json(text)
-	assert_eq(loaded["hacks"], ["power22"])
+	var loaded: Dictionary = SaveData.from_json(text, NOW)
+	assert_eq(loaded["hacks"].keys(), ["power22"])
 	assert_eq_deep(loaded["progress"], {})
 
 
 func test_a_newer_broken_or_non_object_file_gives_nothing() -> void:
-	var newer: String = '{"version": 3, "hacks": ["power22"], "progress": {"credits": 9}}'
+	var newer: String = '{"version": 4, "hacks": [], "progress": {"credits": 9}}'
 	for text: String in [newer, "", "{not json", "[1, 2]", '"text"', '{"version": "2"}']:
-		var loaded: Dictionary = SaveData.from_json(text)
-		assert_eq(loaded["hacks"], [], text)
+		var loaded: Dictionary = SaveData.from_json(text, NOW)
+		assert_eq_deep(loaded["hacks"], {})
 		assert_eq_deep(loaded["progress"], {})
 
 
 func test_a_missing_or_wrong_progress_is_empty() -> void:
-	assert_eq_deep(SaveData.from_json('{"version": 2, "hacks": []}')["progress"], {})
-	assert_eq_deep(SaveData.from_json('{"version": 2, "progress": [1]}')["progress"], {})
+	assert_eq_deep(SaveData.from_json('{"version": 2, "hacks": []}', NOW)["progress"], {})
+	assert_eq_deep(SaveData.from_json('{"version": 2, "progress": [1]}', NOW)["progress"], {})
 
 
 func test_unknown_fighters_and_bad_numbers_are_left_out() -> void:
@@ -57,7 +60,7 @@ func test_unknown_fighters_and_bad_numbers_are_left_out() -> void:
 			}
 		)
 	)
-	var progress: Dictionary = SaveData.from_json(text)["progress"]
+	var progress: Dictionary = SaveData.from_json(text, NOW)["progress"]
 	assert_eq_deep(progress["trophies"], {"blaze": 10})
 	assert_eq_deep(progress["power_levels"], {"rocko": 4})
 	assert_false(progress.has("credits"))
@@ -79,7 +82,7 @@ func test_unknown_unlocks_selection_and_skins_are_left_out() -> void:
 			}
 		)
 	)
-	var progress: Dictionary = SaveData.from_json(text)["progress"]
+	var progress: Dictionary = SaveData.from_json(text, NOW)["progress"]
 	assert_eq(progress["unlocked"], ["luna"])
 	assert_false(progress.has("selected_fighter"))
 	assert_eq_deep(progress["selected_skins"], {"luna": "galaxy"})

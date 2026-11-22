@@ -1,24 +1,32 @@
 class_name SaveData
 extends RefCounted
-## The save file: `{"version": 2, "hacks": [...], "progress": {...}}`. The progress holds
-## `trophies` and `power_levels` per fighter, `unlocked`, `credits`, `selected_fighter` and
-## `selected_skins` per fighter. A version 1 file (spec 05) gives its hacks and an empty
-## progress. A missing, broken or newer file gives no hacks and an empty progress. Every field
-## is checked: unknown fighters, hacks and skins, wrong types and numbers out of range are
-## left out, so the game fills them from the sample progress.
+## The save file: `{"version": 3, "revision": n, "hacks": [{"id": ..., "until": ...}],
+## "progress": {...}}`. `until` is the Unix time (seconds) a hack turns off, `Hacks.FOREVER` (0)
+## for a hack that never does; `revision` counts the saves. The progress holds `trophies` and
+## `power_levels` per fighter, `unlocked`, `credits`, `selected_fighter` and `selected_skins` per
+## fighter. A version 1 file (spec 05) gives its hacks and an empty progress, a version 2 file
+## (spec 08) its hacks and its progress; their hacks get their time from `now` (the 3 days start
+## at the first start of version 3). A missing, broken or newer file gives no hacks and an empty
+## progress. Every field is checked: unknown fighters, hacks and skins, wrong types and numbers
+## out of range are left out, so the game fills them from the sample progress.
 
-const VERSION: int = 2
+const VERSION: int = 3
 
 
-static func to_json(hacks: Array[String], progress: Dictionary) -> String:
-	return JSON.stringify({"version": VERSION, "hacks": hacks, "progress": progress})
+static func to_json(hacks: Dictionary[String, int], progress: Dictionary, revision: int) -> String:
+	var saved_hacks: Array[Dictionary] = []
+	for hack_id: String in hacks:
+		saved_hacks.append({"id": hack_id, "until": hacks[hack_id]})
+	return JSON.stringify(
+		{"version": VERSION, "revision": revision, "hacks": saved_hacks, "progress": progress}
+	)
 
 
-## `{"hacks": Array[String], "progress": Dictionary}`; the progress has only the fields that
-## passed the checks.
-static func from_json(text: String) -> Dictionary:
-	var hacks: Array[String] = []
-	var result: Dictionary = {"hacks": hacks, "progress": {}}
+## `{"hacks": Dictionary[String, int] (id → until), "progress": Dictionary, "revision": int}`;
+## the progress has only the fields that passed the checks. `now` is the Unix time in seconds.
+static func from_json(text: String, now: int) -> Dictionary:
+	var hacks: Dictionary[String, int] = {}
+	var result: Dictionary = {"hacks": hacks, "progress": {}, "revision": 0}
 	var json: JSON = JSON.new()
 	if json.parse(text) != OK:
 		return result
@@ -28,12 +36,18 @@ static func from_json(text: String) -> Dictionary:
 	var version: int = _whole_number(data.get("version"), 1)
 	if version < 1 or version > VERSION:
 		return result
-	result["hacks"] = _read_hacks(data.get("hacks"))
+	if version >= 3:
+		result["hacks"] = _read_timed_hacks(data.get("hacks"), now)
+		result["revision"] = maxi(_whole_number(data.get("revision"), 0), 0)
+	else:
+		for hack_id: String in _read_hacks(data.get("hacks")):
+			hacks[hack_id] = Hacks.until_for(hack_id, now)
 	if version >= 2:
 		result["progress"] = _read_progress(data.get("progress"))
 	return result
 
 
+# Version 1 and 2: a list of hack ids.
 static func _read_hacks(saved: Variant) -> Array[String]:
 	var result: Array[String] = []
 	if not saved is Array:
@@ -41,6 +55,28 @@ static func _read_hacks(saved: Variant) -> Array[String]:
 	for hack_id: Variant in saved:
 		if hack_id is String and Hacks.is_known(hack_id) and not hack_id in result:
 			result.append(hack_id)
+	return result
+
+
+# Version 3: `[{"id", "until"}]`. Known ids once each; a for-ever hack gets `FOREVER`; a timed
+# hack needs a whole `until` > 0, cut to `now` + its duration when it lies further ahead; an
+# expired one is kept (`GameState` turns it off).
+static func _read_timed_hacks(saved: Variant, now: int) -> Dictionary[String, int]:
+	var result: Dictionary[String, int] = {}
+	if not saved is Array:
+		return result
+	for entry: Variant in saved:
+		if not entry is Dictionary:
+			continue
+		var hack_id: Variant = entry.get("id")
+		if not hack_id is String or not Hacks.is_known(hack_id) or result.has(hack_id):
+			continue
+		if not Hacks.is_timed(hack_id):
+			result[hack_id] = Hacks.FOREVER
+			continue
+		var until: int = _whole_number(entry.get("until"), 1)
+		if until >= 1:
+			result[hack_id] = mini(until, Hacks.until_for(hack_id, now))
 	return result
 
 

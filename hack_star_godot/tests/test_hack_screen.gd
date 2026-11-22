@@ -248,4 +248,7 @@ func test_the_code_of_a_qr_link_is_redeemed_when_the_screen_opens() -> void:
 
 
 func _saved_hacks() -> Array[String]:
-	return SaveData.from_json(FileAccess.get_file_as_string(TEST_SAVE))["hacks"]
+	var text: String = FileAccess.get_file_as_string(TEST_SAVE)
+	var hacks: Array[String] = []
+	hacks.assign(SaveData.from_json(text, GameState.now())["hacks"].keys())
+	return hacks

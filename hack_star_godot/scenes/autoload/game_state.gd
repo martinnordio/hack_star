@@ -15,6 +15,10 @@ var viewed_fighter: String = ""
 var entrance_played: bool = false
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
+## When each active hack turns off: Unix time in seconds, `Hacks.FOREVER` for never.
+var hack_until: Dictionary[String, int] = {}
+## The Unix time in seconds (a test sets a fake clock).
+var clock: Callable = Time.get_unix_time_from_system
 ## Where the progress and the hacks are saved; a test points it to a file under `user://test/`.
 var save_path: String = "user://hack_star_save.json"
 ## The fighter pictures of the list, rendered once per game start (see `FighterPictures`).
@@ -27,6 +31,8 @@ var match_settings: MatchSettings = MatchSettings.new()
 ## The end of the last match, `{outcome (Match.Result), place, fighter, skin}`, or empty;
 ## session only, not saved.
 var last_result: Dictionary = {}
+# The revision of the save file this game last read or wrote.
+var _revision: int = 0
 
 
 func _ready() -> void:
@@ -53,6 +59,9 @@ func reset() -> void:
 	last_result = {}
 	# In memory only, so a developer's own save file never changes what a test sees.
 	active_hacks = []
+	hack_until = {}
+	_revision = 0
+	clock = Time.get_unix_time_from_system
 
 
 func is_unlocked(fighter_id: String) -> bool:
@@ -82,6 +91,11 @@ func total_trophies() -> int:
 	return total
 
 
+## The clock's time as whole Unix seconds.
+func now() -> int:
+	return int(clock.call())
+
+
 func has_hack(hack_id: String) -> bool:
 	return hack_id in active_hacks
 
@@ -91,6 +105,7 @@ func activate_hack(hack_id: String) -> bool:
 	if not Hacks.is_known(hack_id) or has_hack(hack_id):
 		return false
 	active_hacks.append(hack_id)
+	hack_until[hack_id] = Hacks.until_for(hack_id, now())
 	save()
 	return true
 
@@ -107,6 +122,7 @@ func redeem_code(text: String) -> Dictionary:
 ## Turns all hacks off and saves; the normal rules are back.
 func reset_hacks() -> void:
 	active_hacks = []
+	hack_until = {}
 	save()
 
 
@@ -116,8 +132,10 @@ func reset_hacks() -> void:
 func load_saved() -> void:
 	if not FileAccess.file_exists(save_path):
 		return
-	var saved: Dictionary = SaveData.from_json(FileAccess.get_file_as_string(save_path))
-	active_hacks = saved["hacks"]
+	var saved: Dictionary = SaveData.from_json(FileAccess.get_file_as_string(save_path), now())
+	hack_until = saved["hacks"]
+	active_hacks.assign(hack_until.keys())
+	_revision = saved["revision"]
 	var progress: Dictionary = saved["progress"]
 	trophies.merge(progress.get("trophies", {}), true)
 	power_levels.merge(progress.get("power_levels", {}), true)
@@ -147,7 +165,8 @@ func save() -> void:
 		"selected_fighter": selected_fighter,
 		"selected_skins": selected_skins,
 	}
-	file.store_string(SaveData.to_json(active_hacks, progress))
+	_revision += 1
+	file.store_string(SaveData.to_json(hack_until, progress, _revision))
 
 
 ## Gives the fighter the trophies of a match result (`Trophies.reward` with the match
