@@ -156,6 +156,8 @@ func _play_entrance() -> void:
 	entrance_playing = true
 	var model: FighterModel = _stage.model
 	_effects = _build_effects()
+	# The stage's reveal plays at the landing, without its own pop (the drop is the pop).
+	_stage.hide_reveal()
 	# Small and high, so the fighter falls in from the sky inside the stage, not cut by its edge.
 	model.position.y = DROP_HEIGHT
 	model.rotation.y = -TAU
@@ -202,6 +204,7 @@ func _play_entrance() -> void:
 		. set_ease(Tween.EASE_OUT)
 	)
 	_tween.tween_callback(_burst).set_delay(LANDING)
+	_tween.tween_callback(_stage.reveal.bind(false)).set_delay(LANDING)
 	_tween_burst(_effects)
 	_tween.tween_property(_flash, "color:a", 0.3, 0.05).set_delay(LANDING)
 	_tween.tween_property(_flash, "color:a", 0.0, 0.25).set_delay(LANDING + 0.05)
@@ -227,6 +230,7 @@ func _finish_entrance() -> void:
 	model.position.y = 0.0
 	model.rotation.y = 0.0
 	model.scale = Vector3.ONE
+	_stage.finish_reveal()
 	_title.scale = Vector2.ONE
 	_title.modulate.a = 1.0
 	_top_bar.modulate.a = 1.0

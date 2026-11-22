@@ -4,3 +4,4 @@
 *.tmp
 /scenes/blaze_godot.zip
 /scenes/blaze_godot/
+/characters/*.zip

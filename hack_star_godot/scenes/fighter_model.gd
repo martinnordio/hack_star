@@ -30,6 +30,13 @@ const RUN_HEAD_SPEED: float = 2.4
 const ATTACK_SECONDS: float = 0.25
 const ATTACK_KICK: float = 0.18
 const ATTACK_SQUASH: float = 0.14
+## The idle of a picture fighter (spec 09, C4, D23): it breathes (stretch and squash), bobs and
+## sways around the view axis (the shader's `tilt`), each at its own speed.
+const CUTOUT_BREATH_STRETCH: float = 0.03
+const CUTOUT_BREATH_SQUASH: float = 0.02
+const CUTOUT_BOB_SPEED: float = 1.6
+const CUTOUT_BOB_HEIGHT: float = 0.04
+const CUTOUT_SWAY_ANGLE: float = 4.0 * PI / 180.0
 ## How opaque a fighter stays in a cactus patch (1 solid, 0 invisible).
 const SEE_THROUGH_ALPHA: float = ToonMaterials.SEE_THROUGH_ALPHA
 const SOLID_META: String = "solid_material"
@@ -327,7 +334,17 @@ func animate(time: float) -> void:
 	if _rig == null:
 		return
 	var recoil: float = sin((1.0 - attack_left / ATTACK_SECONDS) * PI) if attack_left > 0.0 else 0.0
-	if running:
+	var breath: Vector3 = Vector3.ONE
+	var tilt: float = 0.0
+	if _cutout != null and not running:
+		var wave: float = sin(time * BREATH_SPEED)
+		breath = Vector3(1.0 - wave * CUTOUT_BREATH_SQUASH, 1.0 + wave * CUTOUT_BREATH_STRETCH, 1.0)
+		tilt = sin(time * SWAY_SPEED) * CUTOUT_SWAY_ANGLE
+		_rig.rotation.x = 0.0
+		# Up from the feet only, so the picture never sinks into the ground.
+		_body.position.y = (0.5 + 0.5 * sin(time * CUTOUT_BOB_SPEED)) * CUTOUT_BOB_HEIGHT
+		_body.rotation.y = 0.0
+	elif running:
 		_rig.rotation.x = RUN_LEAN_ANGLE
 		_body.position.y = absf(sin(time * RUN_BOUNCE_SPEED)) * RUN_BOUNCE_HEIGHT
 		_body.rotation.y = 0.0
@@ -338,7 +355,11 @@ func animate(time: float) -> void:
 		_body.rotation.y = sin(time * SWAY_SPEED) * SWAY_ANGLE
 		_head.rotation.z = sin(time * HEAD_TILT_SPEED) * HEAD_TILT_ANGLE
 	_body.position.z = -recoil * ATTACK_KICK
-	_body.scale = Vector3(1.0 + recoil * ATTACK_SQUASH, 1.0 - recoil * ATTACK_SQUASH, 1.0)
+	_body.scale = (
+		Vector3(1.0 + recoil * ATTACK_SQUASH, 1.0 - recoil * ATTACK_SQUASH, 1.0) * breath
+	)
+	if _cutout != null:
+		(_cutout.material_override as ShaderMaterial).set_shader_parameter("tilt", tilt)
 	for index: int in _flickers.size():
 		var wave: float = 1.0 + sin(time * FLICKER_SPEED + index * 1.7) * FLICKER_AMOUNT
 		_flickers[index].scale = _flicker_scales[index] * wave

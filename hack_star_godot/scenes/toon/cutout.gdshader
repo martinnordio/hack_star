@@ -21,11 +21,14 @@ uniform bool flip = false;
 uniform float saturation = 1.0;
 // How much of the camera's foreshortening the picture takes (0 none, 1 all).
 uniform float foreshorten = 0.4;
+// A turn around the view axis, around the feet (radians): the idle's sway (D23).
+uniform float tilt = 0.0;
 
 const int RING_SAMPLES = 12;
 
 void vertex() {
 	UV = UV * (1.0 + 2.0 * pad) - vec2(pad);
+	VERTEX.xy = mat2(vec2(cos(tilt), sin(tilt)), vec2(-sin(tilt), cos(tilt))) * VERTEX.xy;
 	// Turned fully to the camera (as BaseMaterial3D's BILLBOARD_ENABLED), keeping the model's
 	// scale. A camera that looks down sees an upright fighter shorter (by the cosine of its pitch,
 	// the camera's up vector's y), so the picture shrinks around its feet by part of that: it keeps
