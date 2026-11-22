@@ -34,6 +34,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.48 M (21 k in · 2.45 M cached · 9 k out) | CHF 0.33 (39 credits) | Step 8 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:36:43–10:40:52) |---## Cost summary
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.29 M (24 k in · 2.25 M cached · 10 k out) | CHF 0.32 (38 credits) | Step 9 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:41:11–10:45:57) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.27 M (100 k in · 2.15 M cached · 17 k out) | CHF 0.04 (4 credits) | Step 10 done: all Godot checks exit 0, README and architecture updated (`usage.ps1 -AgentName s16b-step10` from 10:46:26) |---## Cost summary
+| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.00 M (192 k in · 7.76 M cached · 54 k out) | CHF 3.02 (360 credits) | author's reports (Steps 6–10): semantic diff written (6 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../../review/2026-11-22_godot-mvp-16-bug-fixes-2.html)); code review: Approve, 0 Blocking · 3 Should-fix · 2 Nit (`usage.ps1 -AgentName s16b-review` from 2026-11-22 10:04:46) |
 This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
@@ -711,6 +712,8 @@ Started: 2026-11-22 10:46
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-16-bug-fixes.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 3 Should-fix · 2 Nit |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: author's bug reports (S26–S32; Steps 1–5 kept, Steps 6–10 added) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff (Steps 6–10) | — | [review page](../../review/2026-11-22_godot-mvp-16-bug-fixes-2.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | diff (Steps 6–10) | Approve | 0 Blocking · 3 Should-fix · 2 Nit |
 
 ### Code review 2026-11-22
 
@@ -739,6 +742,33 @@ seam a test fakes; Step 4 drove two tabs in a real browser; nothing in `server/`
 **Outcome:** Approve — no Blocking finding; findings 2–5 to fix now, 1 needs a plan decision
 (runner) before `CLOSE:`.
 
+### Code review 2026-11-22 (author's reports, Steps 6–10)
+
+Range `e175dfe..ccf39a1` (this run's commits only: the plan commit `33fc2c7` and Steps 6–10).
+Ran: `tools/test.ps1` (402 of 402 passed), `tools/lint.ps1` (OK); record checked with
+`change_record.schema.json` (checks 6 pass · 3 n/a · 0 fail). Before | After: real screenshots of
+the hack screen, the Info page and Training at the start from a windowed Godot 4.7.2 run
+(temporary capture script, removed) at 1280×720 and 390×844, the before side from a temporary
+worktree at `e175dfe` (removed); Space, a left click and **Back**'s focus in Training from a
+temporary headless probe, the same source on both sides, saving under `user://review16b/` (never
+the player's file). Good: every report became a statement and a Step with a test that fails
+before the change; the scan rule is one static check with a test seam (`can_scan`); Space reuses
+the tap's aim, the cool-down and the countdown lock, so no rule was added; the mouse code and
+`Combat.ground_point` were removed with their tests instead of being left unused; the help texts
+read their numbers from the rules and a test keeps them equal; the deviations (the hint's place
+without a touch screen, `how_to_play()` as a function) are explained in the Step Notes; nothing in
+`server/` or `ui/` and no PowerShell script changed.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | `docs/architecture.md:322` — Step 10 replaced the description of `test_save_tabs.gd` (two tabs on one save: the merge of hacks, trophies and unlocks, the revision, the sync at the front, the web migration with a fake `localStorage`, `SaveStore` as a file) with the four new test files instead of adding them, so the first round's two-tab tests are no longer documented, and the sentence now runs "…the time left on the hack screen; The controls and the help…". Restore the `test_save_tabs.gd` clause and start the new sentence properly | architecture | docs | Should-fix | fix now |
+| 2 | The Stage log is broken: the rows of Steps 6–10 were written with six lone CR line breaks, and `---` plus `## Cost summary` were glued onto the Step 8 and the Step 10 rows (twice). Markdown reads a lone CR as a line end, so the table ends after the Step 8 row, the Step 9 and 10 rows (and the review row below them) render as plain text and the Cost summary heading is gone. Rewrite the rows with CRLF and keep one `---` and one `## Cost summary` below the table | spec | docs | Should-fix | fix now |
+| 3 | The touch branch of the start hint has no test and was not seen: `scenes/arena.gd:80-84` (the `TOUCH_HINT` line, `HINT_ABOVE_STICKS` 288 and the label height `104.0` written in code) runs only when `DisplayServer.is_touchscreen_available()`, which the tests cannot fake, so S31's "on a touch screen: the two sticks" and "covers neither the countdown" are unchecked where the kids play. At 844×390 the touch hint spans y 258–362 of the 650-high content and the countdown 135–255 (3 px apart); a wrapped fourth line grows it upwards into the countdown. Add a seam like `can_scan` (e.g. `touch_controls`, read in `_ready`) and run the five-size test of `test_controls_hint.gd` with it | code | test | Should-fix | fix now |
+| 4 | In phone portrait (390×844) the keyboard hint wraps as "Move: WASD or arrow keys ·" / "Shoot: Space" (record block controls-hint), leaving the separator at the end of a line; e.g. put the two parts on their own lines in the hint | code | guideline | Nit | fix now |
+| 5 | Definition of Done: the *Implementation* line is still unticked with "(Steps 1–5 done; reopened for Steps 6–10)" although Steps 6–10 are ✅ Done and Step 10 ran `check_tools.ps1`, `test.ps1` (402/402), `lint.ps1` and `export_web.ps1` (exit 0) and updated README and architecture | spec | docs | Nit | fix now |
+
+**Outcome:** Approve — no Blocking finding; findings 1–5 to fix now (no plan decision needed).
+
 ---
 
 ## Definition of Done
@@ -746,6 +776,6 @@ seam a test fakes; Step 4 drove two tabs in a real browser; nothing in `server/`
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated _(Steps 1–5 done; reopened for Steps 6–10)_
-- [ ] Review · review page written; no Blocking finding open _(first review done; Steps 6–10 to review)_
+- [x] Review · review page written; no Blocking finding open _(first review; Steps 6–10: [review page](../../review/2026-11-22_godot-mvp-16-bug-fixes-2.html), Approve, 0 Blocking)_
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22)_
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

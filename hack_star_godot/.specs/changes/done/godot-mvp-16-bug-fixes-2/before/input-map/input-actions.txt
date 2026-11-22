@@ -1,0 +1,5 @@
+input action move_left: A, Left
+input action move_right: D, Right
+input action move_up: W, Up
+input action move_down: S, Down
+arena.tscn Hud/BackButton: focus_mode not set (FOCUS_ALL, from the button)
