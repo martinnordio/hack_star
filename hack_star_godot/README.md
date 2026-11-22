@@ -17,6 +17,7 @@ codes: a hack screen to type or scan a code, the three hacks, and a QR code page
 | `tests/` | Automated tests (GUT) |
 | `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |
 | `addons/gut/` | GUT 9.7.1, the test tool, with its licence |
+| `addons/proton_scatter/` | ProtonScatter 4.2.0, the editor tool that places the Glimmer Isles props (not exported), with its licence |
 | `tools/` | PowerShell scripts for the checks, export and serving |
 | `web/` | Browser scripts copied into the web export: the camera QR scanner and jsQR (with its licence) |
 | `build/` | Web export (created by the scripts, git-ignored) |
@@ -71,7 +72,9 @@ Run the commands in PowerShell, from the `hack_star_godot` folder.
    uv tool install gdtoolkit==4.5.0
    ```
 
-4. **GUT 9.7.1** (the test tool) is already in `addons/gut/`. Nothing to install.
+4. **GUT 9.7.1** (the test tool) is already in `addons/gut/`, and **ProtonScatter 4.2.0**
+   (the editor tool that places the Glimmer Isles props) in `addons/proton_scatter/`. Nothing
+   to install.
 
 5. Check that everything is in place:
 
@@ -156,7 +159,7 @@ Run them from the `hack_star_godot` folder.
 
 | Command | What it does |
 |---------|--------------|
-| `.\tools\check_tools.ps1` | Checks the pinned versions of Godot, the export templates, gdtoolkit and GUT |
+| `.\tools\check_tools.ps1` | Checks the pinned versions of Godot, the export templates, gdtoolkit, GUT and ProtonScatter |
 | `.\tools\test.ps1` | Runs the GUT tests headless (without the editor); fails if a test fails. Use it, not the editor's GUT panel: only this script sets the pre-run hook (`tests/pre_run_hook.gd`) that keeps the tests off your save file |
 | `.\tools\lint.ps1` | Runs `gdlint` and `gdformat --check` on `game/`, `scenes/` and `tests/` |
 | `.\tools\export_web.ps1` | Exports the game for the web into `build\web\` |

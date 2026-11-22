@@ -23,6 +23,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | `tools/` | PowerShell scripts: `check_tools.ps1`, `test.ps1`, `lint.ps1`, `export_web.ps1`, `serve_web.ps1` (the local setup, with `serve_web.py` and `make_cert.py`), `godot.ps1` (finds Godot), the pinned versions in `versions.json` |
 | `web/` | Browser scripts that `export_web.ps1` copies into `build/web/`: `qr_scanner.js` (the camera and the scan, own work), `jsQR.js` (the QR decoder, unmodified) and its `jsQR-LICENSE.txt` |
 | `addons/gut/` | GUT 9.7.1, the test tool (excluded from the export) |
+| `addons/proton_scatter/` | ProtonScatter 4.2.0 without its `demos/` and `tests/`, the editor tool that places the Glimmer Isles props (excluded from the export; the game uses only its baked result) |
 | `docs/` | This document |
 | `export_presets.cfg` | The web export (single-threaded) |
 | `LICENSES.md` | The licence of every asset and third-party part |
@@ -338,7 +339,7 @@ them headless, from the `hack_star_godot` folder:
 
 | Command | What |
 |---------|------|
-| `.\tools\check_tools.ps1` | The pinned versions of Godot, export templates, gdtoolkit and GUT |
+| `.\tools\check_tools.ps1` | The pinned versions of Godot, export templates, gdtoolkit, GUT and ProtonScatter |
 | `.\tools\test.ps1` | All GUT tests; exit code 0 means they pass |
 | `.\tools\lint.ps1` | `gdlint` and `gdformat --check` on `game/`, `scenes/`, `tests/` |
 | `.\tools\export_web.ps1` | Exports the game to `build\web\` |

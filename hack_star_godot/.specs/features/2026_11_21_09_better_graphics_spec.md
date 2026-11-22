@@ -24,6 +24,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.48 M (121 k in · 5.33 M cached · 25 k out) | CHF 1.82 (217 credits) | Step 7 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:43:19 to 13:50:52) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.19 M (251 k in · 5.92 M cached · 25 k out) | CHF 2.47 (295 credits) | Step 8 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:51:50 to 14:13:07) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.44 M (49 k in · 6.37 M cached · 19 k out) | CHF 1.60 (190 credits) | Step 9 done (`usage.ps1 -AgentName s09g-steps7-9` from 14:13:42 to 14:21:06) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.78 M (125 k in · 4.63 M cached · 23 k out) | CHF 1.68 (201 credits) | Step 10 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:22:23 to 14:30:28) |
 
 ---
 
@@ -331,7 +332,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ✅ Done | [→ Step 7](#step-7--fighter-cards) |
 | **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ✅ Done | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
 | **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ✅ Done | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
-| **10** | ProtonScatter addon | reasoning (Claude Opus 5.5) — S1; a new pinned dependency kept out of the export (D11) | ⬜ Not started | [→ Step 10](#step-10--protonscatter-addon) |
+| **10** | ProtonScatter addon | reasoning (Claude Opus 5.5) — S1; a new pinned dependency kept out of the export (D11) | ✅ Done | [→ Step 10](#step-10--protonscatter-addon) |
 | **11** | Worlds and the world choice | reasoning (Claude Opus 5.5) — S1; the arena layout per world, the Glimmer Isles layout and the choice on home (D9, D10) | ⬜ Not started | [→ Step 11](#step-11--worlds-and-the-world-choice) |
 | **12** | Glimmer Isles objects and scatter scene | reasoning (Claude Opus 5.5) — S1; original fantasy props and the ProtonScatter setup (D13) | ⬜ Not started | [→ Step 12](#step-12--glimmer-isles-objects-and-scatter-scene) |
 | **13** | Glimmer Isles baked and playable | reasoning (Claude Opus 5.5) — S1; the bake tool, the world in a match, web export and frame rate (D12) | ⬜ Not started | [→ Step 13](#step-13--glimmer-isles-baked-and-playable) |
@@ -621,13 +622,17 @@ Started: 2026-11-22 14:13
 ProtonScatter 4.2.0 is in the project, pinned, credited and kept out of the export (W6, D11).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Download 4.2.0 from the Godot Asset Store page; copy `addons/proton_scatter/` without `demos/` and `tests/`; keep `LICENSE`; note the zip's SHA-256.
-- [ ] Enable the plugin in `project.godot`; `tools/versions.json` `"protonscatter": "4.2.0"`; `check_tools.ps1` checks its `plugin.cfg` version (pending/fail rules as GUT); `export_presets.cfg` excludes `addons/proton_scatter/*`; `LICENSES.md` row.
-- [ ] Check: `check_tools.ps1` shows ProtonScatter 4.2.0; Godot imports the project headless without errors from the addon; `test.ps1`, `lint.ps1`, `export_web.ps1` exit 0; no addon file in the `.pck` (export file list); export size unchanged (D16).
+- [x] Record the start time in Notes below.
+- [x] Download 4.2.0 from the Godot Asset Store page; copy `addons/proton_scatter/` without `demos/` and `tests/`; keep `LICENSE`; note the zip's SHA-256.
+- [x] Enable the plugin in `project.godot`; `tools/versions.json` `"protonscatter": "4.2.0"`; `check_tools.ps1` checks its `plugin.cfg` version (pending/fail rules as GUT); `export_presets.cfg` excludes `addons/proton_scatter/*`; `LICENSES.md` row.
+- [x] Check: `check_tools.ps1` shows ProtonScatter 4.2.0; Godot imports the project headless without errors from the addon; `test.ps1`, `lint.ps1`, `export_web.ps1` exit 0; no addon file in the `.pck` (export file list); export size unchanged (D16).
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 14:22
+**Addon** (D11, W6): the Godot Asset Store download of version 4.2.0 (`/asset/hungryproton/protonscatter/download/4384/`, 10,151,948 bytes, SHA-256 `ea971151188dfa33ad78c0a53058cfdfdc0a97e4d310641a14dfefe9b5e0e449`; `plugin.cfg` says 4.2.0, `LICENSE` MIT "Copyright (c) 2019 HungryProton") copied unchanged into `addons/proton_scatter/` without `demos/` (11.8 MB) and `tests/` — 334 files, 0.6 MB. The two built-in presets (`presets/grass.tscn`, `scatter_default.tscn`) name demo assets by path; they are loaded only when someone picks them in the editor's preset menu, so they stay unchanged (the import shows no error). Enabled in `project.godot` next to GUT; `tools/versions.json` `"protonscatter": "4.2.0"`; `check_tools.ps1` checks `addons/proton_scatter/plugin.cfg` like GUT (pending without `project.godot`, fails when missing or another version); `export_presets.cfg` excludes `addons/proton_scatter/*`; `LICENSES.md` row (source, version and date, download date, zip SHA-256, licence file) and the "excluded from the export" paragraph; README (folders, setup, `check_tools.ps1`) and `docs/architecture.md` (folders, checks) name the addon.
+**Export** (D16): the only trace of the addon in `index.pck` is its `plugin.cfg` path in the project settings (as GUT's) — no addon file. `index.pck` 306,300 bytes vs 306,252 at `6c00b7e` (exported from a scratch worktree, then removed): +48 bytes, the setting; `build/web` 40,427,430 bytes (+66,340 vs the Step 1 baseline of 40,361,090, budget +5 MB).
+**Done (2026-11-22 · ~8 min · Claude Opus 5.5)** — ProtonScatter 4.2.0 in `addons/proton_scatter/` (without demos and tests), pinned, checked by `check_tools.ps1`, credited, enabled in the editor and excluded from the export. `tools/check_tools.ps1` exit 0 (ProtonScatter 4.2.0), headless `--import` exit 0 without errors, `tools/test.ps1` 433 tests passed, `tools/lint.ps1` exit 0, `tools/export_web.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 4.78 M tokens · CHF 1.68 (201 credits)
 
 ---
 

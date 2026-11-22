@@ -28,11 +28,13 @@ title, headings, buttons and numbers use Lilita One (below).
 |-----------|-------|---------|-----------|
 | Godot Engine 4.7.2 | Installed on the computer, not in the repository; its code is part of every exported game | [MIT](https://godotengine.org/license) | © Godot Engine contributors (Juan Linietsky, Ariel Manzur and contributors) |
 | GUT 9.7.1 (test tool) | `addons/gut/`, with its [LICENSE.md](addons/gut/LICENSE.md) | MIT | `Copyright (c) 2018 Tom "Butch" Wesley` |
+| ProtonScatter 4.2.0 (editor tool that places the Glimmer Isles props) | `addons/proton_scatter/`, with its [LICENSE](addons/proton_scatter/LICENSE); unchanged except that `demos/` and `tests/` are left out (not used); pinned in `tools/versions.json` (`protonscatter`) | MIT | `Copyright (c) 2019 HungryProton` — [Godot Asset Store](https://store.godotengine.org/asset/hungryproton/protonscatter/) download of version 4.2.0 (2026-07-28), downloaded 2026-11-22; [source](https://codeberg.org/hungryproton/proton_scatter); zip SHA-256 `ea971151188dfa33ad78c0a53058cfdfdc0a97e4d310641a14dfefe9b5e0e449` |
 | Fonts of GUT (Anonymous Pro, Courier Prime, Lobster Two) | `addons/gut/fonts/`, with [OFL.txt](addons/gut/fonts/OFL.txt) | SIL Open Font License 1.1 | `Copyright (c) 2009, Mark Simonson` for Anonymous Pro (the licence file names only this font) |
 | jsQR 1.4.0 (QR decoder of the camera scanner, the library of the Svelte game) | `web/jsQR.js`, unmodified with a licence header, and its [licence](web/jsQR-LICENSE.txt); copied into the web export | [Apache-2.0](https://github.com/cozmo/jsQR/blob/master/LICENSE) | © Cosmo Wolfe and the jsQR contributors |
 
-GUT is excluded from the exported game (`exclude_filter` in `export_presets.cfg`); it runs only
-in the tests and in the editor. `web/qr_scanner.js`, the camera scanner around jsQR, is own work
+GUT and ProtonScatter are excluded from the exported game (`exclude_filter` in
+`export_presets.cfg`); GUT runs only in the tests and in the editor, ProtonScatter only in the
+editor and in the bake tool — the game loads only its baked result. `web/qr_scanner.js`, the camera scanner around jsQR, is own work
 (MIT).
 
 ## Tools, not shipped
