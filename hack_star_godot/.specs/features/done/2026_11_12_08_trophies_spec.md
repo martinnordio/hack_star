@@ -1,18 +1,18 @@
 # Trophies and Prestige Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
-> **Last updated:** 2026-11-21
+> **Last updated:** 2026-11-22
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #32
-> **Moved from:** [2026_11_12_trophies_spec.md](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6)
+> **Moved from:** [2026_11_12_trophies_spec.md](../../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_trophies_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_trophies_spec.md (requirements only) |
 | 2026-11-21 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked; S2, S3, S4, S5 revised; S11 (progress kept), S12 (English), S13 (what worked before) and S14 (MVP complete) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-21 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #32 created (no parent) |
 | 2026-11-21 | plan | `PLAN:` | Claude Opus 5.5 | 2.40 M (119 k in · 2.25 M cached · 26 k out) | CHF 1.32 (157 credits) | Part 2 written (7 Steps: standard, reasoning, standard, standard, standard, standard, light); also the requirements revision and the issue (`usage.ps1 -AgentName s08-lead` from 21:49:57) |
@@ -23,8 +23,41 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.58 M (40 k in · 2.52 M cached · 17 k out) | CHF 0.44 (52 credits) | Step 5 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:09:00" -Until "2026-11-21 22:14:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.46 M (19 k in · 1.44 M cached · 9 k out) | CHF 0.23 (28 credits) | Step 6 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:14:00" -Until "2026-11-21 22:18:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.78 M (106 k in · 2.65 M cached · 21 k out) | CHF 0.07 (9 credits) | Step 7 done (`usage.ps1 -AgentName s08-step7 -Since "2026-11-21 21:49:57"`) |
-| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 12.77 M (369 k in · 12.28 M cached · 118 k out) | CHF 5.59 (667 credits) | semantic diff written (7 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-08-trophies.html)); code review: Approve, 0 Blocking · 2 Should-fix · 5 Nit (`usage.ps1 -AgentName s08-review,s08-review2` from 2026-11-21 21:49:57; includes the requests of the interrupted first review agent `s08-review`, whose output was deleted — real cost) |
+| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 12.77 M (369 k in · 12.28 M cached · 118 k out) | CHF 5.59 (667 credits) | semantic diff written (7 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../../review/2026-11-21_godot-mvp-08-trophies.html)); code review: Approve, 0 Blocking · 2 Should-fix · 5 Nit (`usage.ps1 -AgentName s08-review,s08-review2` from 2026-11-21 21:49:57; includes the requests of the interrupted first review agent `s08-review`, whose output was deleted — real cost) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.17 M (81 k in · 1.08 M cached · 8 k out) | CHF 0.33 (39 credits) | review fixes #2, #3, #5, #7 and the decisions D11 (#1) and D12 (#4); #6 was already in Deferred Items; commit `Fix review findings (#32)` (`usage.ps1 -AgentName s08-close` 2026-11-22 08:13:58–08:17:07) |
+| 2026-11-22 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.36 M (30 k in · 1.32 M cached · 13 k out) | CHF 0.28 (34 credits) | spec closed (`usage.ps1 -AgentName s08-close` from 2026-11-22 08:17:07) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 419 k (153 k in · 260 k cached · 6 k out) | CHF 0.39 (47 credits) | spec runner (coordination); the first runner s08-runner was cut off by a network error and s08-runner2 resumed — both counted (`usage.ps1 -AgentName s08-runner,s08-runner2` from 2026-11-21 21:49:57) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.09 M (1.04 M in · 1.04 M cached · 2 k out) | CHF 4.59 (547 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-21 21:49:57) |
 ---
+
+## Cost summary
+
+This feature used 29.89 M tokens, CHF 14.27 (1701 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Sonnet 5.5, Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 2.40 M | CHF 1.32 (157 credits) | 8.3 % |
+| implementation | Claude Sonnet 5.5, Claude Opus 5.5, Claude Haiku 5.5 | 14.72 M | CHF 7.36 (877 credits) | 46.2 % |
+| review | Claude Opus 5.5 | 12.77 M | CHF 5.59 (667 credits) | 35.1 % |
+| **Total** | | **29.89 M** | **CHF 14.27 (1701 credits)** | **89.5 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Sonnet 5.5 | 392 k | CHF 0.18 (21 credits) | 1.1 % |
+| Step 2 | Claude Opus 5.5 | 862 k | CHF 0.45 (53 credits) | 2.8 % |
+| Step 3 | Claude Sonnet 5.5 | 1.04 M | CHF 0.27 (32 credits) | 1.7 % |
+| Step 4 | Claude Sonnet 5.5 | 565 k | CHF 0.13 (15 credits) | 0.8 % |
+| Step 5 | Claude Sonnet 5.5 | 2.58 M | CHF 0.44 (52 credits) | 2.7 % |
+| Step 6 | Claude Sonnet 5.5 | 1.46 M | CHF 0.23 (28 credits) | 1.5 % |
+| Step 7 | Claude Haiku 5.5 | 2.78 M | CHF 0.07 (9 credits) | 0.5 % |
+| Review fixes | Claude Sonnet 5.5 | 1.17 M | CHF 0.33 (39 credits) | 2.1 % |
+| CLOSE | Claude Sonnet 5.5 | 1.36 M | CHF 0.28 (34 credits) | 1.8 % |
+| Spec runner (coordination) | Claude Sonnet 5.5 | 419 k | CHF 0.39 (47 credits) | 2.5 % |
+| Orchestrator (main chat) | Claude Opus 5.5 | 2.09 M | CHF 4.59 (547 credits) | 28.8 % |
+| **Total implementation** | | **14.72 M** | **CHF 7.36 (877 credits)** | **46.2 %** |
 
 # Part 1 · Requirements
 
@@ -34,20 +67,20 @@ Matches can be won and lost, but nothing is earned. The kids' favourite part of 
 pushing a fighter's trophies and reaching **Prestige** at 1000 trophies ("if I win, the
 fighter gets 10 trophies; at 1000 it gets a diamond with a number"). This spec gives trophies
 after each match and celebrates Prestige. It is F5 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md), and with it the
+[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md), and with it the
 first playable version (F0–F5) is complete.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6).
-- [First match spec](done/2026_11_12_07_first_match_spec.md) — matches with a result (victory,
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6).
+- [First match spec](2026_11_12_07_first_match_spec.md) — matches with a result (victory,
   defeat with place, time's up) and the result screen; match settings.
-- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — trophies per fighter in the saved
+- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — trophies per fighter in the saved
   progress, total trophies on home, the Prestige badge on home, list and fighter screen.
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14); its S8 (the MVP is F0–F5) and S9 (progress kept on the same
   device and browser).
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — the first save file (D5).
+- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — the first save file (D5).
 - Checked 2026-11-21 (S0) in the code: `GameState` (`scenes/autoload/game_state.gd`) holds
   trophies, power levels, unlocked fighters, credits and the selected fighter and skins for the
   session only; it starts from `SampleProgress` (`game/sample_progress.gd`: Blaze 1240, Rocko
@@ -73,9 +106,9 @@ first playable version (F0–F5) is complete.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea and the questions to Mattia |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and the questions to Mattia |
 | `hack_star_godot/docs/architecture.md` | How the Godot game is organised (spec 03) |
-| [README](../../README.md) | How to open, run, test and export the Godot game |
+| [README](../../../README.md) | How to open, run, test and export the Godot game |
 
 ## 1 · Specs
 
@@ -125,7 +158,7 @@ first playable version (F0–F5) is complete.
   spec; the save file of spec 05 holds only the hacks.)_
 - **S12 — Language:** All new text (the trophy change, the count, the bar, the celebration) is
   in English; translations come with
-  [spec 15](2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet.)_
 - **S13 — What worked before:** Home, the fighter list, the fighter screen, the info page, the
   hack screen with its codes, Training, the match and the result screen work as before; the
@@ -150,6 +183,14 @@ kept, S11)._
 ---
 
 # Part 2 · Plan
+
+## Closing summary
+
+**Built:** A win now gives the played fighter +10 trophies (0 for a defeat or a time-up), never below its last Prestige (`Trophies`, `Prestige.floor_of` / `next_at`; the two numbers are clamped settings in `MatchSettings`). The trophies are given once, when the match ends, and saved at once; the result screen shows the change ("+10 trophies"), the count "1250 / 2000" and a bar from the last Prestige to the next, counting up over 1 s, and a new Prestige shows "PRESTIGE n!" with the badge and a gold burst. The save file is version 2: the hacks and the whole progress (trophies, power levels, unlocked fighters, credits, chosen fighter and skins); a spec 05 file keeps its hacks, every saved field is checked and a damaged file never stops the game. `tests/pre_run_hook.gd` keeps the tests off the player's file. `tests/test_mvp_flow.gd` walks F0–F5 (home, hack, fighter, match, result with trophies, home, a fresh load). With this the first playable version (F0–F5) is complete. No server call.
+
+**Differs from the plan:** The code review (Approve, 0 Blocking · 2 Should-fix · 5 Nit) was handled: findings 2, 3, 5 and 7 are fixed (the tap-to-skip claim removed from the `finish_count()` comment and the architecture, three wording errors in the architecture, the burst colour set from `Rarity.LEGENDARY_GOLD`, the Definition of Done line); two decisions were added: D11 (the chosen fighter is kept after a restart when `is_unlocked` says it is available, the unlock-all hack included; with a test) and D12 (no `.gutconfig.json`: README and architecture say to run the tests with `tools/test.ps1`); finding 6 (an upper limit for saved power levels) is in Deferred Items for spec 09. Nothing else differs.
+
+**Files:** `hack_star_godot/game/` (`trophies`, `prestige`, `match_settings`, `save_data`), `hack_star_godot/scenes/` (`autoload/game_state`, `match_arena`, `result_screen`, `result_screen.tscn`), `hack_star_godot/scenes/ui/hack_star_theme.tres`, `hack_star_godot/tests/`, `hack_star_godot/tools/test.ps1`, `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 
 ## 2 · Spec Overview
 
@@ -181,7 +222,7 @@ kept, S11)._
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0. Nothing in `server/` or `ui/`
 > changes, and no server is called for trophies or saving (D8). `gdlint` allows at most 20
 > public tests per file: new tests go into new files where a file is full (`test_home.gd` has
@@ -411,10 +452,10 @@ Started: 2026-11-21 22:17
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone of the whole MVP (specs 04–08: touch, ≥ 30 frames per second, the camera for hack codes, a full match, the trophies kept after a reload) and the browser check of the web export | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
-| Credits, unlocks and power upgrades that change with play (saved with `save()`) | Not part of trophies; the fields are already in the save file (D3) | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
-| An upper limit for saved power levels (an edited file can give power 50; `SaveData` checks only ≥ 1) | Code review finding 6 (2026-11-22); power levels change with play only in spec 09 | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Progress on another device or browser (accounts) | No login in the MVP (spec 03, S9) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| Translations of new text | English only (S12, D8) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Credits, unlocks and power upgrades that change with play (saved with `save()`) | Not part of trophies; the fields are already in the save file (D3) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| An upper limit for saved power levels (an edited file can give power 50; `SaveData` checks only ≥ 1) | Code review finding 6 (2026-11-22); power levels change with play only in spec 09 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| Progress on another device or browser (accounts) | No login in the MVP (spec 03, S9) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Translations of new text | English only (S12, D8) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 
 ---
 
@@ -447,7 +488,7 @@ nothing in `server/` or `ui/` changed.
 | 3 | `docs/architecture.md` wording: line 44 gives the change as ("+10", or "0") — the screen writes "+10 trophies" / "+0 trophies"; line 90 (`trophies.gd`) cites "spec 08, D5" — the rules are D1; line 89 (`match_settings.gd`) says "never negative, the defeat number is never above 0" — `trophies_per_defeat` may be negative (≤ 0) | architecture | docs | Nit | fix now |
 | 4 | The pre-run hook (D7) is passed only by `tools/test.ps1` (`-gpre_run_script`); there is no `res://.gutconfig.json`, so GUT started from the editor's GUT panel or `gut_cmdln` without the flag lets the match, select and award tests write the player's `user://hack_star_save.json`. Decide: a `.gutconfig.json` with `pre_run_script`, or a README line "run the tests only with `tools/test.ps1`" | architecture | test | Nit | plan decision |
 | 5 | The burst's gold is a copy: `scenes/result_screen.tscn:107` `Burst` `color = Color(1, 0.82, 0.2, 1)`, while D6 says the burst is in `Rarity.LEGENDARY_GOLD` (the one own colour, held by `Rarity`). Set `_burst.color` from `Rarity.LEGENDARY_GOLD` in `result_screen.gd` (the theme's `Bar_fill` cannot reference a constant) | code | guideline | Nit | fix now |
-| 6 | Saved power levels have no upper bound: `SaveData._read_progress` (`game/save_data.gd:54`) keeps any whole number ≥ 1, so an edited file gives power 50 although the game's maximum is 11 (22 with the hack). D3 asks only ≥ 1; spec 09 changes power levels with play and owns their limits | code | security | Nit | deferred — [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
+| 6 | Saved power levels have no upper bound: `SaveData._read_progress` (`game/save_data.gd:54`) keeps any whole number ≥ 1, so an edited file gives power 50 although the game's maximum is 11 (22 with the hack). D3 asks only ≥ 1; spec 09 changes power levels with play and owns their limits | code | security | Nit | deferred — [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
 | 7 | Definition of Done: the *Implementation* line is not ticked although all seven Steps are ✅ Done and Step 7 ran `tools/check_tools.ps1`, `test.ps1`, `lint.ps1` and `export_web.ps1` (exit 0) and updated README and architecture; spec 07 ticked it in its last Step | spec | docs | Nit | fix now |
 
 **Outcome:** Approve — no Blocking finding; findings 2, 3, 5 and 7 to fix now, 1 and 4 need a
@@ -461,5 +502,5 @@ plan decision (runner) before `CLOSE:`, 6 is deferred to spec 09.
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

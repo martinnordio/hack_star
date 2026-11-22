@@ -33,7 +33,7 @@ in the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.
 - [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — credits (500 at start), power levels and
   unlocked fighters in the saved progress; fighter list and fighter screen.
 - [First match spec](done/2026_11_12_07_first_match_spec.md) and
-  [trophies spec](2026_11_12_08_trophies_spec.md) — matches, fixed health 3200 and damage
+  [trophies spec](done/2026_11_12_08_trophies_spec.md) — matches, fixed health 3200 and damage
   480, settings, rewards after a match.
 - [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how

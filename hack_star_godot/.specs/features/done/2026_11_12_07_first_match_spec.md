@@ -172,7 +172,7 @@ settings with a default, so his answers change one value each.
 - **S16 — What worked before:** Home, the fighter list, the fighter screen, the info page, the
   hack screen and the QR page work as before; **Back** in a match goes home at any time without
   a result; a match changes no trophies, credits or unlocks (trophies come with
-  [spec 08](../2026_11_12_08_trophies_spec.md)), and the hacks change nothing in a match (spec 05,
+  [spec 08](2026_11_12_08_trophies_spec.md)), and the hacks change nothing in a match (spec 05,
   S12). _(added 2026-11-21: the match is shared with the screens of specs 01–06.)_
 
 ### Open questions
@@ -475,7 +475,7 @@ suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (a full match with 3 bots at ≥ 30 frames per second, both sticks) and the browser check of the web export | Needs a person with the devices and a browser (spec 03, D6) | the author, before spec 08 is closed |
-| Trophies and credits for a result | Not part of the first match (S16) | [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| Trophies and credits for a result | Not part of the first match (S16) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
 | Overtime and choosing match length, bot count and level in the game; address overrides of the settings (`?seconds=…`) | The defaults are set in code (S10, D12) | [11 Overtime and match options](../2026_11_12_11_overtime_and_match_options_spec.md) |
 | Bot Supers and Hypercharge | Not part of the first match | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
 | Translations of new text | English only (S15, D12) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |

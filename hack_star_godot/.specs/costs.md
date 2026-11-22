@@ -1,9 +1,9 @@
 # Cost of the specs
 
 > Estimate — see [COSTS.md](../../.specs/kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
-> `costs_ledger` from the Stage logs on 2026-11-21; do not edit by hand.
+> `costs_ledger` from the Stage logs on 2026-11-22; do not edit by hand.
 
-**All specs: ~232.12 M · ~CHF 91.53 (10914 credits)**
+**All specs: ~262.01 M · ~CHF 105.80 (12615 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -12,7 +12,7 @@
 | [Hack Codes](features/done/2026_11_12_05_hack_codes_spec.md) | ✅ Complete | — | ~3.39 M · ~CHF 1.70 | ~29.65 M · ~CHF 7.67 | ~8.27 M · ~CHF 2.98 | — | — | ~41.31 M · ~CHF 12.35 |
 | [Graphics Demo](features/done/2026_11_12_06_graphics_demo_spec.md) | ✅ Complete | — | ~3.35 M · ~CHF 1.76 | ~26.39 M · ~CHF 7.46 | ~7.43 M · ~CHF 3.04 | — | — | ~37.17 M · ~CHF 12.26 |
 | [First Match](features/done/2026_11_12_07_first_match_spec.md) | ✅ Complete | — | ~2.48 M · ~CHF 1.46 | ~20.30 M · ~CHF 5.70 | ~8.22 M · ~CHF 3.06 | — | — | ~31.00 M · ~CHF 10.22 |
-| [Trophies and Prestige](features/2026_11_12_08_trophies_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Trophies and Prestige](features/done/2026_11_12_08_trophies_spec.md) | ✅ Complete | — | ~2.40 M · ~CHF 1.32 | ~14.72 M · ~CHF 7.36 | ~12.77 M · ~CHF 5.59 | — | — | ~29.89 M · ~CHF 14.27 |
 | [Unlock and Upgrade](features/2026_11_12_09_unlock_and_upgrade_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Skins Shop](features/2026_11_12_10_skins_shop_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Overtime and Match Options](features/2026_11_12_11_overtime_and_match_options_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
@@ -25,7 +25,7 @@
 | [Worlds and World Coins](features/2026_11_16_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Godot Setup and First Game](features/done/2026_11_21_01_godot_setup_and_first_game_spec.md) | ✅ Complete | ~7.75 M · ~CHF 4.23 | ~2.07 M · ~CHF 0.78 | ~24.78 M · ~CHF 10.03 | ~5.47 M · ~CHF 2.65 | ~473 k · ~CHF 0.03 | — | ~40.55 M · ~CHF 17.72 |
 | [Move Specs to Godot](features/done/2026_11_21_02_move_specs_to_godot_spec.md) | ✅ Complete | — | ~3.05 M · ~CHF 0.88 | ~12.86 M · ~CHF 5.74 | ~2.60 M · ~CHF 1.55 | — | — | ~18.51 M · ~CHF 8.17 |
-| **All specs** | | | | | | | | **~232.12 M · ~CHF 91.53** |
+| **All specs** | | | | | | | | **~262.01 M · ~CHF 105.80** |
 
 ## Implementation by Step
 
@@ -68,6 +68,13 @@
 | First Match | 5 | Claude Sonnet 5.5 | ~2.83 M | ~CHF 0.60 (71 credits) |
 | First Match | 6 | Claude Sonnet 5.5 | ~4.97 M | ~CHF 1.02 (121 credits) |
 | First Match | 7 | Claude Haiku 5.5 | ~2.18 M | ~CHF 0.06 (8 credits) |
+| Trophies and Prestige | 1 | Claude Sonnet 5.5 | ~392 k | ~CHF 0.18 (21 credits) |
+| Trophies and Prestige | 2 | Claude Opus 5.5 | ~862 k | ~CHF 0.45 (53 credits) |
+| Trophies and Prestige | 3 | Claude Sonnet 5.5 | ~1.04 M | ~CHF 0.27 (32 credits) |
+| Trophies and Prestige | 4 | Claude Sonnet 5.5 | ~565 k | ~CHF 0.13 (15 credits) |
+| Trophies and Prestige | 5 | Claude Sonnet 5.5 | ~2.58 M | ~CHF 0.44 (52 credits) |
+| Trophies and Prestige | 6 | Claude Sonnet 5.5 | ~1.46 M | ~CHF 0.23 (28 credits) |
+| Trophies and Prestige | 7 | Claude Haiku 5.5 | ~2.78 M | ~CHF 0.07 (9 credits) |
 | Godot Setup and First Game | 1 | Claude Sonnet 5.5 | ~737 k | ~CHF 0.26 (32 credits) |
 | Godot Setup and First Game | 2 | Claude Sonnet 5.5 | ~879 k | ~CHF 0.26 (30 credits) |
 | Godot Setup and First Game | 3 | Claude Opus 5.5 | ~2.75 M | ~CHF 1.49 (177 credits) |

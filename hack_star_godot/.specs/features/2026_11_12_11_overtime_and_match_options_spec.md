@@ -30,7 +30,7 @@ minute without walls**. This is F8 in the
 - [First match spec](done/2026_11_12_07_first_match_spec.md) — the match (countdown, timer,
   results), the match settings with the bot levels easy/medium/hard, the arena with its walls,
   the bots.
-- [Trophies spec](2026_11_12_08_trophies_spec.md) and
+- [Trophies spec](done/2026_11_12_08_trophies_spec.md) and
   [unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — rewards for the
   "time's up" result, and the saved progress they extend.
 - [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot

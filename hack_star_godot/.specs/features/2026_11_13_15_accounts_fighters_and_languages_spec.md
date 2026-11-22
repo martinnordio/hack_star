@@ -30,7 +30,7 @@ agreed as enough.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_13_accounts_fighters_and_languages_spec.md) (#15).
-- Saved progress per device, from [Trophies](2026_11_12_08_trophies_spec.md),
+- Saved progress per device, from [Trophies](done/2026_11_12_08_trophies_spec.md),
   [Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) and
   [Skins Shop](2026_11_12_10_skins_shop_spec.md): credits, trophies per fighter, power levels,
   unlocked fighters, skins, active hack codes. There is only **one** progress per device. A new

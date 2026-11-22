@@ -35,7 +35,7 @@ is the biggest change so far; it is F11 in the
   [overtime and match options spec](2026_11_12_11_overtime_and_match_options_spec.md) — the
   match rules, bots, the number of bots and the bot level in the Settings, overtime.
 - Saved progress per device (no login) — each kid keeps their own fighters and trophies (specs
-  [08](2026_11_12_08_trophies_spec.md), [09](2026_11_12_09_unlock_and_upgrade_spec.md)).
+  [08](done/2026_11_12_08_trophies_spec.md), [09](2026_11_12_09_unlock_and_upgrade_spec.md)).
 
 **New:**
 - A **room** a player creates and friends join; a shared match between up to 3 devices.

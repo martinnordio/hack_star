@@ -530,7 +530,7 @@ Started: 2026-11-21 18:16
 | `HYPERCHARGE` and `CREATOR` codes | Their effects come with their specs; until then "Unknown code" (S11, D1) | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md), [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
 | Buying with unlimited credits | Nothing can be bought yet; `Hacks.spend` is ready (S4, D4) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md), [10 Skins shop](../2026_11_12_10_skins_shop_spec.md) |
 | Power 22 in matches | Power levels do not affect matches yet (S12) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](../2026_11_12_08_trophies_spec.md) |
+| Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
 | Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | Play-test on a real iPad and phone (in-game camera over `-Https`, camera app with a QR link, on-screen keyboard) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
 | WebSocket tunnel of `tools/serve_web.py` to an `https://` `-ApiUrl` (code review finding 6) | Plain TCP today; only rooms use WebSockets | [14 Play with friends](../2026_11_12_14_play_with_friends_spec.md) |

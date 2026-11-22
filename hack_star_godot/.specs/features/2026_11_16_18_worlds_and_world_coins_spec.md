@@ -41,7 +41,7 @@ collecting trophies or get from special hack codes that can be used again after 
   active hacks with expiry dates; accounts kept in sync across tabs; the
   [Fighter studio, saves and music spec](2026_11_14_17_fighter_studio_saves_and_music_spec.md)
   made sure every choice is kept.
-- [Trophies spec](2026_11_12_08_trophies_spec.md) — trophies per match (+10 for a win, never
+- [Trophies spec](done/2026_11_12_08_trophies_spec.md) — trophies per match (+10 for a win, never
   below the last Prestige level); Prestige every 1000 total trophies.
 - [Unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) and
   [skins shop spec](2026_11_12_10_skins_shop_spec.md) — credits: earning, paying, prices;
