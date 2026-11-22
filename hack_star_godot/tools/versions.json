@@ -2,5 +2,7 @@
   "godot": "4.7.2",
   "gut": "9.7.1",
   "gdtoolkit": "4.5.0",
-  "cryptography": "50.0.2"
+  "cryptography": "50.0.2",
+  "font_lilita_one": "1.002",
+  "kenney_game_icons": "2014-11-03"
 }

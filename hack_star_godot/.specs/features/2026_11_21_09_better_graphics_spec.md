@@ -16,6 +16,7 @@
 | 2026-11-22 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #35 created (no parent) |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 2.87 M (138 k in · 2.69 M cached · 50 k out) | CHF 1.86 (222 credits) | Part 2 written: 20 Steps, all reasoning (Claude Opus 5.5) per S1; Step 14 is the gate for the author's drawing (A0) (agent `s09g-lead`; requirements revision and issue included) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.82 M (117 k in · 2.69 M cached · 13 k out) | CHF 1.15 (138 credits) | Step 1 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:35:00 to 12:42:16) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 8.99 M (88 k in · 8.86 M cached · 39 k out) | CHF 2.50 (298 credits) | Step 2 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:42:16 to 12:55:30) |
 
 ---
 
@@ -315,7 +316,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Before screenshots and size baseline | reasoning (Claude Opus 5.5) — S1; capturing both games the same way, the reference for G1 and G15 | ✅ Done | [→ Step 1](#step-1--before-screenshots-and-size-baseline) |
-| **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ⬜ Not started | [→ Step 2](#step-2--font-icons-and-theme) |
+| **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ✅ Done | [→ Step 2](#step-2--font-icons-and-theme) |
 | **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ⬜ Not started | [→ Step 3](#step-3--toon-look-of-the-fighters) |
 | **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--home-screen) |
 | **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ⬜ Not started | [→ Step 5](#step-5--arena-look) |
@@ -422,14 +423,20 @@ The display font and the icons are in `assets/`, pinned and credited, and the th
 screen bold outlined text and buttons that react to a press and a hover (G3, G5, G6, G16, S4).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Add Lilita One and `OFL.txt` to `assets/fonts/` (D3); add the used Kenney icons and `License.txt` to `assets/icons/` (D4); pin both in `tools/versions.json`; rows in `LICENSES.md` (source, version, date, SHA-256, licence).
-- [ ] Theme (`scenes/ui/hack_star_theme.tres`): the display font with outline and shadow for the title, heading, button and number types; body text unchanged; the button type variations and states of D7; the `IconChip` scene.
-- [ ] Keep every button ≥ 44 px and text ≥ 14 px (`UiScale`, spec 04 D13).
-- [ ] Check: screenshots of home and info at 1280×720 and 390×844 show the new text and buttons, hover and pressed states captured; `test.ps1`, `lint.ps1`, `check_tools.ps1` exit 0; export size noted (D16).
+- [x] Record the start time in Notes below.
+- [x] Add Lilita One and `OFL.txt` to `assets/fonts/` (D3); add the used Kenney icons and `License.txt` to `assets/icons/` (D4); pin both in `tools/versions.json`; rows in `LICENSES.md` (source, version, date, SHA-256, licence).
+- [x] Theme (`scenes/ui/hack_star_theme.tres`): the display font with outline and shadow for the title, heading, button and number types; body text unchanged; the button type variations and states of D7; the `IconChip` scene.
+- [x] Keep every button ≥ 44 px and text ≥ 14 px (`UiScale`, spec 04 D13).
+- [x] Check: screenshots of home and info at 1280×720 and 390×844 show the new text and buttons, hover and pressed states captured; `test.ps1`, `lint.ps1`, `check_tools.ps1` exit 0; export size noted (D16).
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 12:42
+**Assets** (D3, D4): Lilita One 1.002 (name table) from `google/fonts` `ofl/lilitaone/` at commit `0b03411` (28,092 bytes, with `OFL.txt`); Kenney **Game Icons** — kenney.nl is blocked by the author's network filter (Zscaler, "games" category), so the same pack was taken from Kenney's own upload on OpenGameArt (`Kenney_gameIcons.zip`, 2014-11-03, CC0, no version number → the upload date is pinned); 14 white 100 px icons copied unchanged with `License.txt`. The pack has no coin, bolt, clock, world or eye: `Icons` (`scenes/ui/icons.gd`) draws them once in code (own work) and names every icon (`Icons.get_icon("trophy")`). Both pinned in `tools/versions.json` (`font_lilita_one`, `kenney_game_icons`), rows with source, date, licence and SHA-256 in `LICENSES.md`; `.specs/guidelines/gdscript.md` *Art* line updated (the font and icons are the only files).
+**Theme** (D7): Lilita One with a dark outline on `Button` (and every button variation), `HeadingLabel`, `SubheadingLabel`, `HudLabel`, new `NumberLabel`, `BadgeLabel`; a drop shadow on the heading and HUD labels; plain `Label` (body text) keeps Godot's default font and size. Button variations `PlayButton` (large yellow, dark text and icon, 60 px), `GreenButton`, `BlueButton`, `PinkButton`, `IconButton` (round) and the base purple `Button`: dark 3 px border with an 8 px bottom edge; hover lighter; pressed darker, edge 3 px, content 3 px lower (also `hover_pressed`); focus is now a white ring (before it reused the hover look); `icon_max_width` 48 (Play 64). `IconChip` (`scenes/ui/icon_chip.tscn` + `.gd`, `ChipPanel` dark rounded backing, icon tinted, number in `NumberLabel`). Button and text sizes unchanged (≥ 44 px buttons, ≥ 14 px text: `test_screen_sizes*.gd` green). New `tests/test_theme_look.gd` (8 tests: display font and outline, body font unchanged, hover lighter / pressed darker and lower per variation, own colours, focus ring, every icon, drawn icons not empty, chip).
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step2\`, viewed): home and info at 1280×720 and 390×844 (headings, name and buttons in the outlined display font, body text unchanged and readable); home with the mouse over **Play** (lighter) and pressed (darker, text 3 px lower, short edge) — real input events, so the theme alone reacts in the same frame; a gallery of the six variations × normal/hover/pressed, the chips with all drawn icons and a heading. After looking: the first gallery showed purple for every variation (the capture read the styles before the buttons were in the tree) — fixed in the capture code; nothing to change in the theme. Home still uses the base purple buttons and plain title until Step 4.
+**Size** (D16): `build/web` 40,406,582 bytes (+45,492 vs Step 1), `index.pck` 285,452 bytes (+45,492); budget font ≤ 0.1 MB and icons ≤ 0.3 MB met.
+**Done (2026-11-22 · ~13 min · Claude Opus 5.5)** — Lilita One and 14 Kenney icons in `assets/` (pinned, credited, checksums), `Icons`, the theme's display font, button colours and states, `IconChip`; `tests/test_theme_look.gd`. `tools/test.ps1` 411 tests passed (one run before had a timing flake in `test_touch_joystick.gd` "held about 0.3 s", unrelated; green on the re-run), `tools/lint.ps1` exit 0, `tools/check_tools.ps1` exit 0, `tools/export_web.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 8.99 M tokens · CHF 2.50 (298 credits)
 
 ---
 
