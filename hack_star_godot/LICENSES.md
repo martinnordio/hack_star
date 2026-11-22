@@ -21,9 +21,11 @@ The text on the start screen and the buttons uses Godot's default font, built in
 | Godot Engine 4.7.2 | Installed on the computer, not in the repository; its code is part of every exported game | [MIT](https://godotengine.org/license) | © Godot Engine contributors (Juan Linietsky, Ariel Manzur and contributors) |
 | GUT 9.7.1 (test tool) | `addons/gut/`, with its [LICENSE.md](addons/gut/LICENSE.md) | MIT | `Copyright (c) 2018 Tom "Butch" Wesley` |
 | Fonts of GUT (Anonymous Pro, Courier Prime, Lobster Two) | `addons/gut/fonts/`, with [OFL.txt](addons/gut/fonts/OFL.txt) | SIL Open Font License 1.1 | `Copyright (c) 2009, Mark Simonson` for Anonymous Pro (the licence file names only this font) |
+| jsQR 1.4.0 (QR decoder of the camera scanner, the library of the Svelte game) | `web/jsQR.js`, unmodified with a licence header, and its [licence](web/jsQR-LICENSE.txt); copied into the web export | [Apache-2.0](https://github.com/cozmo/jsQR/blob/master/LICENSE) | © Cosmo Wolfe and the jsQR contributors |
 
 GUT is excluded from the exported game (`exclude_filter` in `export_presets.cfg`); it runs only
-in the tests and in the editor.
+in the tests and in the editor. `web/qr_scanner.js`, the camera scanner around jsQR, is own work
+(MIT).
 
 ## Tools, not shipped
 

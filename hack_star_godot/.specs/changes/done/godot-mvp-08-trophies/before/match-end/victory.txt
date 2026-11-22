@@ -1,0 +1,5 @@
+trophies[blaze] before: 1240
+the bot knocked out (Victory); at once, before the result screen opens:
+trophies[blaze] = 1240
+last_result = { "outcome": "VICTORY", "place": 1, "fighter": "blaze", "skin": "default" }
+save file = <no file>

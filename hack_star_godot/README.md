@@ -2,8 +2,10 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a start screen and a 3D arena with one fighter. The
-Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+It is the first basic game so far: a home screen, a fighter list with six fighters (each with
+its skins), a fighter screen, an info page with the words of the game, a 3D canyon arena where
+your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
+codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the canyon against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -11,12 +13,19 @@ Python + Svelte game in the rest of the repository is unchanged; see the [root R
 |--------|------|
 | `project.godot` | The Godot project (open this file in the editor) |
 | `scenes/` | Screens and objects (`.tscn`) with their scripts |
-| `game/` | Pure rules (movement) without scenes |
+| `game/` | Pure rules (movement, fighters, Prestige, rarity, sample progress, vocabulary, hacks, save file, QR code) without scenes |
 | `tests/` | Automated tests (GUT) |
+| `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |
 | `addons/gut/` | GUT 9.7.1, the test tool, with its licence |
 | `tools/` | PowerShell scripts for the checks, export and serving |
+| `web/` | Browser scripts copied into the web export: the camera QR scanner and jsQR (with its licence) |
 | `build/` | Web export (created by the scripts, git-ignored) |
 | `.specs/` | Specs of this game (see [Specs](#specs)) |
+
+Read [docs/architecture.md](docs/architecture.md) before you work on a spec, and keep it up to
+date in the spec that changes it. The hack codes come from the FastAPI server in `server/` of
+the repository, the same server as the Svelte game (rooms will too); the Godot game does not
+have its own.
 
 ## Install on Windows
 
@@ -80,8 +89,66 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
 ## Run in the editor
 
 1. Start Godot and choose **Import**; select `hack_star_godot\project.godot`; then **Import & Edit**.
-2. Press **F5** (Run Project). The start screen shows **Hack star** and **Play**.
-3. **Play** opens the arena. Press **Back** (top-left) to return to the start screen.
+2. Press **F5** (Run Project). The home screen plays a short entrance (a click, a touch or a key
+   skips it) and then shows your fighter, trophies, credits, **Hack star**, **Play**, **Training**,
+   **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
+   [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
+3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
+   arena with three target dummies. **Fighters** lists the six fighters with their trophies, power
+   level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
+   the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
+   and the hack codes), then explains the words of the game. **Hack** opens the hack screen
+   (see [Hack codes](#hack-codes)). Every screen has **Back** (top-left) that returns to the home
+   screen.
+
+## How to play a match
+
+Press **Play** on the home screen. The match is in the same canyon as Training, without the
+dummies: your fighter and three bots, each at its own start point. A short controls hint shows
+at the start and fades by itself; **How to play** on the Info page has the same rules in full.
+
+1. **Countdown:** "3", "2", "1", then "FIGHT!". Nobody moves or shoots during the countdown.
+2. **Fight:** shoot the bots with Space or the right stick (see [Controls](#controls)). Every fighter has a health bar above it: green
+   for you, red for the bots. A shot takes off part of the health bar and shows the damage
+   number. A fighter that is not hit and does not shoot for 3 seconds slowly gets its health back.
+3. **Bots:** they walk around, go for the nearest opponent they can see and shoot at it. They
+   fight each other too. On "easy" they react late, miss more often and shoot more slowly. A bot
+   in a bush is hard to see: it only sees you in a bush within 2.5 m, and a bot in a bush turns see-through, like you.
+4. **Knock-out:** a fighter with no health left is knocked out and leaves the arena. The label
+   top-right shows "Fighters left".
+5. **Timer:** 2:00 at the top of the screen, red in the last 10 seconds.
+6. **Result:** after the match the result screen shows **Victory!** (you are the last one
+   standing), **Defeat** with your place (for example "You finished 3rd") when you are knocked
+   out, or **Time's up!** (a draw) when the time runs out with bots still in. **Play again**
+   starts a new match; **Home** goes home. **Back** in a match goes home at any time, with no
+   result.
+
+A match changes no credits or unlocks, and the hacks change nothing in a match. The trophies
+change as described in [Trophies and Prestige](#trophies-and-prestige). The match settings (match
+length, number of bots, bot level, health, healing, bush sight, trophies per win and per
+defeat) are the values at the top of `game/match_settings.gd`; change a value there and the next
+match uses it.
+
+## Trophies and Prestige
+
+Every match changes the trophies of the fighter you played with (the home fighter):
+
+| Result | Trophies |
+|--------|----------|
+| Victory (the last fighter standing) | +10 |
+| Defeat (you are knocked out) | 0 |
+| Time's up (a draw) | 0 |
+
+The result screen shows the change, the count "trophies / next Prestige" and a bar from the
+last Prestige to the next one; the count goes up from the old total. A fighter reaches a new
+**Prestige** level at every 1000 trophies (Prestige 1 at 1000, Prestige 2 at 2000, and so on); a
+new Prestige is celebrated on the result screen, and the home screen, the fighter list and the
+fighter screen show a Prestige badge from 1000 trophies. A defeat never takes a fighter below its
+last Prestige. The numbers are `trophies_per_win` and `trophies_per_defeat` in
+`game/match_settings.gd`; the Prestige size is `TROPHIES_PER_LEVEL` in `game/prestige.gd`.
+
+The trophies of each fighter are saved with the match (see **Saved** below), so they are there
+after a reload.
 
 ## Commands
 
@@ -90,33 +157,151 @@ Run them from the `hack_star_godot` folder.
 | Command | What it does |
 |---------|--------------|
 | `.\tools\check_tools.ps1` | Checks the pinned versions of Godot, the export templates, gdtoolkit and GUT |
-| `.\tools\test.ps1` | Runs the GUT tests headless (without the editor); fails if a test fails |
+| `.\tools\test.ps1` | Runs the GUT tests headless (without the editor); fails if a test fails. Use it, not the editor's GUT panel: only this script sets the pre-run hook (`tests/pre_run_hook.gd`) that keeps the tests off your save file |
 | `.\tools\lint.ps1` | Runs `gdlint` and `gdformat --check` on `game/`, `scenes/` and `tests/` |
 | `.\tools\export_web.ps1` | Exports the game for the web into `build\web\` |
-| `.\tools\serve_web.ps1` | Serves `build\web\` on port 8060 until you press Ctrl+C |
+| `.\tools\serve_web.ps1` | Serves `build\web\` on port 8060 and forwards `/api` to the hack server; options in [Run the hack server and the web game](#run-the-hack-server-and-the-web-game) |
 
-## Play in a browser
+## Run the hack server and the web game
 
-1. `.\tools\export_web.ps1`
-2. `.\tools\serve_web.ps1`
-3. Open <http://localhost:8060> in a desktop browser.
+The hack codes are checked by the FastAPI server in `server/` (the same server as the Svelte
+game). Run it in its own PowerShell window, from the `server` folder of the repository:
 
-## Play on an iPad
+```powershell
+cd ..\server
+uv run hack-star-server
+```
+
+It listens on port 8180. Keep it running. Then, in the `hack_star_godot` folder:
+
+```powershell
+.\tools\export_web.ps1
+.\tools\serve_web.ps1
+```
+
+`serve_web.ps1` serves the web export on port 8060 and forwards every `/api` request to the
+server, so the page and the server share one address and the game needs no setup. It prints the
+addresses to open: this computer (`http://localhost:8060`) and, for an iPad or a phone on the
+same Wi-Fi, `http://<this computer's IPv4 address>:8060`. It runs until you press Ctrl+C.
+
+| Option | Default | What |
+|--------|---------|------|
+| `-Port <n>` | `8060` | The port of the web game |
+| `-ApiUrl <url>` | `http://127.0.0.1:8180` | Where the hack server listens; `/api` requests go there |
+| `-Https` | off | Serves `https://` with a self-signed certificate, made once into `build\cert\` (git-ignored). The camera of the browser needs `https://` on an iPad or a phone; the browser warns once, so accept the certificate |
+
+Without the server the game says "Can't reach the hack server" and `/api` answers 502. Windows
+may ask to allow Python through the firewall on private networks.
+
+## Hack codes
+
+On the home screen, **Hack** opens the hack screen. Type a code and press **Use code** (or Enter), or
+press **Scan QR code** and point the camera at a QR code (in the browser). The server checks the
+code; any letter case and spaces around it are fine.
+
+**Scan QR code** works only in the browser version, where the browser has a camera. Elsewhere
+(the desktop run) the button is disabled and a line says "Camera scanning works in the browser
+version — type the code here". To scan:
+
+- **On this computer:** run `.\tools\export_web.ps1`, then `.\tools\serve_web.ps1` (with the
+  server running), and open `http://localhost:8060`. The browser allows the camera on `localhost`.
+- **On a phone or an iPad:** run `.\tools\serve_web.ps1 -Https` and open the `https://` address it
+  prints; accept the self-signed certificate once (see [Play on an iPad or a phone](#play-on-an-ipad-or-a-phone)).
+
+The desktop run (F5, or `godot --path .`) shows the hint and the code is typed (Godot 4.7 has no
+webcam on Windows).
+
+| Code | Hack | Effect |
+|------|------|--------|
+| `INFINITY` | Unlimited credits | Credits never run out (the home screen shows ∞) |
+| `OPENSESAME` | Unlock everything | Every fighter and every skin is unlocked |
+| `POWER22` | Power 22 | Power levels go up to 22 instead of 11 (shown as "Power 7 / 22") |
+
+A hack never changes trophies, unlocks or power levels; turning all hacks off brings the normal
+rules back. The codes `HYPERCHARGE` and `CREATOR` say
+"Unknown code" until their specs (12 and 15) add them. Nothing is bought with credits yet (specs 09
+and 10), and power levels do not change matches yet (spec 09).
+
+**QR codes:** open the QR page from the Wi-Fi address of this computer
+(`http://<this computer's IPv4 address>:8060`), not from `localhost`: the game puts the address
+of the page into every QR code, and a phone cannot open `localhost`. The **QR codes** button on the hack screen opens a page with a QR code for each
+code. Scan it with the camera app or with **Scan QR code** in the game: the link opens the game
+with the code, which is redeemed once. **Save image** saves the picture as a PNG (a download in
+the browser, or a file in the user folder on the computer), for printing.
+
+**How long a code lasts:** `INFINITY` and `OPENSESAME` stay on for 3 days after they are entered,
+then turn off by themselves; `POWER22` stays on for ever. Entering a 3-day code again while it is on
+starts a new 3 days. A code that is on when this version first opens gets its 3 days from that
+moment. The times are the server's (`duration_seconds` in `server/src/hack_star_server/hacks.py`).
+
+**Time left:** the hack screen lists each active hack with how long it stays on, for example
+"Unlimited credits · 2 days 5 hours left", "Unlock everything · 1 day left" or "Power 22 · Lasts for
+ever". Whole hours are shown, rounded down; under an hour it says "Less than 1 hour left". The times
+are refreshed every minute while the screen is open.
+
+**When a code turns off:** it goes off by itself. The game checks at the start, when it comes to the
+front and every 30 seconds. What was gained or chosen stays: trophies, power levels, the fighters
+unlocked without the code and the skins. A fighter that only OPENSESAME unlocked is locked again; if
+it was the chosen fighter, the Home screen shows another unlocked fighter. A match that is running
+keeps the fighter it started with and gets its trophies. **Turn all hacks off** does the same at once.
+
+**Two tabs:** the game can be open in several tabs of the same browser and address (for example a
+hack QR code opened in a new tab). A hack, trophies or unlocked fighters gained in one tab are kept
+when another tab saves, because each save first merges the newer save of the other tab. A tab that
+comes back to the front shows the others' changes without a reload. Credits and the chosen fighter
+and skin come from the tab that saved last (the merge keeps the saving tab's skins).
+
+**Known limitation (two tabs):** a hack turned off in one tab (**Turn all hacks off**) can come
+back when another tab, which has not come to the front since, saves: the merge of hacks is a union.
+Turning all hacks off in a single tab works; with two tabs open, turn them off in the tab you
+use and reload the other one first.
+
+**Saved:** the progress and the active hacks, in one save: the trophies,
+power levels, unlocked fighters, credits, the chosen fighter and skins, and the hacks, each with the time it turns off. The game
+saves each change at once.
+In the browser the save is in the storage of this address (`localStorage`, key
+`hack_star_save`), so it is kept on the same device and browser only, and every tab of that address
+shares it; on the computer it is the file `hack_star_save.json` in
+`%APPDATA%\Godot\app_userdata\Hack star\`. To clear
+the hacks only, press **Turn all hacks off** on the hack screen and confirm. To start fresh (the
+sample progress, no hacks), delete that file while the game is closed, or in the browser clear
+the site's data for this address.
+
+## Play on an iPad or a phone
 
 1. Connect the iPad and the computer to the same Wi-Fi.
-2. On the computer: `.\tools\export_web.ps1`, then `.\tools\serve_web.ps1`. It prints an
-   address such as `http://192.168.1.20:8060`.
+2. Start the server (see [Run the hack server and the web game](#run-the-hack-server-and-the-web-game)),
+   then on the computer: `.\tools\export_web.ps1`, then `.\tools\serve_web.ps1 -Https`. It prints
+   an address such as `https://192.168.1.20:8060`.
 3. If Windows asks, allow Python through the firewall on private networks.
-4. On the iPad, open that address in Safari.
-5. Check landscape and portrait, the touch joystick, and that the frames per second label
-   (top-right) shows 30 or more.
+4. On the iPad, open that address in Safari and accept the self-signed certificate once. Without
+   `-Https` the page works, but the in-game camera does not (the browser needs `https://`); typing
+   a code still works.
+5. Check landscape and portrait, the touch joystick, that the frames per second label (top-right)
+   shows 30 or more, and a hack code typed and scanned.
 
 ## Controls
 
-- **Computer:** WASD or the arrow keys move the fighter.
-- **iPad and phone:** the touch joystick (bottom-left) moves the fighter. It appears only on a
-  touch screen.
-- **Back** (top-left) returns to the start screen.
+- **Computer:** WASD or the arrow keys move the fighter. **Space** shoots: hold it to keep firing
+  (the shots come with a short cool-down). Space shoots at the nearest target in range (in a match,
+  the nearest bot; in Training, the nearest dummy), or straight ahead when none is in range. The
+  mouse does not shoot; it does not aim either.
+- **Start hint:** when Training or a match starts, a short hint (Move and Shoot on their own lines,
+  then "More in Info") shows at the bottom of the screen and fades out after a few seconds; it
+  does not block the game.
+- **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
+  (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
+  the nearest dummy in range (straight ahead when none is in range; in a match, the nearest bot).
+  A thin line on the ground shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
+  The start hint stands above the sticks and names only the sticks.
+- **Info:** the "How to play" section of the Info page repeats these controls and the rules.
+- **Dummies:** in Training three straw dummies stand in the arena. A shot takes off part of the health bar
+  and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.
+- **Bushes:** in a cactus patch the fighter turns see-through, so you can look at the ground
+  and the cacti behind it. Shots stop at the rocks and walls, and at the dummies and fighters.
+- **Back** (top-left) returns to the home screen.
+- **Entrance:** a click, a touch or a key (for example Space) skips the entrance of the home screen.
+- **Frame rate:** the label top-right shows the frames per second of the arena.
 
 ## Resources outside the folder
 
@@ -132,11 +317,12 @@ is listed in [LICENSES.md](LICENSES.md).
 
 ## Specs
 
-The ordered list of the specs is [.specs/features/README.md](.specs/features/README.md). Work
-through it from the first spec that is not closed: **S0** (check each statement against the game
-as built so far), `REQUIREMENTS:` if a statement does not fit, then `PLAN:` → `IMPLEMENT:` →
-`REVIEW:` → `CLOSE:` with the root kit's commands. The Godot specs live in
-`hack_star_godot/.specs/`, not in the root `.specs/` (see [AGENTS.md](../AGENTS.md)).
+The ordered list of the specs is [.specs/features/README.md](.specs/features/README.md). The MVP
+is specs 03–08, and the order follows the feature list. Work through it from the first spec
+that is not closed: **S0** (check each statement against the game as built so far),
+`REQUIREMENTS:` if a statement does not fit, then `PLAN:` → `IMPLEMENT:` → `REVIEW:` →
+`CLOSE:` with the root kit's commands. The Godot specs live in `hack_star_godot/.specs/`, not in
+the root `.specs/` (see [AGENTS.md](../AGENTS.md)).
 
 Specs of this game are in `hack_star_godot/.specs/features/`. The rule for them is in
 [AGENTS.md](../AGENTS.md): a new Godot spec goes into `hack_star_godot/.specs/features/`, and

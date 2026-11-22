@@ -1,0 +1,4 @@
+file: version 2, hacks [unlock_all, power22], trophies blaze 1300, chosen pixel
+active_hacks: ["unlock_all", "power22"]
+selected_fighter: pixel (unlocked now: true)
+trophies[blaze]: 1300

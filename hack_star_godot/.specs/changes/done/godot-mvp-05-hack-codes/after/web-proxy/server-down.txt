@@ -1,0 +1,2 @@
+$ (server stopped) curl -s -w " %{http_code}" http://localhost:8060/api/hacks
+{"detail": "The hack server is not reachable"} 502

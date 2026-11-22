@@ -1,0 +1,9 @@
+# HackServer (scenes/autoload/hack_server.gd), with fake_responder
+base_url() outside the web -> http://127.0.0.1:8180/api
+redeem(" power22 ") with 200 {"id": "power22", "code": "POWER22", "name": "Power 22"} -> { "id": "power22", "name": "Power 22", "code": "POWER22", "status": "ok" }
+redeem(" power22 ") with 200 {"id": "hypercharge", "code": "HYPERCHARGE", "name": "Hypercharge"} -> { "status": "unknown" }
+redeem(" power22 ") with 404 {"detail": "Unknown code"} -> { "status": "unknown" }
+redeem(" power22 ") with 422 {"detail": "too long"} -> { "status": "no_server" }
+redeem(" power22 ") with 500  -> { "status": "no_server" }
+redeem(" power22 ") with 200 not json -> { "status": "no_server" }
+redeem(" power22 ") with 0  -> { "status": "no_server" }

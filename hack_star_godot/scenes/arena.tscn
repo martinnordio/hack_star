@@ -3,85 +3,26 @@
 [ext_resource type="Script" path="res://scenes/arena.gd" id="1_arena"]
 [ext_resource type="PackedScene" path="res://scenes/fighter.tscn" id="2_fighter"]
 [ext_resource type="PackedScene" path="res://scenes/touch_joystick.tscn" id="3_joystick"]
+[ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="4_back"]
+[ext_resource type="Script" path="res://scenes/canyon.gd" id="5_canyon"]
+[ext_resource type="PackedScene" path="res://scenes/target_dummy.tscn" id="6_dummy"]
+[ext_resource type="Script" path="res://scenes/arena_effects.gd" id="7_effects"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
-background_color = Color(0.09, 0.1, 0.16, 1)
+background_color = Color(0.99, 0.82, 0.58, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.75, 0.8, 1, 1)
-ambient_light_energy = 0.45
+ambient_light_color = Color(0.78, 0.84, 1, 1)
+ambient_light_energy = 0.4
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.24, 0.29, 0.36, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aim"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.7)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_border"]
-albedo_color = Color(0.5, 0.56, 0.7, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_inner"]
-albedo_color = Color(0.55, 0.36, 0.72, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_Floor"]
-material = SubResource("StandardMaterial3D_floor")
-size = Vector3(17, 0.2, 13)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_Floor"]
-size = Vector3(17, 0.2, 13)
-
-[sub_resource type="BoxMesh" id="BoxMesh_WallNorth"]
-material = SubResource("StandardMaterial3D_border")
-size = Vector3(17, 1.2, 0.5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_WallNorth"]
-size = Vector3(17, 1.2, 0.5)
-
-[sub_resource type="BoxMesh" id="BoxMesh_WallSouth"]
-material = SubResource("StandardMaterial3D_border")
-size = Vector3(17, 1.2, 0.5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_WallSouth"]
-size = Vector3(17, 1.2, 0.5)
-
-[sub_resource type="BoxMesh" id="BoxMesh_WallWest"]
-material = SubResource("StandardMaterial3D_border")
-size = Vector3(0.5, 1.2, 12)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_WallWest"]
-size = Vector3(0.5, 1.2, 12)
-
-[sub_resource type="BoxMesh" id="BoxMesh_WallEast"]
-material = SubResource("StandardMaterial3D_border")
-size = Vector3(0.5, 1.2, 12)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_WallEast"]
-size = Vector3(0.5, 1.2, 12)
-
-[sub_resource type="BoxMesh" id="BoxMesh_InnerWallA"]
-material = SubResource("StandardMaterial3D_inner")
-size = Vector3(4, 1.2, 0.5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_InnerWallA"]
-size = Vector3(4, 1.2, 0.5)
-
-[sub_resource type="BoxMesh" id="BoxMesh_InnerWallB"]
-material = SubResource("StandardMaterial3D_inner")
-size = Vector3(0.5, 1.2, 3)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_InnerWallB"]
-size = Vector3(0.5, 1.2, 3)
-
-[sub_resource type="BoxMesh" id="BoxMesh_InnerWallC"]
-material = SubResource("StandardMaterial3D_inner")
-size = Vector3(3, 1.2, 0.5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_InnerWallC"]
-size = Vector3(3, 1.2, 0.5)
-
-[sub_resource type="BoxMesh" id="BoxMesh_Pillar"]
-material = SubResource("StandardMaterial3D_inner")
-size = Vector3(1, 1.2, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_Pillar"]
-size = Vector3(1, 1.2, 1)
+[sub_resource type="BoxMesh" id="BoxMesh_aim"]
+material = SubResource("StandardMaterial3D_aim")
+size = Vector3(0.22, 0.02, 9)
 
 [node name="Arena" type="Node3D"]
 script = ExtResource("1_arena")
@@ -91,8 +32,10 @@ environment = SubResource("Environment_arena")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 rotation = Vector3(-0.95, -0.55, 0)
-light_energy = 0.9
+light_color = Color(1, 0.95, 0.84, 1)
+light_energy = 0.8
 shadow_enabled = true
+directional_shadow_max_distance = 40.0
 
 [node name="Camera" type="Camera3D" parent="."]
 position = Vector3(0, 15, 10.5)
@@ -101,101 +44,33 @@ current = true
 fov = 50.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
-position = Vector3(0, -0.1, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Floor"]
-mesh = SubResource("BoxMesh_Floor")
-
-[node name="Collision" type="CollisionShape3D" parent="Floor"]
-shape = SubResource("BoxShape3D_Floor")
 
 [node name="Walls" type="Node3D" parent="."]
 
-[node name="WallNorth" type="StaticBody3D" parent="Walls"]
-position = Vector3(0, 0.6, -6.25)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/WallNorth"]
-mesh = SubResource("BoxMesh_WallNorth")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/WallNorth"]
-shape = SubResource("BoxShape3D_WallNorth")
-
-[node name="WallSouth" type="StaticBody3D" parent="Walls"]
-position = Vector3(0, 0.6, 6.25)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/WallSouth"]
-mesh = SubResource("BoxMesh_WallSouth")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/WallSouth"]
-shape = SubResource("BoxShape3D_WallSouth")
-
-[node name="WallWest" type="StaticBody3D" parent="Walls"]
-position = Vector3(-8.25, 0.6, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/WallWest"]
-mesh = SubResource("BoxMesh_WallWest")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/WallWest"]
-shape = SubResource("BoxShape3D_WallWest")
-
-[node name="WallEast" type="StaticBody3D" parent="Walls"]
-position = Vector3(8.25, 0.6, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/WallEast"]
-mesh = SubResource("BoxMesh_WallEast")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/WallEast"]
-shape = SubResource("BoxShape3D_WallEast")
-
-[node name="InnerWallA" type="StaticBody3D" parent="Walls"]
-position = Vector3(-3.5, 0.6, -2.5)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/InnerWallA"]
-mesh = SubResource("BoxMesh_InnerWallA")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/InnerWallA"]
-shape = SubResource("BoxShape3D_InnerWallA")
-
-[node name="InnerWallB" type="StaticBody3D" parent="Walls"]
-position = Vector3(3.5, 0.6, 3)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/InnerWallB"]
-mesh = SubResource("BoxMesh_InnerWallB")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/InnerWallB"]
-shape = SubResource("BoxShape3D_InnerWallB")
-
-[node name="InnerWallC" type="StaticBody3D" parent="Walls"]
-position = Vector3(-4, 0.6, 3)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/InnerWallC"]
-mesh = SubResource("BoxMesh_InnerWallC")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/InnerWallC"]
-shape = SubResource("BoxShape3D_InnerWallC")
-
-[node name="Pillar" type="StaticBody3D" parent="Walls"]
-position = Vector3(4.5, 0.6, -3)
-
-[node name="Mesh" type="MeshInstance3D" parent="Walls/Pillar"]
-mesh = SubResource("BoxMesh_Pillar")
-
-[node name="Collision" type="CollisionShape3D" parent="Walls/Pillar"]
-shape = SubResource("BoxShape3D_Pillar")
+[node name="Canyon" type="Node3D" parent="." node_paths=PackedStringArray("floor_body", "walls")]
+script = ExtResource("5_canyon")
+floor_body = NodePath("../Floor")
+walls = NodePath("../Walls")
 
 [node name="Fighter" parent="." instance=ExtResource("2_fighter")]
 rotation = Vector3(0, 3.1416, 0)
 
+[node name="Dummies" type="Node3D" parent="."]
+
+[node name="Effects" type="Node3D" parent="."]
+script = ExtResource("7_effects")
+
+[node name="Shots" type="Node3D" parent="."]
+
+[node name="AimLine" type="MeshInstance3D" parent="."]
+visible = false
+cast_shadow = 0
+mesh = SubResource("BoxMesh_aim")
+
 [node name="Hud" type="CanvasLayer" parent="."]
 
-[node name="BackButton" type="Button" parent="Hud"]
-custom_minimum_size = Vector2(180, 80)
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 204.0
-offset_bottom = 104.0
-theme_override_font_sizes/font_size = 36
-text = "Back"
+[node name="BackButton" parent="Hud" instance=ExtResource("4_back")]
+focus_mode = 0
 
 [node name="TouchJoystick" parent="Hud" instance=ExtResource("3_joystick")]
 anchors_preset = 2
@@ -207,6 +82,19 @@ offset_right = 272.0
 offset_bottom = -32.0
 grow_vertical = 0
 
+[node name="AimJoystick" parent="Hud" instance=ExtResource("3_joystick")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -272.0
+offset_top = -272.0
+offset_right = -32.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+
 [node name="FpsLabel" type="Label" parent="Hud"]
 anchors_preset = 1
 anchor_left = 1.0
@@ -216,6 +104,23 @@ offset_top = 24.0
 offset_right = -24.0
 offset_bottom = 70.0
 grow_horizontal = 0
-theme_override_font_sizes/font_size = 32
 text = "FPS: 0"
 horizontal_alignment = 2
+
+[node name="ControlsHint" type="Label" parent="Hud"]
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 1.0
+anchor_right = 0.8
+anchor_bottom = 1.0
+offset_top = -128.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"HudLabel"
+theme_override_font_sizes/font_size = 24
+text = "Move: WASD or arrow keys\nShoot: Space"
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 3

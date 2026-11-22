@@ -1,0 +1,8 @@
+start hint (keyboard): Move: WASD or arrow keys · Shoot: Space
+start hint (touch, second line): Move: left stick · Shoot: drag or tap the right stick
+start hint (last line): More in Info
+How to play / Controls: Keyboard: move with WASD or the arrow keys and shoot with Space (hold it to keep firing). Touch: move with the left stick; drag the right stick and let go to shoot that way, or tap it to shoot at the nearest target. Space and a tap fire at the nearest target in range (9 metres), or straight ahead. Back goes home.
+How to play / Match: You fight 3 bots. The last fighter standing wins. When the 120 seconds are over with more than one fighter left, it is a draw. Stop shooting and stay unhit for 3 seconds and your health comes back.
+How to play / Training: Practise on 3 dummies. A broken dummy comes back after 5 seconds.
+How to play / Trophies and Prestige: A win gives your fighter +10 trophies. At every 1000 trophies it reaches a new Prestige.
+How to play / Hack codes: Open Hack on the home screen. Type a code, or scan its QR code in the browser version.

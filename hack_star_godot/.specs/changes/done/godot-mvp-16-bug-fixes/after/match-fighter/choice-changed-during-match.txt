@@ -1,0 +1,3 @@
+match started with blaze; during the match rocko is chosen
+last_result fighter: blaze, reward change 10
+trophies blaze 1250, rocko 420

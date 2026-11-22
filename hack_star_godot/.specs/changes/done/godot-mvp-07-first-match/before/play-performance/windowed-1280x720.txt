@@ -1,0 +1,4 @@
+﻿# Frames per second after Play, windowed 1280x720, 6 s from 3 s after the press (3 runs, median)
+before (arena.tscn, 3 dummies): 
+60.0, 60.0, 60.0
+ -> median 60.0

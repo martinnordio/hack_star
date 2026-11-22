@@ -1,0 +1,5 @@
+trophies[blaze] before: 1240
+the bot knocked out (Victory); at once, before the result screen opens:
+trophies[blaze] = 1250
+last_result = { "outcome": "VICTORY", "place": 1, "fighter": "blaze", "skin": "default", "reward": { "before": 1240, "after": 1250, "change": 10, "prestige_before": 1, "prestige_after": 1 } }
+save file = {"hacks":[],"progress":{"credits":500,"power_levels":{"blaze":7,"frosty":1,"luna":1,"pixel":1,"rocko":4,"turbo":2},"selected_fighter":"blaze","selected_skins":{"blaze":"default","frosty":"default","luna":"default","pixel":"default","rocko":"default","turbo":"default"},"trophies":{"blaze":1250,"frosty":0,"luna":0,"pixel":0,"rocko":420,"turbo":85},"unlocked":["blaze","rocko","turbo"]},"version":2}

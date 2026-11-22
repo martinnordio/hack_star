@@ -3,8 +3,9 @@
 Exports the game for the web into build\web\.
 
 .DESCRIPTION
-Deletes build\web\, runs `godot --headless --export-release "Web" build/web/index.html` and
-checks that index.html, a .wasm and a .pck exist. Exit code 1 if Godot fails or a file is missing.
+Deletes build\web\, runs `godot --headless --export-release "Web" build/web/index.html`,
+copies web\*.js (the camera QR scanner) next to it and checks that index.html, a .wasm and a
+.pck exist. Exit code 1 if Godot fails or a file is missing.
 #>
 #Requires -Version 5.1
 [CmdletBinding()]
@@ -54,6 +55,14 @@ if ($missing.Count -gt 0) {
     Write-Host ('Export incomplete, missing: ' + ($missing -join ', '))
     exit 1
 }
+
+# The page loads these with `html/head_include` (export_presets.cfg): the camera QR scanner.
+$webScripts = @(Get-ChildItem -LiteralPath (Join-Path $projectRoot 'web') -Filter '*.js' -File)
+if ($webScripts.Count -eq 0) {
+    Write-Host 'No web\*.js found to copy.'
+    exit 1
+}
+$webScripts | Copy-Item -Destination $outputFolder
 
 Write-Host "Web export OK: $outputFolder"
 Get-ChildItem -LiteralPath $outputFolder -File | ForEach-Object {

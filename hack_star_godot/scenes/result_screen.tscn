@@ -1,0 +1,137 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/result_screen.gd" id="1_result"]
+[ext_resource type="PackedScene" path="res://scenes/ui/fighter_stage.tscn" id="2_stage"]
+[ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="3_badge"]
+
+[node name="Result" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_result")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"BackgroundPanel"
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 16
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Margin/Column"]
+layout_mode = 2
+theme_type_variation = &"HeadingLabel"
+theme_override_font_sizes/font_size = 96
+text = "Victory!"
+horizontal_alignment = 1
+
+[node name="Line" type="Label" parent="Margin/Column"]
+layout_mode = 2
+theme_type_variation = &"SubheadingLabel"
+text = "You are the last one standing!"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="TrophyPanel" type="PanelContainer" parent="Margin/Column"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="Trophies" type="VBoxContainer" parent="Margin/Column/TrophyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ChangeLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies"]
+layout_mode = 2
+theme_type_variation = &"SubheadingLabel"
+text = "+0 trophies"
+horizontal_alignment = 1
+
+[node name="CountLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies"]
+layout_mode = 2
+text = "0 / 1000"
+horizontal_alignment = 1
+
+[node name="PrestigeBar" type="ProgressBar" parent="Margin/Column/TrophyPanel/Trophies"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+show_percentage = false
+
+[node name="Celebration" type="HBoxContainer" parent="Margin/Column/TrophyPanel/Trophies"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PrestigeLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies/Celebration"]
+layout_mode = 2
+theme_type_variation = &"HeadingLabel"
+text = "PRESTIGE 1!"
+
+[node name="PrestigeBadge" parent="Margin/Column/TrophyPanel/Trophies/Celebration" instance=ExtResource("3_badge")]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Burst" type="CPUParticles2D" parent="Margin/Column/TrophyPanel/Trophies/Celebration"]
+emitting = false
+amount = 48
+lifetime = 1.4
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, 400)
+initial_velocity_min = 220.0
+initial_velocity_max = 420.0
+scale_amount_min = 6.0
+scale_amount_max = 12.0
+color = Color(1, 0.82, 0.2, 1)
+
+[node name="Body" type="BoxContainer" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="FighterStage" parent="Margin/Column/Body" instance=ExtResource("2_stage")]
+custom_minimum_size = Vector2(240, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Controls" type="VBoxContainer" parent="Margin/Column/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="PlayAgainButton" type="Button" parent="Margin/Column/Body/Controls"]
+custom_minimum_size = Vector2(320, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"BigButton"
+text = "Play again"
+
+[node name="HomeButton" type="Button" parent="Margin/Column/Body/Controls"]
+custom_minimum_size = Vector2(260, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Home"

@@ -43,3 +43,19 @@ func test_facing_yaw_turns_forward_towards_direction() -> void:
 	var direction: Vector2 = Vector2(1.0, 0.0)
 	var forward: Vector3 = Basis(Vector3.UP, Movement.facing_yaw(direction)) * Vector3.FORWARD
 	assert_almost_eq(forward, Vector3(1.0, 0.0, 0.0), Vector3.ONE * 0.0001)
+
+
+func test_follow_moves_part_of_the_way() -> void:
+	var next: Vector3 = Movement.follow(Vector3.ZERO, Vector3(10.0, 0.0, 0.0), 0.1, 6.0)
+	assert_between(next.x, 0.1, 9.9)
+	assert_almost_eq(next.x, 10.0 * (1.0 - exp(-0.6)), 0.0001)
+
+
+func test_follow_reaches_the_target_without_overshoot() -> void:
+	var position: Vector3 = Vector3.ZERO
+	var target: Vector3 = Vector3(4.0, 0.0, -3.0)
+	for i: int in 600:
+		position = Movement.follow(position, target, 1.0 / 60.0, 6.0)
+		assert_true(position.x <= target.x + 0.0001 and position.z >= target.z - 0.0001)
+	assert_almost_eq(position, target, Vector3.ONE * 0.001)
+	assert_eq(Movement.follow(position, target, 5.0, 6.0).x <= target.x, true)

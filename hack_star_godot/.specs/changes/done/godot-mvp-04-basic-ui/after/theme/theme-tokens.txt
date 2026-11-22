@@ -1,0 +1,16 @@
+default_font_size = 28
+BackgroundPanel/base_type = &"Panel"
+CardPanel/base_type = &"PanelContainer"
+BigButton/base_type = &"Button"
+BigButton/font_sizes/font_size = 48
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(0.6, 0.62, 0.7, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.92, 0.92, 1, 1)
+Button/font_sizes/font_size = 36
+HeadingLabel/base_type = &"Label"
+HeadingLabel/font_sizes/font_size = 56
+SubheadingLabel/base_type = &"Label"
+SubheadingLabel/font_sizes/font_size = 40
+Label/colors/font_color = Color(0.94, 0.95, 1, 1)
+Label/font_sizes/font_size = 28

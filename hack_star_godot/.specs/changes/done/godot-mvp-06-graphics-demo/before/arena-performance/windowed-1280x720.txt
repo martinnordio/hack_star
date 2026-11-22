@@ -1,0 +1,6 @@
+# windowed Godot 4.7.2 run at 1280x720, 3 runs (temporary capture script)
+run  arena ready (ms)  fps while walking (6 s)
+1    77                60.0
+2    86                60.0
+3    81                60.0
+median 81 ms, 60.0 fps (no shooting before spec 06)

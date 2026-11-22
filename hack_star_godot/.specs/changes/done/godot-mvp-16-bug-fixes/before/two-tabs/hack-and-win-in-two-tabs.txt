@@ -1,0 +1,6 @@
+tab 1 and tab 2 open on one save; tab 2: INFINITY; tab 1: a win with blaze
+stored "hacks":[]
+stored trophies[blaze]: 1250
+tab 1 has INFINITY: false
+tab 2 chooses rocko; tab 1 back at the front: (no sync)
+tab 1 chosen fighter: blaze

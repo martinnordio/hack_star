@@ -1,0 +1,146 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 16 on feature/godot-mvp (written by REVIEW:, 2026-11-22).
+# Range: this spec's commits only, 235f93c..dfb85cb (plan commit 383f81c and Steps 1-5; the
+# branch carries specs 03-08 and 16). spec.path is relative to hack_star_godot/ (the Godot
+# project root): the kit schema only accepts paths that start with ".specs/".
+# Outputs: a temporary headless probe script (-s), the same source on both sides, saving to
+# user://review16/ (never the player's file); the clock is fixed at START = 1764000000 where the
+# side has GameState.clock (the base has no clock). Screens: a windowed Godot 4.7.2 run with a
+# temporary capture script, captured 90 frames after the screen opened. Before from a temporary
+# worktree at 235f93c (removed). Settings: git show of both revisions.
+version: 1
+branch: feature/godot-mvp
+base: 235f93c
+why: |
+  Players reported hacks that never end and progress lost between browser tabs. In the Godot game
+  the hacks never expire, Turn all hacks off leaves a locked fighter chosen and playable, and each
+  web tab keeps its own copy of user:// so the last tab to save wins (a hack entered through a QR
+  link in a new tab can be lost). Spec 16 makes INFINITY and OPENSESAME 3-day codes (POWER22 for
+  ever), shows the time left, keeps the chosen and the played fighter usable, and shares one save
+  between the tabs.
+spec:
+  path: .specs/features/done/2026_11_14_16_bug_fixes_spec.md
+  statements: [S4, S6, S16, S17, S18, S19, S22, S23, S25]
+changes:
+  - id: hack-screen
+    kind: ui
+    change: modified
+    object: Hack screen - the list of active hacks
+    note: 'Each row now reads "<name> · <time left>" ("Unlimited credits · 1 day 19 hours left", "Power 22 · Lasts for ever"); refreshed on open, after a code, after Turn all hacks off, on progress_changed and every 60 s. No new colours or fonts.'
+    statements: [S6, S18, S23]
+    examples:
+      - name: hack-screen-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          GameState.clock = START; activate_hack infinite_credits, unlock_all, power22;
+          GameState.clock = START + 1 day 5 hours; hack_screen.tscn; captured after 90 frames
+        views: [desktop]
+      - name: hack-screen-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: hack-time-rules
+    kind: output
+    change: added
+    object: Hack time rules - Hacks.duration_seconds, until_for, is_expired, time_left_text
+    note: INFINITY and OPENSESAME last 259200 s (72 h, the server's numbers), POWER22 0 (for ever); the text rounds whole hours down and says "Less than 1 hour left" below an hour.
+    statements: [S16, S17, S18, S23]
+    examples:
+      - name: rules
+        input: |
+          godot --headless --path hack_star_godot -s <temporary probe> -- rules
+          (duration_seconds and until_for(START) per hack; is_expired; time_left_text for
+          START + 259200 / 259199 / 190800 / 86400 / 18000 / 3599 / -5 and for 0)
+  - id: save-file
+    kind: data-format
+    change: modified
+    object: The save - version 2 (hacks as ids) -> version 3 (each hack with "until", and a "revision")
+    note: 'A hack is {"id", "until"} with the Unix second it turns off, 0 for ever; "revision" counts the saves of all tabs. A version 2 file of spec 08 keeps its progress, and its timed hacks get 3 days from the first start (S16, S25).'
+    statements: [S16, S17, S25]
+    examples:
+      - name: infinity-power22
+        input: |
+          same probe -- save-file: GameState.reset(); clock = START;
+          activate_hack("infinite_credits"); activate_hack("power22"); the saved text
+      - name: version-2-file
+        input: |
+          same probe -- migration: the file {"version": 2, "hacks": ["unlock_all", "power22"],
+          "progress": {"trophies": {"blaze": 1300}, "selected_fighter": "pixel"}};
+          clock = START; GameState.load_saved()
+  - id: hack-expiry
+    kind: output
+    change: modified
+    object: A timed hack turning off, and Turn all hacks off - the hacks and the chosen fighter
+    note: After 3 days + 1 s OPENSESAME is off and the chosen pixel (unlocked only by it) is replaced by blaze; Turn all hacks off does the same. Before, the hack stayed on for ever and Turn all hacks off left pixel chosen although locked.
+    statements: [S16, S19, S22]
+    examples:
+      - name: three-days-later
+        input: |
+          same probe -- expiry: clock = START; activate_hack("unlock_all"); select("pixel",
+          "default"); clock = START + 3 days + 1 s; expire_hacks() (absent before)
+      - name: turn-all-hacks-off
+        input: |
+          same probe -- reset-hacks: activate_hack("unlock_all"); select("pixel", "default");
+          reset_hacks()
+  - id: match-fighter
+    kind: output
+    change: modified
+    object: The end of a match - which fighter gets the trophies
+    note: MatchArena reads the fighter and skin once, at its start; a choice made during the match (another tab's sync, a hack turning off) no longer moves the trophies to another fighter.
+    statements: [S22]
+    examples:
+      - name: choice-changed-during-match
+        input: |
+          same probe -- match-fighter: match_settings.bot_count = 1, countdown_seconds = 0;
+          match.tscn with blaze; after 3 frames GameState.select("rocko", "default");
+          arena.bots()[0].knock_out(); two frames later
+  - id: two-tabs
+    kind: output
+    change: modified
+    object: Two tabs on one save - a hack entered in one, a match won in the other
+    note: Two GameState objects on one save file stand for two tabs. Before, tab 1's save overwrote tab 2's INFINITY; after, tab 1 merges the newer save first, and sync_from_store (the tab at the front) reads tab 2's choice.
+    statements: [S4]
+    examples:
+      - name: hack-and-win-in-two-tabs
+        input: |
+          same probe -- two-tabs: two game_state.gd objects, reset, one save_path, clock = START,
+          load_saved; tab 2: activate_hack("infinite_credits"); tab 1: award_trophies("blaze",
+          VICTORY); then tab 2: select("rocko", "default"); tab 1: sync_from_store() (absent before)
+  - id: settings
+    kind: config
+    change: modified
+    object: Hack durations, check intervals, the save version and the web save key
+    note: TIMED_SECONDS 3 days, FOREVER 0; GameState checks expiry every 30 s and has a replaceable clock; the hack screen refreshes every 60 s; SaveData.VERSION 3; in the web export the save is localStorage key hack_star_save (D6).
+    statements: [S4, S16, S18]
+    examples:
+      - name: settings
+        input: |
+          git show <rev>:hack_star_godot/<file> | the const / var lines of game/hacks.gd,
+          game/save_data.gd, game/save_store.gd, scenes/autoload/game_state.gd, scenes/hack_screen.gd
+breaking: |
+  The save is now version 3; a build of specs 05-08 reading it treats it as newer and starts
+  without hacks and with the sample progress. In the web export the save moves from user://
+  (IndexedDB) to localStorage; the first start copies the old file once. No server call changes.
+review:
+  - question: Why does the game not read the durations the server sends?
+    answer: |
+      D1: the migration of a version 1 or 2 file and a game start without the server need them,
+      so Hacks holds the same numbers as the server's duration_seconds (72 h or none); the
+      comment in hacks.gd and the README say to keep the two equal.
+  - question: What happens to what was gained while a hack was on?
+    answer: |
+      Nothing is taken (S19, D3): a hack never writes into the progress, so trophies, power
+      levels, unlocked, credits and skins stay; only the chosen fighter changes when it is locked
+      again (D4, record block hack-expiry; test_hack_expiry.gd).
+  - question: How do two tabs agree on one save?
+    answer: |
+      D6, D7: the web save is one localStorage item every tab reads and writes. Each save first
+      merges a newer stored revision (hacks a union with the later end, unlocked a union, trophies
+      and power levels the higher; credits, choice and skins this tab's); a tab coming to the front
+      reads a newer save (sync_from_store). See finding 1 for a hack turned off in one tab.
+  - question: Was the two-tab case checked in a real browser?
+    answer: |
+      Partly (Step 4 Notes): headless Chromium with the web export and the hack server; a
+      ?hack=INFINITY link in tab 2 showed Credits ∞ in tab 1 when it came to the front. A match
+      won in tab 1 was not driven; it stays with the author with the device play-test (Deferred
+      Items).

@@ -1,0 +1,13 @@
+res://tests/test_screen_sizes.gd
+[0m* test_start_screen_fits_every_size
+* test_arena_fits_every_size
+* test_play_reacts_to_mouse_click
+* test_play_reacts_to_touch
+* test_back_reacts_to_mouse_click_and_touch
+[1m5/5 passed.
+[0m[4m
+
+Tests                25
+Passing Tests        25
+[32m---- All tests passed! ----
+Tests passed: 25.

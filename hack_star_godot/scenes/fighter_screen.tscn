@@ -1,0 +1,112 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/fighter_screen.gd" id="1_screen"]
+[ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="2_back"]
+[ext_resource type="PackedScene" path="res://scenes/ui/fighter_stage.tscn" id="3_stage"]
+[ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="4_badge"]
+
+[node name="FighterScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_screen")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"BackgroundPanel"
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+
+[node name="BackButton" parent="Margin/Column/Header" instance=ExtResource("2_back")]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Column/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeadingLabel"
+text = "Fighter"
+horizontal_alignment = 1
+
+[node name="Balance" type="Control" parent="Margin/Column/Header"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+
+[node name="Body" type="BoxContainer" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="FighterStage" parent="Margin/Column/Body" instance=ExtResource("3_stage")]
+custom_minimum_size = Vector2(240, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Details" type="VBoxContainer" parent="Margin/Column/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="RarityLabel" type="Label" parent="Margin/Column/Body/Details"]
+layout_mode = 2
+theme_type_variation = &"SubheadingLabel"
+text = "Rare"
+horizontal_alignment = 1
+
+[node name="TrophiesLabel" type="Label" parent="Margin/Column/Body/Details"]
+layout_mode = 2
+text = "Trophies: 0"
+horizontal_alignment = 1
+
+[node name="PowerLabel" type="Label" parent="Margin/Column/Body/Details"]
+layout_mode = 2
+text = "Power 1 / 11"
+horizontal_alignment = 1
+
+[node name="PrestigeBadge" parent="Margin/Column/Body/Details" instance=ExtResource("4_badge")]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="SkinsLabel" type="Label" parent="Margin/Column/Body/Details"]
+layout_mode = 2
+text = "Skins"
+horizontal_alignment = 1
+
+[node name="SkinRow" type="HFlowContainer" parent="Margin/Column/Body/Details"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+alignment = 1
+
+[node name="SelectButton" type="Button" parent="Margin/Column/Body/Details"]
+custom_minimum_size = Vector2(320, 110)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"BigButton"
+text = "Select"

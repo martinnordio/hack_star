@@ -1,0 +1,4 @@
+fighter at (-3, 0, -2.5), the nearest dummy 1 m west
+Space pressed: shots 0
+left click 1 m west of the fighter: shots 1, the first towards (-1.00, 0.00, 0.00)
+Back focus_mode 2, focused after grab_focus: true

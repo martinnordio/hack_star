@@ -1,0 +1,150 @@
+# yaml-language-server: $schema=../../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 08 on feature/godot-mvp (written by REVIEW:, 2026-11-22).
+# Range: this spec's commits only, bc0147e..a0efdc2 (the branch carries specs 03-08 and 16).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/".
+# Screens: a windowed Godot 4.7.2 run with a temporary capture script (in the git-ignored build/,
+# removed); the same GameState.last_result on both sides (the base ignores "reward"); captured
+# 1.6 s after the screen opened. Before from a temporary worktree at bc0147e (removed).
+# Outputs: a temporary headless probe script, the same source on both sides (removed), saving to
+# user://review08/ (never the player's file). Settings and tokens: git show of both revisions.
+version: 1
+branch: feature/godot-mvp
+base: bc0147e
+why: |
+  Matches can be won and lost, but nothing is earned, and everything but the hacks is gone after
+  a reload. Spec 08 gives the played fighter +10 trophies for a win (0 for a defeat or a time-up),
+  never below its last Prestige, shows the count-up and a Prestige celebration on the result
+  screen, and saves the whole progress between visits. With it F0-F5, the first playable
+  version, is complete.
+spec:
+  path: .specs/features/done/2026_11_12_08_trophies_spec.md
+  statements: [S1, S2, S3, S4, S5, S6, S7, S8, S10, S11, S12, S13, S14]
+changes:
+  - id: result-screen
+    kind: ui
+    change: modified
+    object: Result screen - the trophy part (change, count, bar to the next Prestige) and the Prestige celebration
+    note: 'Under the line a CardPanel with "+10 trophies" / "+0 trophies", "1250 / 2000" and a gold bar from the last Prestige; a win from 1990 shows "PRESTIGE 2!" with the badge and a gold burst. Short screens (below 700 px) hide the fighter and use a smaller heading and buttons (Step 5 Notes).'
+    statements: [S4, S5, S12, S13]
+    examples:
+      - name: victory-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          GameState.last_result = {outcome: VICTORY, place: 1, fighter: blaze, skin: default,
+          reward: {before: 1240, after: 1250, change: 10, prestige_before: 1, prestige_after: 1}};
+          result_screen.tscn; captured after 1.6 s (the count of 1 s is over)
+        views: [desktop]
+      - name: victory-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+      - name: victory-844x390
+        input: |
+          same at --resolution 844x390 (a phone on its side: a short screen)
+        views: [phone-landscape]
+      - name: defeat-1280x720
+        input: |
+          outcome DEFEAT, place 3, reward {before: 1240, after: 1240, change: 0, ...}
+        views: [desktop]
+      - name: prestige-1280x720
+        input: |
+          outcome VICTORY, reward {before: 1990, after: 2000, change: 10, prestige_before: 1,
+          prestige_after: 2}
+        views: [desktop]
+      - name: prestige-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: trophy-rules
+    kind: output
+    change: modified
+    object: Trophy rules - Trophies.change_for / reward, Prestige.floor_of / next_at, the trophy settings of MatchSettings
+    note: Prestige.level is unchanged; new are the floor and the next Prestige, +10 / 0 / 0 per result, the Prestige floor (with a defeat of -20, 1005 gives 1000 and 15 gives 0) and the clamps of the two settings.
+    statements: [S1, S2, S5, S6, S8]
+    examples:
+      - name: outputs
+        input: |
+          godot --headless --path hack_star_godot -s <temporary probe> -- rules
+          (Prestige for 0, 999, 1240, 1990, 2000; MatchSettings defaults and clamps (-5, 5);
+          Trophies.change_for per result; reward(1240 / 990 / 1990, VICTORY), reward(1240,
+          DEFEAT / TIME_UP); with trophies_per_defeat = -20: reward(1005 / 15, DEFEAT))
+  - id: match-end
+    kind: output
+    change: modified
+    object: The end of a match - the played fighter's trophies, last_result and the save file
+    note: At the moment the bot is knocked out (before the result screen opens) Blaze goes 1240 -> 1250, last_result gets "reward" and the file is written at once; before, nothing changed and no file was written.
+    statements: [S1, S3, S7]
+    examples:
+      - name: victory
+        input: |
+          same probe -- match-end: match_settings.bot_count = 1, countdown_seconds = 0;
+          match.tscn; after 3 frames arena.bots()[0].knock_out(); one frame later
+  - id: save-file
+    kind: data-format
+    change: modified
+    object: The save file user://hack_star_save.json - version 1 (hacks) -> version 2 (hacks and progress)
+    note: '"progress" holds trophies and power_levels per fighter, unlocked, credits, selected_fighter and selected_skins (D3); keys are sorted by JSON.stringify.'
+    statements: [S3, S11]
+    examples:
+      - name: power22
+        input: |
+          same probe -- save-file: GameState.reset(); activate_hack("power22"); the file's text
+  - id: progress-restart
+    kind: output
+    change: modified
+    object: A new game start (GameState._ready) - what comes back from the file
+    note: Trophies and the chosen fighter now come back; a spec 05 file keeps its hacks and the sample progress on both sides. Example 3 (unlock_all, then a locked fighter chosen) loses the choice after the start (finding 1).
+    statements: [S3, S11, S13]
+    examples:
+      - name: restart
+        input: |
+          same probe -- restart: 1) trophies[blaze] = 1300; select("rocko", "default");
+          activate_hack("power22"); GameState._ready(). 2) a file {"version": 1, "hacks":
+          ["power22"]}; _ready(). 3) activate_hack("unlock_all"); select("pixel", "default");
+          _ready()
+  - id: settings
+    kind: config
+    change: modified
+    object: Trophy settings of MatchSettings and where the tests save
+    note: TROPHIES_PER_WIN 10 and TROPHIES_PER_DEFEAT 0 with clamped fields (D2); tools/test.ps1 passes the GUT pre-run hook, which points GameState.save_path to user://test/run_save.json (D7).
+    statements: [S8, S13]
+    examples:
+      - name: settings
+        input: |
+          git show <rev>:hack_star_godot/game/match_settings.gd (const and var lines),
+          tools/test.ps1 (the gut_cmdln line), tests/pre_run_hook.gd (RUN_SAVE)
+  - id: theme-bar
+    kind: tokens
+    change: added
+    object: ProgressBar styles in scenes/ui/hack_star_theme.tres
+    note: A dark rounded background with the card border colour and a Legendary-gold fill; only the result screen's PrestigeBar uses a ProgressBar.
+    statements: [S4]
+    examples:
+      - name: theme-tokens
+        input: |
+          git show a0efdc2:hack_star_godot/scenes/ui/hack_star_theme.tres (ProgressBar lines and
+          the Bar_background / Bar_fill sub-resources)
+breaking: |
+  The save file is now version 2; a spec 05 file (version 1) still gives its hacks, but a build of
+  specs 05-07 reading a version 2 file treats it as newer and starts without hacks. No server call.
+review:
+  - question: Why are the trophies given when the match ends and not when the result screen opens?
+    answer: |
+      D5 (the original game's D3): MatchArena._store_result_when_over runs once per match, calls
+      GameState.award_trophies and saves at once, so Back during the 1.5 s wait or a closed tab
+      keeps them; the screen only reads last_result["reward"] (record block match-end).
+  - question: What happens to a damaged or edited save file?
+    answer: |
+      D3: SaveData checks every field; unknown fighters, hacks and skins, wrong types and numbers
+      out of range are left out and the sample progress fills them; a broken, non-object or newer
+      file gives no hacks and the sample progress (test_save_data_v2.gd, test_game_state_save.gd).
+  - question: Can a test run change the player's own progress?
+    answer: |
+      Not through tools/test.ps1: the pre-run hook points GameState.save_path to
+      user://test/run_save.json before any test (D7); the files that check saving use their own
+      path. GUT started another way does not load the hook (finding 4).
+  - question: Do the hacks change trophies or get saved into the progress?
+    answer: |
+      No (S13, D4, D5): award_trophies reads no hack, and unlock_all does not add to "unlocked"
+      (test_game_state_save.gd, test_match_trophies.gd); the hacks are saved in "hacks" only.

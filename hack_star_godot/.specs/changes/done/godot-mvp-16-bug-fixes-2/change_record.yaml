@@ -1,0 +1,123 @@
+# yaml-language-server: $schema=../../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 16, second round (the author's reports S26-S32), on feature/godot-mvp
+# (written by REVIEW:, 2026-11-22). Range: this run's commits only, e175dfe..ccf39a1 (plan commit
+# 33fc2c7 and Steps 6-10). The first round (Steps 1-5) has its own record in
+# ../godot-mvp-16-bug-fixes/. spec.path is relative to hack_star_godot/ (the Godot project root):
+# the kit schema only accepts paths that start with ".specs/".
+# Screens: a windowed Godot 4.7.2 run with a temporary capture script (-s), the same script on
+# both sides, GameState.save_path = user://review16b/save.json and GameState.reset() (never the
+# player's file). Outputs: a temporary headless probe, the same source on both sides. Before from
+# a temporary worktree at e175dfe (removed). Input map: git show of project.godot and arena.tscn.
+version: 1
+branch: feature/godot-mvp
+base: e175dfe
+why: |
+  The author tried the closed game on Windows and reported three things: Scan QR code only fails
+  in the desktop run (Godot 4.7 has no camera on Windows; the scanner is the browser's), he could
+  not find how to shoot with the keyboard ("before it was Space"), and no screen says how to play.
+  The second round of spec 16 disables the scan where it cannot work with a hint, makes Space the
+  shot (the mouse no longer fires), adds "How to play" to the Info page and a controls hint at the
+  start of Training and a match.
+spec:
+  path: .specs/features/done/2026_11_14_16_bug_fixes_spec.md
+  statements: [S6, S23, S25, S26, S27, S28, S29, S30, S31, S32]
+changes:
+  - id: hack-screen
+    kind: ui
+    change: modified
+    object: Hack screen in the desktop run - Scan QR code and the new ScanHint
+    note: Outside the web export (QrScanner.can_scan() is false) Scan QR code is disabled at once and stays so after a code; a hint under it says "Camera scanning works in the browser version — type the code here". The web export is unchanged (the hint hidden).
+    statements: [S26, S6, S23]
+    examples:
+      - name: hack-screen-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          -- scene=res://scenes/hack_screen.tscn frames=30 (GameState.reset(), a test save path)
+        views: [desktop]
+      - name: hack-screen-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: space-shoots
+    kind: output
+    change: modified
+    object: Firing in Training - a Space key and a left mouse click
+    note: Space fires at the nearest target in range (here the dummy 1 m west), else straight ahead, and keeps firing while held; a left click no longer fires (Combat.ground_point and the mouse code are gone). Touch is unchanged.
+    statements: [S28, S29]
+    examples:
+      - name: training-space-and-click
+        input: |
+          godot --headless --path hack_star_godot -s <temporary probe>: arena.tscn in a 1280x720
+          SubViewport; fighter at (-3, 0, -2.5); Input.parse_input_event(Space pressed), 3 frames,
+          released; 0.5 s later a left click (press and release) 1 m west of the fighter;
+          Hud/BackButton.grab_focus()
+  - id: input-map
+    kind: config
+    change: modified
+    object: Input map and the arena's Back focus
+    note: A new action shoot on the physical Space key; the arena's Back has focus_mode FOCUS_NONE, so Space (ui_accept) has no focused button to press in the arena; a click and a touch still press Back.
+    statements: [S28, S29]
+    examples:
+      - name: input-actions
+        input: |
+          git show <rev>:hack_star_godot/project.godot | the [input] actions and their physical keys;
+          git show <rev>:hack_star_godot/scenes/arena.tscn | Hud/BackButton focus_mode
+  - id: info-how-to-play
+    kind: ui
+    change: modified
+    object: Info page - "How to play" before the words
+    note: The page starts with the heading "How to play" and five sections from ControlsHelp.how_to_play() (Controls, Match, Training, Trophies and Prestige, Hack codes), then the heading "Words" and the vocabulary as before; the numbers come from the rules.
+    statements: [S30, S6, S23]
+    examples:
+      - name: info-1280x720
+        input: |
+          same capture script -- scene=res://scenes/info.tscn frames=30, --resolution 1280x720
+        views: [desktop]
+  - id: controls-hint
+    kind: ui
+    change: modified
+    object: Training (and a match) at the start - the controls hint
+    note: A ControlsHint label in the arena HUD shows the keyboard controls and "More in Info" (plus the sticks on a touch screen), ignores the mouse and touch, stays 5 s and fades out over 1 s. Without a touch screen it stands at the bottom edge (Step 9 Notes); the touch position was not seen (no touch screen here).
+    statements: [S31, S6]
+    examples:
+      - name: training-start-1280x720
+        input: |
+          same capture script -- scene=res://scenes/arena.tscn frames=40, --resolution 1280x720
+        views: [desktop]
+      - name: training-start-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: help-texts
+    kind: message
+    change: added
+    object: The help texts - ControlsHelp (start hint and How to play)
+    note: One English source for the start hint and the Info page; the numbers (shot range, bots, match length, heal delay, dummies, respawn, trophies, Prestige size) are read from the rules.
+    statements: [S30, S31, S23]
+    examples:
+      - name: texts
+        input: |
+          godot --headless --path hack_star_godot -s <temporary probe>: print
+          ControlsHelp.KEYBOARD_HINT, TOUCH_HINT, MORE_IN_INFO and each how_to_play() section
+breaking: |
+  A left mouse click no longer fires in Training or a match (S29, by request); Space fires
+  instead. Nothing else breaks: the save file, the server and the touch controls are unchanged.
+review:
+  - question: Why is Scan QR code not made to work in the desktop run?
+    answer: |
+      D10: Godot 4.7's CameraServer has no camera feed on Windows, and the game's scanner is the
+      browser's (web/qr_scanner.js); a desktop QR decoder would be a new dependency for a run the
+      kids do not use. The README says how to scan on this computer (localhost:8060).
+  - question: Why does Space aim at the nearest target and not where the fighter looks?
+    answer: |
+      D11: the same rule as the quick tap on the right stick (_aim_direction, nearest of
+      tap_targets() within Combat.SHOT_RANGE, else straight ahead), so the keyboard and touch
+      aim alike and a kid does not need a mouse to aim.
+  - question: Why "How to play" on the Info page and not a new screen?
+    answer: |
+      D14: one tap from home, no new home button, the five home layouts unchanged; the start hint
+      points to it ("More in Info").
+  - question: Where does the start hint stand on a touch screen?
+    answer: |
+      288 px above the bottom edge, clear of the sticks (Step 9 Notes); it was not seen on a
+      screenshot and has no test (this computer has no touch screen) - see finding 3.

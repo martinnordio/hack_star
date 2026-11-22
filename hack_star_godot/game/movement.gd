@@ -27,6 +27,12 @@ static func joystick_direction(offset: Vector2, radius: float) -> Vector2:
 	return clamp_direction(offset / radius)
 
 
+## Exponential smoothing of `current` towards `target` (rate per second); frame-rate
+## independent and never overshoots.
+static func follow(current: Vector3, target: Vector3, delta: float, rate: float) -> Vector3:
+	return current.lerp(target, 1.0 - exp(-rate * maxf(delta, 0.0)))
+
+
 ## Rotation around y that turns a node's forward (-z) towards the direction.
 static func facing_yaw(direction: Vector2) -> float:
 	return atan2(-direction.x, -direction.y)

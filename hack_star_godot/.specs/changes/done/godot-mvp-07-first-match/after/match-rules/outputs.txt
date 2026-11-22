@@ -1,0 +1,33 @@
+# Combat (game/combat.gd), calls that exist on both sides
+can_fire(1.00, 0.70) -> false
+health_ratio(1200) -> 0.5
+# Combat, new for fighters (D3)
+can_fire(1.00, 0.70, 0.35 * 2.4) -> false
+health_ratio(1600, 3200) -> 0.5
+heal(1600, 3200, quiet 2.9 s, 1 s) -> 1600.0
+heal(1600, 3200, quiet 3.0 s, 1 s) -> 2016.0
+heal(3100, 3200, quiet 5.0 s, 1 s) -> 3200.0
+# MatchSettings (game/match_settings.gd)
+defaults: match_seconds 120.0, bot_count 3, bot_level easy, time_up_result draw, bots_fight_each_other true, countdown 3, health 3200, heal_delay 3.0, heal_per_second 0.13, bush_sight 2.5
+bot_count = 20 -> 8; bot_count = 0 -> 1
+level("easy") -> { "reaction": 0.6, "aim_error": 0.35, "cooldown": 2.4, "speed": 0.75, "sight": 8.0 }
+level("hard") -> { "reaction": 0.15, "aim_error": 0.08, "cooldown": 1.15, "speed": 1.0, "sight": 12.0 }
+level("nightmare") -> { "reaction": 0.6, "aim_error": 0.35, "cooldown": 2.4, "speed": 0.75, "sight": 8.0 }
+# Match (game/match.gd), 3 bots
+countdown|timer|can_act at 0, 1, 2, 2.5, 3 s -> 3|2:00|false, 2|2:00|false, 1|2:00|false, 1|2:00|false, FIGHT!|2:00|true
+at 113.5 s (fight 110.5 s): timer 0:10 red true
+knock_out(2) -> fighters_left 3, phase FIGHT
+knock_out(0) (player) -> result DEFEAT, place 3 ("3rd")
+1 bot knocked out -> result VICTORY, place 1
+time up (draw) -> result TIME_UP, place 0
+time up (time_up_result defeat, 4 in) -> result DEFEAT, place 4
+ordinal 1, 2, 3, 4, 11, 12, 13, 21, 22 -> 1st, 2nd, 3rd, 4th, 11th, 12th, 13th, 21st, 22nd
+# BotBrain (game/bot_brain.gd), seed 7, level easy
+can_see 5 m, open -> true; 2 m in bush -> true; 3 m in bush -> false; 9 m open -> false
+opponent 7 m away, t 0.0 -> move (0.00, 0.00), aim NO_SHOT
+same, t 0.7 (after 0.6 s reaction) -> move (0.00, -1.00), aim (0.14, -0.99)
+same opponent at 2 m, t 1.0 -> move (-0.00, 1.00), aim (0.28, -0.96)
+opponent 4 m away in a bush, t 2.0 -> move (0.40, 0.92), aim NO_SHOT (wander point (3.206797, 7.447926), free true)
+# ArenaLayout.STARTS
+9 points: [(0.0, 9.5), (0.0, -10.5), (-7.5, -1.0), (7.5, -1.0), (-4.0, -5.5), (4.0, -5.5), (6.5, 9.5), (-3.5, 2.5), (3.5, 2.5)]
+closest pair 5.32 m; any in a bush: false

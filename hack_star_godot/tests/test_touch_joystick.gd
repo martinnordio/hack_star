@@ -66,3 +66,18 @@ func test_hidden_joystick_ignores_touches() -> void:
 	var centre: Vector2 = _joystick.get_global_rect().get_center()
 	_joystick._input(_touch(0, centre + Vector2(_joystick.radius, 0.0), true))
 	assert_eq(_joystick.direction, Vector2.ZERO, "hidden joystick does not react")
+
+
+func test_release_tells_the_direction_and_the_time_held() -> void:
+	watch_signals(_joystick)
+	var centre: Vector2 = _joystick.get_global_rect().get_center()
+	_joystick._input(_touch(0, centre, true))
+	assert_true(_joystick.is_held(), "held")
+	_joystick._input(_drag(0, centre + Vector2(0.0, -_joystick.radius)))
+	await wait_seconds(0.3)
+	_joystick._input(_touch(0, centre, false))
+	assert_false(_joystick.is_held(), "let go")
+	assert_signal_emit_count(_joystick, "released", 1)
+	var params: Array = get_signal_parameters(_joystick, "released")
+	assert_almost_eq(params[0], Vector2.UP, Vector2.ONE * 0.01, "the direction before letting go")
+	assert_between(params[1], 0.25, 1.0, "held about 0.3 s")

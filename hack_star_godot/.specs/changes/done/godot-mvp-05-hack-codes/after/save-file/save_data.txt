@@ -1,0 +1,5 @@
+# Save file (game/save_data.gd)
+to_json([power22, unlock_all]) -> {"hacks":["power22","unlock_all"],"version":1}
+from_json("not json") -> []
+from_json({"version": 2, "hacks": ["power22"]}) -> []
+from_json({"version": 1, "hacks": ["power22", "hypercharge", "power22"]}) -> ["power22"]

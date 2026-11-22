@@ -1,0 +1,41 @@
+﻿NAME
+    <root>\tools\serve_web.ps1
+    
+SYNOPSIS
+    Serves build\web\ on the local network (port 8060) until stopped with Ctrl+C.
+    
+    
+SYNTAX
+    <root>\tools\serve_web.ps1 
+    [[-Port] <Int32>] [<CommonParameters>]
+    
+    
+DESCRIPTION
+    Prints the addresses to open (this computer's IPv4 address for an iPad on the same Wi-Fi, and
+    localhost), then runs Python's http.server through uv. Run tools\export_web.ps1 first.
+    Windows may ask to allow Python through the firewall.
+    
+    Requires -Version 5.1
+    
+
+PARAMETERS
+    -Port <Int32>
+        
+        Required?                    false
+        Position?                    1
+        Default value                8060
+        Accept pipeline input?       false
+        Accept wildcard characters?  false
+        
+    <CommonParameters>
+        This cmdlet supports the common parameters: Verbose, Debug,
+        ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see 
+        about_CommonParameters (https:/go.microsoft.com/fwlink/?LinkID=113216). 
+    
+INPUTS
+    
+OUTPUTS
+    
+    
+RELATED LINKS

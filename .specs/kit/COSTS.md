@@ -106,7 +106,9 @@ Only when cost tracking is on.
    each Step with `-Agent subagents` over its sub-agent's time, and add one Stage log row
    for the **orchestrator** (the chat that starts the sub-agents, checks and commits) with
    `-Agent main` over the whole run — so Steps plus orchestrator equal the run's total and
-   nothing is counted twice or left out. The `Split:` line shows both parts.
+   nothing is counted twice or left out. The `Split:` line shows both parts. When agents run
+   other agents (a spec runner), give every agent a unique name and count each one with
+   `-AgentName <name>` — every Stage log row is then exactly one agent's requests.
 3. **Never leave the cells empty, and never guess.** If the script stops with an error, read
    it: fix the start time, or pass the right log with `-Transcript` (for the Copilot CLI:
    `~/.copilot/session-state/<session>/events.jsonl`; the current session's folder is the

@@ -1,0 +1,13 @@
+# Hacks (game/hacks.gd)
+normalize_code(" infinity ") -> "INFINITY"
+code_from_scan("http://localhost:8060/?hack=opensesame") -> "OPENSESAME"
+code_from_scan("https://example.com/") -> "HTTPS://EXAMPLE.COM/"
+link("http://localhost:8060/", "power22") -> "http://localhost:8060/?hack=POWER22"
+credits_text(500, []) -> "Credits: 500"
+credits_text(500, all) -> "Credits: ∞"
+spend(500, 200, []) -> 300
+spend(500, 200, all) -> 500
+power_text(7, []) -> "Power 7 / 11"
+power_text(7, all) -> "Power 7 / 22"
+is_fighter_unlocked("luna", ["blaze"], []) -> false
+is_fighter_unlocked("luna", ["blaze"], all) -> true

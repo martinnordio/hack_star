@@ -1,0 +1,10 @@
+# project.godot [layer_names]
+3d_physics/layer_1="world"
+3d_physics/layer_2="fighter"
+3d_physics/layer_3="targets"
+# scenes/fighter.tscn Fighter
+collision_layer = 2
+collision_mask = 5
+# scenes/target_dummy.tscn TargetDummy
+collision_layer = 4
+collision_mask = 0

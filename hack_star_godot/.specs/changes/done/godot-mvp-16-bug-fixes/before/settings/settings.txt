@@ -1,0 +1,5 @@
+game/hacks.gd: (none)
+game/save_data.gd: const VERSION: int = 2
+game/save_store.gd: (no file)
+scenes/autoload/game_state.gd: var save_path: String = "user://hack_star_save.json"
+scenes/hack_screen.gd: (none)

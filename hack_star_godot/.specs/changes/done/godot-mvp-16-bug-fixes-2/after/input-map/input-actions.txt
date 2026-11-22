@@ -1,0 +1,6 @@
+input action move_left: A, Left
+input action move_right: D, Right
+input action move_up: W, Up
+input action move_down: S, Down
+input action shoot: Space
+arena.tscn Hud/BackButton: focus_mode = 0 (FOCUS_NONE)

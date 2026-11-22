@@ -1,0 +1,29 @@
+game/match_settings.gd (constants and fields):
+const MATCH_SECONDS: float = 120.0
+const MIN_BOTS: int = 1
+const MAX_BOTS: int = 8
+const BOT_COUNT: int = 3
+const BOT_LEVEL: String = "easy"
+const TIME_UP_DRAW: String = "draw"
+const TIME_UP_DEFEAT: String = "defeat"
+const COUNTDOWN_SECONDS: int = 3
+const FIGHTER_HEALTH: int = 3200
+const HEAL_DELAY: float = 3.0
+const HEAL_PER_SECOND: float = 0.13
+const BUSH_SIGHT: float = 2.5
+var match_seconds: float = MATCH_SECONDS
+var bot_count: int = BOT_COUNT:
+var bot_level: String = BOT_LEVEL
+var time_up_result: String = TIME_UP_DRAW
+var bots_fight_each_other: bool = true
+var countdown_seconds: int = COUNTDOWN_SECONDS
+var fighter_health: int = FIGHTER_HEALTH
+var heal_delay: float = HEAL_DELAY
+var heal_per_second: float = HEAL_PER_SECOND
+var bush_sight: float = BUSH_SIGHT
+
+tools/test.ps1 (the GUT call):
+$output = & $godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gprefix=test_ -gexit 2>&1 |
+
+Where the tests save (GUT pre-run hook):
+(none)

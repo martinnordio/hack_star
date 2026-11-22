@@ -1,0 +1,12 @@
+# project.godot [autoload]
+[autoload]
+
+Screens="*res://scenes/autoload/screens.gd"
+GameState="*res://scenes/autoload/game_state.gd"
+UiScaler="*res://scenes/autoload/ui_scaler.gd"
+
+[display]
+
+# export_presets.cfg (Web preset)
+html/head_include=""
+html/experimental_virtual_keyboard=false

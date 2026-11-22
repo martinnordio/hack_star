@@ -1,0 +1,20 @@
+# Combat (game/combat.gd)
+can_fire(1.00, 0.70) -> false
+can_fire(1.05, 0.70) -> true
+take_damage x6 from 2400 by 480 -> 1920, 1440, 960, 480, 0, 0
+is_broken(0) -> true
+health_ratio(2400) -> 1.0, health_color -> #4dcc4d
+health_ratio(960) -> 0.4, health_color -> #f2cc33
+health_ratio(480) -> 0.2, health_color -> #e63333
+release_aim((0.8, 0), 0.6 s) -> (1.0, 0.0)
+release_aim((0.1, 0), 0.1 s) -> (0.0, 0.0)
+release_aim((0.1, 0), 0.6 s) -> (inf, inf) (NO_SHOT)
+nearest_target((0,0), [(0,-6), (3,0), (0,-20)], 9) -> 1
+nearest_target((0,0), [(0,-20)], 9) -> -1
+ground_point((0,10,7), 55 deg down, 0) -> (0.0, 0.0, -0.002075)
+# ArenaLayout (game/arena_layout.gd)
+SIZE (20.0, 26.0), 11 walls (4 border), 4 bushes, 12 decoration, dummies [(-4.0, -2.5), (4.0, -2.5), (0.0, -9.0)], START (0.0, 9.5)
+in_bush((-7, 2.75)) -> true; in_bush(START) -> false
+# Movement.follow (camera smoothing, rate 6/s)
+follow((0,0,0), (10,0,0), 0.1 s) -> (4.511884, 0.0, 0.0)
+follow((0,0,0), (10,0,0), 5 s) -> (10.0, 0.0, 0.0)

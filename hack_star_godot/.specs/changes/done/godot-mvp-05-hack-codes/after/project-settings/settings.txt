@@ -1,0 +1,12 @@
+# project.godot [autoload]
+[autoload]
+
+Screens="*res://scenes/autoload/screens.gd"
+GameState="*res://scenes/autoload/game_state.gd"
+HackServer="*res://scenes/autoload/hack_server.gd"
+UiScaler="*res://scenes/autoload/ui_scaler.gd"
+
+
+# export_presets.cfg (Web preset)
+html/head_include="<script src=\"jsQR.js\"></script><script src=\"qr_scanner.js\"></script>"
+html/experimental_virtual_keyboard=true

@@ -1,0 +1,11 @@
+# tools/versions.json
+{
+  "godot": "4.7.2",
+  "gut": "9.7.1",
+  "gdtoolkit": "4.5.0",
+  "cryptography": "50.0.2"
+}
+
+# web/ (shipped in the web export)
+web/jsQR.js  jsQR 1.4.0, Apache-2.0 (LICENSES.md row)
+web/qr_scanner.js  own code

@@ -1,0 +1,6 @@
+entered at START: unlock_all; chose pixel
+3 days + 1 s later; expire_hacks: true
+active_hacks: []
+hack_until: {}
+selected_fighter: blaze (unlocked now: true)
+trophies[blaze]: 1240

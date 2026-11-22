@@ -1,0 +1,12 @@
+duration_seconds(infinite_credits) = 259200, until_for(START) = 1764259200
+duration_seconds(unlock_all) = 259200, until_for(START) = 1764259200
+duration_seconds(power22) = 0, until_for(START) = 0
+is_expired(START, START) = true, is_expired(0, START) = false
+time_left_text(START + 259200, START) = 3 days left
+time_left_text(START + 259199, START) = 2 days 23 hours left
+time_left_text(START + 190800, START) = 2 days 5 hours left
+time_left_text(START + 86400, START) = 1 day left
+time_left_text(START + 18000, START) = 5 hours left
+time_left_text(START + 3599, START) = Less than 1 hour left
+time_left_text(START + -5, START) = Less than 1 hour left
+time_left_text(0, START) = Lasts for ever

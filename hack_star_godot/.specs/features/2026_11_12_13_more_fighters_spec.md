@@ -22,19 +22,19 @@
 Mattia asked to "add more figures". Today there are 6 fighters that all fight the same way, so
 the only difference is their look. This spec adds **4 new fighters** and gives every fighter its
 own way of attacking, so choosing, unlocking and upgrading a fighter really matters. It is F9 in
-the [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md).
+the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md).
 
 **Already in the repository** (reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_more_fighters_spec.md) (#10).
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the 6 fighters (Blaze, Rocko, Turbo, Frosty,
+- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the 6 fighters (Blaze, Rocko, Turbo, Frosty,
   Luna, Pixel) with rarity and skins, their 3D looks and portraits.
-- [First match spec](2026_11_12_07_first_match_spec.md) — match rules (one kind of shot for
+- [First match spec](done/2026_11_12_07_first_match_spec.md) — match rules (one kind of shot for
   everyone) and bots; [unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) —
   unlock prices by rarity and the power level numbers; [skins shop spec](2026_11_12_10_skins_shop_spec.md)
   — the Shop (skins by rarity).
 - [Super and hypercharge spec](2026_11_12_12_super_and_hypercharge_spec.md) — the Super blast
   every fighter has so far.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 
