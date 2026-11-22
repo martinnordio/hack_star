@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ✅ Complete — closed on feature/better-graphics
+> **Status:** 🔄 Reopened 2026-11-22 — two characters, views, lighting
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
@@ -42,6 +42,8 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.19 M (1.73 M in · 3.45 M cached · 10 k out) | CHF 8.00 (955 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 12:12:57) |
 | 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 4.42 M (45 k in · 4.36 M cached · 18 k out) | CHF 1.21 (145 credits) | spec closed (`usage.ps1 -AgentName s09g-close` from 2026-11-22 16:42:47) |
 | 2026-11-22 | pr | `PR:` | Claude Opus 5.5 | 1.43 M (66 k in · 1.36 M cached · 9 k out) | CHF 0.66 (78 credits) | pull request opened (#36, base `main`, not draft; issue #35 updated and commented; `usage.ps1 -AgentName s09g-pr` from 2026-11-22 16:48:31) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: spec reopened in place for the author's request (issue #35 kept, comment added); groups C (C1–C11, two new characters Flarekid and Echo), V (V1–V7, views) and L (L1–L8, brighter worlds and lighting presets) added; Q8–Q13 answered with the suggestions; no open questions |
+| 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 3.64 M (128 k in · 3.47 M cached · 40 k out) | CHF 1.79 (214 credits) | re-planned: two characters, views, lighting — Steps 1–20 kept; Steps 21–29 added, all reasoning (Claude Opus 5.5); D20–D30 (agent `s09g-lead3`; requirements revision included; `usage.ps1 -AgentName s09g-lead3` from 2026-11-22 16:55:00) |
 ---
 
 ## Cost summary
@@ -201,6 +203,36 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 - A drawing → character workflow that Claude runs on its own (part A), with a first drawing of
   Mattia's in the game.
 - A written recommendation for a better workflow with Google Flow and few other tools (part B).
+- _(added 2026-11-22, reopened)_ Two new fighters from the author's generated pictures (part C),
+  camera views switchable with the keyboard (part V), and brighter worlds with lighting presets
+  switchable with the keyboard (part L).
+
+**Reopened 2026-11-22 (author's request) — found in the repository:**
+- `characters/blaze2/` and `characters/echo/` (untracked, made by the author with an AI image
+  tool from Mattia's drawing): `<name>_hero.png` (full body, transparent, 1058 × 1415 and
+  1088 × 1431, 1.9 and 2.2 MB), `<name>_card.png` (512 × 512, 0.34 and 0.42 MB), a `Sprite3D`
+  billboard scene `<name>_hero.tscn`, a `TextureRect` scene `<name>_hero_ui.tscn`, a helper
+  `character_preview.gd` (pop-in and bob on a podium) and a README each. Both READMEs say: a 2D
+  picture in 3D, it does not turn or animate. `blaze2`'s two scenes point to
+  `res://characters/blaze/` (wrong folder). The PNGs are imported as VRAM-compressed S3TC, which
+  the web export does not ship for mobile (`vram_texture_compression/for_mobile=false`; an iPad
+  has no S3TC). The Blaze picture is a "hero upgrade" of Blaze (flame hood, scarf, fire ball);
+  Echo has teal headphones that send sound waves, a "sound blaster" staff and neon soles — like
+  Beatbolt, who was built from shapes from Mattia's drawing (A2, A3), and who stays.
+- `scenes/blaze_godot.zip` (2.3 MB) and `scenes/blaze_godot/` (a duplicate with
+  `echo_godot (1).zip`, 2.6 MB): untracked copies of the same delivery. Step 20 measured that
+  Godot packs untracked files of the project folder into the web export (+4.7 MB in the working
+  tree); `.gitignore` and the export's `exclude_filter` do not name them yet.
+- `FighterModel` (rig, body, head; idle, run lean and bounce, attack recoil; see-through by
+  material swap), `DrawnFighters` (a registry asked first by `FighterModel.setup`),
+  `Fighters.LIST` (`"drawn": true`, `"plays_like"`), `FighterPictures` (cards rendered
+  off-screen), `FighterStage` (pedestal on home and the fighter screen), `Fighter` (turns to the
+  input; knock-out spin and shrink in 0.5 s).
+- `Arena` (Training) and `MatchArena` (extends `Arena`): one `Camera3D` at a 55° pitch looking
+  north, distance fitted to the screen, the G11 near-wall rule; `WorldEnvironment` (ambient
+  only) and `Sun` in `arena.tscn`; `GlimmerIsles` sets its own sky and sun. Input actions:
+  `move_*` (WASD and arrows) and `shoot` (Space) — no key is bound to `1`–`4`, `V`, `L` or `K`,
+  and the arena has no text field.
 
 | Document | Purpose |
 |----------|---------|
@@ -365,12 +397,109 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 - **S6 — Language:** New visible text is in English, as in the rest of the Godot game until
   spec 15.
 
+### C — Two new characters (added 2026-11-22, author's request)
+
+- **C1 — Two new fighters:** **Flarekid** (the "hero upgrade" of Blaze, a fighter of its own,
+  not a Blaze skin) and **Echo** (the sound-powered hero from Mattia's drawing) join the
+  fighters, unlocked for every account from the start (old saves included), with one Default
+  skin each and playing like an existing fighter (as A2): Flarekid like Blaze, Echo like Luna.
+  Both are shown in the fighter list, the fighter screen and on home, can be chosen, and are
+  playable in Training and a match. Blaze and Beatbolt stay as they are.
+- **C2 — The author's pictures:** Each new fighter is shown with the author's pictures from
+  `characters/blaze2/` and `characters/echo/`: the full-body picture in 3D, and the 512 × 512
+  card picture on its fighter card and its skin button. The delivered scene files point to their
+  own folder (`blaze2`'s path is fixed).
+- **C3 — Reveal on the pedestal:** Whenever a fighter appears on home's pedestal or on the
+  fighter screen (opening the screen, choosing another fighter or skin), it pops in — grows from
+  small to its size with a short overshoot within 0.5 s — with a burst of glowing particles and a
+  halo or frame in its rarity colour behind it. This holds for every fighter, not only the new
+  ones.
+- **C4 — Alive when standing:** On home and the fighter screen the two new fighters are never
+  still: they breathe (a slight stretch and squash), bob and sway gently in a loop.
+- **C5 — Alive in play:** In Training and a match the two new fighters move like paper
+  cut-outs: running hops with a lean and a squash on landing; they face left or right by
+  flipping with the movement direction (and keep the last facing when moving straight up or
+  down); a shot gives a recoil and a muzzle flash; a hit gives a short white flash; a knock-out
+  makes them fall flat and fade before they are hidden, as the other fighters are.
+- **C6 — Toon fit:** The new fighters have a dark outline around their silhouette, as wide on
+  screen as the other fighters' outline (G9), and a soft shadow on the ground; on a card and in
+  the arena they read as clearly as the other fighters at the five screen sizes.
+- **C7 — Cover:** In a bush (cover) the new fighters are see-through like the others.
+- **C8 — What is missing, written down:** A document says what a flat picture cannot do (no
+  side or back view, no real turning, no drawn run or shot frames), what the author can make with
+  the same tool to improve it (side and back views, a run cycle of 4–8 frames, a shot pose and a
+  hit pose — same size, transparent background — or a 3D model through the B1 workflow), where to
+  put the files, and what the game then does with them.
+- **C9 — Licence:** `LICENSES.md` has a row per new picture: "generated by the author with an AI
+  image tool from Mattia's drawing — tool to be confirmed by the author".
+- **C10 — Kept out:** `scenes/blaze_godot.zip` and `scenes/blaze_godot/` (with its zip) are never
+  committed (`.gitignore`) and never in the web export; files of the delivery that the game does
+  not use are not in the web export either; the author's files are not deleted.
+- **C11 — Size:** The two new fighters add at most 1.0 MB to the web export, and the whole
+  export stays within G15's budget (Step 1 + 5 MB), measured in the working tree with the
+  author's untracked files present.
+
+### V — Views while playing (added 2026-11-22, author's request)
+
+- **V1 — Four views:** In Training and a match the player can switch between four camera views:
+  **Classic** (today's angled view from above, the default), **Close** (the same angle, nearer to
+  the fighter), **Behind** (low, just behind the fighter, looking ahead up the arena) and
+  **Overview** (high above, the whole arena in sight).
+- **V2 — Keys:** `V` switches to the next view (Classic → Close → Behind → Overview → Classic),
+  `1`–`4` (also on the number pad) choose a view directly; they work during the countdown and the
+  fight, and clash with no other key of the game.
+- **V3 — Name shown:** After a switch the view's name is shown at the top of the screen on a dark
+  backing for about 1.5 s.
+- **V4 — Same controls:** In every view the movement keys move the fighter the same way on the
+  screen as in Classic (W and up move away from the camera), and shooting is unchanged.
+- **V5 — Framing:** In every view the player's fighter stays within the screen at the five screen
+  sizes; Classic keeps G11; Overview shows all four border walls.
+- **V6 — Kept and touch:** The chosen view is kept for the next match and Training while the game
+  is open (not saved). Touch players get the default view; no touch button in this spec.
+- **V7 — Documented:** The README's controls, the Info page's *How to play* and the start hint
+  name the view keys.
+
+### L — Brighter worlds and lighting presets (added 2026-11-22, author's request)
+
+- **L1 — Brighter colours:** The canyon and Glimmer Isles look clearly more saturated and
+  brighter than before the reopening (before and after screenshots of both worlds compared); the
+  floor stays less saturated than the fighters, so the fighters stand out (G10).
+- **L2 — More detail:** Each world gets at least three new kinds of decoration, at least one of
+  them moving (for example flags, birds or water in the canyon; fireflies, waterfalls or
+  pulsing crystals in Glimmer Isles); walls, cover, start points and collisions stay as they are
+  (W4, W7, S2).
+- **L3 — Lighting presets:** `L` switches to the next of at least four lighting presets —
+  **Bright day**, **Golden sunset**, **Neon night**, **Candy pop** — in both worlds; each changes
+  the sun, the sky, the ambient light and the colour balance (brightness, contrast, saturation);
+  glow is used only where the web export shows it and the frame rate allows (L8).
+- **L4 — Saturation boost:** `K` switches an extra saturation boost on and off, on top of any
+  preset.
+- **L5 — Name shown:** After `L` or `K` the preset's name, or "Saturation boost on/off", is shown
+  as in V3.
+- **L6 — Best default:** The preset a game starts with is the best-looking one, chosen from
+  screenshots of every preset in both worlds; the reason is written down. The chosen preset and
+  the boost are kept while the game is open (not saved).
+- **L7 — Readable:** In every preset, with and without the boost, the fighters, shots, health
+  bars, cover and see-through, and the HUD stay readable (screenshots).
+- **L8 — Smooth:** With 4 fighters in both worlds, every preset and the boost, the desktop frame
+  time and draw calls are measured and compared with a measurement before the reopening: draw
+  calls at most 30 % more, frame time at most 30 % more and under 33 ms; the iPad check
+  (≥ 30 frames per second, G14) stays with the author.
+
 ### Open questions
 
 None. The author answered Q1–Q7 on 2026-11-22 (Q1 3D built from shapes, cut-out as the
 fallback → A3; Q2 a new fighter, unlocked from the start, one default skin → A2; Q3 home and the
 match first, then the fighter list and screen, then the result, info and hack screens, all in
 this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added part W and A0.
+
+Reopened 2026-11-22: the questions of parts C, V and L were answered with the suggestions
+(the author's rule for this run): Q8 the Blaze upgrade's name → **Flarekid** (C1; original,
+not "Blaze"); Q9 rarity and how they play → Flarekid like Blaze, Echo like Luna, one Default skin
+(C1); Q10 the keys → `V` and `1`–`4` for views, `L` and `K` for lighting, checked against the
+existing keys (V2, L3, L4); Q11 a touch button for views → not in this spec, touch keeps the
+default (V6); Q12 the Behind view and the controls → the camera never turns, so the keys keep
+their direction (V1, V4); Q13 the reveal → for every fighter (C3).
 
 <!-- spec-nx:plan -->
 
@@ -379,6 +508,10 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 # Part 2 · Plan
 
 ## Closing summary
+
+_First close (2026-11-22, Steps 1–20). The spec was reopened in place the same day for the
+author's request — two new characters, views and lighting (C1–C11, V1–V7, L1–L8, Steps 21–29);
+it is closed again after Step 29._
 
 **Built:** The Godot game has the new cartoon look: every menu screen stands on a purple gradient with soft light rays (`MenuBackground`), titles, headings, buttons and numbers use the outlined display font Lilita One, the buttons are coloured with icons (Kenney *Game Icons*, CC0, plus a few drawn in code) and show hover and press from the theme alone, and trophies, credits, power, the timer and the fighters left are icon chips. Home has a two-colour logo, the chosen fighter on a pedestal and a large yellow **Play**; the fighter cards have rarity-coloured backdrops (grey with a lock for locked fighters); the fighter screen a framed stage and skin pictures in rarity frames; the result, info, hack and QR screens follow. Fighters, the canyon and the new world share cel-shaded toon materials with an outline of fixed pixel width (`ToonMaterials`), the camera keeps the near wall under 10 % of the screen in every world, and the FPS label is hidden unless **Show FPS (play-test)** is switched on in Info. A second world, **Glimmer Isles** (crystal ridges, glow-fern cover, giant mushrooms and floating islands, original art), is placed with ProtonScatter 4.2.0 in the editor and baked into plain MultiMeshes (`tools/bake_world.ps1`), so no addon code ships; the world button on home chooses it for **Play** and **Training** (`Worlds`, per-world `ArenaLayout`). Mattia's drawing became **Beatbolt**, a seventh fighter built from shapes (`scenes/drawn/`), unlocked from the start and playable; `docs/drawing_to_fighter.md` says how to add or remove a drawn fighter and `docs/drawing_tools.md` recommends a Google Flow → Meshy → Claude workflow with sources, terms and fit limits. The web export grew by 0.16 MB (budget 5 MB). Nothing in `server/` or `ui/` changed.
 
@@ -410,6 +543,19 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ✅ Done | [→ Step 18](#step-18--tool-recommendation-document) |
 | **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | 🔜 Deferred | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
 | **20** | Final check, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the side-by-side verdict and the documents | ✅ Done | [→ Step 20](#step-20--final-check-readme-and-architecture) |
+| **21** | Baseline, art import and licences | reasoning (Claude Opus 5.5) — S1; the before set and the measurements of the reopening, web-safe imports within the size budget (D22, D28) | ⬜ Not started | [→ Step 21](#step-21--baseline-art-import-and-licences) |
+| **22** | Flarekid and Echo in the game | reasoning (Claude Opus 5.5) — S1; a new kind of fighter look (cut-out shader with outline, shadow, see-through) behind the existing model API (D20, D21) | ⬜ Not started | [→ Step 22](#step-22--flarekid-and-echo-in-the-game) |
+| **23** | Pedestal reveal and idle | reasoning (Claude Opus 5.5) — S1; animation and particles on home and the fighter screen, graphics-heavy (D23) | ⬜ Not started | [→ Step 23](#step-23--pedestal-reveal-and-idle) |
+| **24** | Paper cut-out animation in play | reasoning (Claude Opus 5.5) — S1; run, facing, recoil, flashes and knock-out of a flat figure; the missing-art document (D24, D29) | ⬜ Not started | [→ Step 24](#step-24--paper-cut-out-animation-in-play) |
+| **25** | Camera views | reasoning (Claude Opus 5.5) — S1; four camera rigs with framing rules at five sizes, new keys and the HUD toast (D25) | ⬜ Not started | [→ Step 25](#step-25--camera-views) |
+| **26** | Brighter worlds and more detail | reasoning (Claude Opus 5.5) — S1; palettes and new animated decoration in both worlds without touching the rules (D26) | ⬜ Not started | [→ Step 26](#step-26--brighter-worlds-and-more-detail) |
+| **27** | Lighting presets and saturation boost | reasoning (Claude Opus 5.5) — S1; environment and light presets in the Compatibility renderer, the default chosen from screenshots (D27) | ⬜ Not started | [→ Step 27](#step-27--lighting-presets-and-saturation-boost) |
+| **28** | Performance comparison | reasoning (Claude Opus 5.5) — S1; measuring every preset, world and view against the baseline and trimming what is over (D28) | ⬜ Not started | [→ Step 28](#step-28--performance-comparison) |
+| **29** | Final check of the reopening, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size report, the after set and the documents | ⬜ Not started | [→ Step 29](#step-29--final-check-of-the-reopening-readme-and-architecture) |
+
+**Reopened 2026-11-22:** Steps 1–20 were done in the first run and are kept unchanged with their
+Notes. Steps 21–29 cover the added parts C, V and L; every one runs on Claude Opus 5.5 (S1, D1)
+and is done by the agent; the iPad check of the new parts stays with the author (Deferred Items).
 
 **Who does what:** Steps 1–13, 15–18 and 20 are done by the agent. **Step 14 is a gate:** it
 stops the run until the author has sent the photo (A0); Steps 15–20 start only after it.
@@ -467,6 +613,17 @@ prepares everything and records their answers (D17).
 | D17 | **What needs the author:** Step 14 stops the run (A0) and Steps 15–20 wait for the photo. The B6 trial (Step 19) is done by the author with his accounts; the agent prepares the instructions, records the result and imports it only if D14's licence rules and Mattia allow it. The G1 verdict and the G14/W5 iPad play-test (Step 20) are done by the author and Mattia; a mid-way look (G1) is sent after Step 6 without stopping. A Step that waits says *waiting for the author* in its Notes and is not ✅ Done until the answer is recorded. | A0, B6, G1, G14, W5: what only the author can do is visible in the table and never invented. |
 | D18 | **Tests:** looks are checked on screenshots; what a script can check is tested: the theme's fonts and button styles exist and every home button has an icon (`test_home.gd` / new `test_home_look.gd`); the toon and outline materials on every fighter part (`test_fighter_model.gd`); the nearest wall's share of the screen height ≤ 10 % at the five sizes (new `test_arena_framing.gd`); the FPS label hidden by default (`test_match_hud.gd`); `Worlds`, `ArenaLayout.use` and the Glimmer Isles layout (starts free and ≥ 4 m apart, every cover reachable, walls inside the bounds — new `test_world_layouts.gd`); the world choice used by Play and Training (new `test_world_choice.gd`); the baked scene has no addon reference and has props in every wall and cover rectangle (new `test_glimmer_isles.gd`); the drawn fighter in the list, selectable, playable, and the fallback after removal (new `test_drawn_fighter.gd`); the existing screen-size tests at the five sizes with the new layouts. Tests that count fighters (`test_fighters.gd`, `test_fighter_list.gd`, `test_sample_progress.gd`) are updated in Step 16. | S2, S3, G16: behaviour stays tested; tests change only where the look changes. |
 | D19 | **Review finding 10 (runner decision): no price on locked fighters yet.** A locked fighter's card shows the lock icon on a grey backdrop, a grey picture and a lock chip "Locked" instead of a price, and the fighter screen a disabled **Locked** button, because the game has no prices yet (a fighter is unlocked only by the start list or the unlock-all hack). G5's price tag on locked fighters comes with the prices: [Unlock and Upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) S2 (the unlock price by rarity, also on locked cards); skin prices with [Skins Shop](../2026_11_22_10_skins_shop_spec.md) (spec 10). | S2 (nothing invented: no number without a rule behind it); Part 1, the plan (Step 7) and the result now agree. |
+| D20 | **Name and data of the new fighters (reopened, Q8–Q9):** the Blaze upgrade is **Flarekid** (id `flarekid`) — a kid whose hood is a flame, an original name that is not "Blaze" and is not used by any fighter, skin or brand checked in the repository; rarity **Legendary** (an upgrade hero), `"plays_like": "blaze"`. **Echo** (id `echo`), rarity **Mythic**, `"plays_like": "luna"` (a ranged "sound blaster", like Luna's ray gun). Both are rows in `Fighters.LIST` with `"unlocked": true`, `"cutout": true`, one `default` skin, and the `plays_like` numbers (as drawn fighters, D14; `SampleProgress` gets their numbers); old saves get them through `Fighters.start_unlocked()` (spec 08 D4). Their folders stay `characters/blaze2/` and `characters/echo/` as the author delivered them. | C1: the author asked for an own name; a known rule (`plays_like`) gives the numbers without inventing an attack (A6). |
+| D21 | **Cut-out fighter look:** a registry `CutoutFighters` (`scenes/cutout/cutout_fighters.gd`, like `DrawnFighters`): id → hero texture, card texture, height in metres (about 1.6 m, as the other fighters), the feet point of the picture. `FighterModel.setup` asks it after `DrawnFighters` and builds into its body a `MeshInstance3D` with a `QuadMesh` and a `ShaderMaterial` of a new `scenes/toon/cutout.gdshader`: the quad turns to the camera around the vertical axis in the vertex shader (Y billboard, so the model's own yaw does not matter); alpha scissor; a dark outline found from the picture's alpha in a ring of a fixed **screen-pixel** width (D5's width); uniforms `flash` (mix to white), `fade` (see-through and knock-out alpha), `flip` (mirror), `saturation`. Plus a soft round blob shadow on the ground (unshaded, transparent disc, as the pedestal's shadow). See-through (C7) sets `fade` instead of the material swap. The card picture is the author's `_card.png` itself (`FighterPictures` returns it instead of rendering). The delivered `Sprite3D` scenes are not used (they cannot outline, flash or flip). | C2, C5, C6, C7: one material does all the per-fighter effects; the rig/body/head API of `FighterModel` keeps the existing idle, run and recoil code working for the new fighters. |
+| D22 | **Art files, web size and git:** the author's two folders are committed (pictures, READMEs, scenes with `blaze2`'s path fixed to `res://characters/blaze2/`). The hero pictures are imported **not** VRAM-compressed (the web export has no mobile VRAM formats) with `process/size_limit` 768 (hero) and 256 (card) and `compress/mode` lossless, or lossy WebP if lossless is over the C11 budget of 1.0 MB for both — Step 21 measures and decides. Not shipped (export `exclude_filter`): `characters/*/character_preview.gd`, `characters/*/*_hero.tscn`, `characters/*/*_hero_ui.tscn`, `characters/*/README.md`, `scenes/blaze_godot/*`, `scenes/blaze_godot.zip`. `.gitignore` gets `/scenes/blaze_godot.zip` and `/scenes/blaze_godot/`; the zips and the duplicate folder are never touched. | C2, C9, C10, C11: the original pictures stay as delivered (re-import is lossless for the source); the game ships only what it uses, sized for a phone. |
+| D23 | **Reveal and idle:** `FighterStage.show_fighter` plays a reveal whenever it shows a fighter with `pedestal = true` (home, fighter screen; not the off-screen pictures): scale 0.3 → 1.08 → 1.0 in 0.45 s (`Tween`, `TRANS_BACK`), a one-shot `CPUParticles3D` burst (about 24 sparks in the rarity colour, `Rarity` colours) and a rarity-coloured halo quad behind the fighter (the radial gradient of home's halo) that flares and settles. The cut-out idle is in `FighterModel.animate` for cut-out fighters: body scale y `1 + 0.03·sin`, x `1 − 0.02·sin` (breathing), bob 0.04 m, sway ±4° around the view axis. CPU particles, not GPU (Compatibility and web safe). | C3, C4: one place for both screens; reused by every fighter. |
+| D24 | **In-play cut-out animation:** in `FighterModel.animate` (cut-out branch) — running: a hop `|sin|·0.18 m` with a squash at the bottom (scale y 0.9, x 1.08) and a lean of 8° towards the movement; facing: `Fighter` sets `model.facing_left` from the sign of the input's x (unchanged when x ≈ 0), the shader's `flip`; shot: the existing recoil plus `FighterModel.muzzle_flash()` — a small unshaded star quad at the muzzle for 0.08 s; hit: `Fighter.hit` calls `model.flash()` (white for 0.12 s); knock-out: cut-out fighters tip backwards (rotation about the screen's horizontal axis to 80°) and fade out in `KNOCK_OUT_SECONDS` instead of the spin and shrink. Shape fighters keep their animations. | C5: the "paper" moves the author asked for with the one picture that exists. |
+| D25 | **Camera views:** `game/camera_views.gd` (`CameraViews`, static data): `classic` (pitch 55°, distance fitted as today, G11), `close` (55°, 0.6 × the fitted distance, at least 6 m), `behind` (pitch 28°, 6 m, look-ahead 4 m north), `overview` (pitch 78°, distance fitted to the whole `ArenaLayout.bounds()` at the screen's aspect). The camera's yaw never changes — it always looks north — so the keys keep their screen direction (V4) and the billboards face it. `Arena` keeps one `Camera3D` and moves it between rigs with a short blend (0.3 s); the follow, look-ahead and near-wall rule stay for `classic`. Input actions in `project.godot`: `view_next` (V), `view_1`–`view_4` (keys 1–4 and keypad 1–4), `light_next` (L), `saturation_boost` (K) — none is bound elsewhere (only `move_*` and `shoot` exist; the arena has no text field). `GameState.camera_view` (memory only, default `classic`). A shared `HudToast` (`scenes/ui/hud_toast.gd`: a `ChipPanel` backing with a `HudLabel`, top centre, shown 1.5 s then faded) says the view's name and is reused by D27. No touch button (V6, Deferred Items). | V1–V6: a fixed yaw is the simplest way to keep world-relative controls right in every view. |
+| D26 | **Brighter worlds and detail:** palette constants of `Canyon` and `GlimmerIsles` (and their props) are raised in saturation and value — canyon: warmer orange-red rock, apricot sand floor, greener cacti; Glimmer Isles: vivid teal and violet ground, magenta and cyan crystals — the floor stays the least saturated surface (L1, G10). New decoration only in decoration spots or outside the border, with no collider: canyon — flowering cactus tops, flags on the border that wave, circling birds, a turquoise stream outside the border with moving highlights; Glimmer Isles — fireflies (`CPUParticles3D`, at most 64), pulsing crystal glow (one shared material, its emission animated), waterfalls from the floating islands (a scrolling quad), slowly turning islands. Static props are instanced (MultiMesh), moving ones in code; `baked.tscn` is re-baked with `tools/bake_world.ps1` only if the scatter source changes. | L1, L2, W4, W7: more life without touching the rules, the layouts or the bake's no-thread rule (D12). |
+| D27 | **Lighting presets:** `game/light_presets.gd` (`LightPresets`, data per preset: name, sun colour, energy and angle, ambient colour and energy, sky top/horizon/ground colours, `adjustment_brightness/contrast/saturation`, optional fog and glow) and `scenes/world_lighting.gd` (`WorldLighting`, applies a preset to the arena's `WorldEnvironment`, `Sun` and the world's sky; each world may tint a preset through its own base values). Presets in `L` order: **Bright day**, **Golden sunset**, **Neon night**, **Candy pop**, plus **Classic** (the look before the reopening, to compare). `K`: saturation × 1.3 on top. `GameState.light_preset` and `GameState.saturation_boost` (memory only); `HudToast` (D25) shows the name. Glow is enabled in a preset only if a windowed Compatibility run and the web export both show it and Step 28's numbers stay within L8; otherwise the preset uses emission and the adjustments only. The default (L6) is chosen in Step 27 from screenshots of every preset × world at 1280×720 and 820×1180 and recorded in this table (D27's last sentence and the Step's Notes). | L3–L7: data in one place, applied in one place, the same for Training and a match. |
+| D28 | **Measurements and budgets:** Step 21 takes the reopening's **before** set (D2 method: both worlds in a match 4 s in, home, fighter screen; 1280×720 and 820×1180; `%LOCALAPPDATA%\hack_star\screens\09b\before\`), the **performance baseline** (a windowed run, vsync off, a 4-fighter match in each world, Classic view, 10 s: average and worst frame time, `Performance` `RENDER_TOTAL_DRAW_CALLS_IN_FRAME` and `RENDER_TOTAL_PRIMITIVES_IN_FRAME`, by a temporary script, never committed) and the **web size** (`tools/export_web.ps1` in the working tree). Budgets: the two characters ≤ 1.0 MB (C11); the reopening ≤ 1.5 MB in total; the whole export ≤ 45,361,090 bytes (G15: Step 1 + 5 MB); L8 as stated. Step 28 repeats the performance run for every preset × world, with and without the boost, in Classic and Overview, and trims (particle counts, glow off) what is over. | L8, C11, G15: measured the same way before and after, in the same folder state the author has. |
+| D29 | **Missing-art document:** `docs/drawing_to_fighter.md` gets a section *Picture fighters (Flarekid, Echo)*: how a picture fighter is added or removed (folder, imports, `CutoutFighters` row, `Fighters.LIST` row, `SampleProgress`, `LICENSES.md`), what a single picture cannot do, and exactly what the author can generate with the same tool to improve it — a side and a back view, a run cycle of 4–8 frames, a shot pose and a hit pose (same height and feet point, transparent PNG, `characters/<folder>/<name>_<pose>.png`), or a GLB through the B1 workflow (`docs/drawing_tools.md`) — and what the game then does (frames swapped by the animation; a GLB replaces the cut-out). | C8: the author knows what to deliver next without this spec open. |
+| D30 | **Tests (reopening):** new files (at most 20 tests each, D18): `test_cutout_fighters.gd` (both in the list and unlocked, old save gets them, card picture is the delivered card, model builds the cut-out quad with the outline shader, see-through `fade`, `flip` follows the input, `flash` after a hit, knock-out fades), `test_fighter_reveal.gd` (reveal on home and the fighter screen, not on pictures; particles and halo in the rarity colour), `test_camera_views.gd` (order of `V`, keys `1`–`4`, the toast, fighter within the screen per view at the five sizes, Overview sees the four borders, Classic keeps G11, kept for the next match), `test_light_presets.gd` (order of `L`, `K` toggles, default preset, each preset changes sun, sky and adjustments, kept for the next match), `test_world_decor.gd` (new decoration has no collider, layouts and start points unchanged, at least three new kinds per world). Tests that count fighters are updated in Step 22. | S2, S3: what a script can check is tested; looks are checked on screenshots (D2). |
 
 ---
 
@@ -948,6 +1105,178 @@ Started: 2026-11-22 16:07
 
 ---
 
+## Step 21 — Baseline, art import and licences
+
+### Goal
+The reopening's before set and measurements exist, the author's pictures are imported web-safe
+and within budget, credited, and the delivery's extra files are kept out of git and the export
+(C2, C9, C10, C11, L1, L8; D22, D28).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Before set (D28, D2): home, fighter screen, a 4-fighter match 4 s in, in the canyon and in Glimmer Isles, at 1280×720 and 820×1180, into `%LOCALAPPDATA%\hack_star\screens\09b\before\`; all viewed; capture script outside the repository, deleted.
+- [ ] Performance baseline (D28): a windowed run, vsync off, 4-fighter match per world, Classic view, 10 s — average and worst frame time, draw calls, primitives — written in Notes; temporary script deleted.
+- [ ] `.gitignore`: `/scenes/blaze_godot.zip`, `/scenes/blaze_godot/`; `export_presets.cfg` `exclude_filter`: the D22 entries; the zips and `scenes/blaze_godot/` untouched (`git status` shows them as ignored, not untracked).
+- [ ] Imports (D22): the four PNGs not VRAM-compressed, `size_limit` 768 / 256, lossless (lossy WebP if over budget); `blaze_hero.tscn` and `blaze_hero_ui.tscn` point to `res://characters/blaze2/`; the two folders committed (pictures, `.import`, READMEs, scenes, preview scripts with their `.uid`).
+- [ ] `LICENSES.md`: one row per picture (C9 wording, Mattia's drawing, the author, date 2026-11-22); `tools/export_web.ps1` in the working tree: total and `.pck` size and the size of the two characters' imported files in Notes (C11 ≤ 1.0 MB; total ≤ 45,361,090 bytes).
+- [ ] Check: 8 PNGs present and viewed; the numbers in Notes; `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` exit 0; `git status --short` shows no zip and no `scenes/blaze_godot`.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 22 — Flarekid and Echo in the game
+
+### Goal
+Flarekid and Echo are fighters, unlocked from the start, shown with their pictures — an outlined
+cut-out with a shadow in 3D, their card picture on cards and skin buttons — and see-through in
+cover (C1, C2, C6, C7; D20, D21).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `Fighters.LIST` rows and `SampleProgress` numbers (D20); `CutoutFighters` registry and `scenes/toon/cutout.gdshader` (Y billboard, alpha scissor, pixel-width outline, `flash`, `fade`, `flip`, `saturation`) and the blob shadow (D21); `FighterModel.setup` builds a cut-out fighter; `FighterPictures` returns the card picture.
+- [ ] See-through in cover through `fade` (C7); the tests that count fighters updated; `tests/test_cutout_fighters.gd` (D30, the data, card, model, see-through parts).
+- [ ] Screenshots (D2) at 1280×720 and 820×1180: home with Flarekid and with Echo on the pedestal, the fighter list (both cards), the fighter screen, both in a match in each world and in a bush; the outline compared with Blaze's next to it; Notes say what was looked at and changed.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0; both fighters selectable and playable in Training and a match (a test and the screenshots).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 23 — Pedestal reveal and idle
+
+### Goal
+Every fighter pops in with particles and a rarity halo on home and the fighter screen, and the
+cut-out fighters breathe, bob and sway when standing (C3, C4; D23).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Reveal in `FighterStage` (scale tween, `CPUParticles3D` burst, rarity halo) when the stage has a pedestal; none on the off-screen pictures.
+- [ ] Cut-out idle in `FighterModel.animate` (breathing, bob, sway).
+- [ ] `tests/test_fighter_reveal.gd` (D30); existing home and fighter-screen tests still green.
+- [ ] Screenshots (D2): a sequence of 4 frames (0, 0.15, 0.3, 0.6 s) of the reveal on home and on the fighter screen for Flarekid (Legendary), Echo (Mythic) and Rocko (Rare), and two idle frames of each new fighter 0.5 s apart; viewed; Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 24 — Paper cut-out animation in play
+
+### Goal
+In Training and a match the cut-out fighters hop, lean, flip with the direction, recoil with a
+muzzle flash, flash white when hit and fall flat at a knock-out; the missing art is written down
+(C5, C8; D24, D29).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Run hop, squash and lean; `facing_left` from `Fighter` → shader `flip`; `muzzle_flash()` on a shot; `flash()` on a hit; the knock-out tip-and-fade for cut-out fighters (D24); shape fighters unchanged.
+- [ ] Tests in `tests/test_cutout_fighters.gd` for flip, flash and knock-out (D30).
+- [ ] `docs/drawing_to_fighter.md` section *Picture fighters (Flarekid, Echo)* (D29); README link.
+- [ ] Screenshots (D2) in a match at 1280×720: running left and right (flip), mid-hop, a shot (flash), a hit (white), the knock-out at 0.25 s; both fighters; viewed; Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 25 — Camera views
+
+### Goal
+Four camera views switch with `V` and `1`–`4` in Training and a match, the name shows briefly,
+the controls and framing stay right, and the choice is kept while the game is open (V1–V7; D25).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Input actions `view_next`, `view_1`–`view_4`, `light_next`, `saturation_boost` in `project.godot` (D25; the last two used in Step 27); `CameraViews`; `Arena` places the camera per view with the blend; `GameState.camera_view`.
+- [ ] `HudToast` (D25) on switching; the start hint (`ControlsHelp.KEYBOARD_HINT`) and *How to play* name the view keys (V7).
+- [ ] `tests/test_camera_views.gd` (D30); `tests/test_arena_framing.gd` still green.
+- [ ] Screenshots (D2): each view in each world at 1280×720 and 820×1180 (16 PNGs) with the toast in one of them; viewed; Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 26 — Brighter worlds and more detail
+
+### Goal
+The canyon and Glimmer Isles are brighter and more saturated, with at least three new kinds of
+decoration each, some moving, and the same rules (L1, L2, L7; D26).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Palettes of `Canyon`, `GlimmerIsles` and their props (D26); the floor stays the least saturated surface.
+- [ ] New decoration per world (D26), no colliders, instanced where static; re-bake Glimmer Isles only if its scatter source changed (`tools/bake_world.ps1`, D12).
+- [ ] `tests/test_world_decor.gd` (D30); `tests/test_world_layouts.gd`, `test_glimmer_isles.gd`, `test_canyon_look.gd` still green (tests changed only where colours are checked).
+- [ ] Screenshots (D2): both worlds in a match at 1280×720 and 820×1180 next to Step 21's before set; viewed; Notes say what is brighter, what was added and what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 27 — Lighting presets and saturation boost
+
+### Goal
+`L` cycles the lighting presets and `K` the saturation boost in both worlds, the name shows
+briefly, and the default is the best-looking preset chosen from screenshots (L3–L7; D27).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `LightPresets` and `WorldLighting` (D27); `Arena` applies `GameState.light_preset` and `saturation_boost` at start and on `L` / `K`; `HudToast` shows the name.
+- [ ] Glow: try it in a windowed Compatibility run and in the web export (`tools/export_web.ps1`, `tools/serve_web.ps1`, a desktop browser); keep it only where both show it (D27), Notes say the result.
+- [ ] `tests/test_light_presets.gd` (D30); *How to play*, the start hint and the README controls name `L` and `K`.
+- [ ] Screenshots (D2): every preset × both worlds × 1280×720 and 820×1180, and the boost on for two of them; viewed; the default chosen and its reason written into D27 and the Notes; L7 checked on them (fighters, shots, health bars, cover, HUD).
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 28 — Performance comparison
+
+### Goal
+The new looks are measured against Step 21's baseline and stay within L8 (L8, C11; D28).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] The D28 performance run for every preset × world, with and without the boost, in Classic and Overview, with Flarekid and Echo among the 4 fighters; a table in Notes (frame time average and worst, draw calls, primitives) next to the baseline.
+- [ ] Anything over L8 trimmed (particle counts, glow, decoration counts) and measured again; temporary scripts deleted.
+- [ ] Check: every row within L8 in Notes; `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 29 — Final check of the reopening, README and architecture
+
+### Goal
+Everything that worked before still works, the size budget is met and reported, the after set is
+recorded, and the documents describe the new fighters, views and lighting (C1–C11, V1–V7,
+L1–L8, S2–S6).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` (all exit 0); every `.ps1` changed parses with `[System.Management.Automation.Language.Parser]::ParseFile`; nothing outside `hack_star_godot/` changed (S5); `git status` shows no zip and no `scenes/blaze_godot`.
+- [ ] Web export size report in Notes: total and `.pck` vs Step 1, Step 20 and Step 21; the two characters' share (C11 ≤ 1.0 MB); total ≤ 45,361,090 bytes (G15).
+- [ ] After set (D2) into `%LOCALAPPDATA%\hack_star\screens\09b\after\` with Step 21's file names; viewed next to the before set; Notes say what changed (L1).
+- [ ] `README.md`: the two new fighters, the reveal, the controls (`V`, `1`–`4`, `L`, `K`), the presets and the default, the link to *Picture fighters*; `docs/architecture.md`: `CutoutFighters` and the cut-out shader (*3D models*), the reveal (*UI foundation*), `CameraViews`, `HudToast`, `LightPresets`, `WorldLighting`, the new tests; `LICENSES.md` complete (S4).
+- [ ] Check: every statement C1–C11, V1–V7, L1–L8 has a Step that is ✅ Done (the iPad check of L8 in Deferred Items).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
 ## Deferred Items
 
 | Task | Reason | Target Spec |
@@ -964,6 +1293,10 @@ Started: 2026-11-22 16:07
 | Lint and format-check `tools/*.gd` (first file: `tools/bake_world.gd`) and smoke-test `tools/check_tools.ps1` and `tools/bake_world.ps1` | Code review 2026-11-22 finding 8: outside this spec's scope (the Godot tooling) | A later Godot tooling spec |
 | Allow letter-prefixed statement ids (G1, W1, A0, B1) in the kit's `change_record.schema.json` | Code review 2026-11-22 finding 9: the kit lives in the root `.specs/kit/`, which a Godot spec does not change | A kit spec in the root `.specs/` |
 | The price tag on locked fighter cards and on the fighter screen (G5; D19) — and the skin prices | Code review 2026-11-22 finding 10: the game has no prices yet; the unlock price by rarity is that spec's S2, skin prices come with the shop | [Unlock and Upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) (S2) · [Skins Shop](../2026_11_22_10_skins_shop_spec.md) (spec 10) |
+| A touch button to switch the camera view (and the lighting presets) | V6: touch players keep the default view in this spec (reopened 2026-11-22, Q11) | A later Godot UI spec |
+| The iPad check of the reopened parts: ≥ 30 fps with Flarekid and Echo, every view and the default preset (L8, G14) | Needs the author's iPad; Step 28 measures on the desktop only | This spec, Step 29 / author |
+| Side and back views, run, shot and hit frames, or a 3D model for Flarekid and Echo | C8: only one front picture each exists; `docs/drawing_to_fighter.md` *Picture fighters* says what to deliver | The author, then a later spec |
+| Which AI image tool made the Flarekid and Echo pictures, for `LICENSES.md` | C9: "tool to be confirmed by the author" | The author |
 
 ---
 
@@ -973,6 +1306,7 @@ Started: 2026-11-22 16:07
 |------|----------|-------|---------|----------|
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [2026-11-22_better-graphics.html](../../review/2026-11-22_better-graphics.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `91cc8be..060ff79` | Approve | 0 Blocking · 2 Should-fix · 8 Nit |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: spec reopened for the author's request — two new characters, views, lighting (C1–C11, V1–V7, L1–L8; Steps 1–20 kept, Steps 21–29 added, D20–D30) |
 
 ### Code review 2026-11-22
 
@@ -995,9 +1329,9 @@ Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; pag
 
 ## Definition of Done
 
-- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered)
-- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29)
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items)
 - [x] Review · review page written; no Blocking finding open
-- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again after Step 29)_
 - [ ] Pull request · opened with the spec summary ([#36](https://github.com/martinnordio/hack_star/pull/36), from `feature/better-graphics` to `main`); reviewed; merged; branch deleted — *not ticked:* opened, not merged (the author reviews and merges)
