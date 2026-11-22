@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 Reopened 2026-11-22 — two characters, views, lighting
+> **Status:** 🔄 In progress — reopened 2026-11-22: two characters, views, lighting
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
@@ -44,6 +44,7 @@
 | 2026-11-22 | pr | `PR:` | Claude Opus 5.5 | 1.43 M (66 k in · 1.36 M cached · 9 k out) | CHF 0.66 (78 credits) | pull request opened (#36, base `main`, not draft; issue #35 updated and commented; `usage.ps1 -AgentName s09g-pr` from 2026-11-22 16:48:31) |
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: spec reopened in place for the author's request (issue #35 kept, comment added); groups C (C1–C11, two new characters Flarekid and Echo), V (V1–V7, views) and L (L1–L8, brighter worlds and lighting presets) added; Q8–Q13 answered with the suggestions; no open questions |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 3.64 M (128 k in · 3.47 M cached · 40 k out) | CHF 1.79 (214 credits) | re-planned: two characters, views, lighting — Steps 1–20 kept; Steps 21–29 added, all reasoning (Claude Opus 5.5); D20–D30 (agent `s09g-lead3`; requirements revision included; `usage.ps1 -AgentName s09g-lead3` from 2026-11-22 16:55:00) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.98 M (119 k in · 3.84 M cached · 19 k out) | CHF 1.47 (175 credits) | Step 21 done (`usage.ps1 -AgentName s09g-steps21-22` from 17:03:28 to 17:11:25) |
 ---
 
 ## Cost summary
@@ -543,7 +544,7 @@ it is closed again after Step 29._
 | **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ✅ Done | [→ Step 18](#step-18--tool-recommendation-document) |
 | **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | 🔜 Deferred | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
 | **20** | Final check, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the side-by-side verdict and the documents | ✅ Done | [→ Step 20](#step-20--final-check-readme-and-architecture) |
-| **21** | Baseline, art import and licences | reasoning (Claude Opus 5.5) — S1; the before set and the measurements of the reopening, web-safe imports within the size budget (D22, D28) | ⬜ Not started | [→ Step 21](#step-21--baseline-art-import-and-licences) |
+| **21** | Baseline, art import and licences | reasoning (Claude Opus 5.5) — S1; the before set and the measurements of the reopening, web-safe imports within the size budget (D22, D28) | ✅ Done | [→ Step 21](#step-21--baseline-art-import-and-licences) |
 | **22** | Flarekid and Echo in the game | reasoning (Claude Opus 5.5) — S1; a new kind of fighter look (cut-out shader with outline, shadow, see-through) behind the existing model API (D20, D21) | ⬜ Not started | [→ Step 22](#step-22--flarekid-and-echo-in-the-game) |
 | **23** | Pedestal reveal and idle | reasoning (Claude Opus 5.5) — S1; animation and particles on home and the fighter screen, graphics-heavy (D23) | ⬜ Not started | [→ Step 23](#step-23--pedestal-reveal-and-idle) |
 | **24** | Paper cut-out animation in play | reasoning (Claude Opus 5.5) — S1; run, facing, recoil, flashes and knock-out of a flat figure; the missing-art document (D24, D29) | ⬜ Not started | [→ Step 24](#step-24--paper-cut-out-animation-in-play) |
@@ -1113,16 +1114,24 @@ and within budget, credited, and the delivery's extra files are kept out of git 
 (C2, C9, C10, C11, L1, L8; D22, D28).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Before set (D28, D2): home, fighter screen, a 4-fighter match 4 s in, in the canyon and in Glimmer Isles, at 1280×720 and 820×1180, into `%LOCALAPPDATA%\hack_star\screens\09b\before\`; all viewed; capture script outside the repository, deleted.
-- [ ] Performance baseline (D28): a windowed run, vsync off, 4-fighter match per world, Classic view, 10 s — average and worst frame time, draw calls, primitives — written in Notes; temporary script deleted.
-- [ ] `.gitignore`: `/scenes/blaze_godot.zip`, `/scenes/blaze_godot/`; `export_presets.cfg` `exclude_filter`: the D22 entries; the zips and `scenes/blaze_godot/` untouched (`git status` shows them as ignored, not untracked).
-- [ ] Imports (D22): the four PNGs not VRAM-compressed, `size_limit` 768 / 256, lossless (lossy WebP if over budget); `blaze_hero.tscn` and `blaze_hero_ui.tscn` point to `res://characters/blaze2/`; the two folders committed (pictures, `.import`, READMEs, scenes, preview scripts with their `.uid`).
-- [ ] `LICENSES.md`: one row per picture (C9 wording, Mattia's drawing, the author, date 2026-11-22); `tools/export_web.ps1` in the working tree: total and `.pck` size and the size of the two characters' imported files in Notes (C11 ≤ 1.0 MB; total ≤ 45,361,090 bytes).
-- [ ] Check: 8 PNGs present and viewed; the numbers in Notes; `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` exit 0; `git status --short` shows no zip and no `scenes/blaze_godot`.
+- [x] Record the start time in Notes below.
+- [x] Before set (D28, D2): home, fighter screen, a 4-fighter match 4 s in, in the canyon and in Glimmer Isles, at 1280×720 and 820×1180, into `%LOCALAPPDATA%\hack_star\screens\09b\before\`; all viewed; capture script outside the repository, deleted.
+- [x] Performance baseline (D28): a windowed run, vsync off, 4-fighter match per world, Classic view, 10 s — average and worst frame time, draw calls, primitives — written in Notes; temporary script deleted.
+- [x] `.gitignore`: `/scenes/blaze_godot.zip`, `/scenes/blaze_godot/`; `export_presets.cfg` `exclude_filter`: the D22 entries; the zips and `scenes/blaze_godot/` untouched (`git status` shows them as ignored, not untracked).
+- [x] Imports (D22): the four PNGs not VRAM-compressed, `size_limit` 768 / 256, lossless (lossy WebP if over budget); `blaze_hero.tscn` and `blaze_hero_ui.tscn` point to `res://characters/blaze2/`; the two folders committed (pictures, `.import`, READMEs, scenes, preview scripts with their `.uid`).
+- [x] `LICENSES.md`: one row per picture (C9 wording, Mattia's drawing, the author, date 2026-11-22); `tools/export_web.ps1` in the working tree: total and `.pck` size and the size of the two characters' imported files in Notes (C11 ≤ 1.0 MB; total ≤ 45,361,090 bytes).
+- [x] Check: 8 PNGs present and viewed; the numbers in Notes; `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` exit 0; `git status --short` shows no zip and no `scenes/blaze_godot`.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 17:03
+**Before set** (D28, D2), `%LOCALAPPDATA%\hack_star\screens\09b\before\` (8 PNGs, all viewed; not committed): `godot_home_<size>.png`, `godot_fighter_<size>.png`, `godot_match_canyon_<size>.png`, `godot_match_glimmer_<size>.png` at `1280x720` and `820x1180` (the 820×1180 window is capped by the desktop at 820×1175, as in Steps 16 and 20). A windowed run (`--resolution`) with a temporary `-s` capture script under `%TEMP%` (outside the repository, deleted afterwards), the game's own save (Blaze, 1765 trophies), the entrance skipped, the matches 4 s in (timer 2:00, the fight just started). Seen: home and the fighter screen with Blaze on the pedestal; the canyon in its sand-and-orange look and Glimmer Isles in pale lavender and teal with crystal ridges and fern patches — the reference for L1 ("more saturated and brighter").
+**Performance baseline** (D28, L8; a windowed Compatibility run at 1280×720, vsync off, `Engine.max_fps` 0, a 4-fighter match per world, Classic view, sampled for 10 s from 1 s after the scene loads, the same temporary script, deleted): run 1 — canyon 764 frames, average **13.09 ms**, worst 131.43 ms, draw calls avg **792** (max 844), primitives avg 926 k (max 959 k); Glimmer Isles 1012 frames, average **9.89 ms**, worst 65.86 ms, draw calls avg **570** (max 674), primitives avg 810 k (max 894 k). Run 2 — canyon 780 frames, 12.84 ms, worst 93.88 ms, draw calls avg **1042** (max 1139), primitives avg 1.40 M (max 1.48 M); Glimmer Isles 1397 frames, 7.16 ms, worst 36.33 ms, draw calls avg 533 (max 577), primitives avg 752 k (max 787 k). The bots' fighters are random per match, so the canyon's draw calls vary by about a third between runs; the worst frame is the first frames' shader compilation. Step 28 compares against the higher of the two runs per world and repeats each run twice.
+**Git and export** (C10, D22): `.gitignore` gets `/scenes/blaze_godot.zip` and `/scenes/blaze_godot/`; `git status --short --ignored` shows both as `!!` (ignored), the files untouched. `export_presets.cfg` `exclude_filter` gets `characters/*/character_preview.gd`, `characters/*/*_hero.tscn`, `characters/*/*_hero_ui.tscn`, `characters/*/README.md`, `scenes/blaze_godot/*`, `scenes/blaze_godot.zip`; the exported `index.pck` holds only the four pictures of `characters/` (searched for the file names: no preview script, scene, README or zip).
+**Imports** (D22, C11): every picture not VRAM-compressed (`detect_3d/compress_to` off too, so Godot does not switch it to VRAM when a 3D material uses it); heroes `size_limit` 768 with mipmaps (they are small in the arena), cards 256 without. **Lossless was over budget**: heroes 780,800 + 904,548 bytes, cards 91,500 + 109,874 = 1,886,722 bytes (> 1.0 MB). **Decided:** heroes **lossy WebP** at quality 0.9 (210,596 + 258,378 bytes; alpha is kept exact by WebP), cards stay **lossless** (crisp on the card and skin buttons): **670,348 bytes for both characters** (C11 ≤ 1.0 MB met). The author's PNGs are unchanged. `blaze_hero.tscn` and `blaze_hero_ui.tscn` now point to `res://characters/blaze2/`. The two folders are committed: pictures, `.import`, READMEs, the four scenes and `character_preview.gd` with its `.uid` (not used by the game, not exported).
+**Licences** (C9): `LICENSES.md` gets *Pictures of Flarekid and Echo*, a row per picture (the C9 wording, Mattia's drawing, the author, 2026-11-22; the tool and its terms to be confirmed by the author — Deferred Items), and the intro names the pictures.
+**Web size** (`tools/export_web.ps1` exit 0, in the working tree with the author's untracked zip and folder present): `build/web` **41,188,483 bytes** (≤ 45,361,090; +827,393 vs Step 1, −4,044,448 vs Step 20's working-tree export, which packed the delivery's VRAM pictures), `index.pck` **1,067,352 bytes** (+668,004 vs Step 20's clean 399,348 — the two characters' imported pictures, 670,348 bytes).
+**Done (2026-11-22 · ~8 min · Claude Opus 5.5)** — the reopening's before set (8 PNGs) and performance baseline, the delivery's extras ignored by git and kept out of the export, the four pictures imported web-safe (heroes lossy WebP, cards lossless, 0.67 MB for both) and credited, `blaze2`'s scenes fixed, the two folders committed. `tools/test.ps1` 469 tests passed, `tools/lint.ps1` exit 0, `tools/export_web.ps1` exit 0 (41,188,483 bytes); `git status --short` shows no zip and no `scenes/blaze_godot`; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 3.98 M tokens · CHF 1.47 (175 credits)
 
 ---
 

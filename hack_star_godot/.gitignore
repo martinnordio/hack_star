@@ -2,3 +2,5 @@
 /build/
 /assets/music/
 *.tmp
+/scenes/blaze_godot.zip
+/scenes/blaze_godot/
