@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ✅ Complete — closed on feature/better-graphics (reopened 2026-11-22 for two characters, views and lighting; re-closed 2026-11-22)
+> **Status:** 🔄 Reopened 2026-11-22 — animated characters
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
@@ -60,6 +60,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.37 M (593 k in · 1.77 M cached · 6 k out) | CHF 2.88 (344 credits) | orchestrator (main chat) of the reopening (`usage.ps1 -Agent main` from 2026-11-22 15:11:46; all 4 requests after 16:46, so none counted in the first close's row) |
 | 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 3.99 M (32 k in · 3.94 M cached · 12 k out) | CHF 1.00 (120 credits) | spec closed again after the reopening; web export 41,244,583 bytes (`usage.ps1 -AgentName s09g-close3` from 2026-11-22 20:11:59) |
 | 2026-11-22 | pr | `PR:` | Claude Opus 5.5 | 1.37 M (72 k in · 1.29 M cached · 10 k out) | CHF 0.68 (81 credits) | pull request updated (#36: summary with the reopening and the new Cost summary, both semantic diffs; branch pushed; issue #35 updated; `usage.ps1 -AgentName s09g-pr3` from 2026-11-22 16:55:00) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 4.06 M (159 k in · 3.86 M cached · 35 k out) | CHF 1.90 (226 credits) | Part 1 revised: spec reopened in place a second time for the author's request (issue #35 kept); group M added (M1–M16, animated characters: MagMax a new fighter, Echo and Flarekid with the new delivery, facing, walk, shoot pose and own projectiles in play, showcase on the pedestal, the fighter screen and the list); C2, C5, C8, C9, C11 superseded; Q14–Q18 answered with the suggestions; the image tool and the name MagMax open with the author (agent `s09g-lead4`; `usage.ps1 -AgentName s09g-lead4` from 2026-11-22 20:22:00 to 20:28:42) |
 ---
 
 ## Cost summary
@@ -235,6 +236,10 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 - _(added 2026-11-22, reopened)_ Two new fighters from the author's generated pictures (part C),
   camera views switchable with the keyboard (part V), and brighter worlds with lighting presets
   switchable with the keyboard (part L).
+- _(added 2026-11-22, author's request)_ Animated characters (part M): a third picture fighter,
+  **MagMax**, and Echo and Flarekid with the author's new delivery — front, back and side views
+  that follow the movement, a walk loop, a shoot pose and their own projectiles in play, and a
+  showcase on the pedestal, the fighter screen and the fighter list.
 
 **Reopened 2026-11-22 (author's request) — found in the repository:**
 - `characters/blaze2/` and `characters/echo/` (untracked, made by the author with an AI image
@@ -262,6 +267,50 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   only) and `Sun` in `arena.tscn`; `GlimmerIsles` sets its own sky and sun. Input actions:
   `move_*` (WASD and arrows) and `shoot` (Space) — no key is bound to `1`–`4`, `V`, `L` or `K`,
   and the arena has no text field.
+
+**Reopened again 2026-11-22 (author's request: animated characters) — found in the repository:**
+- `characters/echo_new/`, `characters/flarekid_new/` and `characters/magmax_new/` (untracked, made
+  by the author with an AI image tool): a hero picture and a 512 × 512 card picture — **byte for
+  byte the same files** as the committed `characters/echo/` and `characters/blaze2/` pictures and
+  the older untracked `characters/magmax/` (checked with SHA-256) — the same helper scenes and
+  `character_preview.gd`, a README, and what is new, a `gameplay/` set: **12 frames** per
+  character (`down` = front, `up` = back, `side` = looking right, mirrored for left; each `idle`,
+  `walk1`, `walk2`, `shoot`; 582 × 509 (MagMax), 592 × 503 (Echo), 626 × 507 (Flarekid) px,
+  transparent, feet at the bottom centre; 2.6, 3.1 and 2.6 MB of PNG per character),
+  `*_frames.tres` (a `SpriteFrames`: `idle_`, `walk_` and `shoot_` × `up`, `down`, `side`; the walk
+  loop walk1 → idle → walk2 → idle at 8 frames a second; the shoot frame 0.25 s), `*_gameplay.tscn`
+  (an unshaded `AnimatedSprite3D` billboard about 1.3 m tall, no outline), `*_animator.gd` (the view
+  and animation from the parent body's velocity — `up` when it moves to −z, the side view mirrored
+  for left, the closest view for a diagonal, the last view when standing, the shoot pose 0.25 s on
+  the `shoot` action), a projectile picture (256 px wide: MagMax a lava-fist shockwave, Echo a
+  sound wave, Flarekid a fireball) with a flat `Sprite3D` scene and a mover script, and an
+  `*_animation_preview.png` (all 12 frames). The imports are as delivered (not VRAM-compressed,
+  lossless, full size). The internal paths point to `res://characters/echo/` (Echo),
+  `res://characters/magmax/` (MagMax) and `res://characters/blaze/` (Flarekid, whose files are
+  still named `blaze_*`) — none of them is the folder the files are in.
+- `characters/magmax/` (untracked): the author's older MagMax (hero, card, helper scenes, no
+  frames), superseded by `magmax_new`. `characters/echo/` and `characters/blaze2/` (committed in
+  Step 21): today's Echo and Flarekid, one picture each, used by `CutoutFighters`.
+- `export_presets.cfg` already keeps `characters/*_new/*`, `characters/magmax*/*`,
+  `characters/*.zip` and the delivered helper files (`character_preview.gd`, `*_hero.tscn`,
+  `*_hero_ui.tscn`, `README.md`) out of the web export (D22, D31); `.gitignore` has
+  `/characters/*.zip`, not `characters/magmax/`.
+- Picture fighters today: `CutoutFighters` puts one picture on one outlined, camera-facing quad
+  (`cutout.gdshader`, uniforms `picture`, `flash`, `fade`, `flip`, `tilt`, `tip`; all hero and
+  card pictures preloaded), `CutoutMotion` (hop, lean, left/right flip, muzzle star, knock-out
+  tip), `FighterModel` (996 lines — gdlint's limit is 1000), `Fighter.face()`, `FighterStage`
+  (pop-in, halo and sparks, C3), `FighterCard` (the card picture, still).
+- Camera and controls: in all four views the camera looks north (−z) and never turns
+  (`CameraViews`, D25: Classic and Close at 55°, Behind at 28°, Overview at 78°), and `Movement`
+  maps up on the screen (W, the joystick up) to −z. So in every view, moving up the screen means
+  away from the camera, the delivery's back (`up`) view — the delivery's assumption holds.
+- Shots: every fighter fires the same `Shot` (`Combat`: 16 m/s, 9 m, 480 damage, a ray each frame;
+  a glowing ball with a tail in the fighter's main colour). `Fighters.LIST` rarities: Rare (Blaze,
+  Rocko), Super Rare (Turbo), Epic (Frosty), Mythic (Luna, Beatbolt, Echo), Legendary (Pixel,
+  Flarekid); Rocko is the "friendly rock golem, a tank". No fighter, skin or brand in the
+  repository is called MagMax.
+- Web export at the last close: 41,244,583 bytes, 4.1 MB under G15's budget (45,361,090); the two
+  picture fighters' imported pictures 0.67 MB.
 
 | Document | Purpose |
 |----------|---------|
@@ -434,10 +483,11 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   skin each and playing like an existing fighter (as A2): Flarekid like Blaze, Echo like Luna.
   Both are shown in the fighter list, the fighter screen and on home, can be chosen, and are
   playable in Training and a match. Blaze and Beatbolt stay as they are.
-- **C2 — The author's pictures:** Each new fighter is shown with the author's pictures from
+- ~~**C2 — The author's pictures:** Each new fighter is shown with the author's pictures from
   `characters/blaze2/` and `characters/echo/`: the full-body picture in 3D, and the 512 × 512
   card picture on its fighter card and its skin button. The delivered scene files point to their
-  own folder (`blaze2`'s path is fixed).
+  own folder (`blaze2`'s path is fixed).~~ (superseded 2026-11-22 by M1, M2, M8: in play and on
+  the pedestal the gameplay frames replace the single full-body picture; the card picture stays)
 - **C3 — Reveal on the pedestal:** Whenever a fighter appears on home's pedestal or on the
   fighter screen (opening the screen, choosing another fighter or skin), it pops in — grows from
   small to its size with a short overshoot within 0.5 s — with a burst of glowing particles and a
@@ -445,28 +495,35 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   ones.
 - **C4 — Alive when standing:** On home and the fighter screen the two new fighters are never
   still: they breathe (a slight stretch and squash), bob and sway gently in a loop.
-- **C5 — Alive in play:** In Training and a match the two new fighters move like paper
+- ~~**C5 — Alive in play:** In Training and a match the two new fighters move like paper
   cut-outs: running hops with a lean and a squash on landing; they face left or right by
   flipping with the movement direction (and keep the last facing when moving straight up or
   down); a shot gives a recoil and a muzzle flash; a hit gives a short white flash; a knock-out
-  makes them fall flat and fade before they are hidden, as the other fighters are.
+  makes them fall flat and fade before they are hidden, as the other fighters are.~~ (superseded
+  2026-11-22 by M3–M5 and M7: front, back and side views, a walk loop and a shoot pose replace
+  the left/right flip and the hop of one picture; the muzzle flash, the hit flash and the
+  knock-out stay)
 - **C6 — Toon fit:** The new fighters have a dark outline around their silhouette, as wide on
   screen as the other fighters' outline (G9), and a soft shadow on the ground; on a card and in
   the arena they read as clearly as the other fighters at the five screen sizes.
 - **C7 — Cover:** In a bush (cover) the new fighters are see-through like the others.
-- **C8 — What is missing, written down:** A document says what a flat picture cannot do (no
+- ~~**C8 — What is missing, written down:** A document says what a flat picture cannot do (no
   side or back view, no real turning, no drawn run or shot frames), what the author can make with
   the same tool to improve it (side and back views, a run cycle of 4–8 frames, a shot pose and a
   hit pose — same size, transparent background — or a 3D model through the B1 workflow), where to
-  put the files, and what the game then does with them.
-- **C9 — Licence:** `LICENSES.md` has a row per new picture: "generated by the author with an AI
-  image tool from Mattia's drawing — tool to be confirmed by the author".
+  put the files, and what the game then does with them.~~ (superseded 2026-11-22 by M16: the
+  author delivered the side and back views, walk and shoot frames; the document now says how the
+  animated fighters work and how to add one)
+- ~~**C9 — Licence:** `LICENSES.md` has a row per new picture: "generated by the author with an AI
+  image tool from Mattia's drawing — tool to be confirmed by the author".~~ (superseded
+  2026-11-22 by M13: MagMax, the frames and the projectiles are added)
 - **C10 — Kept out:** `scenes/blaze_godot.zip` and `scenes/blaze_godot/` (with its zip) are never
   committed (`.gitignore`) and never in the web export; files of the delivery that the game does
   not use are not in the web export either; the author's files are not deleted.
-- **C11 — Size:** The two new fighters add at most 1.0 MB to the web export, and the whole
+- ~~**C11 — Size:** The two new fighters add at most 1.0 MB to the web export, and the whole
   export stays within G15's budget (Step 1 + 5 MB), measured in the working tree with the
-  author's untracked files present.
+  author's untracked files present.~~ (superseded 2026-11-22 by M14: three animated fighters
+  with 12 frames each)
 
 ### V — Views while playing (added 2026-11-22, author's request)
 
@@ -515,6 +572,91 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   calls at most 30 % more, frame time at most 30 % more and under 33 ms; the iPad check
   (≥ 30 frames per second, G14) stays with the author.
 
+### M — Animated characters (added 2026-11-22, author's request)
+
+- **M1 — Three animated fighters:** **MagMax** — a masked hero with flame hair and glowing
+  lava-rock fists, the author's new character — joins the fighters: unlocked for every account
+  from the start (old saves included), one Default skin, rarity **Epic**, playing like **Rocko**
+  (the numbers of the fighter it plays like, no new attack, as C1 and A6). **Echo** and
+  **Flarekid** keep their id, name, rarity, how they play, unlock and saved progress, and get the
+  author's new delivery (12 gameplay frames and a projectile each; their hero and card pictures
+  are the same files as before). All three are shown in the fighter list, the fighter screen and
+  on home, can be chosen and are playable in Training and a match. Blaze, Beatbolt and the other
+  fighters stay as they are. _(added 2026-11-22, author's request)_
+- **M2 — Final folders:** The delivery lives in the game's character folders: Echo's in
+  `characters/echo/`, Flarekid's in `characters/blaze2/` (the delivered `blaze_*` file names
+  kept), MagMax's in `characters/magmax2/` (`characters/magmax/` is the author's older, untracked
+  MagMax). Every delivered scene and resource points to the folder it is in — no path to
+  `characters/blaze/`, `characters/magmax/` or a `*_new` folder — and the three `*_new` folders
+  are moved, not copied (they no longer exist afterwards). _(added 2026-11-22, author's request)_
+- **M3 — Facing from movement:** In Training and a match (the player and the bots) an animated
+  fighter shows its **back** view while it moves up the screen (away from the camera), its
+  **front** view while it moves down the screen, and its **side** view while it moves mostly left
+  or right (mirrored for left); a diagonal shows the closer of these, and standing still keeps the
+  last view. Up on the screen is the same direction in all four camera views (the camera never
+  turns, V4), so the facing is the same in Classic, Close, Behind and Overview. At the start of a
+  match and of Training the fighter shows its front view. _(added 2026-11-22, author's request)_
+- **M4 — Walk and idle:** While it moves, an animated fighter plays the walk loop of its current
+  view (walk 1, idle, walk 2, idle) at a pace that fits its speed, with a small hop; when it stops
+  it shows that view's idle frame at once and stays alive (breathing, as C4). It never slides
+  across the ground as a still picture. _(added 2026-11-22, author's request)_
+- **M5 — Shoot pose:** On every shot (Space, the release of the touch aim, a tap that fires at the
+  nearest target, a bot's shot) an animated fighter turns to the view of the shot's direction,
+  shows that view's shoot frame for about 0.25 s and then walks or idles again; the muzzle flash
+  appears at the fist, blaster or fireball of that frame. _(added 2026-11-22, author's request)_
+- **M6 — Own projectiles:** The shots of MagMax, Echo and Flarekid look like their delivered
+  projectile pictures (a lava-fist shockwave, a sound wave, a fireball), turned along the
+  direction they fly; they fly as fast and as far, hit, stop at walls and do the damage of every
+  other shot, and the hit burst stays (S2); they are readable in all four views and every
+  lighting preset (L7). The other fighters keep their shots. _(added 2026-11-22, author's
+  request)_
+- **M7 — Effects kept:** In every view and frame the animated fighters keep the dark outline as
+  wide on screen as the other fighters' (C6), the soft shadow, the white hit flash, the knock-out
+  (tip over and fade, then hidden), the see-through in cover (C7), and the health bar and damage
+  numbers over the figure in every camera view; their feet stay on the ground, they do not jump
+  in size between frames, and they read about as tall on screen as the other fighters.
+  _(added 2026-11-22, author's request)_
+- **M8 — Showcase on the pedestal:** On home, the fighter screen and the result screen an
+  animated fighter pops in with sparks and its rarity halo (C3), then plays a showcase loop of at
+  most 8 s that never stands still: idle facing the viewer, a turn through its views (front,
+  side, back, the other side, front), a few walk steps on the spot, and a shoot pose with its
+  projectile flying out and a burst of sparks; then it starts again. _(added 2026-11-22, author's
+  request)_
+- **M9 — Turn and shoot on the fighter screen:** On the fighter screen the player can turn an
+  animated fighter through its views by dragging left or right over it, and make it shoot (the
+  shoot pose with its projectile) with a tap or click on it — with the mouse and with touch; the
+  showcase goes on a few seconds after the last drag or tap. _(added 2026-11-22, author's
+  request)_
+- **M10 — Living cards:** On the fighter list the card of each animated fighter moves: its figure
+  plays its idle and walk frames on the card with its card picture, and a light sweep in its
+  rarity colour crosses the card every few seconds; a locked card stays grey (G7); the list fits,
+  scrolls and reacts as before at the five screen sizes. _(added 2026-11-22, author's request)_
+- **M11 — Clearly better, on screenshots:** Before and after screenshots of home, the fighter
+  list, the fighter screen and a match with each of the three fighters (1280 × 720 and
+  820 × 1180, and short frame sequences of the animation) show the animated fighters clearly
+  livelier than the single pictures before; what changed is written in this spec; the author's
+  own verdict (as G1) stays with the author. _(added 2026-11-22, author's request)_
+- **M12 — Kept out:** The author's older `characters/magmax/` and every zip are never committed,
+  changed or in the web export; of the delivery only what the game uses is in the web export (no
+  preview picture, and no delivered example script or scene the game does not use).
+  _(added 2026-11-22, author's request)_
+- **M13 — Licence:** `LICENSES.md` has rows for every picture of the three fighters (hero, card,
+  frames, projectile): "generated by the author with an AI image tool from Mattia's drawing or the
+  author's own idea — the tool, and the drawing or idea per character, to be confirmed by the
+  author"; the existing Echo and Flarekid rows are updated. _(added 2026-11-22, author's request)_
+- **M14 — Size:** The three animated fighters' files in the web export (pictures, frames,
+  projectiles) are together at most 3.5 MB, and the whole export stays within G15's budget
+  (at most 45,361,090 bytes: Step 1 + 5 MB), measured in the working tree with the author's
+  untracked files present; the sizes are reported. _(added 2026-11-22, author's request)_
+- **M15 — Smooth:** With four animated fighters in a match in both worlds the desktop frame time
+  and draw calls stay within L8 of the reopening's baseline (Step 21); the game is playable within
+  5 s after **Play** as before (G15); the iPad check (≥ 30 frames per second, G14) stays with the
+  author. _(added 2026-11-22, author's request)_
+- **M16 — Documented:** The README, `docs/architecture.md` and `docs/drawing_to_fighter.md`
+  (*Picture fighters*) say how the animated fighters work (views, walk, shoot pose, projectiles,
+  showcase) and how the author adds another one from the same kind of delivery (12 frames, a card,
+  a hero picture, a projectile). _(added 2026-11-22, author's request)_
+
 ### Open questions
 
 None. The author answered Q1–Q7 on 2026-11-22 (Q1 3D built from shapes, cut-out as the
@@ -529,6 +671,21 @@ not "Blaze"); Q9 rarity and how they play → Flarekid like Blaze, Echo like Lun
 existing keys (V2, L3, L4); Q11 a touch button for views → not in this spec, touch keeps the
 default (V6); Q12 the Behind view and the controls → the camera never turns, so the keys keep
 their direction (V1, V4); Q13 the reveal → for every fighter (C3).
+
+Reopened again 2026-11-22 (animated characters): the questions of part M were answered with the
+suggestions (the author's rule for this run): Q14 MagMax's data → rarity **Epic** (the rarity
+with only one fighter, Frosty), plays like **Rocko** (lava-rock fists, a brawler like the rock
+golem), unlocked from the start, one Default skin, the name written **MagMax** as in the author's
+request (the files say "Magmax") (M1); Q15 the folders → `characters/echo/` and
+`characters/blaze2/` kept (their imports, links and the export filter stay; Flarekid's `blaze_*`
+names kept), `characters/magmax2/` for MagMax because `characters/magmax/` is the author's older
+untracked folder (M2); Q16 the view at the start → the front view, so the player sees the face
+(the delivery starts in the back view) (M3); Q17 the projectiles → their pictures change only the
+look of the shot, never its rules (M6); Q18 where the showcase plays → every pedestal (home, the
+fighter screen, the result), as the reveal (M8, C3). **Open with the author (not blocking;
+Deferred Items):** the AI image tool's name and, per character, Mattia's drawing or the author's
+idea (M13); and whether the name **MagMax** is fine — a 1985 arcade game by Nichibutsu is called
+"MagMax" (no fighter, skin or brand of the repository uses it).
 
 <!-- spec-nx:plan -->
 
@@ -1491,9 +1648,9 @@ Range `bccd2ed..f10d71c` (requirements revision, re-plan, Steps 21–29; parts C
 
 ## Definition of Done
 
-- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered)
+- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered; reopened again 2026-11-22: M1–M16 added, C2, C5, C8, C9, C11 superseded, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29)
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items); the reopening's Steps 21–29 are all ✅ Done (`tools/test.ps1` 517 passed after the review fixes), its iPad check (L8, G14) waits for the author too
 - [x] Review · review page written; no Blocking finding open (second review of the reopening: [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), 0 Blocking)
-- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again 2026-11-22 after the second review's fixes)_
+- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again 2026-11-22 after the second review's fixes; reopened in place again 2026-11-22 for the animated characters — closed again after the last new Step)_
 - [ ] Pull request · opened with the spec summary ([#36](https://github.com/martinnordio/hack_star/pull/36), from `feature/better-graphics` to `main`); reviewed; merged; branch deleted — *not ticked:* opened, not merged (the author reviews and merges)
