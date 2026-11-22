@@ -21,6 +21,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 877 k (7 k in · 867 k cached · 2 k out) | CHF 0.11 (13 credits) | Step 3 done (`usage.ps1 -AgentName s16-steps2-3` from 08:52) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.36 M (69 k in · 2.26 M cached · 23 k out) | CHF 1.06 (127 credits) | Step 4 done (`usage.ps1 -AgentName s16-step4` from 08:54) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.04 M (106 k in · 1.91 M cached · 24 k out) | CHF 0.07 (8 credits) | Step 5 done (`usage.ps1 -AgentName s16-step5` from 09:03) |
+| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 10.93 M (184 k in · 10.68 M cached · 68 k out) | CHF 3.69 (441 credits) | semantic diff written (7 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-16-bug-fixes.html)); code review: Approve, 0 Blocking · 3 Should-fix · 2 Nit (`usage.ps1 -AgentName s16-review` from 2026-11-22 09:07:26) |
 ---
 
 # Part 1 · Requirements
@@ -438,6 +439,35 @@ Started: 2026-11-22 09:03
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-16-bug-fixes.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 3 Should-fix · 2 Nit |
+
+### Code review 2026-11-22
+
+Range `235f93c..dfb85cb` (this spec's commits only: the plan commit `383f81c` and Steps 1–5).
+Ran: `tools/test.ps1` (386 of 386 passed), `tools/lint.ps1` (OK); record checked with
+`change_record.schema.json` (checks 7 pass · 2 n/a · 0 fail). Before | After: real screenshots of
+the hack screen from a windowed Godot 4.7.2 run (temporary capture script, removed) at 1280×720
+and 390×844, the before side from a temporary worktree at `235f93c` (removed); the time rules, the
+save, a hack turning off, **Turn all hacks off**, the end of a match and two tabs on one save from
+a temporary headless probe, the same source on both sides, with a fixed clock where the side has
+one, saving under `user://review16/` (the player's save file was absent before and after); the
+same probe checked finding 1. Good: the time rules are pure and the clock is replaceable, so the
+3 days are tested without waiting; `GameState` stays the one owner of the hacks, the choice and
+the store; a spec 05 or 08 save keeps its hacks and progress; every field of version 3 is checked
+(an `until` too far ahead is cut); the match keeps its fighter; the web store sits behind a small
+seam a test fakes; Step 4 drove two tabs in a real browser; nothing in `server/` or `ui/` changed.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | A hack turned off in one tab comes back when another tab saves before it syncs: `save()` merges the newer store into this tab's memory as a union (`_merge`, `scenes/autoload/game_state.gd:259-271`), so the writing tab's own copy of the hack is written again. Probe: tab A OPENSESAME on, tab B **Turn all hacks off** (stored without it), tab A wins a match without coming to the front → the store and tab B (after `sync_from_store`) have `unlock_all` again; likewise **Turn all hacks off** in a tab whose save merges a newer store that still has the hack. S22 (turned off → locked again) meets S4 / D7 (union); it needs two visible windows (a tab syncs when it is shown). Decide, e.g. keep a hack in the merge only if this tab entered it after its last read, or accept it and say so in the README | code | spec | Should-fix | plan decision |
+| 2 | The fighter screen does not show trophies that arrive from another tab: the trophies label and the Prestige badge are set once in `_ready` (`scenes/fighter_screen.gd:31-32`); `_refresh_hack_state` (43–50), connected to `progress_changed`, updates only the power and **Select**. S4 asks the other tab to show the trophies when it comes back to the front (Home and the fighter list do). Move the two lines into the refresh | code | spec | Should-fix | fix now |
+| 3 | No test for the triggers of D3 / D7: the 30 s `ExpiryTimer` of `GameState._ready` (`game_state.gd:51-56`), `NOTIFICATION_APPLICATION_FOCUS_IN` (214–216) and the `visibilitychange` callback; D8 asks "the timer and `load_saved` turn an expired hack off" — only `load_saved` and `expire_hacks()` are tested. Add a test that emits `ExpiryTimer.timeout` and one that sends the focus notification (the web callback stays with the browser check) | code | test | Should-fix | fix now |
+| 4 | `README.md:235` says "a skin gained in one tab" is kept when another tab saves, but the merge keeps the writing tab's skins (D7), as line 238 says ("Credits and the chosen fighter and skin come from the tab that saved last"). Drop "or a skin" from line 235 | architecture | docs | Nit | fix now |
+| 5 | Definition of Done: the *Implementation* line is not ticked although all five Steps are ✅ Done and Step 5 ran `tools/check_tools.ps1`, `test.ps1`, `lint.ps1` and `export_web.ps1` (exit 0) and updated README and architecture | spec | docs | Nit | fix now |
+
+**Outcome:** Approve — no Blocking finding; findings 2–5 to fix now, 1 needs a plan decision
+(runner) before `CLOSE:`.
 
 ---
 
@@ -446,6 +476,6 @@ Started: 2026-11-22 09:03
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

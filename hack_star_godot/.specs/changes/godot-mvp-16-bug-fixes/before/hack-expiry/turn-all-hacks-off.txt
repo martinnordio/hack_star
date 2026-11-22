@@ -1,0 +1,4 @@
+unlock_all on; chose pixel; Turn all hacks off (reset_hacks)
+active_hacks: []
+selected_fighter: pixel (unlocked now: false)
+trophies[blaze]: 1240

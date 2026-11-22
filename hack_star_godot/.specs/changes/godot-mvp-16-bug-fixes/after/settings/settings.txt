@@ -1,0 +1,10 @@
+game/hacks.gd: const DAY_SECONDS: int = 86400
+game/hacks.gd: const HOUR_SECONDS: int = 3600
+game/hacks.gd: const TIMED_SECONDS: int = 3 * DAY_SECONDS
+game/hacks.gd: const FOREVER: int = 0
+game/save_data.gd: const VERSION: int = 3
+game/save_store.gd: const WEB_KEY: String = "hack_star_save"
+scenes/autoload/game_state.gd: const EXPIRY_CHECK_SECONDS: float = 30.0
+scenes/autoload/game_state.gd: var clock: Callable = Time.get_unix_time_from_system
+scenes/autoload/game_state.gd: var save_path: String = "user://hack_star_save.json"
+scenes/hack_screen.gd: const REFRESH_SECONDS: float = 60.0
