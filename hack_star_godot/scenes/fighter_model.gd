@@ -7,7 +7,10 @@ extends Node3D
 ## the feet stand on y = 0. The idle animation (breathing, sway, flickering flames and screens)
 ## runs in `_process` while `idle_enabled` is true; switch it off for still pictures.
 ## While `running` is true the run animation (bounce, forward lean) replaces the idle one;
-## `play_attack()` adds a short recoil on top of either.
+## `play_attack()` adds a short recoil on top of either. A picture fighter breathes, bobs and sways
+## when standing, hops and leans when running, looks left or right (`facing_left`), and has a
+## muzzle star (`muzzle_flash()`), a white hit flash (`flash()`) and its own knock-out
+## (`knock_out_pose()`) (`CutoutMotion`, spec 09, D23, D24).
 
 const OUTLINE_COLOR: Color = ToonMaterials.OUTLINE_COLOR
 ## Eyes darker than this get a white around the pupil.
@@ -30,13 +33,6 @@ const RUN_HEAD_SPEED: float = 2.4
 const ATTACK_SECONDS: float = 0.25
 const ATTACK_KICK: float = 0.18
 const ATTACK_SQUASH: float = 0.14
-## The idle of a picture fighter (spec 09, C4, D23): it breathes (stretch and squash), bobs and
-## sways around the view axis (the shader's `tilt`), each at its own speed.
-const CUTOUT_BREATH_STRETCH: float = 0.03
-const CUTOUT_BREATH_SQUASH: float = 0.02
-const CUTOUT_BOB_SPEED: float = 1.6
-const CUTOUT_BOB_HEIGHT: float = 0.04
-const CUTOUT_SWAY_ANGLE: float = 4.0 * PI / 180.0
 ## How opaque a fighter stays in a cactus patch (1 solid, 0 invisible).
 const SEE_THROUGH_ALPHA: float = ToonMaterials.SEE_THROUGH_ALPHA
 const SOLID_META: String = "solid_material"
@@ -204,6 +200,12 @@ var running: bool = false
 var attack_left: float = 0.0
 ## True while the whole fighter is see-through.
 var see_through: bool = false
+## Which way a picture fighter looks on the screen (set by `Fighter` from the input's x); the
+## picture is mirrored when it looks the other way than drawn.
+var facing_left: bool = false:
+	set(value):
+		facing_left = value
+		_apply_flip()
 var _rig: Node3D
 var _body: Node3D
 var _head: Node3D
@@ -211,6 +213,9 @@ var _flickers: Array[Node3D] = []
 var _flicker_scales: Array[Vector3] = []
 var _spinners: Array[Node3D] = []
 var _cutout: MeshInstance3D = null
+var _flash_left: float = 0.0
+var _muzzle_left: float = 0.0
+var _muzzle_flash: MeshInstance3D = null
 
 
 func _ready() -> void:
@@ -220,6 +225,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	attack_left = maxf(attack_left - delta, 0.0)
+	if _cutout != null:
+		_step_effects(delta)
 	if idle_enabled and _rig != null:
 		time_seconds += delta
 		animate(time_seconds)
@@ -245,6 +252,7 @@ func setup(new_fighter_id: String, new_skin_id: String = Fighters.DEFAULT_SKIN) 
 		DrawnFighters.build(fighter_id, self, look)
 	elif picture:
 		_cutout = CutoutFighters.build(fighter_id, self)
+		_apply_flip()
 	else:
 		_build(look)
 	animate(time_seconds)
@@ -329,6 +337,72 @@ func play_attack() -> void:
 	attack_left = ATTACK_SECONDS
 
 
+## A picture fighter's hit: the picture turns white for a moment. Fighters of shapes keep their
+## look.
+func flash() -> void:
+	if _cutout == null:
+		return
+	_flash_left = CutoutMotion.FLASH_SECONDS
+	_cutout_material().set_shader_parameter("flash", 1.0)
+
+
+## A picture fighter's shot: a star at the muzzle of its picture for a moment. Fighters of shapes
+## have the arena's flash only.
+func muzzle_flash() -> void:
+	if _cutout == null:
+		return
+	if _muzzle_flash == null:
+		_muzzle_flash = CutoutMotion.build_muzzle_flash(_rig)
+	_muzzle_left = CutoutMotion.MUZZLE_FLASH_SECONDS
+	_muzzle_flash.visible = true
+	_place_muzzle_flash()
+
+
+## The star of `muzzle_flash()` (null before the first shot).
+func get_muzzle_flash() -> MeshInstance3D:
+	return _muzzle_flash
+
+
+## A picture fighter's knock-out at `progress` (0 standing, 1 flat and gone): it tips over and
+## fades. False for a fighter of shapes (it spins and shrinks, `Fighter`).
+func knock_out_pose(progress: float) -> bool:
+	if _cutout == null:
+		return false
+	var material: ShaderMaterial = _cutout_material()
+	material.set_shader_parameter("tip", progress * CutoutMotion.KNOCK_OUT_TIP)
+	var alpha: float = SEE_THROUGH_ALPHA if see_through else 1.0
+	material.set_shader_parameter("fade", alpha * (1.0 - progress))
+	return true
+
+
+func _cutout_material() -> ShaderMaterial:
+	return _cutout.material_override as ShaderMaterial
+
+
+func _apply_flip() -> void:
+	if _cutout != null:
+		var mirrored: bool = facing_left != CutoutFighters.faces_left(fighter_id)
+		_cutout_material().set_shader_parameter("flip", mirrored)
+
+
+func _step_effects(delta: float) -> void:
+	if _flash_left > 0.0:
+		_flash_left = maxf(_flash_left - delta, 0.0)
+		if _flash_left <= 0.0:
+			_cutout_material().set_shader_parameter("flash", 0.0)
+	if _muzzle_left > 0.0:
+		_muzzle_left = maxf(_muzzle_left - delta, 0.0)
+		_muzzle_flash.visible = _muzzle_left > 0.0
+		_place_muzzle_flash()
+
+
+func _place_muzzle_flash() -> void:
+	var camera: Camera3D = get_viewport().get_camera_3d() if is_inside_tree() else null
+	if camera != null:
+		var mirrored: bool = facing_left != CutoutFighters.faces_left(fighter_id)
+		CutoutMotion.place_muzzle_flash(_muzzle_flash, fighter_id, _body, mirrored, camera)
+
+
 ## Puts the animation at a moment in time (seconds): idle or run, plus the attack recoil.
 func animate(time: float) -> void:
 	if _rig == null:
@@ -336,13 +410,12 @@ func animate(time: float) -> void:
 	var recoil: float = sin((1.0 - attack_left / ATTACK_SECONDS) * PI) if attack_left > 0.0 else 0.0
 	var breath: Vector3 = Vector3.ONE
 	var tilt: float = 0.0
-	if _cutout != null and not running:
-		var wave: float = sin(time * BREATH_SPEED)
-		breath = Vector3(1.0 - wave * CUTOUT_BREATH_SQUASH, 1.0 + wave * CUTOUT_BREATH_STRETCH, 1.0)
-		tilt = sin(time * SWAY_SPEED) * CUTOUT_SWAY_ANGLE
+	if _cutout != null:
+		var pose: Dictionary = CutoutMotion.pose(time, running, facing_left)
+		breath = pose["scale"]
+		tilt = pose["tilt"]
 		_rig.rotation.x = 0.0
-		# Up from the feet only, so the picture never sinks into the ground.
-		_body.position.y = (0.5 + 0.5 * sin(time * CUTOUT_BOB_SPEED)) * CUTOUT_BOB_HEIGHT
+		_body.position.y = pose["lift"]
 		_body.rotation.y = 0.0
 	elif running:
 		_rig.rotation.x = RUN_LEAN_ANGLE
@@ -375,6 +448,9 @@ func _clear() -> void:
 	_flicker_scales.clear()
 	_spinners.clear()
 	_cutout = null
+	_muzzle_flash = null
+	_flash_left = 0.0
+	_muzzle_left = 0.0
 	_rig = Node3D.new()
 	_rig.name = "Rig"
 	add_child(_rig)

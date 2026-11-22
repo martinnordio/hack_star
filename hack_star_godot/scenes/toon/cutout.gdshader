@@ -6,7 +6,8 @@ render_mode unshaded, cull_disabled, blend_mix, depth_draw_opaque, shadows_disab
 // `width_px` at 720 px, more on bigger screens, plus `grow` metres for close-ups). The quad is
 // `pad` larger than the picture on each side, so the outline has room at the picture's border.
 // `flash` mixes the picture to white (a hit), `fade` makes it see-through (cover, knock-out),
-// `flip` mirrors it around the feet, `saturation` scales its colour.
+// `flip` mirrors it (the whole picture, moved so the feet stay in place), `saturation` scales its
+// colour.
 
 uniform sampler2D picture : source_color, filter_linear_mipmap, repeat_disable;
 uniform vec4 outline_color : source_color = vec4(0.086, 0.059, 0.2, 1.0);
@@ -15,6 +16,8 @@ uniform float width_px = 3.0;
 uniform vec2 grow_uv = vec2(0.0);
 uniform float pad = 0.05;
 uniform float feet_x = 0.5;
+// The picture's width in metres (the quad without its `pad`).
+uniform float width_m = 1.0;
 uniform float flash : hint_range(0.0, 1.0) = 0.0;
 uniform float fade : hint_range(0.0, 1.0) = 1.0;
 uniform bool flip = false;
@@ -23,12 +26,20 @@ uniform float saturation = 1.0;
 uniform float foreshorten = 0.4;
 // A turn around the view axis, around the feet (radians): the idle's sway (D23).
 uniform float tilt = 0.0;
+// The knock-out (D24): the picture tips over around its feet by this angle (radians), towards the
+// camera, so the floor never cuts it; on screen it falls flat onto its feet.
+uniform float tip = 0.0;
 
 const int RING_SAMPLES = 12;
 
 void vertex() {
 	UV = UV * (1.0 + 2.0 * pad) - vec2(pad);
+	// Mirrored around its middle, the picture's feet would move: the quad moves back under them.
+	if (flip) {
+		VERTEX.x += (2.0 * feet_x - 1.0) * width_m;
+	}
 	VERTEX.xy = mat2(vec2(cos(tilt), sin(tilt)), vec2(-sin(tilt), cos(tilt))) * VERTEX.xy;
+	VERTEX.yz = vec2(VERTEX.y * cos(tip), VERTEX.z + VERTEX.y * sin(tip));
 	// Turned fully to the camera (as BaseMaterial3D's BILLBOARD_ENABLED), keeping the model's
 	// scale. A camera that looks down sees an upright fighter shorter (by the cosine of its pitch,
 	// the camera's up vector's y), so the picture shrinks around its feet by part of that: it keeps
@@ -54,7 +65,7 @@ float alpha_at(vec2 uv) {
 void fragment() {
 	vec2 uv = UV;
 	if (flip) {
-		uv.x = 2.0 * feet_x - uv.x;
+		uv.x = 1.0 - uv.x;
 	}
 	vec2 inside = step(vec2(0.0), uv) * step(uv, vec2(1.0));
 	vec4 color = texture(picture, clamp(uv, vec2(0.0), vec2(1.0)));

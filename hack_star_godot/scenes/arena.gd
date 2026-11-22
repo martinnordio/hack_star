@@ -204,7 +204,9 @@ func fire_from(fighter: Fighter, direction: Vector2, cooldown: float) -> bool:
 	fighter.last_fire_seconds = now
 	fighter.note_action()
 	fighter.rotation.y = Movement.facing_yaw(direction)
+	fighter.face(direction)
 	fighter.model.play_attack()
+	fighter.model.muzzle_flash()
 	var shot: Shot = Shot.new()
 	var muzzle: Vector3 = fighter.muzzle.global_position
 	# The first ray starts at the fighter's body, so a wall or dummy it touches is hit.

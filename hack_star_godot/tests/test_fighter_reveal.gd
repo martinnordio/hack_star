@@ -136,7 +136,7 @@ func test_picture_fighters_breathe_bob_and_sway_when_standing() -> void:
 			)
 		assert_gte(heights.min(), 0.0, "%s: never under the ground" % fighter_id)
 		assert_gt(heights.max() - heights.min(), 0.03, "%s: bobs" % fighter_id)
-		assert_lte(heights.max(), FighterModel.CUTOUT_BOB_HEIGHT + 0.001)
+		assert_lte(heights.max(), CutoutMotion.BOB_HEIGHT + 0.001)
 		assert_gt(tilts.max(), 0.05, "%s: sways one way" % fighter_id)
 		assert_lt(tilts.min(), -0.05, "%s: and the other" % fighter_id)
 		assert_lte(absf(tilts.max()), deg_to_rad(4.0) + 0.001, "at most 4 degrees")

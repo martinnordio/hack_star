@@ -1,9 +1,11 @@
 extends GutTest
 ## The picture fighters Flarekid and Echo (spec 09, part C, D20, D21, D30): their data, their card
 ## picture, the outlined cut-out model and its see-through in cover; both can be chosen and
-## played. Steps 23 and 24 add the reveal, flip, flash and knock-out tests here.
+## played; in play they look where they run, hop, flash at a shot and a hit, and tip over at a
+## knock-out (C5, D24). The reveal and the idle are in `test_fighter_reveal.gd`.
 
 const MODEL_SCENE: PackedScene = preload("res://scenes/fighter_model.tscn")
+const FIGHTER_SCENE: PackedScene = preload("res://scenes/fighter.tscn")
 const HOME: PackedScene = preload("res://scenes/home.tscn")
 const LIST: PackedScene = preload("res://scenes/fighter_list.tscn")
 const FIGHTER_SCREEN: PackedScene = preload("res://scenes/fighter_screen.tscn")
@@ -196,3 +198,109 @@ func test_echo_plays_in_a_match_with_the_health_bar_over_the_picture() -> void:
 	var picture_top: float = player.model.picture_top(camera_up_y)
 	assert_gt(picture_top, CutoutFighters.FIGHTERS["echo"]["height"], "the camera looks down")
 	assert_gt(player.health_bar().position.y, picture_top, "the bar over the picture")
+
+
+func _fighter(fighter_id: String) -> Fighter:
+	var fighter: Fighter = FIGHTER_SCENE.instantiate()
+	add_child_autofree(fighter)
+	fighter.set_look(fighter_id, Fighters.DEFAULT_SKIN)
+	return fighter
+
+
+func test_the_picture_looks_where_it_runs_and_keeps_it_going_up_or_down() -> void:
+	# Flarekid is drawn looking right, Echo looking left: mirrored only when looking the other way.
+	for row: Array in [["flarekid", false], ["echo", true]]:
+		var fighter: Fighter = _fighter(row[0])
+		var material: ShaderMaterial = _material(fighter.model)
+		for step: Array in [[Vector2.LEFT, true], [Vector2.UP, true], [Vector2.RIGHT, false]]:
+			fighter.input_direction = step[0]
+			await wait_physics_frames(2)
+			assert_eq(fighter.model.facing_left, step[1], "%s %s" % [row[0], step[0]])
+			var mirrored: bool = step[1] != row[1]
+			assert_eq(material.get_shader_parameter("flip"), mirrored, "%s flip" % row[0])
+		fighter.input_direction = Vector2(-0.05, 1.0)
+		await wait_physics_frames(2)
+		assert_false(fighter.model.facing_left, "%s: almost straight down keeps it" % row[0])
+		fighter.model.setup(row[0])
+		assert_eq(material.get_shader_parameter("flip"), row[1], "kept after a rebuild")
+
+
+func test_running_hops_squashes_on_landing_and_leans_where_it_looks() -> void:
+	var model: FighterModel = _model("echo")
+	model.idle_enabled = false
+	model.running = true
+	var material: ShaderMaterial = _material(model)
+	var heights: Array[float] = []
+	for step: int in 60:
+		model.animate(step * 0.013)
+		heights.append(model.get_body().position.y)
+	assert_almost_eq(heights.min(), 0.0, 0.01, "lands on its feet")
+	assert_almost_eq(heights.max(), CutoutMotion.HOP_HEIGHT, 0.01, "hops")
+	model.animate(0.0)
+	assert_almost_eq(model.get_body().scale.y, CutoutMotion.LAND_SQUASH.y, 0.001)
+	assert_almost_eq(model.get_body().scale.x, CutoutMotion.LAND_SQUASH.x, 0.001)
+	model.animate(PI / 2.0 / CutoutMotion.HOP_SPEED)
+	assert_eq(model.get_body().scale, Vector3.ONE, "stretched back in the air")
+	assert_almost_eq(material.get_shader_parameter("tilt"), -CutoutMotion.LEAN_ANGLE, 0.001)
+	model.facing_left = true
+	model.animate(0.1)
+	assert_almost_eq(material.get_shader_parameter("tilt"), CutoutMotion.LEAN_ANGLE, 0.001)
+
+
+func test_a_hit_flashes_the_picture_white_for_a_moment() -> void:
+	var fighter: Fighter = _fighter("flarekid")
+	var material: ShaderMaterial = _material(fighter.model)
+	assert_true(material.get_shader_parameter("flash") in [null, 0.0], "not white yet")
+	fighter.hit(10)
+	assert_eq(material.get_shader_parameter("flash"), 1.0, "white")
+	assert_lte(CutoutMotion.FLASH_SECONDS, 0.2, "short")
+	await wait_seconds(CutoutMotion.FLASH_SECONDS + 0.1)
+	assert_eq(material.get_shader_parameter("flash"), 0.0, "back to its colours")
+	var shapes: Fighter = _fighter("blaze")
+	shapes.hit(10)
+	assert_null(shapes.model.get_cutout(), "fighters of shapes keep their look")
+
+
+func test_a_shot_shows_a_star_at_the_muzzle_on_the_side_it_looks() -> void:
+	GameState.select("flarekid", Fighters.DEFAULT_SKIN)
+	var arena: Node3D = ARENA_SCENE.instantiate()
+	add_child_autofree(arena)
+	arena.read_player_input = false
+	await wait_process_frames(2)
+	var fighter: Fighter = arena.get_node("Fighter")
+	var camera: Camera3D = fighter.get_viewport().get_camera_3d()
+	for aim: Vector2 in [Vector2.RIGHT, Vector2.LEFT]:
+		fighter.last_fire_seconds = -INF
+		assert_true(arena.fire(aim))
+		var star: MeshInstance3D = fighter.model.get_muzzle_flash()
+		assert_not_null(star)
+		assert_true(star.visible, "a star at the shot")
+		var star_x: float = camera.unproject_position(star.global_position).x
+		var fighter_x: float = camera.unproject_position(fighter.global_position).x
+		if aim == Vector2.RIGHT:
+			assert_gt(star_x, fighter_x, "on the right of the picture")
+		else:
+			assert_lt(star_x, fighter_x, "mirrored: on the left")
+		await wait_seconds(CutoutMotion.MUZZLE_FLASH_SECONDS + 0.1)
+		assert_false(star.visible, "only a moment")
+	var shapes: FighterModel = _model("blaze")
+	shapes.muzzle_flash()
+	assert_null(shapes.get_muzzle_flash(), "fighters of shapes have the arena's flash only")
+
+
+func test_a_knock_out_tips_the_picture_over_and_fades_it() -> void:
+	var fighter: Fighter = _fighter("echo")
+	var material: ShaderMaterial = _material(fighter.model)
+	var turn: float = fighter.model.rotation.y
+	fighter.knock_out()
+	await wait_seconds(Fighter.KNOCK_OUT_SECONDS / 2.0)
+	var tip: float = material.get_shader_parameter("tip")
+	var fade: float = material.get_shader_parameter("fade")
+	assert_between(tip, 0.2, CutoutMotion.KNOCK_OUT_TIP, "tipping over")
+	assert_between(fade, 0.05, 0.8, "fading")
+	assert_eq(fighter.model.scale, Vector3.ONE, "no shrink")
+	assert_eq(fighter.model.rotation.y, turn, "no spin")
+	await wait_seconds(Fighter.KNOCK_OUT_SECONDS / 2.0 + 0.1)
+	assert_almost_eq(material.get_shader_parameter("tip"), CutoutMotion.KNOCK_OUT_TIP, 0.001)
+	assert_almost_eq(material.get_shader_parameter("fade"), 0.0, 0.001, "gone")
+	assert_false(fighter.visible, "hidden as the others")

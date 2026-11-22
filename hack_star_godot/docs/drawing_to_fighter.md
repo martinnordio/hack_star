@@ -127,3 +127,75 @@ the default fighter (Blaze) at the next start, and keeps everything else: the sa
 field by field and unknown fighters are left out (`SaveData`, spec 08). Checked by
 `test_a_save_that_chose_a_removed_drawn_fighter_falls_back_to_the_default`, and by a dry run that
 removed Beatbolt from a copy of the project: all tests passed.
+
+## Picture fighters (Flarekid, Echo)
+
+A drawing can also join the game as a **picture fighter**: the author makes a full-body picture
+and a card picture from it with an AI image tool, and the game shows the picture itself instead
+of a figure built from shapes. Flarekid (`characters/blaze2/`) and Echo (`characters/echo/`) are
+the first two (spec 09, part C).
+
+### What the game does with one picture
+
+- **Look:** the full-body picture stands on an outlined quad that always turns to the camera
+  (`scenes/toon/cutout.gdshader`), with a soft round shadow; the card picture is shown as it is on
+  the fighter card and the skin button (`CutoutFighters`, `scenes/cutout/cutout_fighters.gd`).
+- **Moves** (`CutoutMotion`, `scenes/cutout/cutout_motion.gd`): it pops in on the pedestal;
+  standing, it breathes, bobs and sways; running, it hops with a squash on landing and leans
+  forward; it is mirrored to look left or right with the movement (and keeps its last facing when
+  going straight up or down); a shot gives a recoil and a star at its muzzle, a hit a short white
+  flash, a knock-out tips it over and fades it; in a bush it is see-through.
+
+### What a single picture cannot do
+
+- **No side or back view:** the picture always shows its front; it never really turns, it is only
+  mirrored. Going up the arena it still looks at the player.
+- **No drawn run, shot or hit:** the hop, lean, recoil and flash move and colour the whole
+  picture; the legs never step and the arm never aims.
+- **One pose for everything:** the pose of the picture (Echo crouching, Flarekid holding his
+  fireball) is the pose in every moment, also on a card.
+
+### What the author can make to improve it
+
+With the same image tool, from the same picture (same character, same style), as **transparent
+PNGs of the same height with the feet at the same point**:
+
+| File (in `characters/<folder>/`) | What it is | What the game then does |
+|---|---|---|
+| `<name>_side.png`, `<name>_back.png` | A side and a back view | Shows the side view when running left or right and the back view when running up the arena |
+| `<name>_run1.png` … `<name>_run8.png` | A run cycle of 4–8 frames | Swaps the frames while running instead of the hop alone |
+| `<name>_shot.png` | A shot pose | Shows it for the recoil of each shot |
+| `<name>_hit.png` | A hit pose | Shows it with the white flash |
+
+Or a **3D model** (GLB with a skeleton and animations) through the workflow of
+[drawing tools](drawing_tools.md) (Google Flow → Meshy → Claude in Godot): it replaces the
+picture, and the fighter turns and moves like the fighters built from shapes.
+
+The frames are swapped by the picture fighter's animation (one texture per pose on the same quad,
+so the outline, the flip, the flash and the see-through keep working). Adding them is a later
+spec; the author's directional gameplay frames in `characters/echo_new/gameplay/frames/` (idle,
+walk and shoot looking down, up and to the side) are such a set, waiting for it (spec 09, D31).
+
+### Add a picture fighter
+
+1. Put the two pictures (`<name>_hero.png`, `<name>_card.png`, transparent background) in a new
+   folder `characters/<folder>/`. In the import dock: not VRAM-compressed (`compress/mode`
+   lossless, or lossy WebP 0.9 for the hero if the export grows too much), `detect_3d` off,
+   `size_limit` 768 for the hero (with mipmaps) and 256 for the card; re-import.
+2. Add its row to `CutoutFighters.FIGHTERS`: `hero`, `card`, `height` (metres, 2.5–2.7 to stand
+   as tall as the others), `feet` (the feet point of the picture in UV, feet at the bottom),
+   `main` (its main colour, different from every other fighter's), `faces_left` (true when the
+   picture looks to the left) and `muzzle` (where its shot leaves the picture, UV).
+3. Add its entry to `Fighters.LIST` (`"unlocked": true`, `"cutout": true`, one `default` skin,
+   `"plays_like"` an existing fighter) and its two lines to `game/sample_progress.gd` (0 trophies,
+   power level 1).
+4. Add a row per picture to `LICENSES.md` (who made it, from which drawing, with which tool).
+5. Keep the files the game does not use out of the web export (`exclude_filter` in
+   `export_presets.cfg`), then run `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1`
+   (the export must stay within its size budget; see the README).
+
+### Remove a picture fighter
+
+Delete its row in `CutoutFighters.FIGHTERS`, its entry in `Fighters.LIST`, its two lines in
+`game/sample_progress.gd` and its rows in `LICENSES.md`; the folder can stay or go. A save that
+chose it falls back to the default fighter, as for a drawn fighter above.

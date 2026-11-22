@@ -205,6 +205,9 @@ baked result.
 A child's drawing can become a fighter of the game, built by Claude via Copilot from shapes:
 how to photograph it (privacy first), where to put the photo, the exact request to Claude and
 what the result can and cannot be are in [docs/drawing_to_fighter.md](docs/drawing_to_fighter.md).
+A drawing can also join as a picture fighter, like Flarekid and Echo: what one picture can and
+cannot do and which pictures make it better are in
+[Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo).
 
 For a 3D model with a skeleton and animations made with other tools (Google Flow → Meshy →
 Claude in Godot), the recommended workflow, the facts and terms of each tool (licence first) and

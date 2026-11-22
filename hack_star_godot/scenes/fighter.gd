@@ -4,7 +4,9 @@ extends CharacterBody3D
 ## frame from the keyboard and the touch joystick; tests may set it directly.
 ## A fighter can be hit: `hit(amount)` lowers `health` (a damage number rises, the health bar,
 ## when `show_health_bar` was called, follows), it heals after a quiet time (`heal_step`) and
-## at 0 health it is knocked out: it spins and shrinks, then is hidden with its collision off.
+## at 0 health it is knocked out: it spins and shrinks (a picture fighter tips over and fades),
+## then is hidden with its collision off. A hit flashes a picture fighter white, and the input's
+## x turns its picture left or right (`face`).
 
 signal hurt(amount: int)
 signal knocked_out_now
@@ -15,6 +17,9 @@ const NUMBER_Y: float = 2.6
 const PICTURE_BAR_GAP: float = 0.3
 const KNOCK_OUT_SECONDS: float = 0.5
 const KNOCK_OUT_SPINS: float = 2.0
+## A picture fighter turns left or right only when the input's x is at least this (C5: moving
+## straight up or down keeps the last facing).
+const FACING_MIN_X: float = 0.1
 
 @export var speed_per_second: float = 5.0
 ## The fighter counts as running above this speed (m/s).
@@ -70,6 +75,14 @@ func _physics_process(_delta: float) -> void:
 	model.running = velocity.length() > running_speed
 	if not input_direction.is_zero_approx():
 		rotation.y = Movement.facing_yaw(input_direction)
+		face(input_direction)
+
+
+## Turns a picture fighter's picture to the left or the right of the screen along `direction`
+## (input or aim; x is the screen's right); a direction straight up or down keeps the facing.
+func face(direction: Vector2) -> void:
+	if absf(direction.x) >= FACING_MIN_X:
+		model.facing_left = direction.x < 0.0
 
 
 func _process(delta: float) -> void:
@@ -79,8 +92,9 @@ func _process(delta: float) -> void:
 		return
 	_knock_out_left = maxf(_knock_out_left - delta, 0.0)
 	var progress: float = 1.0 - _knock_out_left / KNOCK_OUT_SECONDS
-	model.rotation.y += TAU * KNOCK_OUT_SPINS * delta / KNOCK_OUT_SECONDS
-	model.scale = Vector3.ONE * (1.0 - progress)
+	if not model.knock_out_pose(progress):
+		model.rotation.y += TAU * KNOCK_OUT_SPINS * delta / KNOCK_OUT_SECONDS
+		model.scale = Vector3.ONE * (1.0 - progress)
 	if _knock_out_left <= 0.0:
 		visible = false
 
@@ -103,6 +117,7 @@ func hit(amount: int) -> void:
 	health = maxf(health - amount, 0.0)
 	last_action_seconds = _now()
 	_show_health()
+	model.flash()
 	var number_y: float = _bar_y() + NUMBER_Y - BAR_Y
 	DamageNumber.spawn(self, Vector3(0.0, number_y, 0.0), amount, number_color)
 	hurt.emit(amount)
