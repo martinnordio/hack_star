@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Not started — plan ready
+> **Status:** 🔄 In progress
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
@@ -15,6 +15,7 @@
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: Q1–Q7 answered (Q4–Q7 the suggestions) and moved into the statements (A2, A3, B6, G1, G3, G5, new G17, G18); group W added (W1–W7, a new world built with ProtonScatter, repository checked); A0 added |
 | 2026-11-22 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #35 created (no parent) |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 2.87 M (138 k in · 2.69 M cached · 50 k out) | CHF 1.86 (222 credits) | Part 2 written: 20 Steps, all reasoning (Claude Opus 5.5) per S1; Step 14 is the gate for the author's drawing (A0) (agent `s09g-lead`; requirements revision and issue included) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.82 M (117 k in · 2.69 M cached · 13 k out) | CHF 1.15 (138 credits) | Step 1 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:35:00 to 12:42:16) |
 
 ---
 
@@ -313,7 +314,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
-| **1** | Before screenshots and size baseline | reasoning (Claude Opus 5.5) — S1; capturing both games the same way, the reference for G1 and G15 | ⬜ Not started | [→ Step 1](#step-1--before-screenshots-and-size-baseline) |
+| **1** | Before screenshots and size baseline | reasoning (Claude Opus 5.5) — S1; capturing both games the same way, the reference for G1 and G15 | ✅ Done | [→ Step 1](#step-1--before-screenshots-and-size-baseline) |
 | **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ⬜ Not started | [→ Step 2](#step-2--font-icons-and-theme) |
 | **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ⬜ Not started | [→ Step 3](#step-3--toon-look-of-the-fighters) |
 | **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--home-screen) |
@@ -399,14 +400,18 @@ The **before** screenshots of both games and the web export size are recorded, t
 the side-by-side verdict and the size budget (G1, G15, G17).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Capture the Godot game (D2): home, fighter list, fighter screen, a match a few seconds in, at 1280×720 and 820×1180, into `%LOCALAPPDATA%\hack_star\screens\09\before\`.
-- [ ] Capture the Svelte game the same way (`ui/`: `npm run dev`, headless browser), the same screens and sizes, same folder; stop the dev server; `git status` shows nothing in `ui/`.
-- [ ] Run `tools/export_web.ps1`; write the total size of `build/web` and of the `.pck` in Notes (D16).
-- [ ] Check: 16 PNGs present and viewed; the size line in Notes; `tools/test.ps1` and `tools/lint.ps1` exit 0 (nothing in the game changed).
+- [x] Record the start time in Notes below.
+- [x] Capture the Godot game (D2): home, fighter list, fighter screen, a match a few seconds in, at 1280×720 and 820×1180, into `%LOCALAPPDATA%\hack_star\screens\09\before\`.
+- [x] Capture the Svelte game the same way (`ui/`: `npm run dev`, headless browser), the same screens and sizes, same folder; stop the dev server; `git status` shows nothing in `ui/`.
+- [x] Run `tools/export_web.ps1`; write the total size of `build/web` and of the `.pck` in Notes (D16).
+- [x] Check: 16 PNGs present and viewed; the size line in Notes; `tools/test.ps1` and `tools/lint.ps1` exit 0 (nothing in the game changed).
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 12:35
+**Before set** (D2): 16 PNGs in `%LOCALAPPDATA%\hack_star\screens\09\before\` — `godot_` and `svelte_` × `home`, `fighters`, `fighter`, `match` × `1280x720`, `820x1180`, all viewed. Godot: a windowed run (`--resolution`) with a temporary `-s` capture script (kept outside the repository, never committed; at 820×1180 the window is taller than the 960 px desktop and Windows allows it); the game's own save (Rocko chosen, 1755 trophies), the match 4 s in. Svelte: `npm run dev` (the FastAPI server already ran on 8180) and headless Edge through Playwright (`uv run --with playwright`, SwiftShader), a fresh account (Blaze), the match 6 s in (countdown / *FIGHT!* still visible); dev server stopped, nothing changed in `ui/`. What the requirements stage saw holds: flat navy vs purple gradient with rays and a pedestal, plain default font vs bold outlined display text and a two-colour logo, five identical purple buttons vs coloured icon buttons and a big yellow **PLAY**, text-only cards and skin buttons, thin outline, yellow checker floor, the near wall covering the lower ~25 % (1280×720) and ~35 % (820×1180) of the match, FPS shown.
+**Size baseline** (D16, `tools/export_web.ps1` exit 0): `build/web` total **40,361,090 bytes** (38.49 MiB), of which `index.wasm` 39,514,754 and `index.pck` **239,960 bytes**; budget for the spec: total ≤ 45,361,090 bytes (+5 MB).
+**Done (2026-11-22 · ~7 min · Claude Opus 5.5)** — before screenshots of both games (16 PNGs, outside the repository) and the web size baseline; no game file changed. `tools/test.ps1` 403 tests passed, `tools/lint.ps1` exit 0, `tools/export_web.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.82 M tokens · CHF 1.15 (138 credits)
 
 ---
 
