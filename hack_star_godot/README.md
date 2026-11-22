@@ -286,13 +286,14 @@ the site's data for this address.
   (the shots come with a short cool-down). Space shoots at the nearest target in range (in a match,
   the nearest bot; in Training, the nearest dummy), or straight ahead when none is in range. The
   mouse does not shoot; it does not aim either.
-- **Start hint:** when Training or a match starts, a line with these controls shows at the bottom
-  of the screen and fades out after a few seconds; it does not block the game.
+- **Start hint:** when Training or a match starts, a short hint (Move and Shoot on their own lines,
+  then "More in Info") shows at the bottom of the screen and fades out after a few seconds; it
+  does not block the game.
 - **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
   (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
   the nearest dummy in range (straight ahead when none is in range; in a match, the nearest bot).
   A thin line on the ground shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
-  The start hint stands above the sticks.
+  The start hint stands above the sticks and names only the sticks.
 - **Info:** the "How to play" section of the Info page repeats these controls and the rules.
 - **Dummies:** in Training three straw dummies stand in the arena. A shot takes off part of the health bar
   and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.

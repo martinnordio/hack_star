@@ -42,6 +42,9 @@ const SPARK_COLOR: Color = Color(1.0, 0.95, 0.7)
 ## When false, the fighter keeps the `input_direction` set from outside (tests).
 var read_player_input: bool = true
 
+## Whether the sticks are on screen (a touch screen); tests set it before the arena is ready.
+var touch_controls: bool = DisplayServer.is_touchscreen_available()
+
 var _fps_timer: float = 0.0
 var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
@@ -76,13 +79,17 @@ func _ready() -> void:
 
 
 func _show_controls_hint() -> void:
-	var lines: Array[String] = [ControlsHelp.KEYBOARD_HINT]
-	if DisplayServer.is_touchscreen_available():
+	var lines: Array[String] = []
+	if touch_controls:
+		# The sticks stand at the bottom corners; the hint goes above their height. Only the
+		# sticks are named and the box grows upwards to its text, so the hint stays small
+		# enough to clear the countdown.
 		lines.append(ControlsHelp.TOUCH_HINT)
-		# The sticks stand at the bottom corners; the hint goes above their height.
-		_controls_hint.offset_top = -HINT_ABOVE_STICKS - 104.0
 		_controls_hint.offset_bottom = -HINT_ABOVE_STICKS
-	lines.append(ControlsHelp.MORE_IN_INFO)
+		_controls_hint.offset_top = _controls_hint.offset_bottom
+	else:
+		lines.append(ControlsHelp.KEYBOARD_HINT)
+		lines.append(ControlsHelp.MORE_IN_INFO)
 	_controls_hint.text = "\n".join(lines)
 	_controls_hint.modulate.a = 1.0
 	_controls_hint.show()

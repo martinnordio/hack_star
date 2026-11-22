@@ -38,7 +38,7 @@ func _content_size(window_size: Vector2i) -> Vector2:
 	return Vector2(window_size) / UiScale.total(Vector2(window_size), base)
 
 
-func _show_in_viewport(scene: PackedScene, size: Vector2i) -> Node:
+func _show_in_viewport(scene: PackedScene, size: Vector2i, touch: bool = false) -> Node:
 	var viewport: SubViewport = SubViewport.new()
 	viewport.size = size
 	viewport.size_2d_override = Vector2i(_content_size(size).round())
@@ -46,6 +46,7 @@ func _show_in_viewport(scene: PackedScene, size: Vector2i) -> Node:
 	add_child_autofree(viewport)
 	var root: Node = scene.instantiate()
 	root.read_player_input = false
+	root.touch_controls = touch
 	viewport.add_child(root)
 	await wait_process_frames(2)
 	return root
@@ -77,21 +78,36 @@ func test_a_match_shows_the_hint_over_the_countdown() -> void:
 
 
 func test_the_hint_is_clear_of_the_other_controls_at_every_size() -> void:
-	for scene: PackedScene in [ARENA_SCENE, MATCH_SCENE]:
-		for label: String in SIZES:
-			var size: Vector2i = SIZES[label]
-			var arena: Node = await _show_in_viewport(scene, size)
-			var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
-			var hint_rect: Rect2 = _hint(arena).get_global_rect()
-			var where: String = "%s %s" % [scene.resource_path.get_file(), label]
-			assert_true(visible_rect.encloses(hint_rect), "%s: hint %s fits" % [where, hint_rect])
-			for path: String in CLEAR_OF:
-				var other: Control = arena.get_node_or_null("Hud/%s" % path)
-				if other != null:
-					assert_false(
-						hint_rect.intersects(other.get_global_rect()),
-						"%s: clear of %s" % [where, path]
-					)
+	for touch: bool in [false, true]:
+		for scene: PackedScene in [ARENA_SCENE, MATCH_SCENE]:
+			for label: String in SIZES:
+				var size: Vector2i = SIZES[label]
+				var arena: Node = await _show_in_viewport(scene, size, touch)
+				var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
+				var hint: Label = _hint(arena)
+				var hint_rect: Rect2 = hint.get_global_rect()
+				var where: String = (
+					"%s %s%s" % [scene.resource_path.get_file(), label, " (touch)" if touch else ""]
+				)
+				assert_true(
+					visible_rect.encloses(hint_rect), "%s: hint %s fits" % [where, hint_rect]
+				)
+				var text_height: float = hint.get_line_count() * hint.get_line_height()
+				assert_true(text_height <= hint_rect.size.y, "%s: the text fits its box" % where)
+				for path: String in CLEAR_OF:
+					var other: Control = arena.get_node_or_null("Hud/%s" % path)
+					if other != null:
+						assert_false(
+							hint_rect.intersects(other.get_global_rect()),
+							"%s: clear of %s" % [where, path]
+						)
+
+
+func test_touch_shows_only_the_sticks() -> void:
+	var arena: Node = await _show_in_viewport(ARENA_SCENE, Vector2i(844, 390), true)
+	var hint: Label = _hint(arena)
+	assert_true(hint.text.begins_with(ControlsHelp.TOUCH_HINT), "the sticks")
+	assert_false(hint.text.contains("WASD"), "no keyboard text on a touch screen")
 
 
 func test_space_fires_while_the_hint_shows() -> void:

@@ -4,8 +4,8 @@ extends RefCounted
 ## the "How to play" section of the Info page. The numbers come from the rules, so the texts
 ## stay true when a rule changes. English only (spec 16, S23).
 
-const KEYBOARD_HINT: String = "Move: WASD or arrow keys · Shoot: Space"
-const TOUCH_HINT: String = "Move: left stick · Shoot: drag or tap the right stick"
+const KEYBOARD_HINT: String = "Move: WASD or arrow keys\nShoot: Space"
+const TOUCH_HINT: String = "Move: left stick\nShoot: drag or tap the right stick"
 const MORE_IN_INFO: String = "More in Info"
 
 
