@@ -41,12 +41,12 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 1.26 M (388 k in · 853 k cached · 22 k out) | CHF 2.14 (255 credits) | spec runner (coordination); two runner agents, s09g-runner and s09g-runner2 — both counted (`usage.ps1 -AgentName s09g-runner,s09g-runner2` from 2026-11-22 12:34:45) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.19 M (1.73 M in · 3.45 M cached · 10 k out) | CHF 8.00 (955 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 12:12:57) |
 | 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 4.42 M (45 k in · 4.36 M cached · 18 k out) | CHF 1.21 (145 credits) | spec closed (`usage.ps1 -AgentName s09g-close` from 2026-11-22 16:42:47) |
-
+| 2026-11-22 | pr | `PR:` | Claude Opus 5.5 | 1.43 M (66 k in · 1.36 M cached · 9 k out) | CHF 0.66 (78 credits) | pull request opened (#36, base `main`, not draft; issue #35 updated and commented; `usage.ps1 -AgentName s09g-pr` from 2026-11-22 16:48:31) |
 ---
 
 ## Cost summary
 
-This feature used 186.14 M tokens, CHF 62.54 (7463 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+This feature used 187.57 M tokens, CHF 63.20 (7541 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
 |-------|--------|--------|------------|---------------------------|
@@ -54,7 +54,8 @@ This feature used 186.14 M tokens, CHF 62.54 (7463 credits) — measured, see [C
 | plan | Claude Opus 5.5 | 2.87 M | CHF 1.86 (222 credits) | 11.7 % |
 | implementation | Claude Opus 5.5 | 162.44 M | CHF 54.02 (6446 credits) | 339.3 % |
 | review | Claude Opus 5.5 | 16.93 M | CHF 4.99 (595 credits) | 31.3 % |
-| **Total** | | **186.14 M** | **CHF 62.54 (7463 credits)** | **392.8 %** |
+| pr | Claude Opus 5.5 | 1.43 M | CHF 0.66 (78 credits) | 4.1 % |
+| **Total** | | **187.57 M** | **CHF 63.20 (7541 credits)** | **396.9 %** |
 
 **Implementation by Step**
 
@@ -999,4 +1000,4 @@ Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; pag
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items)
 - [x] Review · review page written; no Blocking finding open
 - [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
-- [ ] Pull request · opened by the next stage (`PR:`) from `feature/better-graphics`
+- [ ] Pull request · opened with the spec summary ([#36](https://github.com/martinnordio/hack_star/pull/36), from `feature/better-graphics` to `main`); reviewed; merged; branch deleted — *not ticked:* opened, not merged (the author reviews and merges)
