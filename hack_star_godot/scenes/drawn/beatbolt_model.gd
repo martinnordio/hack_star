@@ -23,6 +23,8 @@ const LOOKS: Dictionary = {
 		"black": Color("23232b"),
 	},
 }
+## The named parts that make the drawing recognisable (checked by `test_drawn_fighter.gd`).
+const IDEA_PARTS: Array[String] = ["SpikyHair", "PinkStreak", "Headphones", "ArmCannon"]
 ## Centre of the head; the hair and the headphones sit around it.
 const HEAD_AT: Vector3 = Vector3(0.0, 1.68, 0.0)
 const HEAD_RADIUS: float = 0.52

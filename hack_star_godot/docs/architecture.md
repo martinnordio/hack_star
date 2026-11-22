@@ -219,13 +219,16 @@ showed. Like the Svelte game's `ui/src/lib/models/`, but in code.
 
 **Drawn fighters** (spec 09 A, D14): a fighter drawn by a child is an entry in `Fighters.LIST`
 with `"drawn": true` (unlocked, one `default` skin, rarity and `SampleProgress` numbers copied
-from the fighter it plays like) and a look file `scenes/drawn/<id>_model.gd` (`LOOKS` per skin and
-a static `build(model, look)`), registered in `DrawnFighters` (`scenes/drawn/drawn_fighters.gd`).
+from the fighter it plays like, named in `"plays_like"`) and a look file
+`scenes/drawn/<id>_model.gd` (`LOOKS` per skin, the `IDEA_PARTS` that make the drawing
+recognisable and a static `build(model, look)`), registered in `DrawnFighters`
+(`scenes/drawn/drawn_fighters.gd`).
 `FighterModel.setup` asks `DrawnFighters` first; the look file builds onto the model's rig, body
 and head (`get_rig`, `get_body`, `get_head`) with `FighterModel`'s public building blocks
 (`part`, `group`, `eyes`, `flicker`, `sphere`, `capsule`, `cone`, `cylinder`, `box`, `torus`)
 and `ToonMaterials`, so the idle, run and attack animations and the see-through work unchanged.
-The first is **Beatbolt** (`beatbolt_model.gd`, Mattia's drawing). The workflow:
+The first is **Beatbolt** (`beatbolt_model.gd`, Mattia's drawing). Adding or removing one touches
+only these places; the tests check every drawn fighter without naming it. The workflow:
 [drawing_to_fighter.md](drawing_to_fighter.md).
 
 If a later spec imports art, it goes to `assets/` with its licence written in
@@ -341,7 +344,7 @@ saved to a file under `user://test/`); `test_hacks.gd`, `test_save_data.gd` and 
 check the hack rules, the save file and the QR encoder (against `tests/fixtures/`);
 `test_hack_server.gd` checks `HackServer` with a fake responder, so no test uses the network;
 `test_hack_effects.gd` checks the effects on the screens; `test_fighter_model.gd` checks the 3D
-fighters (the run and attack animations) and `test_drawn_fighter.gd` the drawn fighter Beatbolt (in the list, unlocked also for old saves, on home, in Training and a match, animations and see-through); `test_home.gd`, `test_fighter_list.gd`, `test_fighter_screen.gd`, `test_info.gd`,
+fighters (the run and attack animations) and `test_drawn_fighter.gd` every drawn fighter (in the list, unlocked also for old saves, the numbers of the fighter it plays like, its look file and drawing parts, on home, in Training and a match, animations and see-through; a save that chose a removed one falls back to Blaze; the six originals unchanged); `test_home.gd`, `test_fighter_list.gd`, `test_fighter_screen.gd`, `test_info.gd`,
 `test_back_button.gd`, `test_hack_screen.gd` and `test_qr_page.gd` check the scenes, `test_qr_scanner.gd` the camera messages;
 `test_arena.gd` checks the arena (the walls from the layout, the selected fighter's model, the
 camera following, Space and the aim stick firing, a click firing nothing, Back), `test_arena_dummies.gd` the dummies

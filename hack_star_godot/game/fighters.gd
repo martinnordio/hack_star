@@ -2,8 +2,8 @@ class_name Fighters
 extends RefCounted
 ## The catalogue: the 6 original fighters of Hack star with their rarity, their skins and who is
 ## unlocked at the start, then the fighters drawn by children (`"drawn": true`, one Default skin,
-## rarity and numbers copied from the fighter they play like; their look is in `scenes/drawn/`,
-## spec 09 D14). Skins of rarity "" are the Default look.
+## rarity and numbers copied from the fighter they play like, `"plays_like"`; their look is in
+## `scenes/drawn/`, spec 09 D14). Skins of rarity "" are the Default look.
 
 const DEFAULT_SKIN: String = "default"
 const LIST: Array[Dictionary] = [
@@ -88,6 +88,7 @@ const LIST: Array[Dictionary] = [
 		"idea": "Mattia's drawing: kid with big headphones and an arm cannon",
 		"unlocked": true,
 		"drawn": true,
+		"plays_like": "luna",
 		"skins":
 		[
 			{"id": "default", "name": "Default", "rarity": ""},

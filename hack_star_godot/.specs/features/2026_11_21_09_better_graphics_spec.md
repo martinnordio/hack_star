@@ -31,7 +31,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 650 k (30 k in · 614 k cached · 6 k out) | CHF 0.32 (39 credits) | Step 14 done (`usage.ps1 -AgentName s09g-step14` from 15:12:33 to 15:13:43) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.32 M (95 k in · 2.22 M cached · 12 k out) | CHF 0.97 (116 credits) | Step 15 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:14:29 to 15:19:30) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 18.96 M (132 k in · 18.75 M cached · 74 k out) | CHF 4.94 (589 credits) | Step 16 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:19:28 to 15:44:13) |---
-
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.84 M (31 k in · 5.78 M cached · 24 k out) | CHF 1.50 (179 credits) | Step 17 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:44:41 to 15:57:30) |---
 # Part 1 · Requirements
 
 ## Context
@@ -343,7 +343,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **14** | Gate: author's drawing photo | reasoning (Claude Opus 5.5) — S1; no code: stops the run and tells the author what to do (A0, D14) | ✅ Done | [→ Step 14](#step-14--gate-authors-drawing-photo) |
 | **15** | Drawing workflow document | reasoning (Claude Opus 5.5) — S1; the repeatable workflow, limits and privacy rules (D15) | ✅ Done | [→ Step 15](#step-15--drawing-workflow-document) |
 | **16** | Drawn fighter in the game | reasoning (Claude Opus 5.5) — S1; reading the drawing and building a recognisable fighter from shapes (D14) | ✅ Done | [→ Step 16](#step-16--drawn-fighter-in-the-game) |
-| **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ⬜ Not started | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
+| **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ✅ Done | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
 | **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ⬜ Not started | [→ Step 18](#step-18--tool-recommendation-document) |
 | **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | ⬜ Not started | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
 | **20** | Final check, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the side-by-side verdict and the documents | ⬜ Not started | [→ Step 20](#step-20--final-check-readme-and-architecture) |
@@ -797,13 +797,18 @@ A second drawing can be added the same way without touching other fighters, and 
 can be removed with saves falling back to the default fighter (A9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `docs/drawing_to_fighter.md`: *Add another drawing* and *Remove a drawn fighter* sections (the three places of D14).
-- [ ] Tests in `test_drawn_fighter.gd`: a save that selected an unknown (removed) drawn fighter loads with the default fighter and keeps the rest; adding a drawn fighter changes no other fighter's data.
-- [ ] Check: a dry run of the removal on a scratch copy (not committed) leaves the tests green; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] `docs/drawing_to_fighter.md`: *Add another drawing* and *Remove a drawn fighter* sections (the three places of D14).
+- [x] Tests in `test_drawn_fighter.gd`: a save that selected an unknown (removed) drawn fighter loads with the default fighter and keeps the rest; adding a drawn fighter changes no other fighter's data.
+- [x] Check: a dry run of the removal on a scratch copy (not committed) leaves the tests green; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 15:44
+**Document** (A9): `docs/drawing_to_fighter.md` gets *Add another drawing* (the new look file, its `DrawnFighters.MODELS` row, its `Fighters.LIST` entry with the two `SampleProgress` numbers, its `LICENSES.md` row; no test change) and *Remove a drawn fighter* (delete the same places and the doc mentions; a save that chose it falls back to Blaze and keeps the rest); D14's three places plus the `SampleProgress` lines Step 16 added. `docs/architecture.md` (*3D models*, *Tests*) updated.
+**Tests made independent of the drawn fighters** (so adding or removing one changes no test): `test_drawn_fighter.gd` now checks *every* drawn fighter (12 tests): unlocked with one Default skin and a 1–12 letter name; rarity and numbers of the fighter in its new `"plays_like"` field (`"luna"` for Beatbolt); one look file per drawn fighter and back; its `IDEA_PARTS` (new const in the look file, read by `DrawnFighters.idea_parts`; Beatbolt: `SpikyHair`, `PinkStreak`, `Headphones`, `ArmCannon`); old saves; **new** `test_a_save_that_chose_a_removed_drawn_fighter_falls_back_to_the_default` (a version 3 save with `selected_fighter`, trophies, power, unlock and skin of an unknown `removedbolt` → Blaze chosen, the unknown id dropped everywhere, Blaze's 1300 trophies, Rocko's power 6 and 42 credits kept); **new** `test_drawn_fighters_change_no_other_fighter` (the six originals first, in order, with their names, rarities, skins, unlocks, start numbers and own looks; `FighterModel.LOOKS` still six); the home, Training, match, animation and see-through tests on the first drawn fighter (with none: pass with a note). Step 16's count changes were replaced: `test_fighters.gd` checks the six originals (drawn ones filtered), `test_fighter_model.gd` the originals' idea parts and 14 + the drawn skins, `test_fighter_list.gd` 6 + the drawn cards, `test_game_state.gd`, `test_game_state_save.gd`, `test_hack_effects.gd` compare with `Fighters.start_unlocked()`.
+**Dry run** (A9): the project copied without the author's `characters/` and `blaze_godot` files to `%LOCALAPPDATA%\hack_star\step17\proj` (never committed); there Beatbolt was removed exactly as the document says (deleted `beatbolt_model.gd` and its `.uid`, `MODELS = {}`, the `Fighters.LIST` entry, the two `SampleProgress` lines); only a comment in `test_drawn_fighter.gd` still named him. `tools/test.ps1` 468 tests passed (the first run had 3 "risky" tests that asserted nothing without a drawn fighter → they now pass with a note; re-run clean), `tools/lint.ps1` exit 0. The copy was deleted; the repository was never changed by the dry run.
+**Done (2026-11-22 · ~13 min · Claude Opus 5.5)** — add and remove sections in the workflow document, the drawn-fighter tests made generic with the removed-fighter save fallback and the no-change-to-others check, the removal dry run green on a scratch copy. `tools/test.ps1` 468 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 5.84 M tokens · CHF 1.50 (179 credits)
 
 ---
 

@@ -41,7 +41,7 @@ give this request (replace the parts in `<…>`):
 > check that it shows only the drawing. Build the fighter from shapes in
 > `scenes/drawn/<id>_model.gd` with the toon materials, register it in
 > `scenes/drawn/drawn_fighters.gd`, add it to `Fighters.LIST` (`drawn: true`, unlocked, one
-> default skin) and `SampleProgress`, credit it in `LICENSES.md`, add tests, compare
+> default skin) and `SampleProgress`, credit it in `LICENSES.md`, compare
 > screenshots of the card, the fighter screen, home and a match with the photo until it reads
 > like the drawing, and run `tools/test.ps1` and `tools/lint.ps1`. Do not commit the photo.
 
@@ -60,9 +60,11 @@ What Claude then does:
    others and its health bar stays visible in a match (Beatbolt: 0.85, for his big hair).
 4. **Adds it to the game** in three places: the row in `scenes/drawn/drawn_fighters.gd`, the
    entry in `game/fighters.gd` (`Fighters.LIST`, `"drawn": true`, unlocked, one `default` skin,
-   the copied rarity) and the starting numbers in `game/sample_progress.gd`. It is unlocked for
-   every player, old saves included, and appears in the fighter list, the fighter screen, home,
-   Training and matches (also as a bot).
+   the copied rarity, `"plays_like"` naming the fighter it copies) and the starting numbers in
+   `game/sample_progress.gd`. The look file also names the parts that make the drawing
+   recognisable (`IDEA_PARTS`, e.g. Beatbolt's hair, pink streak, headphones and arm cannon),
+   which the tests look for. It is unlocked for every player, old saves included, and appears in
+   the fighter list, the fighter screen, home, Training and matches (also as a bot).
 5. **Credits it** in `LICENSES.md` as the child's own work under the repository's MIT licence.
 6. **Checks the look on screenshots** (a game window, not headless) next to the photo, improves
    the shapes until the fighter reads like the drawing, and runs the tests and the linter.
@@ -90,3 +92,38 @@ What Claude then does:
   10 minutes with the child to look at the screenshots.
 - **Claude:** about 30–60 minutes on its own (reading the drawing, building the shapes, a few
   rounds of screenshots, tests), plus a short round for each change the child asks for.
+
+## Add another drawing
+
+Do sections 1–3 again with the new drawing: one drawing per run, each in its own look file. A new
+drawn fighter touches only its own places, never another fighter:
+
+1. a new file `scenes/drawn/<id>_model.gd` (copy the structure of `beatbolt_model.gd`: `LOOKS`,
+   `IDEA_PARTS`, a static `build`);
+2. one new row in `DrawnFighters.MODELS` (`scenes/drawn/drawn_fighters.gd`);
+3. one new entry at the end of `Fighters.LIST` (`game/fighters.gd`) and its two numbers in
+   `game/sample_progress.gd` (`TROPHIES`, `POWER_LEVELS`);
+4. a row in `LICENSES.md` (*Own work*).
+
+The tests need no change: `tests/test_drawn_fighter.gd` checks every drawn fighter (unlocked, one
+Default skin, a 1–12 letter name, the numbers of the fighter it plays like, its look file and its
+`IDEA_PARTS`, old saves) and plays the first one on home, in Training and in a match;
+`test_drawn_fighters_change_no_other_fighter` checks that the six original fighters keep their
+order, names, rarities, skins, start numbers and looks. The fighter's main colour must differ
+from every other fighter's (`test_fighter_model.gd`).
+
+## Remove a drawn fighter
+
+Delete the fighter's places, and nothing else:
+
+1. the file `scenes/drawn/<id>_model.gd` and its `.gd.uid`;
+2. its row in `DrawnFighters.MODELS` (with the last one gone: `const MODELS: Dictionary[String,
+   GDScript] = {}`);
+3. its entry in `Fighters.LIST` and its two lines in `game/sample_progress.gd`;
+4. its row in `LICENSES.md`, and its mentions in the docs (this file, `docs/architecture.md`).
+
+Then run `tools/test.ps1` and `tools/lint.ps1`. A player whose save chose the removed fighter gets
+the default fighter (Blaze) at the next start, and keeps everything else: the save file is read
+field by field and unknown fighters are left out (`SaveData`, spec 08). Checked by
+`test_a_save_that_chose_a_removed_drawn_fighter_falls_back_to_the_default`, and by a dry run that
+removed Beatbolt from a copy of the project: all tests passed.

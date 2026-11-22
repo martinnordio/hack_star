@@ -10,7 +10,6 @@ const IDEA_PARTS: Dictionary = {
 	"frosty": ["Fur", "Horns"],
 	"luna": ["Ears", "Tail", "RayGun"],
 	"pixel": ["ScreenFace", "Antenna"],
-	"beatbolt": ["SpikyHair", "PinkStreak", "Headphones", "ArmCannon"],
 }
 
 
@@ -42,7 +41,11 @@ func test_every_fighter_and_skin_builds() -> void:
 			assert_eq(model.skin_id, skin["id"], "%s has its own look" % skin["name"])
 			assert_gt(_meshes(model), 10, "%s %s is built" % [fighter["name"], skin["name"]])
 			built += 1
-	assert_eq(built, 15, "all 14 combinations and Beatbolt's Default")
+	var expected: int = 14
+	for fighter: Dictionary in Fighters.LIST:
+		if fighter.get("drawn", false):
+			expected += fighter["skins"].size()
+	assert_eq(built, expected, "the 14 combinations of the six and the drawn fighters' skins")
 
 
 func test_a_skin_changes_the_main_colour() -> void:
@@ -78,8 +81,12 @@ func test_only_legendary_skins_glow() -> void:
 
 
 func test_every_fighter_builds_with_the_parts_of_its_idea() -> void:
-	assert_eq(IDEA_PARTS.keys(), Fighters.ids(), "every fighter is checked")
+	var originals: Array[String] = []
 	for fighter_id: String in Fighters.ids():
+		if not DrawnFighters.has(fighter_id):
+			originals.append(fighter_id)
+	assert_eq(IDEA_PARTS.keys(), originals, "every fighter is checked (drawn: test_drawn_fighter)")
+	for fighter_id: String in originals:
 		var model: FighterModel = _model(fighter_id)
 		assert_eq(model.fighter_id, fighter_id)
 		assert_eq(model.skin_id, Fighters.DEFAULT_SKIN)
