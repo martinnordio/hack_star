@@ -12,7 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_13_accounts_fighters_and_languages_spec.md (requirements only) |
-| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](2026_11_14_16_bug_fixes_spec.md) | included in [16](2026_11_14_16_bug_fixes_spec.md) | S25–S40 added from spec 16 (its S0: bugs whose feature comes with this spec) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | S25–S40 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -196,7 +196,7 @@ agreed as enough.
 - **S28 — Created fighters across tabs:** A created fighter, a change to it and the credits paid
   for it in one tab are not lost because of another tab of the same game, and the other tab
   shows them at the latest when it comes back to the front, as for hacks and trophies
-  ([spec 16](2026_11_14_16_bug_fixes_spec.md), S4); per account. `(added from spec 16,
+  ([spec 16](done/2026_11_14_16_bug_fixes_spec.md), S4); per account. `(added from spec 16,
   2026-11-22)`
 - **S29 — Created fighter is usable at once:** Right after it is created, the created fighter has
   no lock: its card in the Fighters list looks like the other unlocked fighters, it can be
@@ -230,7 +230,7 @@ agreed as enough.
   _(added from spec 16, 2026-11-22)_
 - **S38 — CREATOR lasts 3 days:** CREATOR is a 3-day code: it turns off by itself 3 days after it
   is entered, entering it again while it is active starts a new 3 days, and the hack screen shows
-  its time left, like INFINITY and OPENSESAME ([spec 16](2026_11_14_16_bug_fixes_spec.md),
+  its time left, like INFINITY and OPENSESAME ([spec 16](done/2026_11_14_16_bug_fixes_spec.md),
   S16–S18). _(added from spec 16, 2026-11-22)_
 - **S39 — Created fighters wait for CREATOR:** When CREATOR turns off, the extra created fighters
   (all but the first) stay in the Fighters list, keep their trophies and power, but cannot be

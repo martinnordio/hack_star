@@ -3,7 +3,7 @@
 > Estimate — see [COSTS.md](../../.specs/kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-22; do not edit by hand.
 
-**All specs: ~262.01 M · ~CHF 105.80 (12615 credits)**
+**All specs: ~290.82 M · ~CHF 115.86 (13815 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -20,12 +20,12 @@
 | [More Fighters](features/2026_11_12_13_more_fighters_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Play with Friends](features/2026_11_12_14_play_with_friends_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Accounts, Create a Fighter, New Fighters and Languages](features/2026_11_13_15_accounts_fighters_and_languages_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Bug Fixes](features/2026_11_14_16_bug_fixes_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Bug Fixes](features/done/2026_11_14_16_bug_fixes_spec.md) | ✅ Complete | — | ~4.12 M · ~CHF 2.27 | ~13.76 M · ~CHF 4.10 | ~10.93 M · ~CHF 3.69 | — | — | ~28.81 M · ~CHF 10.06 |
 | [Fighter Studio, Saves and Music](features/2026_11_14_17_fighter_studio_saves_and_music_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Worlds and World Coins](features/2026_11_16_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Godot Setup and First Game](features/done/2026_11_21_01_godot_setup_and_first_game_spec.md) | ✅ Complete | ~7.75 M · ~CHF 4.23 | ~2.07 M · ~CHF 0.78 | ~24.78 M · ~CHF 10.03 | ~5.47 M · ~CHF 2.65 | ~473 k · ~CHF 0.03 | — | ~40.55 M · ~CHF 17.72 |
 | [Move Specs to Godot](features/done/2026_11_21_02_move_specs_to_godot_spec.md) | ✅ Complete | — | ~3.05 M · ~CHF 0.88 | ~12.86 M · ~CHF 5.74 | ~2.60 M · ~CHF 1.55 | — | — | ~18.51 M · ~CHF 8.17 |
-| **All specs** | | | | | | | | **~262.01 M · ~CHF 105.80** |
+| **All specs** | | | | | | | | **~290.82 M · ~CHF 115.86** |
 
 ## Implementation by Step
 
@@ -75,6 +75,11 @@
 | Trophies and Prestige | 5 | Claude Sonnet 5.5 | ~2.58 M | ~CHF 0.44 (52 credits) |
 | Trophies and Prestige | 6 | Claude Sonnet 5.5 | ~1.46 M | ~CHF 0.23 (28 credits) |
 | Trophies and Prestige | 7 | Claude Haiku 5.5 | ~2.78 M | ~CHF 0.07 (9 credits) |
+| Bug Fixes | 1 | Claude Opus 5.5 | ~2.17 M | ~CHF 1.02 (121 credits) |
+| Bug Fixes | 2 | Claude Sonnet 5.5 | ~2.52 M | ~CHF 0.52 (62 credits) |
+| Bug Fixes | 3 | Claude Sonnet 5.5 | ~877 k | ~CHF 0.11 (13 credits) |
+| Bug Fixes | 4 | Claude Opus 5.5 | ~2.36 M | ~CHF 1.06 (127 credits) |
+| Bug Fixes | 5 | Claude Haiku 5.5 | ~2.04 M | ~CHF 0.07 (8 credits) |
 | Godot Setup and First Game | 1 | Claude Sonnet 5.5 | ~737 k | ~CHF 0.26 (32 credits) |
 | Godot Setup and First Game | 2 | Claude Sonnet 5.5 | ~879 k | ~CHF 0.26 (30 credits) |
 | Godot Setup and First Game | 3 | Claude Opus 5.5 | ~2.75 M | ~CHF 1.49 (177 credits) |

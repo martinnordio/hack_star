@@ -1,18 +1,18 @@
 # Bug Fixes Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/godot-mvp`
 > **Issue:** #33
-> **Moved from:** [2026_11_14_bug_fixes_spec.md](../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17)
+> **Moved from:** [2026_11_14_bug_fixes_spec.md](../../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17)
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
-| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_14_bug_fixes_spec.md (requirements only) |
+| 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_14_bug_fixes_spec.md (requirements only) |
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: S0 checked against specs 01–08; S4, S6, S16, S22 revised; S1–S3, S7–S15, S20, S21 moved to spec 15 (S16's CREATOR part too, its HYPERCHARGE part to spec 12, S19's bought things to specs 09 and 10, added there at the end of Part 1); S19 correct by design (a test); S23 (English), S24 (documentation, Godot), S25 (what worked before) added; no open questions; branch `feature/godot-mvp` |
 | 2026-11-22 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #33 created (no parent) |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 4.12 M (216 k in · 3.86 M cached · 43 k out) | CHF 2.27 (271 credits) | Part 2 written (5 Steps: reasoning, standard, standard, reasoning, light); also the requirements revision, the moved statements in specs 09, 10, 12 and 15, and the issue (`usage.ps1 -AgentName s16-lead` from 08:20:24) |
@@ -21,8 +21,39 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 877 k (7 k in · 867 k cached · 2 k out) | CHF 0.11 (13 credits) | Step 3 done (`usage.ps1 -AgentName s16-steps2-3` from 08:52) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.36 M (69 k in · 2.26 M cached · 23 k out) | CHF 1.06 (127 credits) | Step 4 done (`usage.ps1 -AgentName s16-step4` from 08:54) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.04 M (106 k in · 1.91 M cached · 24 k out) | CHF 0.07 (8 credits) | Step 5 done (`usage.ps1 -AgentName s16-step5` from 09:03) |
-| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 10.93 M (184 k in · 10.68 M cached · 68 k out) | CHF 3.69 (441 credits) | semantic diff written (7 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-16-bug-fixes.html)); code review: Approve, 0 Blocking · 3 Should-fix · 2 Nit (`usage.ps1 -AgentName s16-review` from 2026-11-22 09:07:26) |
+| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 10.93 M (184 k in · 10.68 M cached · 68 k out) | CHF 3.69 (441 credits) | semantic diff written (7 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../../review/2026-11-21_godot-mvp-16-bug-fixes.html)); code review: Approve, 0 Blocking · 3 Should-fix · 2 Nit (`usage.ps1 -AgentName s16-review` from 2026-11-22 09:07:26) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.24 M (171 k in · 2.06 M cached · 15 k out) | CHF 0.65 (78 credits) | review fixes #2, #3, #4, #5 and the decision D9 (#1, accepted as a known limitation); commit `Fix review findings (#33)` (`usage.ps1 -AgentName s16-close` 2026-11-22 09:21:55–09:41:07) |
+| 2026-11-22 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 702 k (14 k in · 683 k cached · 5 k out) | CHF 0.13 (15 credits) | spec closed (`usage.ps1 -AgentName s16-close` from 2026-11-22 09:41:07) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 328 k (179 k in · 144 k cached · 5 k out) | CHF 0.43 (51 credits) | spec runner (coordination) (`usage.ps1 -AgentName s16-runner` from 2026-11-22 08:20:24) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 526 k (0 k in · 525 k cached · 1 k out) | CHF 0.11 (13 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 08:20:24) |
 ---
+
+## Cost summary
+
+This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | included in plan | included in plan | 0 % |
+| plan | Claude Opus 5.5 | 4.12 M | CHF 2.27 (271 credits) | 14.3 % |
+| implementation | Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 | 13.76 M | CHF 4.10 (488 credits) | 25.7 % |
+| review | Claude Opus 5.5 | 10.93 M | CHF 3.69 (441 credits) | 23.2 % |
+| **Total** | | **28.81 M** | **CHF 10.06 (1200 credits)** | **63.2 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Opus 5.5 | 2.17 M | CHF 1.02 (121 credits) | 6.4 % |
+| Step 2 | Claude Sonnet 5.5 | 2.52 M | CHF 0.52 (62 credits) | 3.3 % |
+| Step 3 | Claude Sonnet 5.5 | 877 k | CHF 0.11 (13 credits) | 0.7 % |
+| Step 4 | Claude Opus 5.5 | 2.36 M | CHF 1.06 (127 credits) | 6.7 % |
+| Step 5 | Claude Haiku 5.5 | 2.04 M | CHF 0.07 (8 credits) | 0.4 % |
+| Review fixes | Claude Sonnet 5.5 | 2.24 M | CHF 0.65 (78 credits) | 4.1 % |
+| CLOSE | Claude Sonnet 5.5 | 702 k | CHF 0.13 (15 credits) | 0.8 % |
+| Spec runner (coordination) | Claude Sonnet 5.5 | 328 k | CHF 0.43 (51 credits) | 2.7 % |
+| Orchestrator (main chat) | Claude Opus 5.5 | 526 k | CHF 0.11 (13 credits) | 0.7 % |
+| **Total implementation** | | **13.76 M** | **CHF 4.10 (488 credits)** | **25.7 %** |
 
 # Part 1 · Requirements
 
@@ -33,12 +64,12 @@ together in one branch. Each reported bug gets its own group of statements below
 added with `REQUIREMENTS: 2026_11_14_16_bug_fixes_spec.md — <bug>` until the plan is written.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17).
-- [Accounts, fighters and languages spec](2026_11_13_15_accounts_fighters_and_languages_spec.md) —
+- How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17).
+- [Accounts, fighters and languages spec](../2026_11_13_15_accounts_fighters_and_languages_spec.md) —
   the created fighter, its price and its lock: creating is free the first time, every change
   costs 500 C, only the CREATOR code unlocks it.
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) and
-  [unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — INFINITY (unlimited
+- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) and
+  [unlock and upgrade spec](../2026_11_12_09_unlock_and_upgrade_spec.md) — INFINITY (unlimited
   credits: paying does not take credits).
 - Progress is saved per account (spec 15): in the Python game each open browser tab kept its
   own copy in memory and wrote the whole save on every change.
@@ -84,9 +115,9 @@ game's dev server):
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea and planned specs |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
 | `hack_star_godot/docs/architecture.md` | How the Godot game is organised (spec 03) |
-| [README](../../README.md) | How to open, run, test and export the Godot game |
+| [README](../../../README.md) | How to open, run, test and export the Godot game |
 
 ## 1 · Specs
 
@@ -140,7 +171,7 @@ not be played.
   lock: its card in the Fighters list looks like the other unlocked fighters, it can be selected,
   then shows on the Home screen and is played in matches, Training and with friends — no hack
   code needed. This changes S10/S11 of
-  [2026_11_13_15_accounts_fighters_and_languages_spec.md](2026_11_13_15_accounts_fighters_and_languages_spec.md).~~
+  [2026_11_13_15_accounts_fighters_and_languages_spec.md](../2026_11_13_15_accounts_fighters_and_languages_spec.md).~~
   (moved to spec 15: created fighters come with spec 15, its S29)
 - ~~**S8 — Prices stay:** Without INFINITY, the first creation stays free and every change costs
   500 C; the created fighter keeps its trophies and power level when it is changed.~~ (moved to
@@ -205,7 +236,7 @@ Added 2026-11-14 together with the CREATOR change.
   playable today.)_
 - **S23 — Language:** All new text (the time left, the for-ever line) is in English;
   translations come with
-  [spec 15](2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-22: the
+  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-22: the
   Godot game has no languages yet.)_
 - **S24 — Documentation (Godot):** `hack_star_godot/README.md` and
   `hack_star_godot/docs/architecture.md` describe how long each code lasts, the time left on
@@ -229,6 +260,13 @@ maximum of 15)._
 
 # Part 2 · Plan
 
+## Closing summary
+
+**Built:** INFINITY and OPENSESAME now turn off by themselves 3 days after they are entered (entering one again starts a new 3 days); POWER22 lasts for ever (`Hacks` durations, the server's numbers). The hack screen shows each active code with its time left ("Unlimited credits · 2 days 23 hours left", "Power 22 · Lasts for ever"). What was gained stays when a code turns off; a fighter that only OPENSESAME unlocked is locked again, the Home screen then shows another usable fighter (also after **Turn all hacks off**), and a running match keeps the fighter it started with and gives it its trophies. The save file is version 3 (each hack with its end time and a revision; versions 1 and 2 give their hacks 3 days from the first start) and, on the web, lives in `localStorage` shared by the browser's tabs (`SaveStore`): each save merges a newer save of another tab, and a tab coming to the front shows the others' hacks, trophies and choices. No server call, nothing in `server/` or `ui/` changed.
+
+**Differs from the plan:** The code review (Approve, 0 Blocking · 3 Should-fix · 2 Nit) was handled: finding 2 (the fighter screen refreshes its trophies and Prestige badge on `progress_changed`, with a test), 3 (tests for the 30 s timer, the focus notification and the page becoming visible or hidden; the visibility check is the small `_page_is_visible()` so a test can replace it), 4 (README wording) and 5 (the Definition of Done line) are fixed; finding 1 (a hack turned off in one tab can come back when another unsynced tab saves) is accepted as a known limitation, decision D9, in the README, the architecture and Deferred Items. The garbled sentence about where the web save lives in the README was repaired. The match part of the two-tab browser check and the device play-test stay with the author (Deferred Items). Nothing else differs.
+
+**Files:** `hack_star_godot/game/` (`hacks`, `save_data`, `save_store`), `hack_star_godot/scenes/` (`autoload/game_state`, `hack_screen`, `fighter_screen`, `match_arena`, home and the fighter list), `hack_star_godot/tests/` (`test_hack_times`, `test_save_data_v3`, `test_hack_expiry`, `test_hack_time_rows`, `test_save_tabs` and adjusted files), `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
 ## 2 · Spec Overview
 
 | Step | Description | Model (suggested) | Status | Detail |
@@ -257,7 +295,7 @@ maximum of 15)._
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0. Nothing in `server/` or `ui/`
 > changes (D1: the server already sends the durations). `gdlint` allows at most 20 public
 > tests per file: new tests go into new files where a file would pass 20 (`test_hack_screen.gd`
@@ -426,14 +464,14 @@ Started: 2026-11-22 09:03
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Creating and changing a fighter with INFINITY, the new fighter at once, the creator's title and button, created fighters usable at once, prices, place in the list, one fighter without CREATOR and more with it, not enough credits, the CREATOR text, created fighters with friends, the maximum of 15, CREATOR lasting 3 days, created fighters waiting for CREATOR, the first created fighter staying (S1–S3, S7–S15, S16's CREATOR part, S20, S21) | Accounts, created fighters and CREATOR come with spec 15; moved there as its S25–S40 (S0) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| Created fighters and their credits across tabs (S4's created-fighter part) | Created fighters come with spec 15; moved there as its S28 | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| HYPERCHARGE lasting 3 days (S16's HYPERCHARGE part) | The HYPERCHARGE code comes with spec 12; moved there as its S11 | [12 Super and Hypercharge](2026_11_12_12_super_and_hypercharge_spec.md) |
-| Fighters and power levels bought with a code stay when it turns off (S19's bought part) | Nothing is bought before spec 09; moved there as its S13 | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Skins bought with a code stay when it turns off (S19's bought part) | Skins are bought from spec 10; moved there as its S13 | [10 Skins shop](2026_11_12_10_skins_shop_spec.md) |
-| The merge rule for credits across tabs (D7 keeps the writing tab's credits) | Credits change with play only from spec 09; that spec decides how two tabs' credits combine | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Translations of the new text (the time left) | English only (S23) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| A hack turned off in one tab can return when another tab that has not synced saves (the merge of hacks is a union, D7); needs a per-hack removal marker in the save | Known limitation, accepted (D9, code review finding 1); **Turn all hacks off** in a single tab works; documented in the README | a later spec on the save file (for example [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md), accounts) |
+| Creating and changing a fighter with INFINITY, the new fighter at once, the creator's title and button, created fighters usable at once, prices, place in the list, one fighter without CREATOR and more with it, not enough credits, the CREATOR text, created fighters with friends, the maximum of 15, CREATOR lasting 3 days, created fighters waiting for CREATOR, the first created fighter staying (S1–S3, S7–S15, S16's CREATOR part, S20, S21) | Accounts, created fighters and CREATOR come with spec 15; moved there as its S25–S40 (S0) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Created fighters and their credits across tabs (S4's created-fighter part) | Created fighters come with spec 15; moved there as its S28 | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| HYPERCHARGE lasting 3 days (S16's HYPERCHARGE part) | The HYPERCHARGE code comes with spec 12; moved there as its S11 | [12 Super and Hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
+| Fighters and power levels bought with a code stay when it turns off (S19's bought part) | Nothing is bought before spec 09; moved there as its S13 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| Skins bought with a code stay when it turns off (S19's bought part) | Skins are bought from spec 10; moved there as its S13 | [10 Skins shop](../2026_11_12_10_skins_shop_spec.md) |
+| The merge rule for credits across tabs (D7 keeps the writing tab's credits) | Credits change with play only from spec 09; that spec decides how two tabs' credits combine | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| Translations of the new text (the time left) | English only (S23) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| A hack turned off in one tab can return when another tab that has not synced saves (the merge of hacks is a union, D7); needs a per-hack removal marker in the save | Known limitation, accepted (D9, code review finding 1); **Turn all hacks off** in a single tab works; documented in the README | a later spec on the save file (for example [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md), accounts) |
 | Play-test on a real iPad and phone (the hack screen with the time left, touch) and the part of the two-tab browser check Step 4 could not drive (a match won in tab 1, then both the hack and the trophies after a reload) | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
 
 ---
@@ -442,7 +480,7 @@ Started: 2026-11-22 09:03
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-16-bug-fixes.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-16-bug-fixes.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 3 Should-fix · 2 Nit |
 
 ### Code review 2026-11-22
@@ -480,5 +518,5 @@ seam a test fakes; Step 4 drove two tabs in a real browser; nothing in `server/`
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

@@ -12,7 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_unlock_and_upgrade_spec.md (requirements only) |
-| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](2026_11_14_16_bug_fixes_spec.md) | included in [16](2026_11_14_16_bug_fixes_spec.md) | S13 added from spec 16 (its S0: bugs whose feature comes with this spec) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | S13 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -90,7 +90,7 @@ in the [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.
   `hack_star_godot/docs/architecture.md` describe credits, unlocking, upgrades and power.
 - **S13 — Bought with a code stays:** Fighters unlocked and power levels bought while INFINITY or
   OPENSESAME was active stay when the code turns off by itself after its 3 days
-  ([spec 16](2026_11_14_16_bug_fixes_spec.md), S16), as after resetting the hacks (S9).
+  ([spec 16](done/2026_11_14_16_bug_fixes_spec.md), S16), as after resetting the hacks (S9).
   _(added from spec 16, 2026-11-22)_
 
 ### Open questions

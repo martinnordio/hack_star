@@ -144,7 +144,7 @@ names and logos are copyrighted and are not used.
 | F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) | later |
 | F11 | Play with up to 2 friends on their own devices | [play with friends](../2026_11_12_14_play_with_friends_spec.md) | later |
 | F12 | A second mode (Gem Grab or another, Mattia to choose) | — | later |
-| F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](../2026_11_14_16_bug_fixes_spec.md) | only the fixes that fit what is built (its S0) |
+| F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](2026_11_14_16_bug_fixes_spec.md) | only the fixes that fit what is built (its S0) |
 
 _"In MVP" is for the Godot game: "(done)" of the Python + Svelte game was removed (S0,
 2026-11-21) — none of F1–F13 is built in Godot yet; the order of work is the

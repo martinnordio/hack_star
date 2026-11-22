@@ -12,7 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_skins_shop_spec.md (requirements only) |
-| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](2026_11_14_16_bug_fixes_spec.md) | included in [16](2026_11_14_16_bug_fixes_spec.md) | S13 added from spec 16 (its S0: bugs whose feature comes with this spec) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | S13 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -82,7 +82,7 @@ the "unlock everything" hack really unlock every skin. It is F7 in the
   `hack_star_godot/docs/architecture.md` and the Info vocabulary ("Shop", "Skin of the day") are
   updated.
 - **S13 — Skins bought with a code stay:** Skins bought while INFINITY was active stay owned when
-  the code turns off by itself after its 3 days ([spec 16](2026_11_14_16_bug_fixes_spec.md),
+  the code turns off by itself after its 3 days ([spec 16](done/2026_11_14_16_bug_fixes_spec.md),
   S16), as after resetting the hacks (S8); when OPENSESAME turns off, the skins that were not
   bought are no longer owned. _(added from spec 16, 2026-11-22)_
 

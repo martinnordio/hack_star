@@ -47,7 +47,7 @@ collecting trophies or get from special hack codes that can be used again after 
   [skins shop spec](2026_11_12_10_skins_shop_spec.md) — credits: earning, paying, prices;
   refusal when there are not enough.
 - [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — hack codes are checked and applied to
-  the account; timed hacks last 72 hours (3 days, [bug fixes spec](2026_11_14_16_bug_fixes_spec.md));
+  the account; timed hacks last 72 hours (3 days, [bug fixes spec](done/2026_11_14_16_bug_fixes_spec.md));
   the QR page (password `M6D2`) prints every code. There is no per-code "already used" record
   today.
 - Five languages (English, Deutsch, Schwiizerdütsch, Español, Italiano) — spec

@@ -30,7 +30,7 @@ review to the same page.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_14_1_fighter_studio_saves_and_music_spec.md) (#19).
-- [Bug fixes spec](2026_11_14_16_bug_fixes_spec.md) — created-fighter collection, stable
+- [Bug fixes spec](done/2026_11_14_16_bug_fixes_spec.md) — created-fighter collection, stable
   ids, account saving and cross-tab sync; this spec builds on it.
 - [Accounts, fighters and languages spec](2026_11_13_15_accounts_fighters_and_languages_spec.md)
   — up to 5 accounts per browser, each with its own name, language and progress; the
