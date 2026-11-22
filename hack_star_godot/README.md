@@ -102,11 +102,14 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
    and the hack codes), then explains the words of the game. **Hack** opens the hack screen
    (see [Hack codes](#hack-codes)). Every screen has **Back** (top-left) that returns to the home
-   screen.
+   screen. The world button at the top (the world's name, **Canyon** at the start) opens the
+   world choice: **Canyon** or **Glimmer Isles**, used by **Play** and **Training** while the game
+   is open.
 
 ## How to play a match
 
-Press **Play** on the home screen. The match is in the same canyon as Training, without the
+Press **Play** on the home screen. The match is in the same world as Training (the one chosen on
+home), without the
 dummies: your fighter and three bots, each at its own start point. A short controls hint shows
 at the start and fades by itself; **How to play** on the Info page has the same rules in full.
 

@@ -136,4 +136,4 @@ func _free_point() -> Vector2:
 		)
 		if ArenaLayout.is_free(point, WANDER_CLEARANCE):
 			return point
-	return ArenaLayout.START
+	return ArenaLayout.start()

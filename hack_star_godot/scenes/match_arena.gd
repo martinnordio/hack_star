@@ -1,7 +1,8 @@
 class_name MatchArena
 extends Arena
-## A match (`match.tscn`, the canyon of `Arena` without dummies): the player and the bots at
-## their start points (`ArenaLayout.STARTS`), each bot driven by a `BotBrain`, the flow of a
+## A match (`match.tscn`, the arena of `Arena` in the chosen world, without dummies): the
+## player and the bots at their start points (`ArenaLayout.starts()`), each bot driven by a
+## `BotBrain`, the flow of a
 ## `Match` (countdown, fight, knock-outs, timer, result) under `GameState.match_settings`.
 ## Nobody moves or fires before the fight or after it ends; then the player's fighter gets its
 ## trophies (saved at once), the result is stored in `GameState.last_result` and, after
@@ -41,7 +42,7 @@ func _ready() -> void:
 	var bot_ids: Array[String] = _bot_fighter_ids()
 	for i: int in bot_ids.size():
 		var bot: Fighter = FIGHTER_SCENE.instantiate()
-		var start: Vector2 = ArenaLayout.STARTS[i + 1]
+		var start: Vector2 = ArenaLayout.starts()[i + 1]
 		bot.name = "Bot%d" % (i + 1)
 		bot.position = Vector3(start.x, 0.0, start.y)
 		bot.rotation.y = PI

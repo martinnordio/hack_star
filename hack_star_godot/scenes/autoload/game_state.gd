@@ -24,6 +24,9 @@ var entrance_played: bool = false
 ## The arena's FPS label is shown (the info screen's play-test switch, spec 09 D8); kept while
 ## the game is open, not saved.
 var show_fps: bool = false
+## The world of the next match and Training (`Worlds`, spec 09 W2); kept while the game is open,
+## not saved (saving it is spec 18).
+var world: String = Worlds.CANYON
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
 ## When each active hack turns off: Unix time in seconds, `Hacks.FOREVER` for never.
@@ -75,6 +78,7 @@ func reset() -> void:
 		selected_skins[fighter_id] = Fighters.DEFAULT_SKIN
 	entrance_played = false
 	show_fps = false
+	world = Worlds.CANYON
 	pictures = {}
 	match_settings = MatchSettings.new()
 	last_result = {}

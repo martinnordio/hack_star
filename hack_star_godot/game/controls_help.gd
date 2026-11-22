@@ -47,7 +47,7 @@ static func how_to_play() -> Array[Dictionary]:
 			"text":
 			(
 				"Practise on %d dummies. A broken dummy comes back after %d seconds."
-				% [ArenaLayout.DUMMIES.size(), int(Combat.RESPAWN_SECONDS)]
+				% [ArenaLayout.dummies().size(), int(Combat.RESPAWN_SECONDS)]
 			),
 		},
 		{

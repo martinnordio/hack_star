@@ -1,6 +1,7 @@
 class_name Arena
 extends Node3D
-## The arena: the canyon (`Canyon`, built from `ArenaLayout`), one fighter, a camera above
+## The arena: the chosen world (`GameState.world`: the canyon, `Canyon`, or Glimmer Isles,
+## `GlimmerIsles`, each built from its `ArenaLayout`), one fighter, a camera above
 ## and behind it, and the HUD. With `training` (the Training arena) the three target dummies
 ## stand in it; `MatchArena` (`match.tscn`) inherits the scene for a match.
 ## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); Space (the
@@ -71,12 +72,36 @@ var _dust_left: float = 0.0
 @onready var _controls_hint_label: Label = $Hud/ControlsHint/Row/Label
 
 
+func _notification(what: int) -> void:
+	# Before any child is ready: the chosen world's layout and scenery (spec 09, D9).
+	if what == NOTIFICATION_SCENE_INSTANTIATED:
+		_use_world()
+
+
+## Makes the chosen world (`GameState.world`) the active layout and, for Glimmer Isles, puts
+## `GlimmerIsles` in place of the scene's `Canyon`, on the same floor and walls.
+func _use_world() -> void:
+	ArenaLayout.use(GameState.world)
+	# An inherited scene (`match.tscn`) gets the notification once per scene level.
+	if ArenaLayout.world() == Worlds.CANYON or not has_node("Canyon"):
+		return
+	var canyon: Node = get_node("Canyon")
+	var isles: GlimmerIsles = GlimmerIsles.new()
+	isles.name = "GlimmerIsles"
+	isles.floor_body = get_node("Floor")
+	isles.walls = get_node("Walls")
+	add_child(isles)
+	move_child(isles, canyon.get_index())
+	remove_child(canyon)
+	canyon.free()
+
+
 func _ready() -> void:
-	_fighter.position = Vector3(ArenaLayout.START.x, 0.0, ArenaLayout.START.y)
+	_fighter.position = Vector3(ArenaLayout.start().x, 0.0, ArenaLayout.start().y)
 	_fighter.set_look(GameState.selected_fighter, GameState.selected_skin())
 	_aim_joystick.released.connect(_on_aim_released)
 	if training:
-		for spot: Vector2 in ArenaLayout.DUMMIES:
+		for spot: Vector2 in ArenaLayout.dummies():
 			var dummy: TargetDummy = DUMMY_SCENE.instantiate()
 			dummy.position = Vector3(spot.x, 0.0, spot.y)
 			_dummies.add_child(dummy)
@@ -256,8 +281,8 @@ func _place_camera() -> void:
 ## The z of the camera-side border wall's inner face (the border wall farthest south).
 static func near_wall_z() -> float:
 	var nearest: float = -INF
-	for index: int in ArenaLayout.BORDER_COUNT:
-		nearest = maxf(nearest, ArenaLayout.WALLS[index].position.y)
+	for index: int in ArenaLayout.border_count():
+		nearest = maxf(nearest, ArenaLayout.walls()[index].position.y)
 	return nearest
 
 

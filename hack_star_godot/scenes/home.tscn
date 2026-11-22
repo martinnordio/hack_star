@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="3_badge"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu_background.tscn" id="4_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icon_chip.tscn" id="5_chip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/world_choice.tscn" id="6_world"]
 
 [node name="Home" type="Control"]
 layout_mode = 3
@@ -43,6 +44,18 @@ size_flags_vertical = 4
 text = "0"
 
 [node name="Spacer" type="Control" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="WorldButton" type="Button" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"TealButton"
+text = "Canyon"
+
+[node name="SpacerRight" type="Control" parent="Margin/Column/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
@@ -135,6 +148,9 @@ layout_mode = 2
 size_flags_horizontal = 8
 theme_type_variation = &"PlayButton"
 text = "Play"
+
+[node name="WorldChoice" parent="." instance=ExtResource("6_world")]
+layout_mode = 1
 
 [node name="Flash" type="ColorRect" parent="."]
 visible = false

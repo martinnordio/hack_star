@@ -1,6 +1,7 @@
 extends Control
 ## The home screen: the chosen fighter and skin, the player's trophies and credits, the
-## fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**.
+## fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**, and
+## the world button that opens the world choice (`WorldChoice`) for Play and Training.
 ## At each game start it first plays the entrance: the fighter drops in with a bounce, a light
 ## burst and sparkles, the title pops in; a click, a touch or a key skips to the end state.
 
@@ -20,6 +21,7 @@ const BUTTON_ICONS: Dictionary[String, String] = {
 	"FightersButton": "fighters",
 	"InfoButton": "info",
 	"HackButton": "hack",
+	"WorldButton": "world",
 }
 
 ## True while the entrance plays.
@@ -42,6 +44,8 @@ var _effects: Node3D
 @onready var _fighters_button: Button = $Margin/Column/Body/Controls/MoreRow/FightersButton
 @onready var _info_button: Button = $Margin/Column/Body/Controls/MoreRow/InfoButton
 @onready var _hack_button: Button = $Margin/Column/Body/Controls/MoreRow/HackButton
+@onready var _world_button: Button = $Margin/Column/TopBar/WorldButton
+@onready var _world_choice: WorldChoice = $WorldChoice
 @onready var _flash: ColorRect = $Flash
 @onready var _skip_hint: Label = $SkipHint
 
@@ -56,8 +60,10 @@ func _ready() -> void:
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)
 	_hack_button.pressed.connect(_on_hack_pressed)
+	_world_button.pressed.connect(_world_choice.open)
+	_world_choice.chosen.connect(_on_world_chosen)
 	for button: Button in [
-		_play_button, _training_button, _fighters_button, _info_button, _hack_button
+		_play_button, _training_button, _fighters_button, _info_button, _hack_button, _world_button
 	]:
 		button.icon = Icons.get_icon(BUTTON_ICONS[button.name])
 	GameState.progress_changed.connect(_refresh)
@@ -101,6 +107,7 @@ func _refresh() -> void:
 	_name_label.text = Fighters.get_fighter(fighter_id)["name"]
 	_badge.show_for_trophies(GameState.trophies[fighter_id])
 	_stage.show_fighter(fighter_id, GameState.selected_skin())
+	_world_button.text = Worlds.get_world(GameState.world)["name"]
 
 
 func _center_title_pivot() -> void:
@@ -125,6 +132,10 @@ func _on_info_pressed() -> void:
 
 func _on_hack_pressed() -> void:
 	Screens.go_to(Screens.HACK)
+
+
+func _on_world_chosen(_world_id: String) -> void:
+	_refresh()
 
 
 static func _is_skip(event: InputEvent) -> bool:
