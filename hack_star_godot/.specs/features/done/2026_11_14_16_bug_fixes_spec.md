@@ -31,7 +31,7 @@
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 1.60 M (112 k in · 1.47 M cached · 19 k out) | CHF 1.03 (123 credits) | re-planned: author's bug reports — Steps 1–5 kept; Steps 6–10 added (standard, standard, standard, standard, light), D10–D15 (`usage.ps1 -AgentName s16b-lead` from 2026-11-22 10:04:46) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.99 M (96 k in · 2.88 M cached · 14 k out) | CHF 0.56 (67 credits) | Step 6 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:09:00–10:28:40) |---
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.66 M (48 k in · 2.60 M cached · 17 k out) | CHF 0.46 (55 credits) | Step 7 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:29:08–10:36:23) |---
-## Cost summary
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.48 M (21 k in · 2.45 M cached · 9 k out) | CHF 0.33 (39 credits) | Step 8 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:36:43–10:40:52) |---## Cost summary
 
 This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
 
@@ -349,7 +349,7 @@ reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 5](#step-5--final-check-readme-and-architecture) |
 | **6** | Scan button only where scanning works | standard (Claude Sonnet 5.5) — one check of the platform, a disabled button and a hint on an existing screen, checked on screenshots (D10) | ✅ Done | [→ Step 6](#step-6--scan-button-only-where-scanning-works) |
 | **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ✅ Done | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
-| **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ⬜ Not started | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
+| **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ✅ Done | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
 | **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ⬜ Not started | [→ Step 9](#step-9--controls-hint-at-the-start) |
 | **10** | Final check, README and architecture (author's reports) | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture-authors-reports) |
 
@@ -605,21 +605,22 @@ The Info page, one tap from home, starts with a short "How to play" section: con
 goal of a match, Training, trophies and Prestige, hack codes (S30, S6, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/controls_help.gd` (`ControlsHelp`) after D13.
-- [ ] `scenes/info.gd` after D14: the heading "How to play", one row per section, then the
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/controls_help.gd` (`ControlsHelp`) after D13.
+- [x] `scenes/info.gd` after D14: the heading "How to play", one row per section, then the
       heading "Words" and the vocabulary as before.
-- [ ] Tests: a new `test_controls_help.gd` (every section has a title and a text; the controls
+- [x] Tests: a new `test_controls_help.gd` (every section has a title and a text; the controls
       name WASD, the arrow keys and Space, and the two sticks; the numbers shown match
       `MatchSettings`, `Prestige` and `Combat`); `test_info.gd` (3 tests): the "How to play"
       rows come first, then all the words.
-- [ ] Look check on screenshots: the Info page at 1280×720, 390×844 and 844×390 (top and
+- [x] Look check on screenshots: the Info page at 1280×720, 390×844 and 844×390 (top and
       scrolled) — every line readable and wrapped, nothing cut.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0 (`test_screen_sizes.gd` keeps passing
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0 (`test_screen_sizes.gd` keeps passing
       for the Info page).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 10:36
+**Done (2026-11-22 · ~5 min · Claude Sonnet 5.5)** — New pure `ControlsHelp` (`game/controls_help.gd`): `KEYBOARD_HINT`, `TOUCH_HINT`, `MORE_IN_INFO` and `how_to_play()` (a function, not a constant, so the numbers are read from `Combat`, `MatchSettings`, `Prestige` and `ArenaLayout`): Controls, Match, Training, Trophies and Prestige, Hack codes. `info.gd` shows the heading "How to play", one row per section (title in the `WordLabel` style, wrapped text), the heading "Words" and the vocabulary rows as before. Tests: new `test_controls_help.gd` (3: sections with title and text, keys and sticks named, numbers equal the rules); `test_info.gd` checks the "How to play" rows first and then every word. Real screenshots of the windowed run (temporary capture script under `%TEMP%`, not committed) of the Info page at 1280×720, 390×844 and 844×390, top and scrolled to the end: every line is readable and wrapped, nothing is cut. `tools/test.ps1` 398/398 passed (exit 0; `test_screen_sizes.gd` keeps passing), `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.48 M · CHF 0.33 (39 credits)
 
 ---
 
