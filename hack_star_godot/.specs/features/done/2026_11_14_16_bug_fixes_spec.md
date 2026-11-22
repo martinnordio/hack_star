@@ -1,7 +1,7 @@
 # Bug Fixes Spec
 
 > **Author:** Martin Nordio
-> **Status:** 🔄 Reopened 2026-11-22 — author's bug reports
+> **Status:** ✅ Complete — closed again on feature/godot-mvp
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/godot-mvp`
@@ -35,20 +35,24 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.29 M (24 k in · 2.25 M cached · 10 k out) | CHF 0.32 (38 credits) | Step 9 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:41:11–10:45:57) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.27 M (100 k in · 2.15 M cached · 17 k out) | CHF 0.04 (4 credits) | Step 10 done: all Godot checks exit 0, README and architecture updated (`usage.ps1 -AgentName s16b-step10` from 10:46:26) |
 | 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 8.00 M (192 k in · 7.76 M cached · 54 k out) | CHF 3.02 (360 credits) | author's reports (Steps 6–10): semantic diff written (6 record blocks, checks 6 pass · 3 n/a · 0 fail, [review page](../../review/2026-11-22_godot-mvp-16-bug-fixes-2.html)); code review: Approve, 0 Blocking · 3 Should-fix · 2 Nit (`usage.ps1 -AgentName s16b-review` from 2026-11-22 10:04:46) |
-
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 3.64 M (169 k in · 3.44 M cached · 25 k out) | CHF 0.85 (102 credits) | review fixes (author's reports, findings 1–5); commit `Fix review findings (#33)` (`usage.ps1 -AgentName s16b-close` 2026-11-22 10:04:46–11:35:15) |
+| 2026-11-22 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 504 k (13 k in · 489 k cached · 2 k out) | CHF 0.08 (10 credits) | spec closed again (`usage.ps1 -AgentName s16b-close` from 2026-11-22 11:35:15) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 263 k (139 k in · 119 k cached · 5 k out) | CHF 0.34 (41 credits) | spec runner (coordination) (`usage.ps1 -AgentName s16b-runner` from 2026-11-22 10:04:46) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 1.09 M (1 k in · 1.09 M cached · 2 k out) | CHF 0.23 (27 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 10:04:46) |
 ---
 
 ## Cost summary
 
-This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+This feature used 57.80 M tokens, CHF 17.35 (2069 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
 |-------|--------|--------|------------|---------------------------|
 | requirements | Claude Opus 5.5 | included in plan | included in plan | 0 % |
-| plan | Claude Opus 5.5 | 4.12 M | CHF 2.27 (271 credits) | 14.3 % |
-| implementation | Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 | 13.76 M | CHF 4.10 (488 credits) | 25.7 % |
-| review | Claude Opus 5.5 | 10.93 M | CHF 3.69 (441 credits) | 23.2 % |
-| **Total** | | **28.81 M** | **CHF 10.06 (1200 credits)** | **63.2 %** |
+| plan | Claude Opus 5.5 | 5.72 M | CHF 3.30 (394 credits) | 20.7 % |
+| implementation | Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 | 31.95 M | CHF 7.31 (871 credits) | 45.8 % |
+| review | Claude Opus 5.5 | 18.93 M | CHF 6.71 (801 credits) | 42.2 % |
+| pr | Claude Haiku 5.5 | 1.20 M | CHF 0.03 (3 credits) | 0.2 % |
+| **Total** | | **57.80 M** | **CHF 17.35 (2069 credits)** | **108.9 %** |
 
 **Implementation by Step**
 
@@ -63,7 +67,16 @@ This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [CO
 | CLOSE | Claude Sonnet 5.5 | 702 k | CHF 0.13 (15 credits) | 0.8 % |
 | Spec runner (coordination) | Claude Sonnet 5.5 | 328 k | CHF 0.43 (51 credits) | 2.7 % |
 | Orchestrator (main chat) | Claude Opus 5.5 | 526 k | CHF 0.11 (13 credits) | 0.7 % |
-| **Total implementation** | | **13.76 M** | **CHF 4.10 (488 credits)** | **25.7 %** |
+| Step 6 | Claude Sonnet 5.5 | 2.99 M | CHF 0.56 (67 credits) | 3.5 % |
+| Step 7 | Claude Sonnet 5.5 | 2.66 M | CHF 0.46 (55 credits) | 2.9 % |
+| Step 8 | Claude Sonnet 5.5 | 2.48 M | CHF 0.33 (39 credits) | 2.1 % |
+| Step 9 | Claude Sonnet 5.5 | 2.29 M | CHF 0.32 (38 credits) | 2.0 % |
+| Step 10 | Claude Haiku 5.5 | 2.27 M | CHF 0.04 (4 credits) | 0.2 % |
+| Review fixes (author's reports) | Claude Sonnet 5.5 | 3.64 M | CHF 0.85 (102 credits) | 5.4 % |
+| CLOSE (author's reports) | Claude Sonnet 5.5 | 504 k | CHF 0.08 (10 credits) | 0.5 % |
+| Spec runner (author's reports) | Claude Sonnet 5.5 | 263 k | CHF 0.34 (41 credits) | 2.2 % |
+| Orchestrator (author's reports) | Claude Opus 5.5 | 1.09 M | CHF 0.23 (27 credits) | 1.4 % |
+| **Total implementation** | | **31.95 M** | **CHF 7.31 (871 credits)** | **45.8 %** |
 
 # Part 1 · Requirements
 
@@ -338,14 +351,16 @@ play" lives, the wording of the hints)._
 ## Closing summary
 
 _First close (2026-11-22, Steps 1–5); the spec was reopened the same day for the author's
-reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
+reports (S26–S32, Steps 6–10) and closed again; its summary is the *Reopened 2026-11-22*
+paragraph below._
 
 **Built:** INFINITY and OPENSESAME now turn off by themselves 3 days after they are entered (entering one again starts a new 3 days); POWER22 lasts for ever (`Hacks` durations, the server's numbers). The hack screen shows each active code with its time left ("Unlimited credits · 2 days 23 hours left", "Power 22 · Lasts for ever"). What was gained stays when a code turns off; a fighter that only OPENSESAME unlocked is locked again, the Home screen then shows another usable fighter (also after **Turn all hacks off**), and a running match keeps the fighter it started with and gives it its trophies. The save file is version 3 (each hack with its end time and a revision; versions 1 and 2 give their hacks 3 days from the first start) and, on the web, lives in `localStorage` shared by the browser's tabs (`SaveStore`): each save merges a newer save of another tab, and a tab coming to the front shows the others' hacks, trophies and choices. No server call, nothing in `server/` or `ui/` changed.
 
 **Differs from the plan:** The code review (Approve, 0 Blocking · 3 Should-fix · 2 Nit) was handled: finding 2 (the fighter screen refreshes its trophies and Prestige badge on `progress_changed`, with a test), 3 (tests for the 30 s timer, the focus notification and the page becoming visible or hidden; the visibility check is the small `_page_is_visible()` so a test can replace it), 4 (README wording) and 5 (the Definition of Done line) are fixed; finding 1 (a hack turned off in one tab can come back when another unsynced tab saves) is accepted as a known limitation, decision D9, in the README, the architecture and Deferred Items. The garbled sentence about where the web save lives in the README was repaired. The match part of the two-tab browser check and the device play-test stay with the author (Deferred Items). Nothing else differs.
 
 **Files:** `hack_star_godot/game/` (`hacks`, `save_data`, `save_store`), `hack_star_godot/scenes/` (`autoload/game_state`, `hack_screen`, `fighter_screen`, `match_arena`, home and the fighter list), `hack_star_godot/tests/` (`test_hack_times`, `test_save_data_v3`, `test_hack_expiry`, `test_hack_time_rows`, `test_save_tabs` and adjusted files), `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
-## 2 · Spec Overview
+
+**Reopened 2026-11-22 (the author's bug reports, S26–S32, Steps 6–10):** The scan button is enabled only where scanning works (the web export; the desktop run shows a hint instead, because Godot 4.7 has no camera feed on Windows, D10), and the Hack screen says how to scan on this computer. Space (held to keep firing) and the right stick shoot at the nearest target in range or straight ahead; the mouse no longer shoots or aims (`Combat.ground_point` and its tests were removed). The Info page has a "How to play" section whose numbers come from the rules (`ControlsHelp.how_to_play()`), and Training and every match show a short controls hint that fades by itself, clear of the countdown, the timer, "Fighters left" and **Back** at the five sizes (on a touch screen it names only the sticks and stands above them). The code review (Approve, 0 Blocking · 3 Should-fix · 2 Nit) was fixed in full: the architecture lists `test_save_tabs.gd` again (finding 1); the Stage log of the spec was rewritten with proper line breaks so the table and the Cost summary heading render (2); the touch hint has a test seam, `Arena.touch_controls`, and the five-size test runs with it, which led to a shorter touch hint that grows upwards to its text (3); Move and Shoot stand on their own lines, so no "·" ends a line (4); the Implementation line is ticked (5). **Differs from the plan:** the touch hint no longer repeats the keyboard line (it would not fit under the countdown at 844×390) and "More in Info" is only on the keyboard hint; the hint's place without a touch screen and `how_to_play()` as a function are explained in the Step Notes. **Files:** `hack_star_godot/game/` (`controls_help`, `combat`), `hack_star_godot/scenes/` (`arena`, `hack_screen`, `info`, `ui/qr_scanner`), `hack_star_godot/tests/` (`test_arena_space`, `test_controls_help`, `test_controls_hint`, `test_hack_screen_scan` and adjusted files), `hack_star_godot/docs/architecture.md`, `hack_star_godot/README.md`, the review page `review/2026-11-22_godot-mvp-16-bug-fixes-2.html` and its change record.## 2 · Spec Overview
 
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
@@ -782,5 +797,5 @@ without a touch screen, `how_to_play()` as a function) are explained in the Step
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated _(Steps 1–5 done; reopened for Steps 6–10, done; review findings fixed)_
 - [x] Review · review page written; no Blocking finding open _(first review; Steps 6–10: [review page](../../review/2026-11-22_godot-mvp-16-bug-fixes-2.html), Approve, 0 Blocking)_
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22)_
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22, closed again on feature/godot-mvp)_
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)
