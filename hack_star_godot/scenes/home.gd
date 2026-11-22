@@ -48,6 +48,7 @@ func _ready() -> void:
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)
 	_hack_button.pressed.connect(_on_hack_pressed)
+	GameState.progress_changed.connect(_refresh)
 	resized.connect(_arrange)
 	_title.resized.connect(_center_title_pivot)
 	_arrange()

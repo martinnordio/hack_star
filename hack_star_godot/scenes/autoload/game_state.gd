@@ -4,6 +4,12 @@ extends Node
 ## It starts from `SampleProgress` and lays the saved progress over it (`load_saved`); the whole
 ## progress and the active hacks are saved in one file (`SaveData`).
 
+## Emitted when the hacks or the chosen fighter changed on their own (a hack turned off).
+signal progress_changed
+
+## How often the game checks whether a hack has turned off.
+const EXPIRY_CHECK_SECONDS: float = 30.0
+
 var trophies: Dictionary[String, int] = {}
 var power_levels: Dictionary[String, int] = {}
 var unlocked: Array[String] = []
@@ -38,6 +44,12 @@ var _revision: int = 0
 func _ready() -> void:
 	reset()
 	load_saved()
+	var expiry_timer: Timer = Timer.new()
+	expiry_timer.name = "ExpiryTimer"
+	expiry_timer.wait_time = EXPIRY_CHECK_SECONDS
+	expiry_timer.timeout.connect(expire_hacks)
+	add_child(expiry_timer)
+	expiry_timer.start()
 	if OS.has_feature("web"):
 		start_code = _take_start_code()
 
@@ -100,13 +112,34 @@ func has_hack(hack_id: String) -> bool:
 	return hack_id in active_hacks
 
 
-## Turns a hack on and saves; false (nothing changes) for an unknown or an active id.
+## Turns a hack on and saves; false (nothing changes) for an unknown id or a for-ever hack that
+## is already on. A timed hack that is already on starts a new 3 days.
 func activate_hack(hack_id: String) -> bool:
-	if not Hacks.is_known(hack_id) or has_hack(hack_id):
+	if not Hacks.is_known(hack_id) or (has_hack(hack_id) and not Hacks.is_timed(hack_id)):
 		return false
-	active_hacks.append(hack_id)
+	if not has_hack(hack_id):
+		active_hacks.append(hack_id)
 	hack_until[hack_id] = Hacks.until_for(hack_id, now())
 	save()
+	return true
+
+
+## Turns off every hack whose time has passed, keeps the chosen fighter usable, saves and emits
+## `progress_changed`. Returns true when a hack turned off.
+func expire_hacks() -> bool:
+	var current: int = now()
+	var expired: Array[String] = []
+	for hack_id: String in active_hacks:
+		if Hacks.is_expired(hack_until.get(hack_id, Hacks.FOREVER), current):
+			expired.append(hack_id)
+	if expired.is_empty():
+		return false
+	for hack_id: String in expired:
+		active_hacks.erase(hack_id)
+		hack_until.erase(hack_id)
+	_keep_usable_selection()
+	save()
+	progress_changed.emit()
 	return true
 
 
@@ -123,7 +156,29 @@ func redeem_code(text: String) -> Dictionary:
 func reset_hacks() -> void:
 	active_hacks = []
 	hack_until = {}
+	_keep_usable_selection()
 	save()
+	progress_changed.emit()
+
+
+# A fighter that is locked again is never the chosen one: the sample fighter when it is
+# unlocked, else the first unlocked fighter; the viewed fighter follows.
+func _keep_usable_selection() -> void:
+	if is_unlocked(selected_fighter):
+		return
+	var replacement: String = ""
+	if is_unlocked(SampleProgress.SELECTED_FIGHTER):
+		replacement = SampleProgress.SELECTED_FIGHTER
+	else:
+		for fighter_id: String in Fighters.ids():
+			if is_unlocked(fighter_id):
+				replacement = fighter_id
+				break
+	if replacement.is_empty():
+		return
+	if viewed_fighter == selected_fighter:
+		viewed_fighter = replacement
+	selected_fighter = replacement
 
 
 ## Lays the saved file over the sample progress: the hacks and the saved trophies, power levels,
@@ -148,6 +203,7 @@ func load_saved() -> void:
 	if is_unlocked(chosen):
 		selected_fighter = chosen
 		viewed_fighter = chosen
+	expire_hacks()
 
 
 ## Writes the hacks and the progress to `save_path`.

@@ -18,6 +18,9 @@ var match_state: Match
 var fighters: Array[Fighter] = []
 
 var _settings: MatchSettings
+# The player's fighter and skin when the match starts; a hack turning off changes nothing here.
+var _player_fighter: String = ""
+var _player_skin: String = ""
 var _level: Dictionary
 var _brains: Array[BotBrain] = []
 var _end_left: float = -1.0
@@ -30,6 +33,8 @@ var _end_left: float = -1.0
 
 func _ready() -> void:
 	super._ready()
+	_player_fighter = GameState.selected_fighter
+	_player_skin = GameState.selected_skin()
 	_settings = GameState.match_settings
 	_level = MatchSettings.level(_settings.bot_level)
 	_add_to_match(_fighter, Combat.COLOR_GREEN, Combat.COLOR_RED)
@@ -111,7 +116,7 @@ func _add_to_match(fighter: Fighter, bar_color: Color, number_color: Color) -> v
 ## more bots than fighters.
 func _bot_fighter_ids() -> Array[String]:
 	var pool: Array[String] = Fighters.ids()
-	pool.erase(GameState.selected_fighter)
+	pool.erase(_player_fighter)
 	for i: int in range(pool.size() - 1, 0, -1):
 		var j: int = rng.randi_range(0, i)
 		var kept: String = pool[i]
@@ -163,13 +168,13 @@ func _store_result_when_over() -> void:
 	_end_left = END_WAIT_SECONDS
 	for fighter: Fighter in fighters:
 		fighter.invulnerable = true
-	var fighter_id: String = GameState.selected_fighter
+	var fighter_id: String = _player_fighter
 	var reward: Dictionary = GameState.award_trophies(fighter_id, match_state.result)
 	GameState.last_result = {
 		"outcome": match_state.result,
 		"place": match_state.place,
 		"fighter": fighter_id,
-		"skin": GameState.selected_skin(),
+		"skin": _player_skin,
 		"reward": reward,
 	}
 

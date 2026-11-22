@@ -17,6 +17,7 @@
 | 2026-11-22 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #33 created (no parent) |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 4.12 M (216 k in · 3.86 M cached · 43 k out) | CHF 2.27 (271 credits) | Part 2 written (5 Steps: reasoning, standard, standard, reasoning, light); also the requirements revision, the moved statements in specs 09, 10, 12 and 15, and the issue (`usage.ps1 -AgentName s16-lead` from 08:20:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.17 M (69 k in · 2.08 M cached · 23 k out) | CHF 1.02 (121 credits) | Step 1 done (`usage.ps1 -AgentName s16-step1` from 08:20:24) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.52 M (71 k in · 2.43 M cached · 20 k out) | CHF 0.52 (62 credits) | Step 2 done (`usage.ps1 -AgentName s16-steps2-3` from 08:41) |
 ---
 
 # Part 1 · Requirements
@@ -229,7 +230,7 @@ maximum of 15)._
 | Step | Description | Model (suggested) | Status | Detail |
 |------|-------------|-------------------|--------|--------|
 | **1** | Timed hack rules and save file version 3 | reasoning (Claude Opus 5.5) — a new saved format with a migration that starts the 3 days, checks of every field and a clock (D1, D2) | ✅ Done | [→ Step 1](#step-1--timed-hack-rules-and-save-file-version-3) |
-| **2** | Hacks turn off by themselves | standard (Claude Sonnet 5.5) — `GameState` keeps the end times, checks them and keeps the chosen fighter usable; the match keeps its fighter (D3, D4) | ⬜ Not started | [→ Step 2](#step-2--hacks-turn-off-by-themselves) |
+| **2** | Hacks turn off by themselves | standard (Claude Sonnet 5.5) — `GameState` keeps the end times, checks them and keeps the chosen fighter usable; the match keeps its fighter (D3, D4) | ✅ Done | [→ Step 2](#step-2--hacks-turn-off-by-themselves) |
 | **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ⬜ Not started | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--progress-across-tabs) |
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 5](#step-5--final-check-readme-and-architecture) |
@@ -310,20 +311,21 @@ again starts a new 3 days, what was gained stays, and a fighter locked again is 
 or the played one (S16, S17, S19, S22).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `GameState` after D3: `hack_until`, `clock`, `activate_hack` (a new 3 days), `expire_hacks`,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `GameState` after D3: `hack_until`, `clock`, `activate_hack` (a new 3 days), `expire_hacks`,
       the 30 s `Timer`, `progress_changed`; `reset_hacks` and `load_saved` updated.
-- [ ] `GameState._keep_usable_selection()` after D4, run after a hack turns off and after
+- [x] `GameState._keep_usable_selection()` after D4, run after a hack turns off and after
       **Turn all hacks off**.
-- [ ] `MatchArena` keeps the fighter and skin it started with (D4).
-- [ ] Home, the fighter list and the fighter screen refresh on `progress_changed` (the ∞ and the
+- [x] `MatchArena` keeps the fighter and skin it started with (D4).
+- [x] Home, the fighter list and the fighter screen refresh on `progress_changed` (the ∞ and the
       locks change at once).
-- [ ] Tests (D8): `test_hack_expiry.gd` (with a fake clock), S19 and S22 included.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; with a fake clock 3 days ahead, home
+- [x] Tests (D8): `test_hack_expiry.gd` (with a fake clock), S19 and S22 included.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; with a fake clock 3 days ahead, home
       shows the real credits and a usable fighter (a test).
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 08:41
+**Done (2026-11-22 · ~10 min · Claude Sonnet 5.5)** — `GameState` keeps `hack_until` and a 30 s `ExpiryTimer`; `expire_hacks()` turns off every hack whose time has passed (also in `load_saved`), keeps the chosen fighter usable (`_keep_usable_selection`: the sample fighter, else the first unlocked; the viewed fighter follows), saves and emits `progress_changed`; `activate_hack` on a timed hack that is on starts a new 3 days, a for-ever one changes nothing; `reset_hacks` also keeps the selection usable; `MatchArena` keeps the fighter and skin it started with; home, the fighter list and the fighter screen refresh on `progress_changed`; new `test_hack_expiry.gd` (13 tests, fake clock: S16, S17, S19, S22, home after 3 days, a match keeps its fighter); `test_game_state` adjusted (a timed code entered again is accepted). `tools/test.ps1` 370/370 passed (exit 0), `tools/lint.ps1` and `tools/check_tools.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.52 M · CHF 0.52 (62 credits)
 
 ---
 

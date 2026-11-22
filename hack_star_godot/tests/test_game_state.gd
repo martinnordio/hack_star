@@ -85,9 +85,9 @@ func test_activate_a_hack_saves_it_and_a_new_start_loads_it() -> void:
 
 func test_unknown_or_active_hacks_are_ignored() -> void:
 	assert_false(GameState.activate_hack("hypercharge"))
-	GameState.activate_hack(Hacks.UNLOCK_ALL)
-	assert_false(GameState.activate_hack(Hacks.UNLOCK_ALL))
-	assert_eq(GameState.active_hacks, [Hacks.UNLOCK_ALL])
+	GameState.activate_hack(Hacks.POWER22)
+	assert_false(GameState.activate_hack(Hacks.POWER22))
+	assert_eq(GameState.active_hacks, [Hacks.POWER22])
 
 
 func test_unlock_all_makes_a_locked_fighter_selectable_and_reset_brings_the_rules_back() -> void:

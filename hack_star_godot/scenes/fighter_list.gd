@@ -18,11 +18,17 @@ func _ready() -> void:
 		card.setup(fighter_id)
 		card.opened.connect(_on_card_opened)
 	_scroll.resized.connect(_update_columns)
+	GameState.progress_changed.connect(_refresh_cards)
 	_update_columns()
 	await FighterPictures.ensure(self)
 	if is_inside_tree():
 		for card: FighterCard in _cards():
 			card.set_picture(FighterPictures.cached(card.fighter_id))
+
+
+func _refresh_cards() -> void:
+	for card: FighterCard in _cards():
+		card.setup(card.fighter_id)
 
 
 func _cards() -> Array[FighterCard]:

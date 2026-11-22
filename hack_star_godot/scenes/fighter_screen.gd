@@ -29,18 +29,24 @@ func _ready() -> void:
 	_rarity_label.text = fighter["rarity"]
 	_rarity_label.add_theme_color_override("font_color", Rarity.color(fighter["rarity"]))
 	_trophies_label.text = "Trophies: %d" % GameState.trophies[_fighter_id]
-	_power_label.text = Hacks.power_text(
-		GameState.power_levels[_fighter_id], GameState.active_hacks
-	)
 	_badge.show_for_trophies(GameState.trophies[_fighter_id])
 	_build_skin_buttons(fighter["skins"])
 	_stage.show_fighter(_fighter_id, _skin_id)
+	_select_button.pressed.connect(_on_select_pressed)
+	GameState.progress_changed.connect(_refresh_hack_state)
+	_refresh_hack_state()
+	resized.connect(_arrange)
+	_arrange()
+
+
+# What the hacks change: the power maximum and whether the fighter can be selected.
+func _refresh_hack_state() -> void:
+	_power_label.text = Hacks.power_text(
+		GameState.power_levels[_fighter_id], GameState.active_hacks
+	)
 	var unlocked: bool = GameState.is_unlocked(_fighter_id)
 	_select_button.disabled = not unlocked
 	_select_button.text = "Select" if unlocked else "Locked"
-	_select_button.pressed.connect(_on_select_pressed)
-	resized.connect(_arrange)
-	_arrange()
 
 
 # Wide: the fighter on the left, the details on the right. Tall: one column.
