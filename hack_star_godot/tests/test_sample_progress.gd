@@ -5,8 +5,8 @@ func test_every_fighter_has_trophies_and_a_power_level() -> void:
 	for fighter_id: String in Fighters.ids():
 		assert_true(SampleProgress.TROPHIES.has(fighter_id), "%s has trophies" % fighter_id)
 		assert_between(SampleProgress.POWER_LEVELS[fighter_id], 1, 11, "%s power" % fighter_id)
-	assert_eq(SampleProgress.TROPHIES.size(), 6)
-	assert_eq(SampleProgress.POWER_LEVELS.size(), 6)
+	assert_eq(SampleProgress.TROPHIES.size(), Fighters.LIST.size())
+	assert_eq(SampleProgress.POWER_LEVELS.size(), Fighters.LIST.size())
 
 
 func test_values_of_the_svelte_game() -> void:

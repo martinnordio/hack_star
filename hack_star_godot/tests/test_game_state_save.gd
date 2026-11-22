@@ -74,7 +74,7 @@ func test_an_active_hack_is_saved_but_not_written_into_the_progress() -> void:
 	var text: String = FileAccess.get_file_as_string(TEST_SAVE)
 	var saved: Dictionary = SaveData.from_json(text, GameState.now())
 	assert_eq(saved["hacks"].keys(), ["unlock_all"])
-	assert_eq(saved["progress"]["unlocked"], ["blaze", "rocko", "turbo"])
+	assert_eq(saved["progress"]["unlocked"], ["blaze", "rocko", "turbo", "beatbolt"])
 	_restart()
 	assert_true(GameState.has_hack("unlock_all"))
 	GameState.reset_hacks()

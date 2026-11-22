@@ -25,7 +25,7 @@ Decide three things (or let Claude suggest them):
 
 - the fighter's **name**: 1–12 letters, not the name of an existing fighter, a game, a film or a
   brand;
-- the **existing fighter** whose attack and starting numbers (trophies, power) it copies — every
+- the **existing fighter** whose attack, rarity and starting numbers (trophies, power) it copies — every
   fighter shoots with the same rules today, so this is the fighter it "plays like";
 - the **first name or nickname** for the credit in `LICENSES.md`.
 
@@ -35,8 +35,8 @@ Open Copilot (CLI or chat) in the repository on the branch of the spec that adds
 give this request (replace the parts in `<…>`):
 
 > Turn the drawing `%USERPROFILE%\hack_star_drawings\<file>` into a new fighter of the Godot game,
-> following `hack_star_godot/docs/drawing_to_fighter.md`. Name: `<Name>`; it copies the attack
-> and starting numbers of `<fighter>`; credit: "`<first name or nickname>` (drawing)".
+> following `hack_star_godot/docs/drawing_to_fighter.md`. Name: `<Name>`; it copies the attack,
+> rarity and starting numbers of `<fighter>`; credit: "`<first name or nickname>` (drawing)".
 > Re-encode the photo with Godot's `Image` (at most 1024 px, PNG, outside the repository) and
 > check that it shows only the drawing. Build the fighter from shapes in
 > `scenes/drawn/<id>_model.gd` with the toon materials, register it in
@@ -56,12 +56,13 @@ What Claude then does:
 3. **Builds the fighter from shapes** — spheres, capsules, cones, boxes and rings — in
    `scenes/drawn/<id>_model.gd`, with the game's cel-shaded, dark-outlined materials
    (`ToonMaterials`) and the same idle, run and attack animations and see-through in a bush as the
-   other fighters (`FighterModel` does them).
+   other fighters (`FighterModel` does them). It is scaled so that it is about as tall as the
+   others and its health bar stays visible in a match (Beatbolt: 0.85, for his big hair).
 4. **Adds it to the game** in three places: the row in `scenes/drawn/drawn_fighters.gd`, the
-   entry in `game/fighters.gd` (`Fighters.LIST`, `"drawn": true`, unlocked, one `default` skin)
-   and the starting numbers in `game/sample_progress.gd`. It is unlocked for every player, old
-   saves included, and appears in the fighter list, the fighter screen, home, Training and matches
-   (also as a bot).
+   entry in `game/fighters.gd` (`Fighters.LIST`, `"drawn": true`, unlocked, one `default` skin,
+   the copied rarity) and the starting numbers in `game/sample_progress.gd`. It is unlocked for
+   every player, old saves included, and appears in the fighter list, the fighter screen, home,
+   Training and matches (also as a bot).
 5. **Credits it** in `LICENSES.md` as the child's own work under the repository's MIT licence.
 6. **Checks the look on screenshots** (a game window, not headless) next to the photo, improves
    the shapes until the fighter reads like the drawing, and runs the tests and the linter.

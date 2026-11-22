@@ -27,7 +27,7 @@ func test_starts_from_the_sample_progress() -> void:
 	assert_eq(GameState.credits, SampleProgress.CREDITS)
 	assert_eq(GameState.trophies["blaze"], 1240)
 	assert_eq(GameState.power_levels["rocko"], 4)
-	assert_eq(GameState.unlocked, ["blaze", "rocko", "turbo"])
+	assert_eq(GameState.unlocked, ["blaze", "rocko", "turbo", "beatbolt"])
 	assert_false(GameState.entrance_played)
 
 

@@ -10,6 +10,7 @@ const IDEA_PARTS: Dictionary = {
 	"frosty": ["Fur", "Horns"],
 	"luna": ["Ears", "Tail", "RayGun"],
 	"pixel": ["ScreenFace", "Antenna"],
+	"beatbolt": ["SpikyHair", "PinkStreak", "Headphones", "ArmCannon"],
 }
 
 
@@ -41,7 +42,7 @@ func test_every_fighter_and_skin_builds() -> void:
 			assert_eq(model.skin_id, skin["id"], "%s has its own look" % skin["name"])
 			assert_gt(_meshes(model), 10, "%s %s is built" % [fighter["name"], skin["name"]])
 			built += 1
-	assert_eq(built, 14, "all 14 combinations")
+	assert_eq(built, 15, "all 14 combinations and Beatbolt's Default")
 
 
 func test_a_skin_changes_the_main_colour() -> void:

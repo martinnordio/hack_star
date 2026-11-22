@@ -97,7 +97,7 @@ func test_power_shows_its_maximum_with_and_without_power_22() -> void:
 func test_the_hacks_change_no_trophies_unlocks_or_power_levels() -> void:
 	for hack_id: String in Hacks.ids():
 		GameState.activate_hack(hack_id)
-	assert_eq(GameState.unlocked, ["blaze", "rocko", "turbo"])
+	assert_eq(GameState.unlocked, ["blaze", "rocko", "turbo", "beatbolt"])
 	assert_eq(GameState.power_levels["blaze"], 7)
 	assert_eq(GameState.credits, 500)
 	assert_eq(GameState.total_trophies(), 1240 + 420 + 85)

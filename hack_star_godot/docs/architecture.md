@@ -97,7 +97,7 @@ without a scene.
 | `match.gd` (`Match`) | The match flow (D4 of spec 07), no scene: `Match.new(settings, fighter_count)` (fighter 0 is the player); `advance(delta)`; the phases `COUNTDOWN`, `FIGHT` and `OVER`; `countdown_text()` ("3", "2", "1", then "FIGHT!"), `can_act()`, `seconds_left()`, `timer_text()` and `timer_red()` (last 10 s); `knock_out(index)` (records `knock_out_order`, ends the match on the player or on the last bot); `fighters_left()`, `is_alive(index)`; the `result` (`VICTORY`, `DEFEAT`, `TIME_UP`) and `place` (fighters left + 1 at the player's knock-out, else 1: a victory, or time up); `ordinal(n)` ("3rd") |
 | `bot_brain.gd` (`BotBrain`) | One bot's decisions (D5 of spec 07), pure, with a `RandomNumberGenerator` the tests seed: `can_see(from, at, in_bush, sight, bush_sight)` (a fighter in a bush is seen only within 2.5 m; walls do not block sight); `think(now, me, opponents, level)` returns `{move, aim}`: the nearest visible opponent, a reaction delay for a new target, closing in, backing off within 3 m or sidestepping, an aim turned by a random error within `aim_error`, and wandering to a free point of `ArenaLayout` when nobody is seen |
 
-| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
+| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters and the drawn ones (`drawn`, spec 09) with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
 | `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies; `floor_of(trophies)` (the trophies of the last Prestige, 0 below 1000) and `next_at(trophies)` (the trophies of the next one) |
 | `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
@@ -217,6 +217,17 @@ bob) and `play_attack()` runs a 0.25 s recoil on top of it (`attack_left`). In a
 Compatibility renderer does not show `GeometryInstance3D.transparency`, as the screenshots
 showed. Like the Svelte game's `ui/src/lib/models/`, but in code.
 
+**Drawn fighters** (spec 09 A, D14): a fighter drawn by a child is an entry in `Fighters.LIST`
+with `"drawn": true` (unlocked, one `default` skin, rarity and `SampleProgress` numbers copied
+from the fighter it plays like) and a look file `scenes/drawn/<id>_model.gd` (`LOOKS` per skin and
+a static `build(model, look)`), registered in `DrawnFighters` (`scenes/drawn/drawn_fighters.gd`).
+`FighterModel.setup` asks `DrawnFighters` first; the look file builds onto the model's rig, body
+and head (`get_rig`, `get_body`, `get_head`) with `FighterModel`'s public building blocks
+(`part`, `group`, `eyes`, `flicker`, `sphere`, `capsule`, `cone`, `cylinder`, `box`, `torus`)
+and `ToonMaterials`, so the idle, run and attack animations and the see-through work unchanged.
+The first is **Beatbolt** (`beatbolt_model.gd`, Mattia's drawing). The workflow:
+[drawing_to_fighter.md](drawing_to_fighter.md).
+
 If a later spec imports art, it goes to `assets/` with its licence written in
 [LICENSES.md](../LICENSES.md) (the packs of the Python + Svelte game, Quaternius and Kenney,
 are CC0). No Supercell art, names or logos are used (S7).
@@ -330,7 +341,7 @@ saved to a file under `user://test/`); `test_hacks.gd`, `test_save_data.gd` and 
 check the hack rules, the save file and the QR encoder (against `tests/fixtures/`);
 `test_hack_server.gd` checks `HackServer` with a fake responder, so no test uses the network;
 `test_hack_effects.gd` checks the effects on the screens; `test_fighter_model.gd` checks the 3D
-fighters (the run and attack animations); `test_home.gd`, `test_fighter_list.gd`, `test_fighter_screen.gd`, `test_info.gd`,
+fighters (the run and attack animations) and `test_drawn_fighter.gd` the drawn fighter Beatbolt (in the list, unlocked also for old saves, on home, in Training and a match, animations and see-through); `test_home.gd`, `test_fighter_list.gd`, `test_fighter_screen.gd`, `test_info.gd`,
 `test_back_button.gd`, `test_hack_screen.gd` and `test_qr_page.gd` check the scenes, `test_qr_scanner.gd` the camera messages;
 `test_arena.gd` checks the arena (the walls from the layout, the selected fighter's model, the
 camera following, Space and the aim stick firing, a click firing nothing, Back), `test_arena_dummies.gd` the dummies

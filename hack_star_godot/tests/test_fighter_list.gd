@@ -18,13 +18,13 @@ func _card(screen: Control, fighter_id: String) -> FighterCard:
 	return screen.get_node(GRID_PATH).get_node(fighter_id.capitalize())
 
 
-func test_has_six_cards_in_catalogue_order() -> void:
+func test_has_seven_cards_in_catalogue_order() -> void:
 	var screen: Control = _show_list()
 	var ids: Array[String] = []
 	for card: FighterCard in screen.get_node(GRID_PATH).get_children():
 		ids.append(card.fighter_id)
 	assert_eq(ids, Fighters.ids())
-	assert_eq(ids.size(), 6)
+	assert_eq(ids.size(), 7, "the 6 fighters and Beatbolt")
 
 
 func test_card_shows_name_rarity_trophies_and_power() -> void:
