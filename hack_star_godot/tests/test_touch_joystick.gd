@@ -74,7 +74,11 @@ func test_release_tells_the_direction_and_the_time_held() -> void:
 	_joystick._input(_touch(0, centre, true))
 	assert_true(_joystick.is_held(), "held")
 	_joystick._input(_drag(0, centre + Vector2(0.0, -_joystick.radius)))
-	await wait_seconds(0.3)
+	# The joystick measures the wall clock; GUT's wait_seconds counts physics time, which can
+	# run ahead of it in a headless run, so wait on the wall clock.
+	var start_msec: int = Time.get_ticks_msec()
+	while Time.get_ticks_msec() - start_msec < 300:
+		await wait_process_frames(1)
 	_joystick._input(_touch(0, centre, false))
 	assert_false(_joystick.is_held(), "let go")
 	assert_signal_emit_count(_joystick, "released", 1)

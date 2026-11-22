@@ -17,6 +17,7 @@
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 2.87 M (138 k in · 2.69 M cached · 50 k out) | CHF 1.86 (222 credits) | Part 2 written: 20 Steps, all reasoning (Claude Opus 5.5) per S1; Step 14 is the gate for the author's drawing (A0) (agent `s09g-lead`; requirements revision and issue included) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.82 M (117 k in · 2.69 M cached · 13 k out) | CHF 1.15 (138 credits) | Step 1 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:35:00 to 12:42:16) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 8.99 M (88 k in · 8.86 M cached · 39 k out) | CHF 2.50 (298 credits) | Step 2 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:42:16 to 12:55:30) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 10.98 M (93 k in · 10.84 M cached · 41 k out) | CHF 2.89 (345 credits) | Step 3 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:55:30 to 13:11:15) |
 
 ---
 
@@ -317,7 +318,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 |------|-------------|-------------------|--------|--------|
 | **1** | Before screenshots and size baseline | reasoning (Claude Opus 5.5) — S1; capturing both games the same way, the reference for G1 and G15 | ✅ Done | [→ Step 1](#step-1--before-screenshots-and-size-baseline) |
 | **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ✅ Done | [→ Step 2](#step-2--font-icons-and-theme) |
-| **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ⬜ Not started | [→ Step 3](#step-3--toon-look-of-the-fighters) |
+| **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ✅ Done | [→ Step 3](#step-3--toon-look-of-the-fighters) |
 | **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--home-screen) |
 | **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ⬜ Not started | [→ Step 5](#step-5--arena-look) |
 | **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ⬜ Not started | [→ Step 6](#step-6--arena-framing-and-match-hud) |
@@ -447,14 +448,20 @@ Every fighter and skin has 3-band cel shading and a dark outline that stays visi
 in the arena, with readable eyes; shapes, names and colours unchanged (G9).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Add `scenes/toon/toon.gdshader`, `outline.gdshader` and `toon_materials.gd` (D5).
-- [ ] `FighterModel`: use the shared materials on every part (replacing `DIFFUSE_TOON` and the grown copy); eyes with a white and a dark part large enough for a card; the see-through in a bush still works.
-- [ ] Update `test_fighter_model.gd` (every visible part has the toon material with the outline pass; see-through).
-- [ ] Check: screenshots of all 6 fighters and the 14 skins on cards (150 px) and in Training; outline visible at both sizes, two or more tones per colour; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] Add `scenes/toon/toon.gdshader`, `outline.gdshader` and `toon_materials.gd` (D5).
+- [x] `FighterModel`: use the shared materials on every part (replacing `DIFFUSE_TOON` and the grown copy); eyes with a white and a dark part large enough for a card; the see-through in a bush still works.
+- [x] Update `test_fighter_model.gd` (every visible part has the toon material with the outline pass; see-through).
+- [x] Check: screenshots of all 6 fighters and the 14 skins on cards (150 px) and in Training; outline visible at both sizes, two or more tones per colour; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 12:55
+**Shaders and materials** (D5): `scenes/toon/toon.gdshader` — per light three bands (lit 0.85, mid 0.5, none; a surface in a cast shadow gets none), the ambient light is the shadow tone, so every colour shows two or three clear tones; a thin light rim; colour and glow as uniforms. `scenes/toon/outline.gdshader` — inverted hull (`cull_front`, unshaded, dark navy) as `next_pass`; each vertex moves out from the part's centre (not along the face normal, so box corners stay closed) by `grow` 0.012 m and then by 3 px on screen, scaled up when the shorter side of the view is over 720 px (820×1180 → 3.4 px). `ToonMaterials` (`scenes/toon/toon_materials.gd`) caches one material per colour/glow/outline, shared by every fighter (`test_fighters_share_their_materials`), and the see-through copies. **Differs from D5:** the see-through copy is a transparent toon `StandardMaterial3D` with a faded grown outline, not an alpha uniform in `toon.gdshader` — writing `ALPHA` in the shader would make every fighter part transparent all the time (sorting artefacts between parts, cost on the iPad). `Canyon` keeps its own materials until Step 5.
+**FighterModel**: every `_toon` part takes `ToonMaterials.toon` (no `DIFFUSE_TOON` and no per-model outline copy left); `_faded` and the per-model cache replaced by `ToonMaterials.see_through`; eyes darker than 0.35 luminance get an outlined white (`LeftEyeWhite`/`RightEyeWhite`) around a larger-looking pupil (`…Pupil`) with the shine; Rocko's yellow glowing eyes stay without a white. Shapes, names and colours unchanged.
+**Tests**: `tests/test_fighter_model.gd` +4 (all 14 looks cel-shaded with the shared outline pass and ≥ 8 outlined parts, materials shared, eye whites and pupils, see-through copy transparent with a faded outline); the see-through swap tests in `test_arena_effects.gd` / `test_match_arena.gd` unchanged and green. `tests/test_touch_joystick.gd`: the "held about 0.3 s" test failed in every run of this Step, also on the plan commit `dd563c8` (checked in a scratch worktree) — GUT's `wait_seconds` counts physics time, which ran ahead of the wall clock the joystick measures (0.18–0.22 s); the test now waits on the wall clock (test only, no game change).
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step3\`, viewed): all 14 looks rendered at the picture size (256×320) and shown at 150 px like a card (1280×720) and at 80 px (820×1180); home and the fighter screen (close-ups); the fighter list; Training and a match at 1280×720 and 820×1180. Outline visible at every size, faces and bodies show a lit and a shaded tone, eye whites readable on the 150 px pictures; a bot in a cactus patch is see-through. After looking: lit band 1.0 → 0.85 and mid 0.55 → 0.5 (faces were nearly white on home); the screen width first scaled with the view height (4.9 px at 820×1180 looked heavy in the arena) → now with the shorter side.
+**Done (2026-11-22 · ~16 min · Claude Opus 5.5)** — toon and outline shaders, `ToonMaterials`, `FighterModel` on the shared materials with eye whites, tests. `tools/test.ps1` 415 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 10.98 M tokens · CHF 2.89 (345 credits)
 
 ---
 

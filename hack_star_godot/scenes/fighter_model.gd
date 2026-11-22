@@ -1,14 +1,16 @@
 class_name FighterModel
 extends Node3D
-## A fighter's 3D look, built in code from primitive meshes and plain materials (no imported art).
+## A fighter's 3D look, built in code from primitive meshes and the shared cartoon materials of
+## `ToonMaterials` (cel shading and a dark outline; no imported art).
 ## `setup(fighter_id, skin_id)` builds the fighter; the front faces +Z (towards the stage camera),
 ## the feet stand on y = 0. The idle animation (breathing, sway, flickering flames and screens)
 ## runs in `_process` while `idle_enabled` is true; switch it off for still pictures.
 ## While `running` is true the run animation (bounce, forward lean) replaces the idle one;
 ## `play_attack()` adds a short recoil on top of either.
 
-const OUTLINE_COLOR: Color = Color(0.086, 0.059, 0.2)
-const OUTLINE_GROW: float = 0.022
+const OUTLINE_COLOR: Color = ToonMaterials.OUTLINE_COLOR
+## Eyes darker than this get a white around the pupil.
+const EYE_WHITE_BELOW: float = 0.35
 ## Height of the neck: the head turns around this point.
 const NECK_Y: float = 1.2
 const BREATH_SPEED: float = 2.2
@@ -28,7 +30,7 @@ const ATTACK_SECONDS: float = 0.25
 const ATTACK_KICK: float = 0.18
 const ATTACK_SQUASH: float = 0.14
 ## How opaque a fighter stays in a cactus patch (1 solid, 0 invisible).
-const SEE_THROUGH_ALPHA: float = 0.45
+const SEE_THROUGH_ALPHA: float = ToonMaterials.SEE_THROUGH_ALPHA
 const SOLID_META: String = "solid_material"
 
 ## Colours of each fighter's look, per skin. `main` is the colour a player sees most.
@@ -200,8 +202,6 @@ var _head: Node3D
 var _flickers: Array[Node3D] = []
 var _flicker_scales: Array[Vector3] = []
 var _spinners: Array[Node3D] = []
-var _outline: StandardMaterial3D
-var _faded_materials: Dictionary = {}
 
 
 func _ready() -> void:
@@ -252,7 +252,7 @@ func set_see_through(on: bool) -> void:
 
 
 ## The Compatibility renderer ignores `GeometryInstance3D.transparency`, so the fighter's
-## materials are swapped for see-through copies (D11), and back.
+## materials are swapped for see-through copies (`ToonMaterials.see_through`), and back.
 func _apply_see_through(node: Node) -> void:
 	for child: Node in node.get_children():
 		if child is MeshInstance3D:
@@ -264,19 +264,7 @@ func _swap_material(mesh: MeshInstance3D) -> void:
 	if not mesh.has_meta(SOLID_META):
 		mesh.set_meta(SOLID_META, mesh.material_override)
 	var solid: Material = mesh.get_meta(SOLID_META)
-	mesh.material_override = _faded(solid) if see_through else solid
-
-
-func _faded(material: Material) -> Material:
-	if not material is StandardMaterial3D:
-		return material
-	if not _faded_materials.has(material):
-		var copy: StandardMaterial3D = material.duplicate() as StandardMaterial3D
-		copy.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		copy.albedo_color.a *= SEE_THROUGH_ALPHA
-		copy.next_pass = _faded(copy.next_pass) if copy.next_pass != null else null
-		_faded_materials[material] = copy
-	return _faded_materials[material]
+	mesh.material_override = ToonMaterials.see_through(solid) if see_through else solid
 
 
 ## Starts the short recoil of a shot: the body kicks back and squashes, then springs back.
@@ -315,7 +303,6 @@ func _clear() -> void:
 	_flickers.clear()
 	_flicker_scales.clear()
 	_spinners.clear()
-	_faded_materials.clear()
 	_rig = Node3D.new()
 	_rig.name = "Rig"
 	add_child(_rig)
@@ -333,8 +320,8 @@ func _clear() -> void:
 
 func _build_blaze(look: Dictionary) -> void:
 	_human(look["skin"], look["main"], look["legs"], look["shoes"], look.get("glow", Color.BLACK))
-	var flame: StandardMaterial3D = _toon(look["hair"], look["hair"], 0.6)
-	var tip: StandardMaterial3D = _toon(look["tip"], look["tip"], 0.9)
+	var flame: ShaderMaterial = _toon(look["hair"], look["hair"], 0.6)
+	var tip: ShaderMaterial = _toon(look["tip"], look["tip"], 0.9)
 	var hair: Node3D = _group(_head, "FlameHair")
 	_part(
 		hair, _sphere(0.52), flame, Vector3(0.0, 1.86, -0.16), Vector3.ZERO, Vector3(1.02, 0.7, 1)
@@ -360,11 +347,11 @@ func _build_blaze(look: Dictionary) -> void:
 	)
 	ball.name = "Fireball"
 	_flicker(ball)
-	var skirt: StandardMaterial3D = _toon(look["legs"])
+	var skirt: ShaderMaterial = _toon(look["legs"])
 	_part(_body, _cylinder(0.3, 0.46, 0.28), skirt, Vector3(0.0, 0.45, 0.0))
 	if skin_id == "lava":
 		var cracks: Node3D = _group(_body, "LavaCracks")
-		var lava: StandardMaterial3D = _toon(look["tip"], Color("ff5a00"), 1.5, false)
+		var lava: ShaderMaterial = _toon(look["tip"], Color("ff5a00"), 1.5, false)
 		var lines: Array[Vector4] = [
 			Vector4(-0.12, 1.02, 0.26, 0.45),
 			Vector4(0.1, 0.84, 0.3, -0.5),
@@ -375,7 +362,7 @@ func _build_blaze(look: Dictionary) -> void:
 			_part(cracks, _box(line.z, 0.045, 0.03), lava, Vector3(line.x, line.y, 0.35), turn)
 	elif skin_id == "phoenix":
 		var wings: Node3D = _group(_body, "Wings")
-		var feather: StandardMaterial3D = _toon(look["wing"], look["hair"], 0.7)
+		var feather: ShaderMaterial = _toon(look["wing"], look["hair"], 0.7)
 		for side: float in [-1.0, 1.0]:
 			var wing_at: Vector3 = Vector3(side * 0.7, 1.15, -0.35)
 			var wing_turn: Vector3 = Vector3(0.3, 0.0, -side * 1.0)
@@ -386,9 +373,9 @@ func _build_blaze(look: Dictionary) -> void:
 
 func _build_rocko(look: Dictionary) -> void:
 	var glow: Color = look.get("glow", Color.BLACK)
-	var rock: StandardMaterial3D = _toon(look["main"], glow, 0.45)
-	var dark: StandardMaterial3D = _toon(look["dark"], glow, 0.5)
-	var moss: StandardMaterial3D = _toon(
+	var rock: ShaderMaterial = _toon(look["main"], glow, 0.45)
+	var dark: ShaderMaterial = _toon(look["dark"], glow, 0.5)
+	var moss: ShaderMaterial = _toon(
 		look["moss"], look["moss"], 0.6 if glow != Color.BLACK else 0.0
 	)
 	var blocks: Node3D = _group(_body, "RockBlocks")
@@ -439,7 +426,7 @@ func _build_turbo(look: Dictionary) -> void:
 	var helmet_shell: SphereMesh = _sphere(0.56)
 	helmet_shell.is_hemisphere = true
 	helmet_shell.height = 0.56
-	var helmet_material: StandardMaterial3D = _toon(
+	var helmet_material: ShaderMaterial = _toon(
 		look["helmet"], look["helmet"], 0.5 if neon else 0.0
 	)
 	var helmet: MeshInstance3D = _part(
@@ -456,9 +443,9 @@ func _build_turbo(look: Dictionary) -> void:
 	)
 	visor.name = "Visor"
 	var stripe_glow: float = 0.8 if neon else 0.0
-	var stripe: StandardMaterial3D = _toon(look["stripe"], look["stripe"], stripe_glow, false)
+	var stripe: ShaderMaterial = _toon(look["stripe"], look["stripe"], stripe_glow, false)
 	_part(_head, _box(0.14, 0.05, 1.0), stripe, Vector3(0.0, 2.31, -0.02), Vector3(0.2, 0, 0))
-	var scarf: StandardMaterial3D = _toon(look["stripe"], look["stripe"], stripe_glow)
+	var scarf: ShaderMaterial = _toon(look["stripe"], look["stripe"], stripe_glow)
 	if neon:
 		var strips: Node3D = _group(_body, "NeonStrips")
 		for side: float in [-1.0, 1.0]:
@@ -472,9 +459,9 @@ func _build_turbo(look: Dictionary) -> void:
 
 
 func _build_frosty(look: Dictionary) -> void:
-	var fur: StandardMaterial3D = _toon(look["main"], look.get("glow", Color.BLACK), 0.2)
-	var face: StandardMaterial3D = _toon(look["face"])
-	var horn: StandardMaterial3D = _toon(look["horn"], Color("7fd0ff"), 0.5)
+	var fur: ShaderMaterial = _toon(look["main"], look.get("glow", Color.BLACK), 0.2)
+	var face: ShaderMaterial = _toon(look["face"])
+	var horn: ShaderMaterial = _toon(look["horn"], Color("7fd0ff"), 0.5)
 	var horns: Node3D = _group(_head, "Horns")
 	for side: float in [-1.0, 1.0]:
 		_part(
@@ -510,14 +497,14 @@ func _build_frosty(look: Dictionary) -> void:
 		_head, _sphere(0.08), _toon(look["nose"], Color.BLACK, 0.0, false), Vector3(0, 1.58, 0.53)
 	)
 	if skin_id == "snow_king":
-		var gold: StandardMaterial3D = _toon(Rarity.LEGENDARY_GOLD, Color("ffb000"), 0.5)
+		var gold: ShaderMaterial = _toon(Rarity.LEGENDARY_GOLD, Color("ffb000"), 0.5)
 		var crown: Node3D = _group(_head, "Crown")
 		_part(crown, _cylinder(0.3, 0.26, 0.18), gold, Vector3(0.0, 2.3, 0.0))
 		for index: int in 5:
 			var angle: float = index / 5.0 * TAU
 			var spike_at: Vector3 = Vector3(sin(angle) * 0.27, 2.48, cos(angle) * 0.27)
 			_part(crown, _cone(0.07, 0.2, 4), gold, spike_at)
-		var gem: StandardMaterial3D = _toon(Color("7fd6ff"), Color("2a8cff"), 1.0, false)
+		var gem: ShaderMaterial = _toon(Color("7fd6ff"), Color("2a8cff"), 1.0, false)
 		_part(crown, _sphere(0.07), gem, Vector3(0.0, 2.3, 0.3))
 		var cape: MeshInstance3D = _part(
 			_body,
@@ -534,9 +521,9 @@ func _build_frosty(look: Dictionary) -> void:
 func _build_luna(look: Dictionary) -> void:
 	var suit_glow: Color = look.get("glow", Color.BLACK)
 	_human(look["fur"], look["main"], look["main"], look["accent"], suit_glow)
-	var fur: StandardMaterial3D = _toon(look["fur"])
-	var inner: StandardMaterial3D = _toon(look["inner"], Color.BLACK, 0.0, false)
-	var whisker: StandardMaterial3D = _toon(Color.WHITE, Color.BLACK, 0.0, false)
+	var fur: ShaderMaterial = _toon(look["fur"])
+	var inner: ShaderMaterial = _toon(look["inner"], Color.BLACK, 0.0, false)
+	var whisker: ShaderMaterial = _toon(Color.WHITE, Color.BLACK, 0.0, false)
 	var ears: Node3D = _group(_head, "Ears")
 	for side: float in [-1.0, 1.0]:
 		var turn: Vector3 = Vector3(0.0, PI / 4.0, side * -0.3)
@@ -554,12 +541,12 @@ func _build_luna(look: Dictionary) -> void:
 		point.z -= (1.0 - cos(angle)) * 0.25
 		_part(tail, _sphere(0.08 - index * 0.004), fur, point)
 	var gun: Node3D = _group(_body, "RayGun")
-	var metal: StandardMaterial3D = _toon(look["metal"])
+	var metal: ShaderMaterial = _toon(look["metal"])
 	var gun_turn: Vector3 = Vector3(0.0, 0.0, PI / 2.0)
 	_part(gun, _cylinder(0.07, 0.1, 0.45), metal, Vector3(0.84, 0.74, 0.12), gun_turn)
 	_part(gun, _box(0.08, 0.2, 0.1), metal, Vector3(0.66, 0.62, 0.12), Vector3(0.0, 0.0, 0.3))
 	_part(gun, _torus(0.09, 0.14), _toon(look["accent"]), Vector3(0.84, 0.74, 0.12), gun_turn)
-	var beam: StandardMaterial3D = _toon(look["accent"], look["accent"], 1.2, false)
+	var beam: ShaderMaterial = _toon(look["accent"], look["accent"], 1.2, false)
 	_flicker(_part(gun, _sphere(0.1), beam, Vector3(1.08, 0.74, 0.12)))
 	var bubble: StandardMaterial3D = StandardMaterial3D.new()
 	bubble.albedo_color = Color(0.75, 0.91, 1.0, 0.18)
@@ -591,11 +578,11 @@ func _build_luna(look: Dictionary) -> void:
 
 func _build_pixel(look: Dictionary) -> void:
 	var glow: Color = look.get("glow", Color.BLACK)
-	var shell: StandardMaterial3D = _toon(look["main"], glow, 0.25)
-	var trim: StandardMaterial3D = _toon(
+	var shell: ShaderMaterial = _toon(look["main"], glow, 0.25)
+	var trim: ShaderMaterial = _toon(
 		look["trim"], look["trim"], 0.6 if glow != Color.BLACK else 0.0
 	)
-	var lit: StandardMaterial3D = _toon(look["pixels"], look["pixels"], 1.2, false)
+	var lit: ShaderMaterial = _toon(look["pixels"], look["pixels"], 1.2, false)
 	for side: float in [-1.0, 1.0]:
 		_part(_rig, _box(0.22, 0.45, 0.28), trim, Vector3(side * 0.2, 0.23, 0.0))
 		_part(
@@ -704,10 +691,10 @@ func _sparkles(color: Color) -> CPUParticles3D:
 func _human(
 	skin: Color, top: Color, legs: Color, shoes: Color, top_glow: Color = Color.BLACK
 ) -> void:
-	var top_material: StandardMaterial3D = _toon(top, top_glow, 0.5)
-	var legs_material: StandardMaterial3D = _toon(legs)
-	var shoes_material: StandardMaterial3D = _toon(shoes)
-	var skin_material: StandardMaterial3D = _toon(skin)
+	var top_material: ShaderMaterial = _toon(top, top_glow, 0.5)
+	var legs_material: ShaderMaterial = _toon(legs)
+	var shoes_material: ShaderMaterial = _toon(shoes)
+	var skin_material: ShaderMaterial = _toon(skin)
 	for side: float in [-1.0, 1.0]:
 		_part(_rig, _capsule(0.13, 0.51), legs_material, Vector3(side * 0.17, 0.3, 0.0))
 		var shoe_scale: Vector3 = Vector3(1.0, 0.7, 1.35)
@@ -721,20 +708,37 @@ func _human(
 	_eyes(_head, 1.65, 0.5)
 
 
-## Two big shiny cartoon eyes on the front of a head of radius `radius` centred at `y`.
+## Two big shiny cartoon eyes on the front of a head of radius `radius` centred at `y`: a dark
+## pupil with a light shine on an outlined white (dark eyes only; bright eyes glow on their own),
+## large enough to read on a card.
 func _eyes(
 	parent: Node3D, y: float, radius: float, color: Color = OUTLINE_COLOR, spread: float = 0.34
 ) -> void:
-	var eye: StandardMaterial3D = _toon(color, Color.BLACK, 0.0, false)
+	var eye: ShaderMaterial = _toon(color, Color.BLACK, 0.0, false)
+	var white: ShaderMaterial = _toon(Color.WHITE)
 	var shine: StandardMaterial3D = StandardMaterial3D.new()
 	shine.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var dark: bool = color.get_luminance() < EYE_WHITE_BELOW
 	for side: float in [-1.0, 1.0]:
 		var x: float = side * radius * spread
 		var z: float = sqrt(maxf(0.0, radius * radius - x * x)) * 0.92
 		var eye_at: Vector3 = Vector3(x, y + radius * 0.05, z)
+		if dark:
+			var white_at: Vector3 = Vector3(x, y + radius * 0.07, z + radius * 0.03)
+			var white_scale: Vector3 = Vector3(1.0, 1.3, 0.55)
+			var eye_white: MeshInstance3D = _part(
+				parent, _sphere(radius * 0.22), white, white_at, Vector3.ZERO, white_scale
+			)
+			eye_white.name = ("Left" if side < 0.0 else "Right") + "EyeWhite"
+			eye_at.z += radius * 0.09
 		var eye_scale: Vector3 = Vector3(1.0, 1.35, 0.6)
-		_part(parent, _sphere(radius * 0.16), eye, eye_at, Vector3.ZERO, eye_scale)
-		var shine_at: Vector3 = Vector3(x + radius * 0.05, y + radius * 0.13, z + radius * 0.08)
+		var pupil: MeshInstance3D = _part(
+			parent, _sphere(radius * 0.16), eye, eye_at, Vector3.ZERO, eye_scale
+		)
+		pupil.name = ("Left" if side < 0.0 else "Right") + "Pupil"
+		var shine_at: Vector3 = Vector3(
+			x + radius * 0.05, y + radius * 0.13, eye_at.z + radius * 0.08
+		)
 		_part(parent, _sphere(radius * 0.055), shine, shine_at)
 
 
@@ -783,33 +787,11 @@ func _flicker(node: Node3D) -> void:
 	_flicker_scales.append(node.scale)
 
 
-## Cartoon material: toon light, an optional glow and a dark outline (inverted hull).
+## Cartoon material: cel shading, an optional glow and the dark outline (`ToonMaterials`).
 func _toon(
 	color: Color, glow: Color = Color.BLACK, glow_strength: float = 0.0, outlined: bool = true
-) -> StandardMaterial3D:
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = color
-	material.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-	material.specular_mode = BaseMaterial3D.SPECULAR_TOON
-	material.roughness = 0.8
-	if glow_strength > 0.0 and glow != Color.BLACK:
-		material.emission_enabled = true
-		material.emission = glow
-		material.emission_energy_multiplier = glow_strength
-	if outlined:
-		material.next_pass = _outline_material()
-	return material
-
-
-func _outline_material() -> StandardMaterial3D:
-	if _outline == null:
-		_outline = StandardMaterial3D.new()
-		_outline.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_outline.albedo_color = OUTLINE_COLOR
-		_outline.cull_mode = BaseMaterial3D.CULL_FRONT
-		_outline.grow = true
-		_outline.grow_amount = OUTLINE_GROW
-	return _outline
+) -> ShaderMaterial:
+	return ToonMaterials.toon(color, glow, glow_strength, outlined)
 
 
 ## Bright light that adds to what is behind it: halos, sparkles, glitch copies.
