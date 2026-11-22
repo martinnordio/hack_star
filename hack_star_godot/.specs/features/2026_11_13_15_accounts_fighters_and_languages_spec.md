@@ -3,7 +3,7 @@
 > **Author:** Martin Nordio
 > **Status:** ⬜ Requirements in progress
 > **Created:** 2026-11-21
-> **Last updated:** 2026-11-21
+> **Last updated:** 2026-11-22
 > **Branch:** `feature/accounts-fighters-and-languages`
 > **Moved from:** [2026_11_13_accounts_fighters_and_languages_spec.md](../../../.specs/features/done/2026_11_13_accounts_fighters_and_languages_spec.md) (#15)
 
@@ -12,6 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_13_accounts_fighters_and_languages_spec.md (requirements only) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](2026_11_14_16_bug_fixes_spec.md) | included in [16](2026_11_14_16_bug_fixes_spec.md) | S25–S40 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -182,6 +183,63 @@ agreed as enough.
   colours and look. Each change costs 500 credits (free with the INFINITY code); with fewer
   credits the change is refused with a message saying how many are missing. The fighter keeps
   its trophies, power level and lock state.
+- **S25 — Free with INFINITY:** While INFINITY is active, creating a fighter and saving changes to
+  it never show "Need … more C"; the button shows "free" and the save works, whatever the saved
+  credit count is (including 0). _(added from spec 16, 2026-11-22)_
+- **S26 — New fighter shows at once:** Right after **Create**, the Fighters screen shows the new
+  fighter's card and no longer shows the "Create a fighter" card (unless S33 keeps it), without
+  reloading the game. _(added from spec 16, 2026-11-22)_
+- **S27 — Creator screen agrees with itself:** The creator shows "Create a fighter" with a free
+  **Create** button only when the account has no created fighter (or with CREATOR for an extra
+  one, S33); when changing a fighter it shows "Change your fighter" with **Save changes** and its
+  price. Title and button never disagree. _(added from spec 16, 2026-11-22)_
+- **S28 — Created fighters across tabs:** A created fighter, a change to it and the credits paid
+  for it in one tab are not lost because of another tab of the same game, and the other tab
+  shows them at the latest when it comes back to the front, as for hacks and trophies
+  ([spec 16](2026_11_14_16_bug_fixes_spec.md), S4); per account. `(added from spec 16,
+  2026-11-22)`
+- **S29 — Created fighter is usable at once:** Right after it is created, the created fighter has
+  no lock: its card in the Fighters list looks like the other unlocked fighters, it can be
+  selected, then shows on the Home screen and is played in matches, Training and with friends —
+  no hack code needed. This replaces the lock of S10, CREATOR's unlocking in S11 and the lock
+  state in S24. _(added from spec 16, 2026-11-22)_
+- **S30 — Prices stay:** Without INFINITY, the first creation is free and every change costs
+  500 C; the created fighter keeps its trophies and power level when it is changed, and a change
+  made while INFINITY or CREATOR was active stays after the code turns off. `(added from spec 16,
+  2026-11-22)`
+- **S31 — Place in the list:** In the Fighters list, the created fighter's card comes right after
+  the last unlocked fighter and before the locked ones (with 3 unlocked fighters, it is the 4th
+  card). _(added from spec 16, 2026-11-22)_
+- **S32 — One fighter without CREATOR:** Without the CREATOR code, an account can create one
+  fighter; once it exists, the "Create a fighter" card is gone and only **Change** is offered
+  (replaces S7 and S9's "the entry opens that fighter"). _(added from spec 16, 2026-11-22)_
+- **S33 — More fighters with CREATOR:** With the CREATOR code active, the "Create a fighter" card
+  stays in the Fighters list, and each extra fighter created costs credits (free with INFINITY).
+  Every created fighter has its own name, look, trophies and power level, is usable at once
+  (S29), and can be changed on its own (S30). This replaces S11's "unlocks the created fighter".
+  _(added from spec 16, 2026-11-22)_
+- **S34 — Not enough credits:** Without enough credits for an extra fighter, the creator says how
+  many credits are missing and nothing is created. _(added from spec 16, 2026-11-22)_
+- **S35 — Code text:** In the hack list and on the printable QR page, CREATOR says it lets you
+  create more fighters (in all five languages), not that it unlocks the created fighter.
+  _(added from spec 16, 2026-11-22)_
+- **S36 — Playing with friends:** Each created fighter looks the same on friends' devices as on
+  the player's own device. _(added from spec 16, 2026-11-22)_
+- **S37 — Price and maximum:** Each extra created fighter costs 500 C (free with INFINITY). An
+  account has at most 15 created fighters; at 15, the "Create a fighter" card is not shown.
+  _(added from spec 16, 2026-11-22)_
+- **S38 — CREATOR lasts 3 days:** CREATOR is a 3-day code: it turns off by itself 3 days after it
+  is entered, entering it again while it is active starts a new 3 days, and the hack screen shows
+  its time left, like INFINITY and OPENSESAME ([spec 16](2026_11_14_16_bug_fixes_spec.md),
+  S16–S18). _(added from spec 16, 2026-11-22)_
+- **S39 — Created fighters wait for CREATOR:** When CREATOR turns off, the extra created fighters
+  (all but the first) stay in the Fighters list, keep their trophies and power, but cannot be
+  selected, played or changed; their card and detail say they are active again when the CREATOR
+  code is entered. Entering CREATOR again makes them usable and changeable. If one of them was
+  selected, the Home screen shows another usable fighter. _(added from spec 16, 2026-11-22)_
+- **S40 — First created fighter stays:** The first created fighter (S32), created without
+  CREATOR, stays usable whether CREATOR is active or not; only the extra created fighters become
+  inactive when CREATOR turns off (S39). _(added from spec 16, 2026-11-22)_
 
 ### Open questions
 

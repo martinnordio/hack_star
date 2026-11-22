@@ -3,7 +3,7 @@
 > **Author:** Martin Nordio and Mattia Nordio
 > **Status:** ⬜ Requirements in progress
 > **Created:** 2026-11-21
-> **Last updated:** 2026-11-21
+> **Last updated:** 2026-11-22
 > **Branch:** `feature/super-and-hypercharge`
 > **Moved from:** [2026_11_12_super_and_hypercharge_spec.md](../../../.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) (#11)
 
@@ -12,6 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_super_and_hypercharge_spec.md (requirements only) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](2026_11_14_16_bug_fixes_spec.md) | included in [16](2026_11_14_16_bug_fixes_spec.md) | S11 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -79,6 +80,10 @@ part of F8).
 - **S10 — Documentation (Godot):** `hack_star_godot/README.md` (controls, hack table),
   `hack_star_godot/docs/architecture.md` and the Info vocabulary (Super and Hypercharge already
   listed; add the hack code) are updated.
+- **S11 — HYPERCHARGE lasts 3 days:** HYPERCHARGE is a 3-day code: it turns off by itself 3 days
+  after it is entered, entering it again while it is active starts a new 3 days, and the hack
+  screen shows its time left, like INFINITY and OPENSESAME
+  ([spec 16](2026_11_14_16_bug_fixes_spec.md), S16–S18). _(added from spec 16, 2026-11-22)_
 
 ### Open questions
 
