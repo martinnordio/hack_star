@@ -19,6 +19,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 8.99 M (88 k in · 8.86 M cached · 39 k out) | CHF 2.50 (298 credits) | Step 2 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:42:16 to 12:55:30) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 10.98 M (93 k in · 10.84 M cached · 41 k out) | CHF 2.89 (345 credits) | Step 3 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:55:30 to 13:11:15) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.56 M (72 k in · 7.45 M cached · 38 k out) | CHF 2.19 (261 credits) | Step 4 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:12:53 to 13:22:37) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.15 M (48 k in · 7.08 M cached · 22 k out) | CHF 1.75 (208 credits) | Step 5 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:22:37 to 13:30:18) |
 
 ---
 
@@ -321,7 +322,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ✅ Done | [→ Step 2](#step-2--font-icons-and-theme) |
 | **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ✅ Done | [→ Step 3](#step-3--toon-look-of-the-fighters) |
 | **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ✅ Done | [→ Step 4](#step-4--home-screen) |
-| **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ⬜ Not started | [→ Step 5](#step-5--arena-look) |
+| **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ✅ Done | [→ Step 5](#step-5--arena-look) |
 | **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ⬜ Not started | [→ Step 6](#step-6--arena-framing-and-match-hud) |
 | **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ⬜ Not started | [→ Step 7](#step-7--fighter-cards) |
 | **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
@@ -500,13 +501,19 @@ The canyon's floor, walls, cacti and props have the outlined cartoon look, and t
 saturated than the fighters (G10, W7).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Canyon`: softer sand tiles (lower saturation), D5 materials with outline on walls, boulders, cacti, crates, skulls and bones (also on its `MultiMeshInstance3D`s); layout and collisions unchanged.
-- [ ] Note the draw calls (`Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME`) and the frame time of Training on the desktop before and after in Notes.
-- [ ] Check: screenshots of Training and a match at 1280×720 and 820×1180; fighters stand out from the floor; `test_arena*.gd` unchanged and green; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] `Canyon`: softer sand tiles (lower saturation), D5 materials with outline on walls, boulders, cacti, crates, skulls and bones (also on its `MultiMeshInstance3D`s); layout and collisions unchanged.
+- [x] Note the draw calls (`Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME`) and the frame time of Training on the desktop before and after in Notes.
+- [x] Check: screenshots of Training and a match at 1280×720 and 820×1180; fighters stand out from the floor; `test_arena*.gd` unchanged and green; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 13:22
+**Canyon** (D5, G10, W7): every part takes its material from `ToonMaterials` (the canyon's own `_toon` / `_vertex_color_material` StandardMaterials are gone): walls (body, band, top), the boulders on and outside the walls, cactus trunks, arms and flowers, crates, skulls, bones and rocks are cel-shaded with the dark outline pass; the floor box, the sand tiles, the outside ground and the bush patches are cel-shaded without an outline (flat ground needs none). For the MultiMeshes `toon.gdshader` got `use_instance_color` and `ToonMaterials.instanced(outlined)` (one shared material each), so every boulder, tile and cactus keeps its own colour. Sand `f2b866`/`e4a456` → `b89c74`/`ad9068` (the arena's bright sun made the first try, `ecd3a4`, render almost white — measured on the screenshot, the old floor rendered at 255,255,140, the new one at about 248,208,155: saturation 0.45 → 0.37, the fighters' colours stay at 0.8–1.0); bush ground `b9a24a` → olive `8f9a5a` so the patches still read; outside ground `a5512f` → `b47552`. Layout, wall heights, collisions and names unchanged.
+**Draw calls and frame time** (Training at 1280×720, desktop GPU, vsync off, mean of 240 frames, two runs each): before **384** draw calls, 3.2 / 4.8 ms per frame; after **539** draw calls (+155: one outline pass per outlined mesh and MultiMesh), 2.6–5.1 ms per frame (same as before within the run-to-run noise). The iPad check stays with Step 20 (G14).
+**Tests**: new `tests/test_canyon_look.gd` (2: walls and props cel-shaded with the outline; the ground cel-shaded without one); `test_arena*.gd` unchanged and green.
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step5\`, viewed): Training and a match (5 s in) at 1280×720 and 820×1180. Outlines on walls, boulders, cacti, crates, skulls and bones read like the fighters'; the soft sand lets the fighters stand out. After looking: the first sand was too pale (blown out by the sun) → darker, and the bush ground greener. The near wall and the HUD are Step 6.
+**Done (2026-11-22 · ~8 min · Claude Opus 5.5)** — the canyon on the shared toon materials with the dark outline on walls and props (MultiMeshes too, per-instance colour), softer sand; `tests/test_canyon_look.gd`. `tools/test.ps1` 423 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 7.15 M tokens · CHF 1.75 (208 credits)
 
 ---
 

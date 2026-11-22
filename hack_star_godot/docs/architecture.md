@@ -175,7 +175,8 @@ sizes.
 There are no imported models, textures or fonts. The canyon (sand floor, rock walls, cacti,
 decoration), the dummies, the shots and the effects are built in code from Godot's primitive
 meshes (box, cylinder, sphere, capsule) and plain materials: the canyon by `Canyon` from
-`ArenaLayout` at `_ready` (a `MultiMeshInstance3D` for the sand tiles, toon-like materials, a
+`ArenaLayout` at `_ready` (a `MultiMeshInstance3D` for the sand tiles, the shared cel-shaded
+`ToonMaterials` with the dark outline on walls, boulders, cacti and props — spec 09 —, a
 sun with shadows), the dummies by `TargetDummy`, the shots by `Shot`, the dust, flash and sparks
 by `ArenaEffects` (`CPUParticles3D`, no `GPUParticles3D`). The fighter is `fighter.tscn` with its
 `FighterModel` on the `Model` node (the same figure as in the fighter screen). Fighters are built the same way by

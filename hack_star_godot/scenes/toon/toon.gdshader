@@ -11,9 +11,11 @@ uniform float lit_band = 0.85;
 uniform float mid_band = 0.5;
 uniform float shadow_band = 0.0;
 uniform float rim_strength = 0.25;
+// MultiMesh props: each instance's colour (set_instance_color) tints the albedo.
+uniform bool use_instance_color = false;
 
 void fragment() {
-	ALBEDO = albedo.rgb;
+	ALBEDO = use_instance_color ? albedo.rgb * COLOR.rgb : albedo.rgb;
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
 	EMISSION = emission.rgb * emission_energy;

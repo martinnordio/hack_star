@@ -2,8 +2,10 @@ class_name Canyon
 extends Node3D
 ## The sunny canyon of the arena, built in code from `ArenaLayout` at `_ready`: the sand floor
 ## (into `floor_body`), the rock walls (one `StaticBody3D` each, into `walls`), cacti on the
-## bush patches and the decoration. Own art from primitive meshes and toon materials; the
-## many small pieces (sand tiles, boulders, cacti) are MultiMeshes to keep draw calls low.
+## bush patches and the decoration. Own art from primitive meshes in the outlined cartoon look of
+## the fighters (`ToonMaterials`, spec 09 D5/G10): walls, boulders, cacti and props have the dark
+## outline, the ground is soft sand without one, less saturated than the fighters. The many small
+## pieces (sand tiles, boulders, cacti) are MultiMeshes to keep draw calls low.
 
 ## Wall heights: the border, the border on the camera side (low, never hides the fighter) and
 ## the rocks inside.
@@ -17,15 +19,15 @@ const CACTUS_SPACING: float = 0.85
 ## The same canyon every time.
 const LOOK_SEED: int = 6
 
-const SAND: Color = Color("f2b866")
-const SAND_DARK: Color = Color("e4a456")
-const OUTSIDE: Color = Color("a5512f")
+const SAND: Color = Color("b89c74")
+const SAND_DARK: Color = Color("ad9068")
+const OUTSIDE: Color = Color("b47552")
 const ROCK: Color = Color("c95a33")
 const ROCK_BAND: Color = Color("e8844c")
 const ROCK_TOP: Color = Color("8a3a26")
 const BOULDER: Color = Color("9c4a30")
 const BOULDER_LIGHT: Color = Color("c86a40")
-const BUSH_GROUND: Color = Color("b9a24a")
+const BUSH_GROUND: Color = Color("8f9a5a")
 const CACTUS: Color = Color("47b04f")
 const CACTUS_DARK: Color = Color("2f8a3f")
 const FLOWER: Color = Color("ff5fa2")
@@ -38,7 +40,6 @@ const PEBBLE: Color = Color("9c7b5c")
 @export var floor_body: StaticBody3D
 @export var walls: Node3D
 
-var _materials: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _boulders: Array[Transform3D] = []
 var _boulder_colors: Array[Color] = []
@@ -52,7 +53,7 @@ func _ready() -> void:
 	_build_cacti()
 	_build_decoration()
 	_add_multimesh(
-		"Boulders", _low_poly_sphere(0.5), _vertex_color_material(), _boulders, _boulder_colors
+		"Boulders", _low_poly_sphere(0.5), ToonMaterials.instanced(), _boulders, _boulder_colors
 	)
 
 
@@ -74,17 +75,17 @@ func _build_floor() -> void:
 	box.size = Vector3(size.x, FLOOR_THICKNESS, size.y)
 	shape.shape = box
 	floor_body.add_child(shape)
-	_mesh(floor_body, "Mesh", _box(box.size), SAND, Vector3.ZERO)
+	_mesh(floor_body, "Mesh", _box(box.size), SAND, Vector3.ZERO, false)
 	var outside: PlaneMesh = PlaneMesh.new()
 	outside.size = Vector2(OUTSIDE_SIZE, OUTSIDE_SIZE)
-	_mesh(self, "Outside", outside, OUTSIDE, Vector3(0.0, -0.15, 0.0))
+	_mesh(self, "Outside", outside, OUTSIDE, Vector3(0.0, -0.15, 0.0), false)
 	_build_sand_tiles(size)
 	for bush: Rect2 in ArenaLayout.BUSHES:
 		var patch: PlaneMesh = PlaneMesh.new()
 		patch.size = bush.size + Vector2(0.4, 0.4)
 		var at: Vector2 = bush.get_center()
 		var ground: MeshInstance3D = _mesh(
-			self, "BushGround", patch, BUSH_GROUND, Vector3(at.x, 0.02, at.y)
+			self, "BushGround", patch, BUSH_GROUND, Vector3(at.x, 0.02, at.y), false
 		)
 		ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
@@ -105,7 +106,7 @@ func _build_sand_tiles(size: Vector2) -> void:
 			var shade: Color = SAND if (column + row) % 2 == 0 else SAND_DARK
 			colors.append(shade.lightened(_rng.randf_range(0.0, 0.06)))
 	var tiles: MultiMeshInstance3D = _add_multimesh(
-		"SandTiles", tile, _vertex_color_material(), transforms, colors
+		"SandTiles", tile, ToonMaterials.instanced(false), transforms, colors
 	)
 	tiles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
@@ -214,14 +215,14 @@ func _build_cacti() -> void:
 					flowers.append(Transform3D(Basis.IDENTITY, base + Vector3(0, 1.1 * tall, 0)))
 					flower_colors.append(FLOWER)
 	var trunk: ArrayMesh = _shifted(_capsule(0.22, 1.1), 0.55)
-	_add_multimesh("CactusTrunks", trunk, _vertex_color_material(), trunks, trunk_colors)
-	_add_multimesh("CactusArms", _capsule(0.12, 0.5), _vertex_color_material(), arms, arm_colors)
+	_add_multimesh("CactusTrunks", trunk, ToonMaterials.instanced(), trunks, trunk_colors)
+	_add_multimesh("CactusArms", _capsule(0.12, 0.5), ToonMaterials.instanced(), arms, arm_colors)
 	var flower: SphereMesh = SphereMesh.new()
 	flower.radius = 0.1
 	flower.height = 0.2
 	flower.radial_segments = 8
 	flower.rings = 4
-	_add_multimesh("CactusFlowers", flower, _vertex_color_material(), flowers, flower_colors)
+	_add_multimesh("CactusFlowers", flower, ToonMaterials.instanced(), flowers, flower_colors)
 
 
 func _build_decoration() -> void:
@@ -266,12 +267,12 @@ func _build_decoration() -> void:
 
 
 func _mesh(
-	parent: Node, node_name: String, mesh: Mesh, color: Color, at: Vector3
+	parent: Node, node_name: String, mesh: Mesh, color: Color, at: Vector3, outlined: bool = true
 ) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()
 	instance.name = node_name
 	instance.mesh = mesh
-	instance.material_override = _toon(color)
+	instance.material_override = ToonMaterials.toon(color, Color.BLACK, 0.0, outlined)
 	instance.position = at
 	parent.add_child(instance, true)
 	return instance
@@ -298,24 +299,6 @@ func _add_multimesh(
 	instance.material_override = material
 	add_child(instance)
 	return instance
-
-
-## Cartoon material in one colour: toon light, no shine (like the fighters).
-func _toon(color: Color) -> StandardMaterial3D:
-	if not _materials.has(color):
-		var material: StandardMaterial3D = StandardMaterial3D.new()
-		material.albedo_color = color
-		material.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-		material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
-		_materials[color] = material
-	return _materials[color]
-
-
-## Toon material that takes its colour from each MultiMesh instance.
-func _vertex_color_material() -> StandardMaterial3D:
-	var material: StandardMaterial3D = _toon(Color.WHITE).duplicate()
-	material.vertex_color_use_as_albedo = true
-	return material
 
 
 ## A mesh moved up so its bottom stands on y = 0 (for MultiMesh instances placed at the feet).

@@ -41,6 +41,16 @@ static func toon(
 	return _toons[key]
 
 
+## The cel-shaded material of MultiMesh props, coloured per instance (`set_instance_color`).
+static func instanced(outlined: bool = true) -> ShaderMaterial:
+	var key: String = "instanced/%s" % outlined
+	if not _toons.has(key):
+		var material: ShaderMaterial = toon(Color.WHITE, Color.BLACK, 0.0, outlined).duplicate()
+		material.set_shader_parameter("use_instance_color", true)
+		_toons[key] = material
+	return _toons[key]
+
+
 ## The one dark outline pass shared by every outlined material.
 static func outline() -> ShaderMaterial:
 	if _outline == null:
