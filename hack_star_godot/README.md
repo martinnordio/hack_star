@@ -204,8 +204,8 @@ code; any letter case and spaces around it are fine.
 | `POWER22` | Power 22 | Power levels go up to 22 instead of 11 (shown as "Power 7 / 22") |
 
 A hack never changes trophies, unlocks or power levels; turning all hacks off brings the normal
-rules back. The hacks do not expire yet (spec 16), and the codes `HYPERCHARGE` and `CREATOR` say
-"Unknown code" until their specs (12 and 17) add them. Nothing is bought with credits yet (specs 09
+rules back. The codes `HYPERCHARGE` and `CREATOR` say
+"Unknown code" until their specs (12 and 15) add them. Nothing is bought with credits yet (specs 09
 and 10), and power levels do not change matches yet (spec 09).
 
 **QR codes:** open the QR page from the Wi-Fi address of this computer
@@ -215,10 +215,35 @@ code. Scan it with the camera app or with **Scan QR code** in the game: the link
 with the code, which is redeemed once. **Save image** saves the picture as a PNG (a download in
 the browser, or a file in the user folder on the computer), for printing.
 
-**Saved:** the progress and the active hacks, in one file, `hack_star_save.json`: the trophies,
-power levels, unlocked fighters, credits, the chosen fighter and skins, and the hacks. The game
+**How long a code lasts:** `INFINITY` and `OPENSESAME` stay on for 3 days after they are entered,
+then turn off by themselves; `POWER22` stays on for ever. Entering a 3-day code again while it is on
+starts a new 3 days. A code that is on when this version first opens gets its 3 days from that
+moment. The times are the server's (`duration_seconds` in `server/src/hack_star_server/hacks.py`).
+
+**Time left:** the hack screen lists each active hack with how long it stays on, for example
+"Unlimited credits · 2 days 5 hours left", "Unlock everything · 1 day left" or "Power 22 · Lasts for
+ever". Whole hours are shown, rounded down; under an hour it says "Less than 1 hour left". The times
+are refreshed every minute while the screen is open.
+
+**When a code turns off:** it goes off by itself. The game checks at the start, when it comes to the
+front and every 30 seconds. What was gained or chosen stays: trophies, power levels, the fighters
+unlocked without the code and the skins. A fighter that only OPENSESAME unlocked is locked again; if
+it was the chosen fighter, the Home screen shows another unlocked fighter. A match that is running
+keeps the fighter it started with and gets its trophies. **Turn all hacks off** does the same at once.
+
+**Two tabs:** the game can be open in several tabs of the same browser and address (for example a
+hack QR code opened in a new tab). A hack, trophies, unlocked fighters or a skin gained in one tab
+are kept when another tab saves, because each save first merges the newer save of the other tab. A
+tab that comes back to the front shows the others' changes without a reload. Credits and the chosen
+fighter and skin come from the tab that saved last.
+
+**Saved:** the progress and the active hacks, in one save: the trophies,
+power levels, unlocked fighters, credits, the chosen fighter and skins, and the hacks, each with the time it turns off. The game
 saves each change at once. The file is in the browser's storage for this address (so on the same
-device and browser only); on the computer, in `%APPDATA%\Godot\app_userdata\Hack star\`. To clear
+In the browser the save is in the storage of this address (`localStorage`, key
+`hack_star_save`), so it is kept on the same device and browser only, and every tab of that address
+shares it; on the computer it is the file `hack_star_save.json` in
+`%APPDATA%\Godot\app_userdata\Hack star\`. To clear
 the hacks only, press **Turn all hacks off** on the hack screen and confirm. To start fresh (the
 sample progress, no hacks), delete that file while the game is closed, or in the browser clear
 the site's data for this address.

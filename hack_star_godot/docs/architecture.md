@@ -40,7 +40,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 |-------|--------|------|
 | `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the match, `match.tscn`), **Training** (opens the arena, `arena.tscn`), **Fighters** (opens `fighter_list.tscn`), **Info** (opens `info.tscn`) and **Hack** (opens `hack_screen.tscn`). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
 | `arena.tscn` | `arena.gd` (`Arena`) | The 3D arena (**Training**): the canyon (`canyon.gd`, `Canyon`, built in code from `ArenaLayout`), one fighter (`Fighter`, with its `FighterModel`), three target dummies (`@export var training`, true here), the shots, the effects, a following camera and the HUD: **Back** (top-left, returns to the home screen), the touch joystick (left), the aim stick `AimJoystick` (right, drag or tap to fire) and the FPS label (top-right) |
-| `match.tscn` | `match_arena.gd` (`MatchArena`) | The match (**Play**), an inheriting scene of `arena.tscn` with the same canyon, player, camera, sticks, Back and FPS label, `training = false` (no dummies). `MatchArena` adds the bots (one `Fighter` each at the next of `ArenaLayout.STARTS`, driven by a `BotBrain` each), the `Match` flow (countdown lock, fight, knock-outs, the end) and the match HUD: `Hud/MatchHud` with `CountdownLabel` (centre), `TimerLabel` (top-centre, red in the last 10 s, on a dark rounded backing) and `FightersLeftLabel` (top-right, under the FPS label). A tap on the right stick fires at the nearest live bot. When the match is over it makes every fighter invulnerable and stores `GameState.last_result` at once (with the trophies: `GameState.award_trophies(fighter, result)` gives the player's fighter `Trophies.reward` and saves; the reward is kept in `last_result["reward"]`), and 1.5 s later goes to the result screen |
+| `match.tscn` | `match_arena.gd` (`MatchArena`) | The match (**Play**), an inheriting scene of `arena.tscn` with the same canyon, player, camera, sticks, Back and FPS label, `training = false` (no dummies). `MatchArena` adds the bots (one `Fighter` each at the next of `ArenaLayout.STARTS`, driven by a `BotBrain` each), the `Match` flow (countdown lock, fight, knock-outs, the end) and the match HUD: `Hud/MatchHud` with `CountdownLabel` (centre), `TimerLabel` (top-centre, red in the last 10 s, on a dark rounded backing) and `FightersLeftLabel` (top-right, under the FPS label). A tap on the right stick fires at the nearest live bot. When the match is over it makes every fighter invulnerable and stores `GameState.last_result` at once (with the trophies: `GameState.award_trophies(fighter, result)` gives the player's fighter `Trophies.reward` and saves; the reward is kept in `last_result["reward"]`; the fighter and skin are read at the start, `_player_fighter` and `_player_skin`, so a hack turning off during the match changes nothing), and 1.5 s later goes to the result screen |
 | `result_screen.tscn` | `result_screen.gd` | The result (after a match; no result → home): the heading "Victory!", "Defeat" or "Time's up!" and its line ("You are the last one standing!", "You finished 3rd", "It's a draw"), the player's fighter and skin in a `FighterStage`, the trophy part (`TrophyPanel`, from `last_result["reward"]`, shown only when there is a reward): the change ("+10 trophies", or "+0 trophies"), the count "trophies / next Prestige" and a bar from the last Prestige to the next one, counting up from the old total over 1 s (`COUNT_SECONDS`; only the tests jump to the end, with `finish_count()`); a new Prestige in the match gives a celebration (`Celebration`: "PRESTIGE n!", the `PrestigeBadge` and a short burst), once the count reaches it. **Play again** (opens `match.tscn`) and **Home**. Wide screens put the fighter left, tall screens use one column |
 | `shot.gd` | `shot.gd` (`Shot`) | A shot of the arena: a glowing sphere that flies at `Combat.SHOT_SPEED` and stops at the first wall, rock, fighter or dummy (ray casts, D8, D6: the shooter's own RID is excluded), or after `SHOT_RANGE`; it emits `ended` and frees itself |
 | `health_bar.gd` | `health_bar.gd` (`HealthBar`) | The health bar above a fighter or a dummy: two billboard quads; `show_ratio(ratio)` sets the fill and the colour (`Combat.health_color`), or `fixed_color` when set (green for the player and red for bots in a match, D7) |
@@ -54,7 +54,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame. It has `max_health` and `health` (`MatchSettings.FIGHTER_HEALTH`, 3200), `hit(amount)` (ignored when knocked out or `invulnerable`, which the match sets on every fighter when it is over; emits `hurt`), `heal_step(now, delta)` (`Combat.heal`), `note_action()` (the last hit or shot, for the healing delay), `knock_out()` (spins and shrinks for 0.5 s, then hidden with its collision off; emits `knocked_out_now`) and its own health bar (`show_health_bar(color)`). Only the match's fighters have health; the player in Training shows no bar |
 | `target_dummy.tscn` | `target_dummy.gd` (`TargetDummy`) | A straw dummy (a `StaticBody3D` on the targets layer): health bar (`HealthBar`), damage number (`DamageNumber`), flash on a hit; it breaks apart at 0 and comes back after `respawn_seconds` |
 | `touch_joystick.tscn` | `touch_joystick.gd` (`TouchJoystick`) | On-screen joystick, visible only on a touch screen; its `direction` has length ≤ 1 |
-| `hack_screen.tscn` | `hack_screen.gd` | The hack screen (**Hack** on home; Back goes home): a code field with **Use code** and **Scan QR code** (`QrScanner`); the server checks every code through `HackServer`; the messages "<name> unlocked!" (with a short celebration), "Unknown code" and "Can't reach the hack server"; the list of active hacks or "No hacks active"; **Turn all hacks off** (with a confirmation); **QR codes** opens `qr_page.tscn`. A code from a `?hack=` link is redeemed once when the game opens |
+| `hack_screen.tscn` | `hack_screen.gd` | The hack screen (**Hack** on home; Back goes home): a code field with **Use code** and **Scan QR code** (`QrScanner`); the server checks every code through `HackServer`; the messages "<name> unlocked!" (with a short celebration), "Unknown code" and "Can't reach the hack server"; the list of active hacks with the time left of each ("Unlimited credits · 2 days 5 hours left", "Power 22 · Lasts for ever"), or "No hacks active" (the time left is refreshed on `progress_changed` and every 60 s while the screen is open); **Turn all hacks off** (with a confirmation); **QR codes** opens `qr_page.tscn`. A code from a `?hack=` link is redeemed once when the game opens |
 | `qr_page.tscn` | `qr_page.gd` (`QrPage`) | The QR codes (**QR codes** on the hack screen; Back goes home): one card per hack code from `GET /api/hacks`, with a large QR code of the game's address and `?hack=<CODE>` (`QrImage`) and **Save image** (a download in the browser, else a PNG in `user://`) |
 
 **Camera and screen sizes (S2, S11, D5).** The arena camera looks down at 55° from behind and
@@ -96,8 +96,9 @@ without a scene.
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies; `floor_of(trophies)` (the trophies of the last Prestige, 0 below 1000) and `next_at(trophies)` (the trophies of the next one) |
 | `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
 | `vocabulary.gd` (`Vocabulary`) | The 24 words of the info page with their one-sentence meanings (`LIST`); English until spec 15 |
-| `hacks.gd` (`Hacks`) | The hack rules (spec 05): the ids `infinite_credits`, `unlock_all` and `power22` and their names (`ids`, `is_known`, `display_name`); a typed or scanned code (`normalize_code`, `code_from_scan`, `code_from_address`); the QR link of a code (`link`); the effects: `credits_text` and `spend` (unlimited credits), `is_fighter_unlocked` (unlock everything), `max_power` and `power_text` (power 22). A hack changes no trophies, unlocks or power levels |
-| `save_data.gd` (`SaveData`) | The save file's JSON, `{"version": 2, "hacks": [...], "progress": {...}}` (`to_json`, `from_json`; `VERSION` 2): a version 1 file gives its hacks and an empty progress; a missing, broken or newer file gives no hacks and an empty progress. Every field is checked and the ones that fail are left out (unknown fighters, hacks and skins, wrong types, numbers out of range), so the game fills them from the sample progress |
+| `hacks.gd` (`Hacks`) | The hack rules (specs 05 and 16): the ids `infinite_credits`, `unlock_all` and `power22` and their names (`ids`, `is_known`, `display_name`); how long each lasts (`duration_seconds`: `infinite_credits` and `unlock_all` 3 days, `power22` for ever; the same numbers as the server's `duration_seconds`), the end time of a hack entered now (`until_for`, `is_expired`) and the time left text (`time_left_text`: "2 days 5 hours left", "Lasts for ever"); a typed or scanned code (`normalize_code`, `code_from_scan`, `code_from_address`); the QR link of a code (`link`); the effects: `credits_text` and `spend` (unlimited credits), `is_fighter_unlocked` (unlock everything), `max_power` and `power_text` (power 22). A hack changes no trophies, unlocks or power levels |
+| `save_data.gd` (`SaveData`) | The save file's JSON, `{"version": 3, "revision": n, "hacks": [{"id", "until"}], "progress": {...}}` (`to_json`, `from_json`; `VERSION` 3; spec 16 D1): a version 2 file gives its progress and its hacks (3 days from now), a version 1 file its hacks and an empty progress, and a for-ever hack has `until` 0; a missing, broken or newer file gives no hacks and an empty progress. Every field is checked and the ones that fail are left out (unknown fighters, hacks and skins, wrong types, numbers out of range), so the game fills them from the sample progress |
+| `save_store.gd` (`SaveStore`) | Where the save text lives (spec 16, D6): the file `save_path` on the desktop and in the tests; the page's `localStorage` (key `hack_star_save`) in the web export, shared by the browser's tabs of one address (`read`, `write`; a one-time copy of an old `user://` file on the web) |
 | `qr_code.gd` (`QrCode`) | A QR code encoder (ISO/IEC 18004, byte mode, level M, versions 1–10): a text in, a matrix of booleans out; the quiet zone is added by `QrImage` |
 
 Later specs add their rules here, one script per rule, with a test next to it in `tests/`:
@@ -123,7 +124,9 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   and calls `Screens.go_home()`.
 - **Session state:** the autoload `GameState` (`scenes/autoload/game_state.gd`) holds trophies,
   power levels, unlocked fighters, credits, the selected fighter and skins, `viewed_fighter`,
-  `entrance_played`, the active hacks (`active_hacks`), the cached `pictures`, the `start_code`
+  `entrance_played`, the active hacks (`active_hacks`) and when each turns off (`hack_until`: Unix
+  seconds, `Hacks.FOREVER` for ever; `clock`, a Callable a test replaces for the time), the save
+  `revision` this game last read or wrote, the cached `pictures`, the `start_code`
   of a `?hack=` link, `match_settings` (a `MatchSettings`, session only, read at the start of
   each match) and `last_result` (`{outcome, place, fighter, skin, reward}` of the last match,
   session only, set at its end; `reward` is the `Trophies.reward` dictionary). It starts from `SampleProgress` at every game start; `load_saved()` lays the saved
@@ -132,7 +135,10 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   once. `select(fighter_id, skin_id)`
   refuses a locked fighter or an unknown skin. `activate_hack(id)` and `reset_hacks()` save at
   once; `redeem_code(text)` checks a code with `HackServer` and activates the hack, so a code
-  accepted after Back still counts.
+  accepted after Back still counts. `activate_hack` of a timed hack that is on starts a new 3 days.
+  `expire_hacks()` turns off the hacks whose time has passed, `sync_from_store()` reads another
+  tab's newer save, and `progress_changed` tells the screens that the hacks, the chosen fighter or
+  the progress changed on their own (see *Saved progress*).
 - **Server:** the autoload `HackServer` (`scenes/autoload/hack_server.gd`) has `redeem(code)` and
   `list_hacks()`, both `await`-able, on `HTTPRequest` with a timeout of 8 s. Each returns a
   `Dictionary` whose `status` is `ok`, `unknown` or `no_server` (see *Server, hack codes and
@@ -193,20 +199,50 @@ position every physics frame, so a thin wall is never missed at 16 m/s (D8); it 
 too, and `Shot.launch` takes the shooter, whose RID is excluded from every ray, so a fighter never
 hits itself (spec 07, D6). The dummies are on layer 3 and do not look for anything (mask 0).
 
-## Saved progress (*done: specs 05 and 08*)
+## Saved progress (*done: specs 05, 08 and 16*)
 
-The save file is one JSON file, `user://hack_star_save.json` (spec 05, D5), with
-`{"version": 2, "hacks": [...], "progress": {...}}` (spec 08, D4): the active hacks, as ids, and
-the progress: `trophies` and `power_levels` per fighter, `unlocked` fighters, `credits`,
-`selected_fighter` and `selected_skins` per fighter. It is read and written by **the autoload
-`GameState`** only (`save_path`, `load_saved`, `save`), so no screen touches the file; the rules
-of the format are in `SaveData`. `version` lets later specs migrate it: a version 1 file (only
-the hacks) gives its hacks and the sample progress, and a newer file gives no hacks and the sample
-progress rather than a wrong one. Every field is checked when it is read; a wrong one is left
-out and the sample progress fills it. `GameState.save()` runs at each change (a selection, a hack,
-a match's trophies). In the browser, Godot keeps `user://` in the browser's IndexedDB, so
-progress stays on the same device and in the same browser; on Windows the desktop run keeps it in
-`%APPDATA%\Godot\app_userdata\Hack star\`. There is no login and nothing is shared between devices.
+The save file is one JSON text, `{"version": 3, "revision": n, "hacks": [{"id", "until"}, ...],
+"progress": {...}}` (spec 16, D1; version 2 of spec 08 and version 1 of spec 05 are migrated).
+`until` is the Unix time in seconds when a hack turns off, `0` (`Hacks.FOREVER`) for a hack that
+never does; `revision` counts the saves of all tabs. The progress: `trophies` and `power_levels`
+per fighter, `unlocked` fighters, `credits`, `selected_fighter` and `selected_skins` per fighter.
+It is read and written by **the autoload `GameState`** only (`save_path`, `load_saved`, `save`,
+`sync_from_store`), so no screen touches the store; the format is in `SaveData` and the place is in
+`SaveStore`. `SaveStore` (`game/save_store.gd`) has two places. On the desktop and in the tests it
+is the file `user://hack_star_save.json` (`save_path`; on Windows it is in
+`%APPDATA%\Godot\app_userdata\Hack star\`). In the web export it is the page's `localStorage`
+under the key `hack_star_save` (`SaveStore.WEB_KEY`): every tab of the same address reads and
+writes the same item, where Godot's `user://` on the web would be a copy made when each tab
+started. A web start with no `localStorage` item copies an old `user://` file into it once and
+leaves that file. Nothing is shared between devices or browsers, and there is no login.
+
+**Versions:** a version 3 file gives its hacks with their end times; a version 2 file (spec 08)
+gives its progress and its hacks, and each of its hacks gets 3 days from the first start of this
+version (`until_for`), so codes active when this version first opens get their 3 days from that
+moment; a version 1 file gives its hacks the same way and the sample progress. A newer or broken
+file gives no hacks and the sample progress rather than a wrong one. Every field is checked when
+it is read (known ids, whole numbers, values in range, `until` not further than the duration
+from now); a wrong one is left out and the sample progress fills it.
+
+**Across tabs (D6, D7):** `GameState.save()` first reads the store; a stored revision newer than
+the one this game last read or wrote is merged in (`_merge`): hacks are the union with the later
+end (expired ones left out), `unlocked` is the union, trophies and power levels are the higher per
+fighter; credits, the chosen fighter and skins stay this tab's. Then it writes with `revision` + 1
+and emits `progress_changed` when a merge happened. `sync_from_store()` lays a newer stored save
+over the tab (`_lay_over`), keeps the chosen fighter usable and turns expired hacks off; it runs
+when the game gets the focus (`NOTIFICATION_APPLICATION_FOCUS_IN`) and, on the web, when the page
+becomes `visible` (`visibilitychange`), so a tab that comes back to the front shows the others'
+changes without reloading. Screens that show hacks, the chosen fighter or the power levels
+connect to `progress_changed`.
+
+**Hacks turning off:** `expire_hacks()` runs at each load, at every sync and every 30 s
+(`EXPIRY_CHECK_SECONDS`, a timer of `GameState`). A hack whose `until` has passed is removed,
+the save is written and `progress_changed` is emitted. Only the hacks go: nothing that was gained
+or chosen is removed (spec 16, S19). `_keep_usable_selection()` then chooses another unlocked
+fighter (the sample fighter, else the first unlocked one) when the chosen one is locked again
+(S22); `reset_hacks()` does the same when all hacks are turned off. A running match keeps the
+fighter and skin it started with (`MatchArena._player_fighter`), and gives them its trophies.
+
 Credits, unlocks and power upgrades that change with play are saved as fields but not yet changed
 by play (spec 09).
 
@@ -277,7 +313,7 @@ checks the match HUD and the result screen at the five sizes, with mouse and tou
 last Prestige); `test_match_trophies.gd` checks the award at the end of a match;
 `test_result_trophies.gd` the trophy part of the result screen; `test_save_data_v2.gd`,
 `test_save_data.gd` and `test_game_state_save.gd` the save file (version 2, the version 1
-migration, the progress kept between a restart and the fields checked); `test_mvp_flow.gd` plays
+migration, the progress kept between a restart and the fields checked); `test_save_data_v3.gd` the version 3 file (the end times, the version 2 and 1 migrations with 3 days from now, the checks); `test_hack_times.gd` the durations, the end times and the time left text, `test_hack_expiry.gd` a timed hack turning off (its end time, the chosen fighter, the match keeping its fighter, a for-ever hack); `test_hack_time_rows.gd` the time left on the hack screen; `test_save_tabs.gd` two games on one save file (the merge of hacks, trophies and unlocks, the revision, the sync at the front, the one-time web migration with a fake `localStorage`, `SaveStore` as a file). `test_mvp_flow.gd` plays
 F0–F5 in one run (see *Spec order*). Every test saves to `user://test/run_save.json`, never to the
 player's file: the pre-run hook `tests/pre_run_hook.gd` sets `GameState.save_path` and starts from
 the sample progress. Only `tools/test.ps1` passes the hook (`-gpre_run_script`): GUT started from

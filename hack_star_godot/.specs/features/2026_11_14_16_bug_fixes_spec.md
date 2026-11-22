@@ -20,6 +20,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.52 M (71 k in · 2.43 M cached · 20 k out) | CHF 0.52 (62 credits) | Step 2 done (`usage.ps1 -AgentName s16-steps2-3` from 08:41) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 877 k (7 k in · 867 k cached · 2 k out) | CHF 0.11 (13 credits) | Step 3 done (`usage.ps1 -AgentName s16-steps2-3` from 08:52) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.36 M (69 k in · 2.26 M cached · 23 k out) | CHF 1.06 (127 credits) | Step 4 done (`usage.ps1 -AgentName s16-step4` from 08:54) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.04 M (106 k in · 1.91 M cached · 24 k out) | CHF 0.07 (8 credits) | Step 5 done (`usage.ps1 -AgentName s16-step5` from 09:03) |
 ---
 
 # Part 1 · Requirements
@@ -235,7 +236,7 @@ maximum of 15)._
 | **2** | Hacks turn off by themselves | standard (Claude Sonnet 5.5) — `GameState` keeps the end times, checks them and keeps the chosen fighter usable; the match keeps its fighter (D3, D4) | ✅ Done | [→ Step 2](#step-2--hacks-turn-off-by-themselves) |
 | **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ✅ Done | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ✅ Done | [→ Step 4](#step-4--progress-across-tabs) |
-| **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 5](#step-5--final-check-readme-and-architecture) |
+| **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 5](#step-5--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -389,31 +390,32 @@ architecture describe the timed hacks, the time left and the progress across tab
 S25, all statements).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/docs/architecture.md`: Game rules (the hack durations and texts of
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/docs/architecture.md`: Game rules (the hack durations and texts of
       `Hacks`, `save_data.gd` version 3, `save_store.gd`), Screens (the hack screen's time left;
       `MatchArena` keeps its fighter), the `GameState` session state (`hack_until`, `clock`,
       `expire_hacks`, `progress_changed`, `sync_from_store`, the revision and the merge),
       *Saved progress* (version 3, the migration of versions 1 and 2, `localStorage` on the web
       and its migration), Tests (the new files).
-- [ ] `hack_star_godot/README.md`: the hack table with how long each code lasts (3 days or for
+- [x] `hack_star_godot/README.md`: the hack table with how long each code lasts (3 days or for
       ever; entering again starts a new 3 days; the durations equal the server's), the time left
       on the hack screen, what happens when a code turns off (what stays; locked fighters and the
       chosen fighter), the game in two tabs, and where the progress is saved on the web
       (`localStorage` of the address) and how to start fresh; the sentence "The hacks do not
       expire yet (spec 16)" removed.
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); PowerShell scripts that changed parse with
       `[System.Management.Automation.Language.Parser]::ParseFile`; `git diff --stat` of this spec
       shows nothing in `server/` or `ui/`.
-- [ ] Re-check the MVP flow (`tests/test_mvp_flow.gd` passes: home → hack → fighter → match →
+- [x] Re-check the MVP flow (`tests/test_mvp_flow.gd` passes: home → hack → fighter → match →
       result → home → a fresh load) and write the result into Notes.
-- [ ] Note in Notes what stays with the author (Deferred Items): the device play-test (iPad and
+- [x] Note in Notes what stays with the author (Deferred Items): the device play-test (iPad and
       phone: the hack screen with the time left, touch) and, if Step 4 could not do it, the
       two-tab browser check.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 09:03
+**Done (2026-11-22 · ~4 min · Claude Haiku 5.5)** — Final check and documents. `hack_star_godot/README.md`: how long each code lasts (INFINITY and OPENSESAME 3 days, POWER22 for ever; entering again starts 3 days; the server's durations), the time left on the hack screen, what happens when a code turns off (what stays, locked fighters and the chosen fighter, a running match), the game in two tabs, and the save on the web (`localStorage`, key `hack_star_save`) and how to start fresh; "The hacks do not expire yet" removed. `docs/architecture.md`: `Hacks` durations and time left, `SaveData` version 3 and the migrations, the new `SaveStore`, the `GameState` session state (`hack_until`, `clock`, `expire_hacks`, `progress_changed`, `sync_from_store`, the revision and the merge), *Saved progress*, the new tests. Checks: `check_tools.ps1`, `lint.ps1` (gdlint and gdformat), `test.ps1` 386/386 passed (including `test_mvp_flow.gd`: home, hack, fighter, match, result, home, fresh load) and `export_web.ps1`, all exit 0. No PowerShell script changed; nothing in `server/` or `ui/`. Deferred: the device play-test and the match part of the two-tab check (Deferred Items). suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.04 M · CHF 0.07 (8 credits)
 
 ---
 
