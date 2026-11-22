@@ -24,6 +24,11 @@ const FRAME_MARGIN: float = 0.03
 const FRAME_TOP_MARGIN: float = 0.12
 ## The FPS label (only while the first game is being checked) refreshes this often.
 const FPS_LABEL_INTERVAL: float = 0.25
+## The controls hint at the start is fully visible for this long, then fades out over the next.
+const HINT_SECONDS: float = 5.0
+const HINT_FADE_SECONDS: float = 1.0
+## With touch controls the hint stands this far above the bottom edge, clear of the sticks.
+const HINT_ABOVE_STICKS: float = 288.0
 
 const DUMMY_SCENE: PackedScene = preload("res://scenes/target_dummy.tscn")
 ## Dust puffs under a running fighter come this often, in this colour.
@@ -51,6 +56,7 @@ var _dust_left: float = 0.0
 @onready var _dummies: Node3D = $Dummies
 @onready var _effects: ArenaEffects = $Effects
 @onready var _fps_label: Label = $Hud/FpsLabel
+@onready var _controls_hint: Label = $Hud/ControlsHint
 
 
 func _ready() -> void:
@@ -66,6 +72,24 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
 	_update_fps_label()
+	_show_controls_hint()
+
+
+func _show_controls_hint() -> void:
+	var lines: Array[String] = [ControlsHelp.KEYBOARD_HINT]
+	if DisplayServer.is_touchscreen_available():
+		lines.append(ControlsHelp.TOUCH_HINT)
+		# The sticks stand at the bottom corners; the hint goes above their height.
+		_controls_hint.offset_top = -HINT_ABOVE_STICKS - 104.0
+		_controls_hint.offset_bottom = -HINT_ABOVE_STICKS
+	lines.append(ControlsHelp.MORE_IN_INFO)
+	_controls_hint.text = "\n".join(lines)
+	_controls_hint.modulate.a = 1.0
+	_controls_hint.show()
+	var fade: Tween = create_tween()
+	fade.tween_interval(HINT_SECONDS)
+	fade.tween_property(_controls_hint, "modulate:a", 0.0, HINT_FADE_SECONDS)
+	fade.tween_callback(_controls_hint.hide)
 
 
 func _process(delta: float) -> void:

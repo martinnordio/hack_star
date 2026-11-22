@@ -32,7 +32,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.99 M (96 k in · 2.88 M cached · 14 k out) | CHF 0.56 (67 credits) | Step 6 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:09:00–10:28:40) |---
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.66 M (48 k in · 2.60 M cached · 17 k out) | CHF 0.46 (55 credits) | Step 7 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:29:08–10:36:23) |---
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.48 M (21 k in · 2.45 M cached · 9 k out) | CHF 0.33 (39 credits) | Step 8 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:36:43–10:40:52) |---## Cost summary
-
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.29 M (24 k in · 2.25 M cached · 10 k out) | CHF 0.32 (38 credits) | Step 9 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:41:11–10:45:57) |---## Cost summary
 This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
@@ -350,7 +350,7 @@ reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
 | **6** | Scan button only where scanning works | standard (Claude Sonnet 5.5) — one check of the platform, a disabled button and a hint on an existing screen, checked on screenshots (D10) | ✅ Done | [→ Step 6](#step-6--scan-button-only-where-scanning-works) |
 | **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ✅ Done | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
 | **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ✅ Done | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
-| **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ⬜ Not started | [→ Step 9](#step-9--controls-hint-at-the-start) |
+| **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ✅ Done | [→ Step 9](#step-9--controls-hint-at-the-start) |
 | **10** | Final check, README and architecture (author's reports) | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture-authors-reports) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -631,20 +631,21 @@ When Training or a match starts, a short controls hint shows and fades away by i
 covering the countdown or **Back** and without blocking input (S31, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `arena.tscn` / `arena.gd`: the `ControlsHint` label and its fade after D15 (texts from
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `arena.tscn` / `arena.gd`: the `ControlsHint` label and its fade after D15 (texts from
       `ControlsHelp`).
-- [ ] Tests (a new `test_controls_hint.gd`): the hint is visible at the start of Training and of
+- [x] Tests (a new `test_controls_hint.gd`): the hint is visible at the start of Training and of
       a match with the keyboard text; after `HINT_SECONDS` + `HINT_FADE_SECONDS` it is hidden;
       it ignores the mouse (`mouse_filter`); in the match it does not overlap the countdown label
       or **Back** at the five sizes (rects); Space fires while it shows.
-- [ ] Look check on screenshots: Training and a match (during the countdown) at 1280×720,
+- [x] Look check on screenshots: Training and a match (during the countdown) at 1280×720,
       390×844 and 844×390, the hint readable and clear of the countdown, the timer, "Fighters
       left" and **Back**; one shot a few seconds later without the hint.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 10:41
+**Done (2026-11-22 · ~5 min · Claude Sonnet 5.5)** — A `ControlsHint` label in the `Hud` of `arena.tscn` (so Training and the match): `ControlsHelp.KEYBOARD_HINT`, `TOUCH_HINT` on a second line when `DisplayServer.is_touchscreen_available()`, then "More in Info"; `HudLabel` style, 24 px, centred, 60 % of the width, wrapped, `mouse_filter = IGNORE`; shown at once, fully visible for `HINT_SECONDS` (5), faded out over `HINT_FADE_SECONDS` (1) by a tween and hidden. **Differs from D15 in one detail:** without a touch screen the hint stands at the bottom edge (offsets −128 … −24), because the first screenshots showed it covering the player's fighter at the height of the sticks; with a touch screen it stands `HINT_ABOVE_STICKS` (288) above the bottom edge, clear of the sticks, as D15 says (the touch case was not seen on a screenshot: this computer has no touch screen — Deferred Items: play-test on a device). Tests: new `test_controls_hint.gd` (4: Training shows the text, ignores the mouse and is hidden after 6 s; a match shows it over the countdown; clear of Back, FPS, countdown, timer and "Fighters left" and inside the screen at the five sizes in both scenes; Space fires while it shows). Real screenshots of the windowed run (temporary capture script under `%TEMP%`, not committed) of Training and a match during the countdown at 1280×720, 390×844 and 844×390: the hint is readable and clear of the countdown, the timer, "Fighters left" and **Back**; a match shot 6.5 s later shows no hint. `tools/test.ps1` 402/402 passed (exit 0), `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.29 M · CHF 0.32 (38 credits)
 
 ---
 
