@@ -24,12 +24,12 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | `web/` | Browser scripts that `export_web.ps1` copies into `build/web/`: `qr_scanner.js` (the camera and the scan, own work), `jsQR.js` (the QR decoder, unmodified) and its `jsQR-LICENSE.txt` |
 | `addons/gut/` | GUT 9.7.1, the test tool (excluded from the export) |
 | `addons/proton_scatter/` | ProtonScatter 4.2.0 without its `demos/` and `tests/`, the editor tool that places the Glimmer Isles props (excluded from the export; the game uses only its baked result) |
-| `docs/` | This document |
+| `docs/` | This document; [drawing_to_fighter.md](drawing_to_fighter.md) (a drawing → a fighter, Claude alone) and [drawing_tools.md](drawing_tools.md) (the recommended tools workflow) |
 | `export_presets.cfg` | The web export (single-threaded) |
 | `LICENSES.md` | The licence of every asset and third-party part |
 | `build/` | The web export, created by the tools, git-ignored |
 | `.specs/` | The specs of this game |
-| `assets/` | *planned — spec 04*: imported art and music, only with their licence in `LICENSES.md`; music stays git-ignored ([README](../README.md#resources-outside-the-folder)) |
+| `assets/` | `fonts/` (Lilita One with `OFL.txt`) and `icons/` (14 Kenney *Game Icons* with `License.txt`), spec 09; every file with its licence in `LICENSES.md`; music (later) stays git-ignored ([README](../README.md#resources-outside-the-folder)) |
 
 ## Screens (`scenes/`)
 
@@ -128,6 +128,20 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   content of info, hack and QR codes sits on the dark rounded `ContentScroll` panel; Back shows
   the back arrow, and the result, hack and fighter screen buttons have their own colours and
   icons (`Icons`).
+- **Font, icons, buttons and chips (spec 09):** the display font **Lilita One**
+  (`assets/fonts/`, OFL) with a dark outline is set in the theme on every button, `HeadingLabel`,
+  `SubheadingLabel`, `HudLabel`, `NumberLabel` and `BadgeLabel` (the title, headings, buttons and
+  numbers; a drop shadow on headings and the HUD); plain `Label` (body text) keeps Godot's
+  default font. Button variations `PlayButton` (large yellow), `GreenButton`, `BlueButton`,
+  `PinkButton`, `IconButton` (round) and the base purple `Button` have a dark border and a bottom
+  edge, a lighter hover, a darker pressed state 3 px lower and a white focus ring — the theme alone
+  shows a press and a hover in the same frame. `Icons` (`scenes/ui/icons.gd`) names every icon
+  (`Icons.get_icon("trophy")`): 14 of Kenney's *Game Icons* (`assets/icons/`, CC0) and coin, bolt,
+  clock, world and eye drawn in code. `scenes/ui/icon_chip.tscn` (`IconChip`) is a dark rounded
+  backing with a tinted icon and a number (trophies, credits, power, timer, fighters left).
+  `scenes/ui/world_choice.tscn` is the world button on home and its popup (Canyon or Glimmer
+  Isles, sets `GameState.world`, kept while the game is open). The info screen's
+  **Show FPS (play-test)** switch sets `GameState.show_fps` (not saved).
 - **Screens:** the autoload `Screens` (`scenes/autoload/screens.gd`) has one constant per screen
   path (`HOME`, `ARENA`, `MATCH`, `RESULT`, `FIGHTERS`, `FIGHTER`, `INFO`, and the hack screens),
   `go_to(path)` and `go_home()`. There is no scene stack: every Back goes home.
@@ -181,7 +195,14 @@ sizes.
 
 ## 3D models
 
-There are no imported models, textures or fonts. The canyon (sand floor, rock walls, cacti,
+There are no imported models or textures (the only files are the font and the icons of the *UI
+foundation*). **Toon look** (spec 09, D5): `scenes/toon/toon.gdshader` shades every part in
+three clear bands (lit, mid, shadow) with a thin light rim, colour and glow as uniforms;
+`scenes/toon/outline.gdshader` is its `next_pass`, an inverted hull (`cull_front`, unshaded, dark
+navy) grown by a few millimetres and then by about 3 px on screen, so the outline keeps its width
+on a 150 px card and in the arena. `ToonMaterials` (`scenes/toon/toon_materials.gd`) caches one
+material per colour, glow and outline choice, shared by the fighters, the canyon and Glimmer Isles
+(also on `MultiMeshInstance3D`s), and makes the transparent see-through copies. The canyon (sand floor, rock walls, cacti,
 decoration), the dummies, the shots and the effects are built in code from Godot's primitive
 meshes (box, cylinder, sphere, capsule) and plain materials: the canyon by `Canyon` from
 `ArenaLayout` at `_ready` (a `MultiMeshInstance3D` for the sand tiles, the shared cel-shaded
@@ -229,7 +250,9 @@ and head (`get_rig`, `get_body`, `get_head`) with `FighterModel`'s public buildi
 and `ToonMaterials`, so the idle, run and attack animations and the see-through work unchanged.
 The first is **Beatbolt** (`beatbolt_model.gd`, Mattia's drawing). Adding or removing one touches
 only these places; the tests check every drawn fighter without naming it. The workflow:
-[drawing_to_fighter.md](drawing_to_fighter.md).
+[drawing_to_fighter.md](drawing_to_fighter.md); a workflow with image and 3D tools (Google Flow →
+Meshy → Claude, a GLB with a skeleton, its fit limits and credits) is recommended in
+[drawing_tools.md](drawing_tools.md) — no generated model is in the game yet.
 
 If a later spec imports art, it goes to `assets/` with its licence written in
 [LICENSES.md](../LICENSES.md) (the packs of the Python + Svelte game, Quaternius and Kenney,
@@ -324,9 +347,14 @@ English, in the scene.
 
 ## Art and licences
 
-Everything in the game is original or has a free licence (S7). Today: own work built in code,
-Godot's built-in default font, GUT (test tool, not exported) and jsQR 1.4.0 (Apache-2.0,
-`web/jsQR.js`, copied into the web export for the camera scanner). Every asset and
+Everything in the game is original or has a free licence (S7). Today: own work built in code
+(fighters, the drawn fighter Beatbolt credited to the child, the canyon, the Glimmer Isles props,
+the toon and menu shaders, the icons drawn in code), the display font Lilita One (SIL OFL 1.1,
+with `assets/fonts/OFL.txt`), 14 Kenney *Game Icons* (CC0, with `assets/icons/License.txt`),
+Godot's built-in default font for body text, GUT and ProtonScatter (editor tools, not exported)
+and jsQR 1.4.0 (Apache-2.0, `web/jsQR.js`, copied into the web export for the camera scanner).
+The font and icon pack versions are pinned in `tools/versions.json`, with their source and
+SHA-256 in `LICENSES.md`. Every asset and
 third-party part is listed in [LICENSES.md](../LICENSES.md); add a row there in the same Step
 that adds an asset.
 

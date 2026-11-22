@@ -2,10 +2,10 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a home screen, a fighter list with six fighters (each with
-its skins), a fighter screen, an info page with the words of the game, a 3D canyon arena where
+It is the first basic game so far: a home screen, a fighter list with seven fighters (each with
+its skins; the seventh, **Beatbolt**, comes from a child's drawing), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
 your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
-codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the canyon against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
+codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the chosen world against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. Since spec 09 the game has a new look (see [The look](#the-look)). The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
 ## Layout
 
@@ -97,7 +97,7 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
    [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
 3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
-   arena with three target dummies. **Fighters** lists the six fighters with their trophies, power
+   arena with three target dummies. **Fighters** lists the seven fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
    the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
    and the hack codes), then explains the words of the game. **Hack** opens the hack screen
@@ -105,6 +105,22 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    screen. The world button at the top (the world's name, **Canyon** at the start) opens the
    world choice: **Canyon** or **Glimmer Isles**, used by **Play** and **Training** while the game
    is open.
+
+## The look
+
+Spec 09 gave the game the look of the Svelte game: every menu stands on a purple gradient with
+light rays (`MenuBackground`), the fighter on home and on the fighter screen stands on a pedestal,
+the title, headings, buttons and numbers use the bold display font **Lilita One** with a dark
+outline, the buttons have icons and their own colours (a large yellow **Play**) and react to a
+hover and a press, and trophies, credits, power, the timer and the fighters left are shown as
+chips with icons. Fighters, the canyon and Glimmer Isles share one cel-shaded toon material with a
+dark outline that stays visible on a card and in the arena. **Glimmer Isles** is a fantasy world
+of floating islands with glowing crystals and giant mushrooms; its props are placed with the
+ProtonScatter editor addon and baked into a plain scene (see
+[How to change Glimmer Isles](#how-to-change-glimmer-isles)). The frames-per-second label is
+hidden: switch it on in **Info → Show FPS (play-test)** (kept while the game is open). How the
+look is built: [docs/architecture.md](docs/architecture.md) (*UI foundation*, *3D models*); the
+font and icons and their licences: [LICENSES.md](LICENSES.md).
 
 ## How to play a match
 
@@ -309,8 +325,10 @@ the site's data for this address.
 4. On the iPad, open that address in Safari and accept the self-signed certificate once. Without
    `-Https` the page works, but the in-game camera does not (the browser needs `https://`); typing
    a code still works.
-5. Check landscape and portrait, the touch joystick, that the frames per second label (top-right)
-   shows 30 or more, and a hack code typed and scanned.
+5. Check landscape and portrait, the touch joystick, and a hack code typed and scanned. For the
+   frame rate, open **Info**, switch on **Show FPS (play-test)**, go back and start a match with
+   4 fighters (**Play**) in the canyon and in Glimmer Isles: the label top-right should show 30
+   or more.
 
 ## Controls
 
@@ -333,14 +351,16 @@ the site's data for this address.
   and the cacti behind it. Shots stop at the rocks and walls, and at the dummies and fighters.
 - **Back** (top-left) returns to the home screen.
 - **Entrance:** a click, a touch or a key (for example Space) skips the entrance of the home screen.
-- **Frame rate:** the label top-right shows the frames per second of the arena.
+- **Frame rate:** hidden for players; with **Info → Show FPS (play-test)** switched on, the label
+  top-right of the arena shows the frames per second.
 
 ## Resources outside the folder
 
 | Resource | Where it lives | In git? |
 |----------|----------------|---------|
-| Art | None: the fighter and arena are built in code from simple shapes | Yes, in the scripts |
-| Fonts | None: Godot's default font | Built into Godot |
+| Art | Built in code from simple shapes with toon shaders (fighters, arena, Glimmer Isles); the icons in `assets/icons/` (Kenney, CC0) | Yes |
+| Fonts | `assets/fonts/LilitaOne-Regular.ttf` (OFL) for titles, buttons and numbers; Godot's default font for body text | Yes |
+| Drawing photos | `%USERPROFILE%\hack_star_drawings\` ([drawing to fighter](docs/drawing_to_fighter.md)) | No, never committed |
 | Music (later) | `assets/music/` in this folder; Godot only imports files inside the project | No, git-ignored |
 
 Music is never committed. Only tracks with a CC0 or CC BY licence may be used, with the rules
