@@ -30,8 +30,12 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 13.27 M (54 k in · 13.18 M cached · 37 k out) | CHF 3.05 (364 credits) | Step 13 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:56:50 to 15:09:25) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 650 k (30 k in · 614 k cached · 6 k out) | CHF 0.32 (39 credits) | Step 14 done (`usage.ps1 -AgentName s09g-step14` from 15:12:33 to 15:13:43) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.32 M (95 k in · 2.22 M cached · 12 k out) | CHF 0.97 (116 credits) | Step 15 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:14:29 to 15:19:30) |
-| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 18.96 M (132 k in · 18.75 M cached · 74 k out) | CHF 4.94 (589 credits) | Step 16 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:19:28 to 15:44:13) |---
-| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.84 M (31 k in · 5.78 M cached · 24 k out) | CHF 1.50 (179 credits) | Step 17 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:44:41 to 15:57:30) |---
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 18.96 M (132 k in · 18.75 M cached · 74 k out) | CHF 4.94 (589 credits) | Step 16 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:19:28 to 15:44:13) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.84 M (31 k in · 5.78 M cached · 24 k out) | CHF 1.50 (179 credits) | Step 17 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:44:41 to 15:57:30) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.49 M (114 k in · 2.36 M cached · 15 k out) | CHF 1.13 (135 credits) | Step 18 done (`usage.ps1 -AgentName s09g-steps18-20` from 15:58:18 to 16:03:41) |
+
+---
+
 # Part 1 · Requirements
 
 ## Context
@@ -344,7 +348,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **15** | Drawing workflow document | reasoning (Claude Opus 5.5) — S1; the repeatable workflow, limits and privacy rules (D15) | ✅ Done | [→ Step 15](#step-15--drawing-workflow-document) |
 | **16** | Drawn fighter in the game | reasoning (Claude Opus 5.5) — S1; reading the drawing and building a recognisable fighter from shapes (D14) | ✅ Done | [→ Step 16](#step-16--drawn-fighter-in-the-game) |
 | **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ✅ Done | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
-| **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ⬜ Not started | [→ Step 18](#step-18--tool-recommendation-document) |
+| **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ✅ Done | [→ Step 18](#step-18--tool-recommendation-document) |
 | **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | ⬜ Not started | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
 | **20** | Final check, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the side-by-side verdict and the documents | ⬜ Not started | [→ Step 20](#step-20--final-check-readme-and-architecture) |
 
@@ -819,13 +823,17 @@ Started: 2026-11-22 15:44
 with the facts, terms and limits of each tool (B1, B2, B3, B4, B5, D15).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Re-check the sources of Part 1's research table (Google Flow, Meshy, Tripo/Hunyuan3D/TRELLIS, Godot import) and date every fact.
-- [ ] Write the document: main workflow (Google Flow → Meshy → Claude in Godot) step by step, fallback (Claude alone, or Google Flow → Claude), facts per tool (what it does, cannot do, cost, account and minimum age, output format and Godot import, training on uploads, terms for an MIT game), Google Flow's place (B3), licence first and credits for `LICENSES.md` (B4), the fit limits (MB and triangles for 30 fps on an iPad, outlined look via D5, the A4 animations) (B5); "not legal advice"; link from the README.
-- [ ] Check: every fact has a source and date; no tool with unclear terms recommended; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] Re-check the sources of Part 1's research table (Google Flow, Meshy, Tripo/Hunyuan3D/TRELLIS, Godot import) and date every fact.
+- [x] Write the document: main workflow (Google Flow → Meshy → Claude in Godot) step by step, fallback (Claude alone, or Google Flow → Claude), facts per tool (what it does, cannot do, cost, account and minimum age, output format and Godot import, training on uploads, terms for an MIT game), Google Flow's place (B3), licence first and credits for `LICENSES.md` (B4), the fit limits (MB and triangles for 30 fps on an iPad, outlined look via D5, the A4 animations) (B5); "not legal advice"; link from the README.
+- [x] Check: every fact has a source and date; no tool with unclear terms recommended; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 15:58
+**Sources re-checked** (2026-11-22, web_fetch/web_search): Flow help *Get started* and *Manage your credits*, the Flow Privacy Notice (2026-05-19), the Feb 2026 Flow blog, Google Terms of Service (effective 2026-07-30), Meshy pricing, docs (*Pricing and credits*, *Image to 3D*, *Animation*), Meshy Terms of Service and Privacy Policy (both 2026-09-19), the Oct 2026 image-to-3D comparison, the Hunyuan3D-2.1 licence, Godot's *Available 3D formats*, CC BY 4.0. **New or changed against Part 1's table:** Meshy's free plan downloads only **10 Meshy 6 Lite models a month** (no texture at generation; AI Texturing 10 credits), has **20** of the animation presets, rigging and presets cost 0 credits; Meshy's minimum age is **14** (under 18 with a parent's permission); Meshy may **train on uploads and outputs** of non-Enterprise users (opt-out by e-mail to support@meshy.ai); on the free plan **Meshy owns the output** and licenses it under CC BY 4.0; uploads to the **Meshy Community** become CC BY-NC 4.0 (images) / CC0 (models) — so never publish there; Google Flow uses uploads and outputs to improve products and ML (switch *Help improve Flow* off); Google's terms forbid using AI output to develop ML models; the Pro price is shown as CHF 18 a month to a Swiss visitor (Part 1: about $20).
+**Document** (D15, B1–B5): `docs/drawing_tools.md` — recommendation (main Google Flow → Meshy → Claude in Godot; fallback A Claude alone; fallback B Google Flow → Claude), licence first (B4), the main workflow in 5 steps, facts per tool (Google Flow with its place before the 3D tool, B3; Meshy; Claude; Godot 4.7), the tools not recommended (Tripo free = non-commercial, Hunyuan3D excludes the EU/UK/South Korea, TRELLIS.2 needs a 24 GB GPU), the `LICENSES.md` credit line for a Meshy free-plan model (CC BY 4.0, © Meshy LLC, changes noted), the fit limits (B5: ≤ 10,000 triangles per fighter, GLB ≤ 2 MB with textures ≤ 1024 px, rig with idle/run/attack, the D5 toon material and outline, licence, the child's preference), "not legal advice", and a *Sources* table (every fact, page date, read 2026-11-22). The fit limits are this spec's own numbers, reasoned from Step 13's ~0.8 M primitives per match and G15's budget. The *Trial (B6)* section is a placeholder for Step 19. Linked from the README (*Layout* `docs/` row and *How to turn a drawing into a fighter*) and from `docs/drawing_to_fighter.md`.
+**Done (2026-11-22 · ~6 min · Claude Opus 5.5)** — `docs/drawing_tools.md` with the recommended workflow, fallbacks, facts and terms per tool with sources and dates, fit limits; README and workflow-document links. `tools/test.ps1` 468 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.49 M tokens · CHF 1.13 (135 credits)
 
 ---
 

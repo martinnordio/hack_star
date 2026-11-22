@@ -2,7 +2,7 @@
 
 How a child's drawing becomes a fighter of the Godot game, done by Claude via Copilot with no
 other tool (spec 09, part A). The first one is **Beatbolt**, from Mattia's drawing. For a
-workflow with image and 3D tools, see the tool recommendation of spec 09 (part B).
+workflow with image and 3D tools, see [drawing_tools.md](drawing_tools.md) (part B).
 
 ## 1. Photograph the drawing
 
