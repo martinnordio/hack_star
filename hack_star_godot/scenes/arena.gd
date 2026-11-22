@@ -7,6 +7,8 @@ extends Node3D
 ## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); Space (the
 ## `shoot` action, held to keep firing) and the right stick (`AimJoystick`, drag and release or a
 ## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
+## `V` and `1`–`4` switch the camera view (`CameraViews`, spec 09 V1–V6), kept in
+## `GameState.camera_view`; `HudToast` names the view.
 
 ## The camera looks at the fighter from above and behind (towards +z), at this angle down.
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -36,6 +38,10 @@ const HINT_SECONDS: float = 5.0
 const HINT_FADE_SECONDS: float = 1.0
 ## With touch controls the hint stands this far above the bottom edge, clear of the sticks.
 const HINT_ABOVE_STICKS: float = 288.0
+## A switch of the camera view moves the camera over this long (D25).
+const VIEW_BLEND_SECONDS: float = 0.3
+## Overview keeps this share of the screen free at the sides and the bottom around the arena.
+const OVERVIEW_MARGIN: float = 0.02
 
 const DUMMY_SCENE: PackedScene = preload("res://scenes/target_dummy.tscn")
 ## Dust puffs under a running fighter come this often, in this colour.
@@ -57,6 +63,14 @@ var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
 # The southmost the camera target may go (see `NEAR_WALL_SHARE`).
 var _camera_max_z: float = INF
+var _close_max_z: float = INF
+# The fighter's position, followed like `_camera_target` (Close and Behind).
+var _follow_point: Vector3 = Vector3.ZERO
+var _overview_distance: float = CAMERA_MIN_DISTANCE
+var _view: String = CameraViews.CLASSIC
+var _blend_from: Transform3D = Transform3D.IDENTITY
+var _blend_left: float = 0.0
+var _toast: HudToast
 var _dust_left: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
@@ -100,6 +114,9 @@ func _ready() -> void:
 	_fighter.position = Vector3(ArenaLayout.start().x, 0.0, ArenaLayout.start().y)
 	_fighter.set_look(GameState.selected_fighter, GameState.selected_skin())
 	_aim_joystick.released.connect(_on_aim_released)
+	_toast = HudToast.new()
+	$Hud.add_child(_toast)
+	_view = GameState.camera_view
 	if training:
 		for spot: Vector2 in ArenaLayout.dummies():
 			var dummy: TargetDummy = DUMMY_SCENE.instantiate()
@@ -108,6 +125,7 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
 	_camera_target = _wanted_camera_target()
+	_follow_point = _fighter.position
 	_place_camera()
 	_fps_label.visible = GameState.show_fps
 	_update_fps_label()
@@ -140,6 +158,8 @@ func _process(delta: float) -> void:
 	_camera_target = Movement.follow(
 		_camera_target, _wanted_camera_target(), delta, CAMERA_FOLLOW_RATE
 	)
+	_follow_point = Movement.follow(_follow_point, _fighter.position, delta, CAMERA_FOLLOW_RATE)
+	_blend_left = maxf(_blend_left - delta, 0.0)
 	_place_camera()
 	if read_player_input and Input.is_action_pressed("shoot"):
 		fire(_aim_direction())
@@ -152,6 +172,40 @@ func _process(delta: float) -> void:
 	if _fps_label.visible and _fps_timer >= FPS_LABEL_INTERVAL:
 		_fps_timer = 0.0
 		_update_fps_label()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("view_next"):
+		set_view(CameraViews.next(_view))
+		return
+	var all: Array[String] = CameraViews.ids()
+	for index: int in all.size():
+		if event.is_action_pressed("view_%d" % (index + 1)):
+			set_view(all[index])
+			return
+
+
+## The camera view in use (`CameraViews`).
+func view() -> String:
+	return _view
+
+
+## Switches to the camera view `view_id`, kept for the next match and Training, names it in the
+## toast and moves the camera there over `VIEW_BLEND_SECONDS`.
+func set_view(view_id: String) -> void:
+	if not CameraViews.ids().has(view_id):
+		return
+	if view_id != _view:
+		_blend_from = _camera.global_transform
+		_blend_left = VIEW_BLEND_SECONDS
+	_view = view_id
+	GameState.camera_view = view_id
+	_toast.show_text(CameraViews.view_name(view_id))
+
+
+## The toast that names the view (and, from Step 27, the lighting presets).
+func toast() -> HudToast:
+	return _toast
 
 
 func _physics_process(_delta: float) -> void:
@@ -274,10 +328,50 @@ func _wanted_camera_target() -> Vector3:
 	return target
 
 
+## Places the camera for the view in use, part of the way there during a switch.
 func _place_camera() -> void:
-	var pitch: float = deg_to_rad(CAMERA_PITCH_DEGREES)
-	var backwards: Vector3 = Vector3(0.0, sin(pitch), cos(pitch))
-	_camera.look_at_from_position(_camera_target + backwards * _camera_distance, _camera_target)
+	var pose: Transform3D = view_pose(_view)
+	if _blend_left > 0.0:
+		var share: float = smoothstep(0.0, 1.0, 1.0 - _blend_left / VIEW_BLEND_SECONDS)
+		pose = _blend_from.interpolate_with(pose, share)
+	_camera.global_transform = pose
+
+
+## Where the camera stands and looks in the view `view_id` (D25); it always looks north.
+func view_pose(view_id: String) -> Transform3D:
+	var view_data: Dictionary = CameraViews.get_view(view_id)
+	var pitch: float = view_data["pitch_degrees"]
+	match view_id:
+		CameraViews.CLOSE:
+			var target: Vector3 = _follow_point + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
+			# Like Classic, it does not look so far south that the near wall fills the screen.
+			target.z = minf(target.z, _close_max_z)
+			return _orbit_pose(target, pitch, _close_distance())
+		CameraViews.BEHIND:
+			# `distance` behind the fighter, as high as the pitch towards the look-ahead point.
+			var ahead: float = view_data["look_ahead"]
+			var behind: float = view_data["distance"]
+			var height: float = (ahead + behind) * tan(deg_to_rad(pitch))
+			var eye: Vector3 = _follow_point + Vector3(0.0, height, behind)
+			var ahead_point: Vector3 = _follow_point + Vector3(0.0, 0.0, -ahead)
+			return Transform3D(Basis.looking_at(ahead_point - eye, Vector3.UP), eye)
+		CameraViews.OVERVIEW:
+			var center: Vector2 = ArenaLayout.bounds().get_center()
+			return _orbit_pose(Vector3(center.x, 0.0, center.y), pitch, _overview_distance)
+	return _orbit_pose(_camera_target, CAMERA_PITCH_DEGREES, _camera_distance)
+
+
+# The camera `distance` metres from `target`, south of it, looking `pitch_degrees` down at it.
+static func _orbit_pose(target: Vector3, pitch_degrees: float, distance: float) -> Transform3D:
+	var pitch: float = deg_to_rad(pitch_degrees)
+	var eye: Vector3 = target + Vector3(0.0, sin(pitch), cos(pitch)) * distance
+	return Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
+
+
+# How far the Close camera is from its target: a share of Classic's distance, not too near.
+func _close_distance() -> float:
+	var close: Dictionary = CameraViews.get_view(CameraViews.CLOSE)
+	return maxf(_camera_distance * float(close["distance_share"]), float(close["min_distance"]))
 
 
 ## The z of the camera-side border wall's inner face (the border wall farthest south).
@@ -298,26 +392,59 @@ func _frame_camera() -> void:
 	)
 	_camera_distance = CAMERA_MIN_DISTANCE
 	while _camera_distance < CAMERA_MAX_DISTANCE:
-		_place_camera()
+		_camera.global_transform = view_pose(CameraViews.CLASSIC)
 		if _box_inside(allowed):
 			break
 		_camera_distance += CAMERA_DISTANCE_STEP
-	_camera_max_z = near_wall_z() - _near_wall_offset(view_size.y)
+	_camera_max_z = (
+		near_wall_z() - _near_wall_offset(view_size.y, CAMERA_PITCH_DEGREES, _camera_distance)
+	)
+	var close: Dictionary = CameraViews.get_view(CameraViews.CLOSE)
+	_close_max_z = (
+		near_wall_z() - _near_wall_offset(view_size.y, close["pitch_degrees"], _close_distance())
+	)
+	_frame_overview(view_size)
 	_place_camera()
 
 
+# Moves the Overview camera back until the whole arena, border walls included, fits the screen
+# (V5), below the top margin of the Back button and the match's chips.
+func _frame_overview(view_size: Vector2) -> void:
+	var allowed: Rect2 = Rect2(
+		view_size * Vector2(OVERVIEW_MARGIN, FRAME_TOP_MARGIN),
+		view_size * Vector2(1.0 - 2.0 * OVERVIEW_MARGIN, 1.0 - FRAME_TOP_MARGIN - OVERVIEW_MARGIN)
+	)
+	var bounds: Rect2 = ArenaLayout.bounds()
+	var corners: Array[Vector3] = []
+	for x: float in [bounds.position.x, bounds.end.x]:
+		for z: float in [bounds.position.y, bounds.end.y]:
+			for height: float in [0.0, Canyon.WALL_HEIGHT + WALL_CAP_HEIGHT]:
+				corners.append(Vector3(x, height, z))
+	_overview_distance = CAMERA_MIN_DISTANCE
+	while _overview_distance < CAMERA_MAX_DISTANCE:
+		_camera.global_transform = view_pose(CameraViews.OVERVIEW)
+		var inside: bool = true
+		for corner: Vector3 in corners:
+			inside = inside and allowed.has_point(_camera.unproject_position(corner))
+		if inside:
+			return
+		_overview_distance += CAMERA_DISTANCE_STEP
+
+
 # How far south of the camera target the near wall's top edge may be, so that the wall covers
-# at most `NEAR_WALL_SHARE` of the screen height. The camera moves with its target, so the answer
-# does not depend on where the target is.
-func _near_wall_offset(view_height: float) -> float:
+# at most `NEAR_WALL_SHARE` of the screen height, for a camera `distance` metres from its target
+# at `pitch_degrees`. The camera moves with its target, so the answer does not depend on where
+# the target is.
+func _near_wall_offset(view_height: float, pitch_degrees: float, distance: float) -> float:
+	_camera.global_transform = _orbit_pose(Vector3.ZERO, pitch_degrees, distance)
 	var wall_top: float = Canyon.CAMERA_SIDE_WALL_HEIGHT + WALL_CAP_HEIGHT
 	var wanted_y: float = view_height * (1.0 - NEAR_WALL_SHARE)
 	var near: float = 0.0
 	# Not past the camera itself, where a point would be behind it.
-	var far: float = _camera_distance * cos(deg_to_rad(CAMERA_PITCH_DEGREES))
+	var far: float = distance * cos(deg_to_rad(pitch_degrees))
 	for _step: int in 40:
 		var offset: float = (near + far) / 2.0
-		var edge: Vector3 = _camera_target + Vector3(0.0, wall_top, offset)
+		var edge: Vector3 = Vector3(0.0, wall_top, offset)
 		if _camera.unproject_position(edge).y < wanted_y:
 			near = offset
 		else:

@@ -27,6 +27,9 @@ var show_fps: bool = false
 ## The world of the next match and Training (`Worlds`, spec 09 W2); kept while the game is open,
 ## not saved (saving it is spec 18).
 var world: String = Worlds.CANYON
+## The camera view of the next match and Training (`CameraViews`, spec 09 V6); kept while the
+## game is open, not saved.
+var camera_view: String = CameraViews.CLASSIC
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
 ## When each active hack turns off: Unix time in seconds, `Hacks.FOREVER` for never.
@@ -79,6 +82,7 @@ func reset() -> void:
 	entrance_played = false
 	show_fps = false
 	world = Worlds.CANYON
+	camera_view = CameraViews.CLASSIC
 	ArenaLayout.use(world)
 	pictures = {}
 	match_settings = MatchSettings.new()

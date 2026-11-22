@@ -4,7 +4,7 @@ extends RefCounted
 ## the "How to play" section of the Info page. The numbers come from the rules, so the texts
 ## stay true when a rule changes. English only (spec 16, S23).
 
-const KEYBOARD_HINT: String = "Move: WASD or arrow keys\nShoot: Space"
+const KEYBOARD_HINT: String = "Move: WASD or arrow keys\nShoot: Space\nView: V or 1-4"
 const TOUCH_HINT: String = "Move: left stick\nShoot: drag or tap the right stick"
 const MORE_IN_INFO: String = "More in Info"
 
@@ -21,9 +21,10 @@ static func how_to_play() -> Array[Dictionary]:
 					+ "firing). Touch: move with the left stick; drag the right stick and let go to "
 					+ "shoot that way, or tap it to shoot at the nearest target. Space and a tap fire "
 					+ "at the nearest target in range (%d metres), or straight ahead. "
+					+ "V switches the camera view, 1 to 4 choose one (%s). "
 					+ "Back goes home."
 				)
-				% int(Combat.SHOT_RANGE)
+				% [int(Combat.SHOT_RANGE), ", ".join(_view_names())]
 			),
 		},
 		{
@@ -70,3 +71,11 @@ static func how_to_play() -> Array[Dictionary]:
 			),
 		},
 	]
+
+
+# The camera views' names in the order of the keys 1 to 4.
+static func _view_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for view_id: String in CameraViews.ids():
+		names.append(CameraViews.view_name(view_id))
+	return names

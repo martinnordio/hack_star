@@ -80,12 +80,20 @@ static func muzzle_offset(fighter_id: String) -> Vector2:
 
 
 ## How high over the feet (metres, straight up) a point shows on screen level with the top of
-## the picture, for a camera whose up vector has this y: the picture turns to the camera and
-## shrinks by part of the foreshortening, an upright height by all of it.
-static func top_height(fighter_id: String, camera_up_y: float) -> float:
-	var up_y: float = clampf(camera_up_y, 0.1, 1.0)
+## the picture, seen by a camera at `camera` from feet at `feet` (world): the picture stands
+## parallel to the screen and shrinks by part of the foreshortening; a point straight up also
+## comes nearer to a camera that looks down, so near the camera it climbs the screen faster.
+static func top_height(fighter_id: String, camera: Transform3D, feet: Vector3) -> float:
+	var up_y: float = clampf(camera.basis.y.y, 0.1, 1.0)
 	var height: float = FIGHTERS[fighter_id]["height"]
-	return height * lerpf(1.0, up_y, FORESHORTEN) / up_y
+	var picture: float = height * lerpf(1.0, up_y, FORESHORTEN)
+	var seen: Vector3 = camera.affine_inverse() * feet
+	if seen.z > -0.1:
+		return picture / up_y
+	# The top's screen slope (up over depth); a point `h` straight up has the same slope when
+	# `h` = picture / (up_y + slope · forward_y).
+	var slope: float = (seen.y + picture) / -seen.z
+	return picture / maxf(up_y + slope * camera.basis.z.y, 0.1)
 
 
 ## Builds the picture quad into `model`'s body (the model is already cleared by

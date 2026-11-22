@@ -29,6 +29,10 @@ func test_the_controls_name_the_keys_and_the_sticks() -> void:
 		assert_false(hint.is_empty())
 	assert_true(ControlsHelp.KEYBOARD_HINT.contains("WASD"))
 	assert_true(ControlsHelp.KEYBOARD_HINT.contains("Space"))
+	assert_true(ControlsHelp.KEYBOARD_HINT.contains("View: V or 1-4"), "the view keys (V7)")
+	assert_true(controls.contains("V switches the camera view"), "the view keys (V7)")
+	for view_id: String in CameraViews.ids():
+		assert_true(controls.contains(CameraViews.view_name(view_id)), view_id)
 	assert_true(ControlsHelp.TOUCH_HINT.contains("stick"))
 
 

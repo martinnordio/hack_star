@@ -265,12 +265,12 @@ func get_cutout() -> MeshInstance3D:
 
 
 ## How high over the feet (metres, straight up) a point must be to show on screen at the top of
-## the picture, for a camera whose up vector has this y (`CutoutFighters.top_height`); 0 for a
-## fighter of shapes.
-func picture_top(camera_up_y: float) -> float:
+## the picture, for the camera at `camera` (`CutoutFighters.top_height`); 0 for a fighter of
+## shapes.
+func picture_top(camera: Transform3D) -> float:
 	if _cutout == null:
 		return 0.0
-	return CutoutFighters.top_height(fighter_id, camera_up_y)
+	return CutoutFighters.top_height(fighter_id, camera, global_position)
 
 
 ## The rig (turns as a whole), the body (breathes, bounces, recoils) and the head (tilts around

@@ -105,8 +105,9 @@ func _bar_y() -> float:
 	if model.get_cutout() == null:
 		return BAR_Y
 	var camera: Camera3D = get_viewport().get_camera_3d() if is_inside_tree() else null
-	var up_y: float = camera.global_basis.y.y if camera != null else 1.0
-	return maxf(BAR_Y, model.picture_top(up_y) + PICTURE_BAR_GAP)
+	if camera == null:
+		return maxf(BAR_Y, model.picture_top(Transform3D.IDENTITY) + PICTURE_BAR_GAP)
+	return maxf(BAR_Y, model.picture_top(camera.global_transform) + PICTURE_BAR_GAP)
 
 
 ## Takes `amount` damage; ignored once knocked out or invulnerable. At 0 health the fighter is

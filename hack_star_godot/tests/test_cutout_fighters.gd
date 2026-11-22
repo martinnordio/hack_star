@@ -194,8 +194,8 @@ func test_echo_plays_in_a_match_with_the_health_bar_over_the_picture() -> void:
 	var player: Fighter = arena.get_node("Fighter")
 	assert_eq((player.get_node("Model") as FighterModel).fighter_id, "echo")
 	assert_eq(arena.fighters.size(), MatchSettings.BOT_COUNT + 1, "against the bots")
-	var camera_up_y: float = player.get_viewport().get_camera_3d().global_basis.y.y
-	var picture_top: float = player.model.picture_top(camera_up_y)
+	var camera: Transform3D = player.get_viewport().get_camera_3d().global_transform
+	var picture_top: float = player.model.picture_top(camera)
 	assert_gt(picture_top, CutoutFighters.FIGHTERS["echo"]["height"], "the camera looks down")
 	assert_gt(player.health_bar().position.y, picture_top, "the bar over the picture")
 
