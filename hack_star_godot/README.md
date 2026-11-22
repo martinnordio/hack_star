@@ -96,17 +96,19 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
 3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
    arena with three target dummies. **Fighters** lists the six fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
-   the home fighter. **Info** explains the words of the game. **Hack** opens the hack screen
+   the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
+   and the hack codes), then explains the words of the game. **Hack** opens the hack screen
    (see [Hack codes](#hack-codes)). Every screen has **Back** (top-left) that returns to the home
    screen.
 
 ## How to play a match
 
 Press **Play** on the home screen. The match is in the same canyon as Training, without the
-dummies: your fighter and three bots, each at its own start point.
+dummies: your fighter and three bots, each at its own start point. A short controls hint shows
+at the start and fades by itself; **How to play** on the Info page has the same rules in full.
 
 1. **Countdown:** "3", "2", "1", then "FIGHT!". Nobody moves or shoots during the countdown.
-2. **Fight:** shoot the bots (controls below). Every fighter has a health bar above it: green
+2. **Fight:** shoot the bots with Space or the right stick (see [Controls](#controls)). Every fighter has a health bar above it: green
    for you, red for the bots. A shot takes off part of the health bar and shows the damage
    number. A fighter that is not hit and does not shoot for 3 seconds slowly gets its health back.
 3. **Bots:** they walk around, go for the nearest opponent they can see and shoot at it. They
@@ -197,6 +199,18 @@ On the home screen, **Hack** opens the hack screen. Type a code and press **Use 
 press **Scan QR code** and point the camera at a QR code (in the browser). The server checks the
 code; any letter case and spaces around it are fine.
 
+**Scan QR code** works only in the browser version, where the browser has a camera. Elsewhere
+(the desktop run) the button is disabled and a line says "Camera scanning works in the browser
+version — type the code here". To scan:
+
+- **On this computer:** run `.\tools\export_web.ps1`, then `.\tools\serve_web.ps1` (with the
+  server running), and open `http://localhost:8060`. The browser allows the camera on `localhost`.
+- **On a phone or an iPad:** run `.\tools\serve_web.ps1 -Https` and open the `https://` address it
+  prints; accept the self-signed certificate once (see [Play on an iPad or a phone](#play-on-an-ipad-or-a-phone)).
+
+The desktop run (F5, or `godot --path .`) shows the hint and the code is typed (Godot 4.7 has no
+webcam on Windows).
+
 | Code | Hack | Effect |
 |------|------|--------|
 | `INFINITY` | Unlimited credits | Credits never run out (the home screen shows ∞) |
@@ -268,13 +282,18 @@ the site's data for this address.
 
 ## Controls
 
-- **Computer:** WASD or the arrow keys move the fighter. The mouse aims: the fighter turns
-  towards the pointer and a left click fires; hold the button to keep firing (the shots come
-  with a short cool-down).
+- **Computer:** WASD or the arrow keys move the fighter. **Space** shoots: hold it to keep firing
+  (the shots come with a short cool-down). Space shoots at the nearest target in range (in a match,
+  the nearest bot; in Training, the nearest dummy), or straight ahead when none is in range. The
+  mouse does not shoot; it does not aim either.
+- **Start hint:** when Training or a match starts, a line with these controls shows at the bottom
+  of the screen and fades out after a few seconds; it does not block the game.
 - **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
   (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
   the nearest dummy in range (straight ahead when none is in range; in a match, the nearest bot).
   A thin line on the ground shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
+  The start hint stands above the sticks.
+- **Info:** the "How to play" section of the Info page repeats these controls and the rules.
 - **Dummies:** in Training three straw dummies stand in the arena. A shot takes off part of the health bar
   and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.
 - **Bushes:** in a cactus patch the fighter turns see-through, so you can look at the ground

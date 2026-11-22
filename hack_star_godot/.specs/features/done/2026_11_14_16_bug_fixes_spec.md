@@ -32,7 +32,8 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.99 M (96 k in · 2.88 M cached · 14 k out) | CHF 0.56 (67 credits) | Step 6 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:09:00–10:28:40) |---
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.66 M (48 k in · 2.60 M cached · 17 k out) | CHF 0.46 (55 credits) | Step 7 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:29:08–10:36:23) |---
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.48 M (21 k in · 2.45 M cached · 9 k out) | CHF 0.33 (39 credits) | Step 8 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:36:43–10:40:52) |---## Cost summary
-| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.29 M (24 k in · 2.25 M cached · 10 k out) | CHF 0.32 (38 credits) | Step 9 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:41:11–10:45:57) |---## Cost summary
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.29 M (24 k in · 2.25 M cached · 10 k out) | CHF 0.32 (38 credits) | Step 9 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:41:11–10:45:57) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.27 M (100 k in · 2.15 M cached · 17 k out) | CHF 0.04 (4 credits) | Step 10 done: all Godot checks exit 0, README and architecture updated (`usage.ps1 -AgentName s16b-step10` from 10:46:26) |---## Cost summary
 This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
@@ -351,7 +352,7 @@ reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
 | **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ✅ Done | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
 | **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ✅ Done | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
 | **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ✅ Done | [→ Step 9](#step-9--controls-hint-at-the-start) |
-| **10** | Final check, README and architecture (author's reports) | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture-authors-reports) |
+| **10** | Final check, README and architecture (author's reports) | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 10](#step-10--final-check-readme-and-architecture-authors-reports) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -657,8 +658,8 @@ architecture describe scanning, Space shooting, "How to play" and the start hint
 S25, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_star_godot/README.md`: *Controls* (Space shoots at the nearest target in range or
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_star_godot/README.md`: *Controls* (Space shoots at the nearest target in range or
       straight ahead, hold to keep firing; no mouse click; touch as before; the start hint);
       *How to play a match* (Space; the "How to play" section on the Info page); *Run in the
       editor* (Info starts with "How to play"); *Hack codes* — **Scan QR code** works only in
@@ -666,21 +667,22 @@ S25, S6).
       the browser allows the camera on `localhost`), on a phone or iPad use `-Https`; the
       desktop run (F5, `godot --path .`) shows the hint and the code is typed (Godot 4.7 has
       no webcam on Windows).
-- [ ] `hack_star_godot/docs/architecture.md`: Screens (the arena's input: Space, no mouse,
+- [x] `hack_star_godot/docs/architecture.md`: Screens (the arena's input: Space, no mouse,
       `_aim_direction`, the start hint; the hack screen's `ScanHint`; the Info page's "How to
       play"), Game rules (`ControlsHelp`; `Combat` without `ground_point`), UI foundation
       (camera and QR codes: `can_scan`), Tests (the new files).
-- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+- [x] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
       (all exit 0); PowerShell scripts that changed parse with
       `[System.Management.Automation.Language.Parser]::ParseFile`; `git diff --stat` of Steps
       6–10 shows nothing in `server/` or `ui/`.
-- [ ] Re-check the MVP flow (`tests/test_mvp_flow.gd` passes) and write the result into Notes.
-- [ ] Note in Notes what stays with the author (Deferred Items): the play-test of Space and the
+- [x] Re-check the MVP flow (`tests/test_mvp_flow.gd` passes) and write the result into Notes.
+- [x] Note in Notes what stays with the author (Deferred Items): the play-test of Space and the
       start hint on the computer, touch and the hint on an iPad and a phone, and scanning in the
       browser on `localhost`.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 10:46
+**Done (2026-11-22 · ~10 min · Claude Haiku 5.5)** — Final check and documents. Checks, all exit 0: `tools/check_tools.ps1` (all pinned tools OK), `tools/test.ps1` 402/402 passed (includes `tests/test_mvp_flow.gd`: home, hack, fighter, match, result, home), `tools/lint.ps1`, `tools/export_web.ps1` (`build\web\` exported). No PowerShell script changed since Step 5, and `git diff` of Steps 6–10 shows nothing in `server/` or `ui/`. `hack_star_godot/README.md`: *Controls* (Space shoots at the nearest target in range or straight ahead, hold to keep firing; the mouse does not shoot; touch as before; the start hint), *How to play a match* (Space; the Info page's "How to play"), *Run in the editor* (Info starts with "How to play"), *Hack codes* (**Scan QR code** only in the browser: `http://localhost:8060` with `tools\serve_web.ps1`, `-Https` on a phone or iPad; the desktop run shows the hint and the code is typed). `docs/architecture.md`: Screens (arena input and `ControlsHint`, match, Info's "How to play", the hack screen's `ScanHint`), Game rules (`ControlsHelp`; `Combat` without `ground_point`), UI foundation (`can_scan`), Input (Space, no mouse), Tests (the four new test files). Deferred (author, Deferred Items): the play-test of Space and the start hint on the computer, touch and the hint on an iPad and a phone, and scanning in the browser on `localhost`. suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.27 M · CHF 0.04 (4 credits)
 
 ---
 
