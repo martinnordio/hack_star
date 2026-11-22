@@ -1,0 +1,2 @@
+after activate_hack("power22"):
+{"hacks":["power22"],"version":1}

@@ -23,6 +23,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.58 M (40 k in · 2.52 M cached · 17 k out) | CHF 0.44 (52 credits) | Step 5 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:09:00" -Until "2026-11-21 22:14:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.46 M (19 k in · 1.44 M cached · 9 k out) | CHF 0.23 (28 credits) | Step 6 done (`usage.ps1 -AgentName s08-steps3-6 -Since "2026-11-21 22:14:00" -Until "2026-11-21 22:18:00"`) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Haiku 5.5 | 2.78 M (106 k in · 2.65 M cached · 21 k out) | CHF 0.07 (9 credits) | Step 7 done (`usage.ps1 -AgentName s08-step7 -Since "2026-11-21 21:49:57"`) |
+| 2026-11-22 | review | `REVIEW:` + `CODE REVIEW:` | Claude Opus 5.5 | 12.77 M (369 k in · 12.28 M cached · 118 k out) | CHF 5.59 (667 credits) | semantic diff written (7 record blocks, checks 7 pass · 2 n/a · 0 fail, [review page](../review/2026-11-21_godot-mvp-08-trophies.html)); code review: Approve, 0 Blocking · 2 Should-fix · 5 Nit (`usage.ps1 -AgentName s08-review,s08-review2` from 2026-11-21 21:49:57; includes the requests of the interrupted first review agent `s08-review`, whose output was deleted — real cost) |
 ---
 
 # Part 1 · Requirements
@@ -409,6 +410,7 @@ Started: 2026-11-21 22:17
 |------|--------|------------------|
 | Play-test on a real iPad and phone of the whole MVP (specs 04–08: touch, ≥ 30 frames per second, the camera for hack codes, a full match, the trophies kept after a reload) and the browser check of the web export | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
 | Credits, unlocks and power upgrades that change with play (saved with `save()`) | Not part of trophies; the fields are already in the save file (D3) | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
+| An upper limit for saved power levels (an edited file can give power 50; `SaveData` checks only ≥ 1) | Code review finding 6 (2026-11-22); power levels change with play only in spec 09 | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
 | Progress on another device or browser (accounts) | No login in the MVP (spec 03, S9) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | Translations of new text | English only (S12, D8) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 
@@ -418,6 +420,36 @@ Started: 2026-11-21 22:17
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-08-trophies.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 2 Should-fix · 5 Nit |
+
+### Code review 2026-11-22
+
+Range `bc0147e..a0efdc2` (this spec's commits only). Ran: `tools/test.ps1` (342 of 342 passed),
+`tools/lint.ps1` (OK); record checked with `change_record.schema.json` (checks 7 pass · 2 n/a ·
+0 fail). Before | After: real screenshots of the result screen from a windowed Godot 4.7.2 run
+(temporary capture script, removed) at 1280×720, 390×844 and 844×390, the before side from a
+temporary worktree at `bc0147e` (removed); the rules, the end of a match, the save file and a new
+game start from a temporary headless probe, the same source on both sides, saving under
+`user://review08/` (the player's save file was absent before and after). Good: the rules are pure
+and tested without a scene (`Trophies`, `Prestige.floor_of`/`next_at`, clamped settings); the
+trophies are given once, when the match ends, and saved before the result screen opens; every
+saved field is checked and a damaged file never stops the game; the tests save to their own file
+through the pre-run hook; `test_mvp_flow.gd` walks F0–F5 by clicks and reloads the progress;
+nothing in `server/` or `ui/` changed.
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | A fighter chosen through the unlock-all hack is lost after a new start: `load_saved` keeps the saved `selected_fighter` only when `unlocked.has(chosen)` (`scenes/autoload/game_state.gd:130`), although the hacks are already loaded (line 120) and `select` accepted it with `is_unlocked`; S11 lists the chosen fighter and the active hacks as kept (record block *progress-restart*, example 3: pixel → blaze). D4 says "known and unlocked"; decide whether a fighter open through the hack counts (simplest: `is_unlocked(chosen)`) and add a test | code | spec | Should-fix | plan decision |
+| 2 | A tap-to-skip that does not exist: the `finish_count()` comment (`scenes/result_screen.gd:88`, "the tests, and a player who taps") and `docs/architecture.md:44` ("a tap jumps to the end") promise it, but only tests call `finish_count()` (D6: "(tests)"). Remove the claim from both | architecture | docs | Should-fix | fix now |
+| 3 | `docs/architecture.md` wording: line 44 gives the change as ("+10", or "0") — the screen writes "+10 trophies" / "+0 trophies"; line 90 (`trophies.gd`) cites "spec 08, D5" — the rules are D1; line 89 (`match_settings.gd`) says "never negative, the defeat number is never above 0" — `trophies_per_defeat` may be negative (≤ 0) | architecture | docs | Nit | fix now |
+| 4 | The pre-run hook (D7) is passed only by `tools/test.ps1` (`-gpre_run_script`); there is no `res://.gutconfig.json`, so GUT started from the editor's GUT panel or `gut_cmdln` without the flag lets the match, select and award tests write the player's `user://hack_star_save.json`. Decide: a `.gutconfig.json` with `pre_run_script`, or a README line "run the tests only with `tools/test.ps1`" | architecture | test | Nit | plan decision |
+| 5 | The burst's gold is a copy: `scenes/result_screen.tscn:107` `Burst` `color = Color(1, 0.82, 0.2, 1)`, while D6 says the burst is in `Rarity.LEGENDARY_GOLD` (the one own colour, held by `Rarity`). Set `_burst.color` from `Rarity.LEGENDARY_GOLD` in `result_screen.gd` (the theme's `Bar_fill` cannot reference a constant) | code | guideline | Nit | fix now |
+| 6 | Saved power levels have no upper bound: `SaveData._read_progress` (`game/save_data.gd:54`) keeps any whole number ≥ 1, so an edited file gives power 50 although the game's maximum is 11 (22 with the hack). D3 asks only ≥ 1; spec 09 changes power levels with play and owns their limits | code | security | Nit | deferred — [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
+| 7 | Definition of Done: the *Implementation* line is not ticked although all seven Steps are ✅ Done and Step 7 ran `tools/check_tools.ps1`, `test.ps1`, `lint.ps1` and `export_web.ps1` (exit 0) and updated README and architecture; spec 07 ticked it in its last Step | spec | docs | Nit | fix now |
+
+**Outcome:** Approve — no Blocking finding; findings 2, 3, 5 and 7 to fix now, 1 and 4 need a
+plan decision (runner) before `CLOSE:`, 6 is deferred to spec 09.
 
 ---
 
@@ -426,6 +458,6 @@ Started: 2026-11-21 22:17
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

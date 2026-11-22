@@ -1,0 +1,7 @@
+1) trophies[blaze] = 1300; select("rocko", "default"); activate_hack("power22"); then a new game start (GameState._ready)
+   trophies blaze = 1240, rocko = 420; selected_fighter = blaze; active_hacks = ["power22"]
+2) a spec 05 file {"version": 1, "hacks": ["power22"]}, then a new game start
+   trophies blaze = 1240, rocko = 420; selected_fighter = blaze; active_hacks = ["power22"]
+3) activate_hack("unlock_all"); select("pixel", "default") (locked without the hack); then a new game start
+   select -> true, selected_fighter = pixel
+   trophies blaze = 1240, rocko = 420; selected_fighter = blaze; active_hacks = ["unlock_all"]

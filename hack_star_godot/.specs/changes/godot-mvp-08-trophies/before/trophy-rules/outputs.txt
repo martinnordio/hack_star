@@ -1,0 +1,5 @@
+Prestige.level(1240) = 1
+Prestige.floor_of: not there
+Prestige.next_at: not there
+MatchSettings.trophies_per_win / trophies_per_defeat: not there
+Trophies: not there
