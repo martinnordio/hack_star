@@ -5,7 +5,8 @@ extends Node3D
 ## bush patches and the decoration. Own art from primitive meshes in the outlined cartoon look of
 ## the fighters (`ToonMaterials`, spec 09 D5/G10): walls, boulders, cacti and props have the dark
 ## outline, the ground is soft sand without one, less saturated than the fighters. The many small
-## pieces (sand tiles, boulders, cacti) are MultiMeshes to keep draw calls low.
+## pieces (sand tiles, boulders, cacti) are MultiMeshes to keep draw calls low. The newer moving
+## decoration (flags, birds, a stream; spec 09 L2) is `CanyonDecor`, a child named `Decor`.
 
 ## Wall heights: the border, the border on the camera side (low, never hides the fighter) and
 ## the rocks inside.
@@ -16,37 +17,45 @@ const FLOOR_THICKNESS: float = 0.2
 const TILE_SIZE: float = 2.0
 const OUTSIDE_SIZE: float = 90.0
 const CACTUS_SPACING: float = 0.85
-## The same canyon every time.
+## The same canyon every time; the decoration added in the reopening has its own seed, so the
+## older pieces keep their places.
 const LOOK_SEED: int = 6
+const DECOR_SEED: int = 61
 
-const SAND: Color = Color("b89c74")
-const SAND_DARK: Color = Color("ad9068")
-const OUTSIDE: Color = Color("b47552")
-const ROCK: Color = Color("c95a33")
-const ROCK_BAND: Color = Color("e8844c")
-const ROCK_TOP: Color = Color("8a3a26")
-const BOULDER: Color = Color("9c4a30")
-const BOULDER_LIGHT: Color = Color("c86a40")
-const BUSH_GROUND: Color = Color("8f9a5a")
-const CACTUS: Color = Color("47b04f")
-const CACTUS_DARK: Color = Color("2f8a3f")
-const FLOWER: Color = Color("ff5fa2")
-const CRATE: Color = Color("b07434")
-const CRATE_EDGE: Color = Color("6b4220")
-const BONE: Color = Color("f6eedb")
+## Brighter and warmer since the reopening (spec 09, L1, D26); the sand stays the least saturated
+## surface, so the fighters stand out (G10).
+const SAND: Color = Color("d6ad7e")
+const SAND_DARK: Color = Color("cb9f6e")
+const OUTSIDE: Color = Color("cf7b4c")
+const ROCK: Color = Color("e65a2a")
+const ROCK_BAND: Color = Color("ff9a4f")
+const ROCK_TOP: Color = Color("a83a20")
+const BOULDER: Color = Color("bf4f2a")
+const BOULDER_LIGHT: Color = Color("ee7c3e")
+const BUSH_GROUND: Color = Color("9fc05a")
+const CACTUS: Color = Color("3fd35c")
+const CACTUS_DARK: Color = Color("1fa848")
+const FLOWER: Color = Color("ff4f9e")
+## The blossoms on the cactus tops without a flower (L2), in these colours.
+const BLOSSOMS: Array[Color] = [Color("ffd23f"), Color("ff8a3d"), Color("ff6fd0")]
+const CRATE: Color = Color("d98c35")
+const CRATE_EDGE: Color = Color("7a4620")
+const BONE: Color = Color("fff6e0")
 const EYE: Color = Color("2a1d1d")
-const PEBBLE: Color = Color("9c7b5c")
+const PEBBLE: Color = Color("b98a5e")
 
 @export var floor_body: StaticBody3D
 @export var walls: Node3D
 
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _decor_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _boulders: Array[Transform3D] = []
 var _boulder_colors: Array[Color] = []
 
 
 func _ready() -> void:
 	_rng.seed = LOOK_SEED
+	_decor_rng.seed = DECOR_SEED
 	_build_floor()
 	_build_walls()
 	_build_outside_boulders()
@@ -55,6 +64,9 @@ func _ready() -> void:
 	_add_multimesh(
 		"Boulders", _low_poly_sphere(0.5), ToonMaterials.instanced(), _boulders, _boulder_colors
 	)
+	var decor: CanyonDecor = CanyonDecor.new()
+	decor.name = "Decor"
+	add_child(decor)
 
 
 ## Height of a wall of `ArenaLayout.WALLS` (by index).
@@ -185,6 +197,8 @@ func _build_cacti() -> void:
 	var arm_colors: Array[Color] = []
 	var flowers: Array[Transform3D] = []
 	var flower_colors: Array[Color] = []
+	var blossoms: Array[Transform3D] = []
+	var blossom_colors: Array[Color] = []
 	for bush: Rect2 in ArenaLayout.BUSHES:
 		var columns: int = maxi(1, roundi(bush.size.x / CACTUS_SPACING))
 		var rows: int = maxi(1, roundi(bush.size.y / CACTUS_SPACING))
@@ -214,6 +228,10 @@ func _build_cacti() -> void:
 				if _rng.randf() < 0.5:
 					flowers.append(Transform3D(Basis.IDENTITY, base + Vector3(0, 1.1 * tall, 0)))
 					flower_colors.append(FLOWER)
+				elif _decor_rng.randf() < 0.7:
+					var bloom: Basis = Basis(Vector3.UP, _decor_rng.randf_range(0.0, TAU))
+					blossoms.append(Transform3D(bloom, base + Vector3(0, 1.08 * tall, 0)))
+					blossom_colors.append(BLOSSOMS[_decor_rng.randi() % BLOSSOMS.size()])
 	var trunk: ArrayMesh = _shifted(_capsule(0.22, 1.1), 0.55)
 	_add_multimesh("CactusTrunks", trunk, ToonMaterials.instanced(), trunks, trunk_colors)
 	_add_multimesh("CactusArms", _capsule(0.12, 0.5), ToonMaterials.instanced(), arms, arm_colors)
@@ -223,6 +241,14 @@ func _build_cacti() -> void:
 	flower.radial_segments = 8
 	flower.rings = 4
 	_add_multimesh("CactusFlowers", flower, ToonMaterials.instanced(), flowers, flower_colors)
+	# A five-petal blossom: a flat pentagon with a round middle.
+	var petals: CylinderMesh = CylinderMesh.new()
+	petals.top_radius = 0.2
+	petals.bottom_radius = 0.14
+	petals.height = 0.07
+	petals.radial_segments = 5
+	petals.rings = 1
+	_add_multimesh("CactusBlossoms", petals, ToonMaterials.instanced(), blossoms, blossom_colors)
 
 
 func _build_decoration() -> void:

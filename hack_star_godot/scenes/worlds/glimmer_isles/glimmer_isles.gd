@@ -8,7 +8,8 @@ extends Node3D
 ## starry gradient sky, and the props baked from ProtonScatter (`baked.tscn`, see
 ## `tools/bake_world.gd`): no addon code and no thread while the game runs. Collisions and hiding
 ## come from the layout, as in the canyon; the same wall heights as `Canyon`, so the camera frames
-## both the same way.
+## both the same way. The newer decoration (fireflies, pulsing crystals, waterfalls, turning
+## islands; spec 09 L2) is `GlimmerDecor`, a child named `Decor`.
 
 const BAKED: PackedScene = preload("res://scenes/worlds/glimmer_isles/baked.tscn")
 
@@ -23,16 +24,18 @@ const PATH_STEP: float = 1.1
 ## The same island every time.
 const LOOK_SEED: int = 9
 
-const GROUND: Color = Color("86a3b4")
-const GROUND_LAVENDER: Color = Color("9a95c4")
-const PATH: Color = Color("bff6ff")
-const PATH_GLOW: Color = Color("6fe3ff")
-const RIM: Color = Color("5c9a8c")
-const UNDERSIDE: Color = Color("5a4aa0")
-const BORDER: Color = Color("6c5bb0")
-const BORDER_TOP: Color = Color("4a3d8a")
-const PLINTH: Color = Color("4a3d8a")
-const FERN_GROUND: Color = Color("3f7f6a")
+## Vivid teal and violet since the reopening (spec 09, L1, D26); the ground stays the least
+## saturated surface (G10).
+const GROUND: Color = Color("74bccb")
+const GROUND_LAVENDER: Color = Color("a294dc")
+const PATH: Color = Color("c8fbff")
+const PATH_GLOW: Color = Color("5fe8ff")
+const RIM: Color = Color("4aa892")
+const UNDERSIDE: Color = Color("6446c4")
+const BORDER: Color = Color("7b56dc")
+const BORDER_TOP: Color = Color("5434b0")
+const PLINTH: Color = Color("5434b0")
+const FERN_GROUND: Color = Color("2c9c78")
 const SKY_TOP: Color = Color("1b1446")
 const SKY_HORIZON: Color = Color("c77ad6")
 const VOID_DEEP: Color = Color("140f38")
@@ -54,7 +57,12 @@ func _ready() -> void:
 	_build_walls()
 	_build_cover()
 	_build_path()
-	add_child(load_baked())
+	var baked: Node3D = load_baked()
+	add_child(baked)
+	var decor: GlimmerDecor = GlimmerDecor.new()
+	decor.name = "Decor"
+	decor.baked = baked
+	add_child(decor)
 
 
 ## Height of a wall of `ArenaLayout.walls()` (by index), as in the canyon.
