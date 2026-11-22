@@ -31,8 +31,10 @@ func test_card_shows_name_rarity_trophies_and_power() -> void:
 	var card: FighterCard = _card(_show_list(), "blaze")
 	assert_eq(card.get_node("Column/NameLabel").text, "Blaze")
 	assert_eq(card.get_node("Column/RarityLabel").text, "Rare")
-	assert_eq(card.get_node("Column/TrophiesLabel").text, "Trophies: 1240")
-	assert_eq(card.get_node("Column/PowerLabel").text, "Power 7 / 11")
+	var trophies: IconChip = card.get_node("Column/Stats/TrophiesChip")
+	assert_eq([trophies.icon_name, trophies.text], ["trophy", "1240"])
+	var power: IconChip = card.get_node("Column/Stats/PowerChip")
+	assert_eq([power.icon_name, power.text], ["bolt", "7 / 11"])
 
 
 func test_rarity_is_shown_in_its_colour() -> void:
@@ -50,16 +52,23 @@ func test_blaze_shows_prestige_1_and_the_others_no_badge() -> void:
 		assert_false(other.visible, "%s has no badge" % fighter_id)
 
 
-func test_locked_fighters_are_greyed_out_with_a_lock() -> void:
+func test_locked_fighters_are_grey_with_a_lock_icon() -> void:
 	var screen: Control = _show_list()
 	for fighter_id: String in ["frosty", "luna", "pixel"]:
 		var card: FighterCard = _card(screen, fighter_id)
-		assert_true(card.get_node("Column/LockLabel").visible, "%s shows the lock" % fighter_id)
-		assert_lt(card.modulate.r, 1.0, "%s is greyed out" % fighter_id)
+		var lock_icon: TextureRect = card.get_node("Column/Backdrop/LockIcon")
+		assert_true(lock_icon.visible, "%s shows the lock icon" % fighter_id)
+		assert_eq(lock_icon.texture, Icons.get_icon("lock"))
+		assert_true(card.get_node("Column/LockChip").visible, "%s shows the lock chip" % fighter_id)
+		assert_eq(card.backdrop_color(), FighterCard.LOCKED_BACKDROP, "%s grey" % fighter_id)
+		assert_true(card.is_picture_grey(), "%s picture is grey" % fighter_id)
 	for fighter_id: String in ["blaze", "rocko", "turbo"]:
 		var card: FighterCard = _card(screen, fighter_id)
-		assert_false(card.get_node("Column/LockLabel").visible, "%s has no lock" % fighter_id)
-		assert_eq(card.modulate, Color.WHITE)
+		assert_false(card.get_node("Column/Backdrop/LockIcon").visible, "%s: no lock" % fighter_id)
+		assert_false(card.get_node("Column/LockChip").visible, "%s: no lock chip" % fighter_id)
+		var rarity: String = Fighters.get_fighter(fighter_id)["rarity"]
+		assert_eq(card.backdrop_color(), Rarity.color(rarity), "%s backdrop" % fighter_id)
+		assert_false(card.is_picture_grey(), "%s picture in colour" % fighter_id)
 
 
 func test_cached_pictures_are_used_without_rendering_again() -> void:
@@ -69,7 +78,7 @@ func test_cached_pictures_are_used_without_rendering_again() -> void:
 	for fighter_id: String in Fighters.ids():
 		GameState.pictures[FighterPictures.key(fighter_id, "default")] = texture
 	var screen: Control = _show_list()
-	assert_eq(_card(screen, "luna").get_node("Column/Picture").texture, texture)
+	assert_eq(_card(screen, "luna").get_node("Column/Backdrop/Picture").texture, texture)
 	assert_eq(screen.get_children().size(), 2, "no off-screen stage was added")
 
 

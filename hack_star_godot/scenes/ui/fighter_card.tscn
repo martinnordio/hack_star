@@ -2,9 +2,26 @@
 
 [ext_resource type="Script" path="res://scenes/ui/fighter_card.gd" id="1_card"]
 [ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="2_badge"]
+[ext_resource type="Shader" path="res://scenes/ui/fighter_picture.gdshader" id="3_picture"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icon_chip.tscn" id="4_chip"]
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_premult"]
-blend_mode = 4
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_picture"]
+resource_local_to_scene = true
+shader = ExtResource("3_picture")
+shader_parameter/grey = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_backdrop"]
+resource_local_to_scene = true
+bg_color = Color(0.35, 0.8, 0.4, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.05, 0.03, 0.12, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_open"]
 
@@ -17,10 +34,23 @@ script = ExtResource("1_card")
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Picture" type="TextureRect" parent="Column"]
-material = SubResource("CanvasItemMaterial_premult")
-custom_minimum_size = Vector2(0, 200)
+[node name="Backdrop" type="PanelContainer" parent="Column"]
+custom_minimum_size = Vector2(0, 210)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
+
+[node name="Picture" type="TextureRect" parent="Column/Backdrop"]
+material = SubResource("ShaderMaterial_picture")
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LockIcon" type="TextureRect" parent="Column/Backdrop"]
+visible = false
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 expand_mode = 1
 stretch_mode = 5
 
@@ -30,30 +60,39 @@ theme_type_variation = &"SubheadingLabel"
 text = "Fighter"
 horizontal_alignment = 1
 
+[node name="RarityLabel" type="Label" parent="Column"]
+layout_mode = 2
+theme_type_variation = &"RarityLabel"
+text = "Rare"
+horizontal_alignment = 1
+uppercase = true
+
 [node name="PrestigeBadge" parent="Column" instance=ExtResource("2_badge")]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="RarityLabel" type="Label" parent="Column"]
+[node name="Stats" type="HBoxContainer" parent="Column"]
 layout_mode = 2
-text = "Rare"
-horizontal_alignment = 1
+alignment = 1
+theme_override_constants/separation = 8
 
-[node name="TrophiesLabel" type="Label" parent="Column"]
+[node name="TrophiesChip" parent="Column/Stats" instance=ExtResource("4_chip")]
 layout_mode = 2
-text = "Trophies: 0"
-horizontal_alignment = 1
+text = "0"
 
-[node name="PowerLabel" type="Label" parent="Column"]
+[node name="PowerChip" parent="Column/Stats" instance=ExtResource("4_chip")]
 layout_mode = 2
-text = "Power 1 / 11"
-horizontal_alignment = 1
+icon_name = "bolt"
+icon_color = Color(1, 0.6, 0.15, 1)
+text = "1 / 11"
 
-[node name="LockLabel" type="Label" parent="Column"]
+[node name="LockChip" parent="Column" instance=ExtResource("4_chip")]
 visible = false
 layout_mode = 2
+size_flags_horizontal = 4
+icon_name = "lock"
+icon_color = Color(1, 0.72, 0.25, 1)
 text = "Locked"
-horizontal_alignment = 1
 
 [node name="OpenButton" type="Button" parent="."]
 layout_mode = 2

@@ -9,6 +9,8 @@ const TEST_SAVE: String = "user://test/hack_effects_save.json"
 const CREDITS_PATH: String = "Margin/Column/TopBar/CreditsChip"
 const GRID_PATH: String = "Margin/Column/Scroll/Grid"
 const DETAILS: String = "Margin/Column/Body/Details"
+const LOCK_ICON: String = "Column/Backdrop/LockIcon"
+const CARD_POWER: String = "Column/Stats/PowerChip"
 
 var _player_save_path: String = ""
 
@@ -53,12 +55,12 @@ func test_unlock_all_unlocks_every_card_and_reset_locks_them_again() -> void:
 	var list: Control = _show(LIST)
 	for fighter_id: String in Fighters.ids():
 		var card: FighterCard = _card(list, fighter_id)
-		assert_false(card.get_node("Column/LockLabel").visible, "%s has no lock" % fighter_id)
-		assert_eq(card.modulate, Color.WHITE, "%s is not greyed out" % fighter_id)
+		assert_false(card.get_node(LOCK_ICON).visible, "%s has no lock" % fighter_id)
+		assert_false(card.is_picture_grey(), "%s is not greyed out" % fighter_id)
 	GameState.reset_hacks()
 	list = _show(LIST)
 	for fighter_id: String in ["frosty", "luna", "pixel"]:
-		assert_true(_card(list, fighter_id).get_node("Column/LockLabel").visible)
+		assert_true(_card(list, fighter_id).get_node(LOCK_ICON).visible)
 
 
 func test_with_unlock_all_select_works_for_luna() -> void:
@@ -82,14 +84,14 @@ func test_without_the_hack_luna_stays_locked() -> void:
 
 
 func test_power_shows_its_maximum_with_and_without_power_22() -> void:
-	assert_eq(_card(_show(LIST), "blaze").get_node("Column/PowerLabel").text, "Power 7 / 11")
+	assert_eq(_card(_show(LIST), "blaze").get_node(CARD_POWER).text, "7 / 11")
 	GameState.viewed_fighter = "blaze"
 	assert_eq(_show(FIGHTER).get_node(DETAILS + "/PowerLabel").text, "Power 7 / 11")
 	GameState.activate_hack(Hacks.POWER22)
-	assert_eq(_card(_show(LIST), "blaze").get_node("Column/PowerLabel").text, "Power 7 / 22")
+	assert_eq(_card(_show(LIST), "blaze").get_node(CARD_POWER).text, "7 / 22")
 	assert_eq(_show(FIGHTER).get_node(DETAILS + "/PowerLabel").text, "Power 7 / 22")
 	GameState.reset_hacks()
-	assert_eq(_card(_show(LIST), "blaze").get_node("Column/PowerLabel").text, "Power 7 / 11")
+	assert_eq(_card(_show(LIST), "blaze").get_node(CARD_POWER).text, "7 / 11")
 
 
 func test_the_hacks_change_no_trophies_unlocks_or_power_levels() -> void:

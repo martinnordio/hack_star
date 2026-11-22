@@ -21,6 +21,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.56 M (72 k in · 7.45 M cached · 38 k out) | CHF 2.19 (261 credits) | Step 4 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:12:53 to 13:22:37) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.15 M (48 k in · 7.08 M cached · 22 k out) | CHF 1.75 (208 credits) | Step 5 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:22:37 to 13:30:18) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 11.32 M (74 k in · 11.20 M cached · 39 k out) | CHF 2.84 (339 credits) | Step 6 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:30:18 to 13:42:24) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.48 M (121 k in · 5.33 M cached · 25 k out) | CHF 1.82 (217 credits) | Step 7 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:43:19 to 13:50:52) |
 
 ---
 
@@ -325,7 +326,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ✅ Done | [→ Step 4](#step-4--home-screen) |
 | **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ✅ Done | [→ Step 5](#step-5--arena-look) |
 | **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ✅ Done | [→ Step 6](#step-6--arena-framing-and-match-hud) |
-| **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ⬜ Not started | [→ Step 7](#step-7--fighter-cards) |
+| **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ✅ Done | [→ Step 7](#step-7--fighter-cards) |
 | **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
 | **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ⬜ Not started | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
 | **10** | ProtonScatter addon | reasoning (Claude Opus 5.5) — S1; a new pinned dependency kept out of the export (D11) | ⬜ Not started | [→ Step 10](#step-10--protonscatter-addon) |
@@ -552,13 +553,18 @@ when locked), its name, rarity in its colour, trophies and power with icons, and
 badge (G5, G7, G16).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `FighterCard`: backdrop by unlock state and rarity, picture from `fighter_pictures.gd` with the new look, lock icon and price for locked fighters, icon chips for trophies and power, rarity label in `Rarity` colours, `PrestigeBadge` as today; the fighter list on `MenuBackground`.
-- [ ] Update `test_fighter_list.gd` (lock icon only on locked cards; numbers shown); screen sizes pass.
-- [ ] Check: screenshots of the list (unlocked and locked cards, with the unlock-all hack and without) at five sizes; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] `FighterCard`: backdrop by unlock state and rarity, picture from `fighter_pictures.gd` with the new look, lock icon and price for locked fighters, icon chips for trophies and power, rarity label in `Rarity` colours, `PrestigeBadge` as today; the fighter list on `MenuBackground`.
+- [x] Update `test_fighter_list.gd` (lock icon only on locked cards; numbers shown); screen sizes pass.
+- [x] Check: screenshots of the list (unlocked and locked cards, with the unlock-all hack and without) at five sizes; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 13:43
+**Card** (G5, G7): `FighterCard` — `Column/Backdrop` (a rounded, dark-bordered panel in `Rarity.color` of the fighter, `LOCKED_BACKDROP` grey while locked) holding the `Picture` (the cached `FighterPictures` render, unchanged: the toon look of Step 3, no pedestal) and a centred `LockIcon` (Kenney lock, tinted orange); the name; the rarity in its colour, upper case, in the display font with an outline (new theme variation `RarityLabel`); the `PrestigeBadge` as before; `Stats` with a `TrophiesChip` (trophy, "1240") and a `PowerChip` (drawn bolt, "7 / 11" — new `Hacks.power_amount`, `power_text` now uses it) at 26 px; a `LockChip` (lock, "Locked") on locked cards. A locked picture is drawn grey by `scenes/ui/fighter_picture.gdshader` (keeps the premultiplied blend of the old `CanvasItemMaterial`; one material per card, `resource_local_to_scene`) instead of tinting the whole card. `CardPanel` (also used by the result and QR screens) is now the dark violet card with a dark border and a thicker bottom edge. The list's flat `BackgroundPanel` became `MenuBackground`. **Differs from the plan:** no price on locked cards — the game has no fighter prices yet (fighters unlock only by the hack; the shop is a later spec), so the lock chip says "Locked" instead of inventing a number (S2).
+**Tests**: `test_fighter_list.gd` (the numbers in the chips with their icons; locked cards — lock icon, lock chip, grey backdrop and grey picture — and unlocked cards — none of them, the backdrop in the rarity colour); `test_hack_effects.gd` (unlock-all removes the lock icon and the grey; Power 22 shows "7 / 22" on the card's chip). `test_screen_sizes*.gd` unchanged and green. `docs/architecture.md` (list row, `power_amount`) updated.
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step7\`, viewed): `godot_fighters_<size>.png` and `godot_fighters_unlockall_<size>.png` at 1280×720, 1180×820, 820×1180, 390×844, 844×390 (sample progress; with the unlock-all hack every card has its rarity backdrop: green, blue, purple, red, gold). Compared with `before\svelte_fighters_1280x720.png`: the same idea (rarity-coloured backdrop, grey locked fighter with a lock, icons for trophies and power); the text stays readable at 390 px (two columns). Nothing changed after looking.
+**Done (2026-11-22 · ~8 min · Claude Opus 5.5)** — fighter cards with a rarity-coloured backdrop, grey picture with a lock for locked fighters, trophy and power chips, outlined rarity; the list on the gradient background. `tools/test.ps1` 428 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 5.48 M tokens · CHF 1.82 (217 credits)
 
 ---
 
