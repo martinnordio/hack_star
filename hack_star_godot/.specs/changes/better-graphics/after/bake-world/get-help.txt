@@ -1,0 +1,35 @@
+﻿
+NAME
+    tools\bake_world.ps1
+    
+SYNOPSIS
+    Bakes Glimmer Isles: writes scenes\worlds\glimmer_isles\baked.tscn from scatter_source.tscn.
+    
+    
+SYNTAX
+    tools\bake_world.ps1 [<CommonParameters>]
+    
+    
+DESCRIPTION
+    Imports the project, then runs tools\bake_world.gd with Godot (headless). It rebuilds every
+    ProtonScatter of the source scene on the main thread with its fixed seed and saves the props as
+    plain MultiMeshInstance3D nodes, without any addon reference (spec 09, D12). Run it after
+    changing scatter_source.tscn or the props in props\, then run tools\test.ps1 and commit
+    baked.tscn. Exit code 1 if Godot fails or the bake does not finish.
+    
+    Requires -Version 5.1
+    
+
+RELATED LINKS
+
+REMARKS
+    To see the examples, type: "get-help 
+    tools\bake_world.ps1 -examples".
+    For more information, type: "get-help 
+    tools\bake_world.ps1 -detailed".
+    For technical information, type: "get-help 
+    tools\bake_world.ps1 -full".
+
+
+
+

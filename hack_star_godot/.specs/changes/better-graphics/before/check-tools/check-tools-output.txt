@@ -1,0 +1,5 @@
+﻿OK       Godot: 4.7.2.stable.official.ed1daf0bf (%USERPROFILE%\AppData\Local\Microsoft\WinGet\Packages\GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe\Godot_v4.7.2-stable_win64_console.exe)
+OK       Export templates: web_nothreads in %USERPROFILE%\AppData\Roaming\Godot\export_templates\4.7.2.stable
+OK       gdtoolkit: gdlint 4.5.0
+OK       GUT: addons\gut is 9.7.1, need 9.7.1
+All pinned tools OK.

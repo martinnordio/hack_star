@@ -35,6 +35,8 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.49 M (114 k in · 2.36 M cached · 15 k out) | CHF 1.13 (135 credits) | Step 18 done (`usage.ps1 -AgentName s09g-steps18-20` from 15:58:18 to 16:03:41) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 434 k (4 k in · 427 k cached · 3 k out) | CHF 0.14 (17 credits) | Step 19 prepared, trial deferred (`usage.ps1 -AgentName s09g-steps18-20` from 16:04:13 to 16:06:57) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.86 M (61 k in · 5.78 M cached · 20 k out) | CHF 1.57 (187 credits) | Step 20 done; the G1 verdict, A3, the iPad play-test and the B6 trial wait for the author (`usage.ps1 -AgentName s09g-steps18-20` from 16:07:28 to 16:17:13) |
+| 2026-11-22 | review | `REVIEW:` | Claude Opus 5.5 | 16.93 M (258 k in · 16.61 M cached · 67 k out) | CHF 4.99 (595 credits) | semantic diff written: change record `changes/better-graphics/` (16 blocks), review page [2026-11-22_better-graphics.html](../review/2026-11-22_better-graphics.html) and index row, PR text `semantic_diff.md`; checks 6 pass · 2 n/a · 1 fail (agent `s09g-review`; `CODE REVIEW:` included) |
+| 2026-11-22 | review | `CODE REVIEW:` | Claude Opus 5.5 | included in the review row | included in the review row | Approve — 0 Blocking · 2 Should-fix · 8 Nit (7 fix now, 2 deferred, 1 plan decision); check_tools, lint, test (468 passed), export_web exit 0 |
 
 ---
 
@@ -902,6 +904,8 @@ Started: 2026-11-22 16:07
 | The B6 trial with Google Flow + Meshy (free use) and the possible import of its GLB (Step 19; instructions in `docs/drawing_tools.md` § *Trial (B6)*) | Needs the author's own Google Flow and Meshy accounts (and Mattia's preference); the agent has neither | This spec's follow-up by the author / a later spec |
 | The side-by-side verdict of the author and Mattia per screen (G1), from the before and after sets in `%LOCALAPPDATA%\hack_star\screens\09\before\` and `…\after\` (Step 20) | Needs the author and Mattia; the agent cannot judge for them and does not invent the verdict | This spec, Step 20 / author |
 | The iPad (and phone) play-test: ≥ 30 fps with 4 fighters in the canyon and in Glimmer Isles with **Show FPS (play-test)**, and playable within 5 s after **Play** (G14, G15, W5) | Needs the author's iPad; the agent has no device | This spec, Step 20 / author |
+| Lint and format-check `tools/*.gd` (first file: `tools/bake_world.gd`) and smoke-test `tools/check_tools.ps1` and `tools/bake_world.ps1` | Code review 2026-11-22 finding 8: outside this spec's scope (the Godot tooling) | A later Godot tooling spec |
+| Allow letter-prefixed statement ids (G1, W1, A0, B1) in the kit's `change_record.schema.json` | Code review 2026-11-22 finding 9: the kit lives in the root `.specs/kit/`, which a Godot spec does not change | A kit spec in the root `.specs/` |
 
 ---
 
@@ -909,6 +913,25 @@ Started: 2026-11-22 16:07
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [2026-11-22_better-graphics.html](../review/2026-11-22_better-graphics.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `91cc8be..060ff79` | Approve | 0 Blocking · 2 Should-fix · 8 Nit |
+
+### Code review 2026-11-22
+
+Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; page [2026-11-22_better-graphics.html](../review/2026-11-22_better-graphics.html). Accepted as deferred, not findings: the G1 verdict, Mattia's A3 confirmation, the iPad G14/W5 play-test and the B6 trial (Step 19).
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | hack_star_godot/docs/architecture.md:363-400 — the Tests paragraph does not name the five look tests this spec added: test_theme_look.gd (Step 2), test_home_look.gd (Step 4), test_canyon_look.gd (Step 5), test_arena_framing.gd (Step 6) and test_screens_look.gd (Step 9), although those Steps say the architecture was updated and D18 lists them. Add one clause each | architecture | docs | Should-fix | fix now |
+| 2 | hack_star_godot/tests/test_arena_framing.gd:58-79 — G11 (near wall at most 10 % of the screen height at the start of a match and Training) is measured only in the canyon (before_each resets to it); Glimmer Isles gets the same framing only because GlimmerIsles copies Canyon.CAMERA_SIDE_WALL_HEIGHT and Arena._near_wall_offset (scenes/arena.gd:311) reads the canyon's constant. Run both tests for every world in Worlds.ids() | code | test | Should-fix | fix now |
+| 3 | hack_star_godot/.specs/features/2026_11_21_09_better_graphics_spec.md:796-797 — Step 16's Done line is followed directly by '---' with no blank line, so Markdown renders the Done line as a heading instead of a paragraph and a rule. Add the blank line | spec | docs | Nit | fix now |
+| 4 | hack_star_godot/.specs/features/README.md:32 — the ordered list still says 'planned' for spec 09 Better Graphics although every Step is done and the review runs; it also shares the number 09 with Unlock and Upgrade (next row). Set the status to the current stage (closed at CLOSE:) and say in the list's intro that two specs carry 09 | spec | docs | Nit | fix now |
+| 5 | hack_star_godot/tests/test_home_look.gd:59-60 — assert_gt compares a float with an int (1280 - 64, 720 - 64), so every run prints two GUT 'Float/Int comparison' warnings; use 1280.0 - 64.0 and 720.0 - 64.0 | code | test | Nit | fix now |
+| 6 | Unused after this spec: Hacks.power_text (hack_star_godot/game/hacks.gd:155-157, now called only by test_hacks.gd), the theme variations BackgroundPanel (no screen uses it since Step 9) and IconButton (D7; only test_theme_look.gd uses it), and three Kenney icons that Icons names but no screen shows — gear.png ('settings'), star.png ('star'), singleplayer.png ('fighter') — although D4 says only the used icons are copied. Remove them (and their LICENSES.md names), or say in D4/D7 why they stay | code | dead-code | Nit | fix now |
+| 7 | hack_star_godot/game/arena_layout.gd:68-96 and scenes/autoload/game_state.gd:80-81 — the active layout is global static state that stays on the last world after its arena closes; GameState.reset() sets world back to the canyon but not ArenaLayout, so code that reads ArenaLayout without an arena (BotBrain, ControlsHelp, tests) depends on the last scene built, and tests reset it by hand (test_world_choice.gd:25, test_glimmer_isles.gd:29). Call ArenaLayout.use(world) in GameState.reset(), and drop 'Pure data' from the class comment | architecture | architecture | Nit | fix now |
+| 8 | Semantic-diff check C7: the changed command tools/check_tools.ps1 and the new tools/bake_world.ps1 / tools/bake_world.gd have no automated test, and tools/lint.ps1 lints only game/, scenes/ and tests/, so bake_world.gd (the first .gd in tools/) is never linted or format-checked. A Deferred Items row: lint tools/*.gd and smoke-test the tools | scan | test | Nit | deferred |
+| 9 | The kit's change_record.schema.json accepts only S<n> statement ids, but this spec's statements are G1–G18, W1–W7, A0–A9 and B1–B6; the record lists S2–S6 and names the others in each block's note. A Deferred Items row for the kit (root .specs/kit, not changed by a Godot spec): allow letter-prefixed ids | spec | docs | Nit | deferred |
+| 10 | Part 1 G5 asks for lock and price with icons, and the plan's Step 7 task says 'lock icon and price for locked fighters'; the game has no fighter prices yet, so Step 7 shows a 'Locked' chip without a price and says so only in its Notes. Record the deviation as a decision (price on locked cards comes with the shop spec) so Part 1, the plan and the result agree | spec | spec | Nit | plan decision |
 
 ---
 
@@ -917,6 +940,6 @@ Started: 2026-11-22 16:07
 - [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded
-- [ ] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
 - [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted

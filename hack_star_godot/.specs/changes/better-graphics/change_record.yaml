@@ -1,0 +1,244 @@
+# yaml-language-server: $schema=../../../../.specs/kit/review/change_record.schema.json
+# Change record of spec 09 Better Graphics (#35) on feature/better-graphics (written by REVIEW:,
+# 2026-11-22). Range: 91cc8be..060ff79 (requirements, plan and Steps 1-20).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/". The schema only accepts statement ids S<n>; this spec
+# also has the groups G, W, A and B, so each block lists its S<n> under `statements` and names
+# its G/W/A/B statements in its `note` (finding 9).
+# Screens: a windowed Godot 4.7.2 run with a temporary capture script (-s, removed), the same
+# script on both sides: GameState.save_path = user://review09/save.json, GameState.reset()
+# (sample progress, Blaze, never the player's file), entrance skipped; PNG of the root viewport
+# after a fixed wait. Before from a temporary worktree at 91cc8be, after from a temporary
+# worktree at HEAD without the author's untracked files (both removed). Outputs: a temporary
+# headless probe, the same source on both sides. Matches use random bots, so the two match
+# pictures show different moments of the same setup.
+version: 1
+branch: feature/better-graphics
+base: 91cc8be
+why: |
+  The author and Mattia found the Godot game's screens and characters much worse than the
+  Python + Svelte game (flat navy screens, default font, five identical purple buttons, a thin
+  outline, a yellow checker floor with a wall over a quarter of the match). Spec 09 gives every
+  screen and fighter an outlined cartoon look like the Svelte game, adds a second world
+  (Glimmer Isles, placed with ProtonScatter and baked), turns Mattia's drawing into a fighter
+  (Beatbolt) and recommends a drawing-to-3D workflow.
+spec:
+  path: .specs/features/2026_11_21_09_better_graphics_spec.md
+  statements: [S2, S3, S4, S5, S6]
+changes:
+  - id: home
+    kind: ui
+    change: modified
+    object: Home screen (sample progress, Blaze, after the entrance)
+    note: G2 gradient with rays and a pedestal, G3/G4 the outlined two-colour slanted logo in Lilita One, G5 coloured icon buttons with a big yellow Play (corner when wide, bottom when tall), trophy and coin chips, and the new world button in the top bar (W2). Node paths of the buttons unchanged.
+    statements: [S6]
+    examples:
+      - name: home-1280x720
+        input: |
+          godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+          -- shots=home (GameState.reset(), entrance_played = true, 1.8 s)
+        views: [desktop]
+      - name: home-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: world-choice
+    kind: ui
+    change: added
+    object: The world choice on home (WorldButton -> WorldChoice)
+    note: W2/D10 a dimmed home with "Choose a world", the current world green with a tick, the other with the world icon; a choice sets GameState.world (memory only) for Play and Training. Sits in the top bar, not next to Play (Step 11 Notes).
+    statements: [S2]
+    examples:
+      - name: world-choice-1280x720
+        input: |
+          same capture script -- shots=world_choice (home, WorldButton.pressed emitted)
+        views: [desktop]
+  - id: fighter-list
+    kind: ui
+    change: modified
+    object: Fighter list (sample progress, no hacks)
+    note: G7 rarity-coloured backdrops, grey picture with a lock icon and a "Locked" chip for locked fighters (no price - the game has none, Step 7 Notes), trophy and power chips; Beatbolt as the seventh card (A2).
+    statements: [S6]
+    examples:
+      - name: fighters-1280x720
+        input: |
+          same capture script -- shots=fighters (2.8 s, pictures rendered)
+        views: [desktop]
+      - name: fighters-390x844
+        input: |
+          same at --resolution 390x844
+        views: [phone-portrait]
+  - id: fighter-screen
+    kind: ui
+    change: modified
+    object: Fighter screen of Blaze (three skins)
+    note: G2/G8 the fighter on a pedestal in a frame, chips for trophies and power, a green Select with a tick, and a picture of the fighter in each skin framed in its rarity colour (Legendary gold).
+    statements: [S6]
+    examples:
+      - name: fighter-blaze-1280x720
+        input: |
+          same capture script -- shots=fighter_blaze (viewed_fighter = blaze, 2.8 s)
+        views: [desktop]
+  - id: drawn-fighter
+    kind: ui
+    change: added
+    object: Beatbolt, the fighter from Mattia's drawing, on the fighter screen
+    note: A2-A5/A8 built from shapes (spiky purple hair with a pink streak, white headphones, arm cannon), Mythic, one Default skin, unlocked for every save; Mattia's "this is my drawing" (A3) is deferred to the author.
+    statements: [S2, S4]
+    examples:
+      - name: fighter-beatbolt-1280x720
+        input: |
+          same capture script -- shots=fighter_beatbolt (viewed_fighter = beatbolt, 2.8 s)
+        views: [desktop]
+  - id: training-canyon
+    kind: ui
+    change: modified
+    object: Training in the canyon, 1.8 s after the start
+    note: G9/G10 outlined cel-shaded walls, cacti and props on a softer sand floor; G11 the near wall a thin strip (was about a quarter of the screen); G12 the controls hint on a dark backing with an icon, no FPS label. W7 layout and collisions unchanged.
+    statements: [S2]
+    examples:
+      - name: training-1280x720
+        input: |
+          same capture script -- shots=training (arena.tscn, 1.8 s)
+        views: [desktop]
+  - id: match-hud
+    kind: ui
+    change: modified
+    object: A match 4.8 s after the start (countdown over)
+    note: G12 the timer and fighters-left as icon chips, no "FPS" for players (Info has Show FPS (play-test), D8); the same framing as Training. Bots are random, so the moments differ.
+    statements: [S2]
+    examples:
+      - name: match-1280x720
+        input: |
+          same capture script -- shots=match (match.tscn, 4.8 s)
+        views: [desktop]
+  - id: glimmer-isles
+    kind: ui
+    change: added
+    object: Training in Glimmer Isles
+    note: W1/W3/W4 the second world - tiled teal-lavender ground with a glowing path, crystal ridges on plinths (walls), glow-fern patches (cover), baked ProtonScatter props in the outlined look; same size, start and dummies as the canyon. W5 (iPad frame rate) deferred to the author.
+    statements: [S4]
+    examples:
+      - name: training-glimmer-1280x720
+        input: |
+          same capture script -- shots=training_glimmer (GameState.world = glimmer_isles, 1.8 s)
+        views: [desktop]
+  - id: info-and-hack
+    kind: ui
+    change: modified
+    object: Info and Hack screens
+    note: G13 the gradient, a dark content panel, the back arrow, display-font words; Info gets the Show FPS (play-test) switch (D8); Hack's buttons green/blue/pink/purple with icons.
+    statements: [S6]
+    examples:
+      - name: info-1280x720
+        input: |
+          same capture script -- shots=info (1.3 s)
+        views: [desktop]
+      - name: hack-1280x720
+        input: |
+          same capture script -- shots=hack (1.3 s)
+        views: [desktop]
+  - id: catalogue-and-layouts
+    kind: output
+    change: modified
+    object: Fighter catalogue, session fields, hack texts and arena layouts
+    note: A2/A9 a seventh fighter (beatbolt) unlocked at the start; W1/W4/D9 ArenaLayout.use() with a second layout of the same size, border, start and dummy count; GameState.world and show_fps (not saved); Hacks.credits_text became credits_amount ("500"), power_amount added.
+    statements: [S2]
+    examples:
+      - name: probe
+        input: |
+          godot --headless --path hack_star_godot -s <temporary probe>: Fighters.ids(), skins,
+          start_unlocked(); GameState.world / show_fps; Hacks texts for 500 credits and power 7;
+          each world's layout sizes (ArenaLayout.use where it exists, else the constants)
+  - id: save-file
+    kind: data-format
+    change: modified
+    object: The save file after GameState.reset() (version 3)
+    note: Same version 3 and fields; the fighter dictionaries get a beatbolt entry (0 trophies, power 1, Default skin, unlocked). The world choice and the FPS switch are not saved (S2). revision masked.
+    statements: [S2]
+    examples:
+      - name: save-after-reset
+        input: |
+          same probe: GameState.save_path = user://review09/save.json; reset(); save(); the JSON
+  - id: check-tools
+    kind: command
+    change: modified
+    object: tools/check_tools.ps1
+    note: W6 also checks ProtonScatter's plugin.cfg against tools/versions.json (pending without project.godot, fails when missing or another version).
+    statements: [S3]
+    examples:
+      - name: check-tools-output
+        input: |
+          powershell -File hack_star_godot/tools/check_tools.ps1 (user paths masked)
+  - id: bake-world
+    kind: command
+    change: added
+    object: tools/bake_world.ps1 (and tools/bake_world.gd)
+    note: D12/W5 bakes scatter_source.tscn into baked.tscn on the main thread with fixed seeds; a re-bake at HEAD gave the same file except Godot's random node unique_ids.
+    statements: [S3]
+    examples:
+      - name: get-help
+        input: |
+          Get-Help hack_star_godot/tools/bake_world.ps1
+  - id: dependencies
+    kind: dependency
+    change: added
+    object: Pinned assets and addons (tools/versions.json, editor plugins, export filter)
+    note: W6/D11 ProtonScatter 4.2.0 (MIT, editor only, excluded from the export with the scatter source scene); G3/D3 Lilita One 1.002 (OFL); G5/D4 Kenney Game Icons (CC0, upload date pinned). All in LICENSES.md.
+    statements: [S4]
+    examples:
+      - name: pins
+        input: |
+          git show <rev>:hack_star_godot/tools/versions.json, the enabled editor plugins of
+          project.godot and the exclude_filter of export_presets.cfg
+  - id: theme-tokens
+    kind: tokens
+    change: modified
+    object: The shared theme (scenes/ui/hack_star_theme.tres) per type variation
+    note: G3/G5/G6/D7 Lilita One with a dark outline on buttons, headings, numbers and badges (body text keeps the default font); new button variations PlayButton, GreenButton, BlueButton, PinkButton, TealButton, IconButton with lighter hover and darker pressed; ChipPanel, ContentScroll, StageFramePanel, the logo labels; darker CardPanel and skin frames.
+    statements: [S6]
+    examples:
+      - name: theme
+        input: |
+          godot --headless --path hack_star_godot -s <temporary probe>: for each type of the theme,
+          its base type, normal/panel/hover/pressed colours, font colours, sizes, outline and font
+  - id: web-size
+    kind: performance
+    change: modified
+    object: Web export size (build/web)
+    note: G15/D16 +159,388 bytes (+0.16 MB) against the +5 MB budget; index.pck 239,960 -> 399,348. A working-tree export with the author's untracked characters/ and blaze_godot files is 45,232,931 bytes (+4.87 MB) - those are not part of this spec.
+    statements: [S3]
+    examples:
+      - name: build-web
+        input: |
+          powershell -File hack_star_godot/tools/export_web.ps1 in a clean worktree of the revision
+breaking: |
+  none for players and saves: version 3 saves load (an old save gets Beatbolt unlocked), the
+  server and the Python + Svelte game are unchanged. For code: Hacks.credits_text was renamed
+  Hacks.credits_amount (no other caller), and the HUD and card labels became IconChips (node
+  paths TimerLabel, FightersLeftLabel, TrophiesLabel, PowerLabel, LockLabel are gone).
+review:
+  - question: Why is ProtonScatter's result baked instead of running in the game?
+    answer: |
+      D12/W5: ProtonScatter rebuilds on a Thread at load, which the single-threaded web export
+      cannot rely on and which costs start-up time. tools/bake_world.ps1 rebuilds it on the main
+      thread once and saves plain MultiMeshInstance3D nodes; the game never loads addon code
+      (test_glimmer_isles.gd checks baked.tscn has no addon path), and the addon is excluded
+      from the export.
+  - question: Why a screen-space inverted hull instead of Godot's grow outline?
+    answer: |
+      D5/G9: the old 0.022 m grow vanished at card size. outline.gdshader grows each vertex out
+      from the part's centre by 0.012 m and then by 3 px on screen (scaled above 720 px), so the
+      outline reads on a 150 px card and in the arena. It costs one extra pass per outlined mesh
+      (Training 384 -> 539 draw calls on the desktop, Step 5); the iPad check is deferred.
+  - question: How does the arena pick its world without changing Arena's logic?
+    answer: |
+      D9: ArenaLayout.use(GameState.world) swaps the active layout (static variables) and the
+      functions and accessors read it; Arena handles NOTIFICATION_SCENE_INSTANTIATED to replace
+      its Canyon node with GlimmerIsles before any child is ready. The canyon constants are
+      unchanged (W7).
+  - question: How is a drawn fighter added or removed?
+    answer: |
+      D14/A9: a look file scenes/drawn/<id>_model.gd, a row in DrawnFighters.MODELS, an entry in
+      Fighters.LIST ("drawn": true, "plays_like") and two SampleProgress numbers. A save that
+      chose a removed fighter falls back to Blaze (test_drawn_fighter.gd); docs/drawing_to_fighter.md.

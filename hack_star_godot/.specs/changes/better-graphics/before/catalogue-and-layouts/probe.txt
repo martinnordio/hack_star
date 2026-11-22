@@ -1,0 +1,12 @@
+﻿== fighters
+ids: ["blaze", "rocko", "turbo", "frosty", "luna", "pixel"]
+skins: 14
+start_unlocked: ["blaze", "rocko", "turbo"]
+== session (GameState, not saved)
+world: <no field>
+show_fps: <no field>
+== hacks texts (credits 500, power 7)
+credits_text(500): Credits: 500
+power_text(7): Power 7 / 11
+== arena layouts
+canyon: walls 11 (border 4), cover patches 4, decoration 12, dummies 3, starts 9, start (0.0, 9.5)
