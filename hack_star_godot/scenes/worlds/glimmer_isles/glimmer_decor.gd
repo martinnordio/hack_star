@@ -103,6 +103,8 @@ func _find_baked() -> void:
 		var instances: MultiMeshInstance3D = child
 		var kind: String = instances.get_meta("kind")
 		if kind == "crystal_cluster" and float(instances.get_meta("glow_strength")) > 0.0:
+			# Its own copy: the pulse must not change the shared `ToonMaterials` entry.
+			instances.material_override = instances.material_override.duplicate()
 			_crystals.append(instances)
 		elif kind == "island_chunk":
 			_islands.append(instances)

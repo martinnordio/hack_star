@@ -57,7 +57,7 @@ func show_health_bar(color: Color) -> void:
 	if _health_bar == null:
 		_health_bar = HealthBar.new()
 		_health_bar.name = "HealthBar"
-		_health_bar.position = Vector3(0.0, _bar_y(), 0.0)
+		_health_bar.position = _bar_offset()
 		add_child(_health_bar)
 	_health_bar.fixed_color = color
 	_health_bar.show_ratio(Combat.health_ratio(health, max_health))
@@ -87,7 +87,7 @@ func face(direction: Vector2) -> void:
 
 func _process(delta: float) -> void:
 	if _health_bar != null and model.get_cutout() != null:
-		_health_bar.position.y = _bar_y()
+		_health_bar.position = _bar_offset()
 	if _knock_out_left <= 0.0:
 		return
 	_knock_out_left = maxf(_knock_out_left - delta, 0.0)
@@ -99,15 +99,32 @@ func _process(delta: float) -> void:
 		visible = false
 
 
-## The height of the health bar: `BAR_Y`, or over the top of a picture fighter's picture as the
-## camera sees it (the picture turns to the camera, D21).
-func _bar_y() -> float:
+## Where the health bar sits (local to the fighter): `BAR_Y` over the feet, or over the top of a
+## picture fighter's picture as the camera sees it (the picture turns to the camera, D21) — along
+## the camera's up, so it stays over the picture in every view and anywhere on the screen.
+func _bar_offset() -> Vector3:
 	if model.get_cutout() == null:
-		return BAR_Y
+		return Vector3(0.0, BAR_Y, 0.0)
+	var camera: Transform3D = _camera_transform()
+	return _local(model.picture_top(camera) + camera.basis.y.normalized() * PICTURE_BAR_GAP)
+
+
+## The direction a damage number rises (local): up, or the camera's up over a picture fighter.
+func _number_rise() -> Vector3:
+	if model.get_cutout() == null:
+		return Vector3.UP
+	return _local(_camera_transform().basis.y.normalized())
+
+
+func _camera_transform() -> Transform3D:
 	var camera: Camera3D = get_viewport().get_camera_3d() if is_inside_tree() else null
-	if camera == null:
-		return maxf(BAR_Y, model.picture_top(Transform3D.IDENTITY) + PICTURE_BAR_GAP)
-	return maxf(BAR_Y, model.picture_top(camera.global_transform) + PICTURE_BAR_GAP)
+	return camera.global_transform if camera != null else Transform3D.IDENTITY
+
+
+## A world direction turned into the fighter's own frame (the fighter turns to its input).
+func _local(direction: Vector3) -> Vector3:
+	var turned: Basis = global_basis if is_inside_tree() else basis
+	return turned.inverse() * direction
 
 
 ## Takes `amount` damage; ignored once knocked out or invulnerable. At 0 health the fighter is
@@ -119,8 +136,9 @@ func hit(amount: int) -> void:
 	last_action_seconds = _now()
 	_show_health()
 	model.flash()
-	var number_y: float = _bar_y() + NUMBER_Y - BAR_Y
-	DamageNumber.spawn(self, Vector3(0.0, number_y, 0.0), amount, number_color)
+	var rise: Vector3 = _number_rise()
+	var number_at: Vector3 = _bar_offset() + rise * (NUMBER_Y - BAR_Y)
+	DamageNumber.spawn(self, number_at, amount, number_color, rise)
 	hurt.emit(amount)
 	if health <= 0.0:
 		knock_out()

@@ -102,12 +102,25 @@ func test_glimmer_isles_waterfalls_are_outside_and_crystals_and_islands_move() -
 		assert_false(
 			ArenaLayout.bounds().has_point(Vector2(at.x, at.z)), "%s is outside" % fall.name
 		)
-	var crystal: ShaderMaterial = decor.crystals()[0].material_override
+	var crystals: MultiMeshInstance3D = decor.crystals()[0]
+	var crystal: ShaderMaterial = crystals.material_override
 	var glow: float = crystal.get_shader_parameter("emission_energy")
+	var shared: ShaderMaterial = ToonMaterials.toon(
+		crystals.get_meta("albedo"),
+		crystals.get_meta("glow"),
+		crystals.get_meta("glow_strength"),
+		crystals.get_meta("outlined")
+	)
+	assert_ne(crystal, shared, "the crystals pulse on their own copy of the material")
 	var island: MultiMeshInstance3D = decor.islands()[0]
 	var place: Transform3D = decor.island_place(island, 0)
 	await wait_seconds(0.3)
 	assert_ne(crystal.get_shader_parameter("emission_energy"), glow, "the crystals pulse")
+	assert_eq(
+		shared.get_shader_parameter("emission_energy"),
+		float(crystals.get_meta("glow_strength")),
+		"the shared material keeps its glow"
+	)
 	var moved: Transform3D = decor.island_place(island, 0)
 	assert_false(moved.is_equal_approx(place), "the islands turn and bob")
 	var center: Vector3 = (decor.islands()[0].get_meta("transforms")[0] as Transform3D).origin

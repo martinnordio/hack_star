@@ -137,6 +137,70 @@ func test_the_player_and_the_bar_are_on_screen_in_every_view_at_every_size() -> 
 			arena.get_parent().queue_free()
 
 
+func test_the_bar_and_the_numbers_show_over_the_picture_anywhere_in_every_view() -> void:
+	# Review 2026-11-22 (reopening) finding 1: in Overview a point straight up from a fighter in
+	# the lower half of the screen moves down the screen, so the bar showed under the picture.
+	GameState.selected_fighter = "flarekid"
+	for world_id: String in Worlds.ids():
+		GameState.world = world_id
+		for size: Vector2i in [Vector2i(820, 1180), Vector2i(1280, 720)]:
+			var arena: Arena = await _show_in_viewport(MATCH_SCENE, size)
+			var camera: Camera3D = arena.get_node("Camera")
+			var fighter: Fighter = arena.get_node("Fighter")
+			fighter.invulnerable = false
+			var area: Rect2 = ArenaLayout.bounds().grow(-1.5)
+			var spots: Array[Vector2] = [
+				area.get_center(),
+				Vector2(area.get_center().x, area.end.y),
+				Vector2(area.get_center().x, area.position.y),
+				area.position,
+				area.end,
+			]
+			var last_start: float = 0.0
+			for view_id: String in CameraViews.ids():
+				await _switch(arena, view_id)
+				for spot: Vector2 in spots:
+					fighter.global_position = Vector3(spot.x, 0.0, spot.y)
+					await wait_process_frames(1)
+					var where: String = "%s %s %s at %s" % [world_id, size, view_id, spot]
+					var top: float = _picture_top_on_screen(camera, fighter)
+					var bar: Vector2 = camera.unproject_position(
+						fighter.health_bar().global_position
+					)
+					assert_lt(bar.y, top, "bar over the picture: " + where)
+					fighter.hit(1)
+					var number: Label3D = _newest_number(fighter)
+					var start: float = camera.unproject_position(number.global_position).y
+					assert_lt(start, top, "damage number over the picture: " + where)
+					last_start = start
+					fighter.health = fighter.max_health
+			await wait_seconds(DamageNumber.SECONDS / 2.0)
+			var risen: Label3D = _newest_number(fighter)
+			assert_lt(
+				camera.unproject_position(risen.global_position).y,
+				last_start,
+				"%s %s: the number rises up the screen" % [world_id, size]
+			)
+			arena.get_parent().queue_free()
+
+
+## The top of the picture on screen as `cutout.gdshader` draws it: the quad turns to the camera
+## (its up is the camera's up) and shrinks around the feet by part of the foreshortening.
+func _picture_top_on_screen(camera: Camera3D, fighter: Fighter) -> float:
+	var up: Vector3 = camera.global_basis.y.normalized()
+	var height: float = CutoutFighters.FIGHTERS[fighter.model.fighter_id]["height"]
+	var shown: float = height * lerpf(1.0, clampf(up.y, 0.0, 1.0), CutoutFighters.FORESHORTEN)
+	return camera.unproject_position(fighter.model.global_position + up * shown).y
+
+
+func _newest_number(fighter: Fighter) -> Label3D:
+	var found: Label3D = null
+	for child: Node in fighter.get_children():
+		if child is Label3D:
+			found = child
+	return found
+
+
 func test_overview_shows_the_four_border_walls() -> void:
 	for label: String in SIZES:
 		var size: Vector2i = SIZES[label]
