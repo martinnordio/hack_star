@@ -47,20 +47,6 @@ func test_nearest_target() -> void:
 	assert_eq(Combat.nearest_target(Vector2.ZERO, [] as Array[Vector2], 9.0), -1)
 
 
-func test_ground_point_of_a_ray_looking_down() -> void:
-	var angle: float = deg_to_rad(55.0)
-	var direction: Vector3 = Vector3(0.0, -sin(angle), -cos(angle))
-	var point: Vector3 = Combat.ground_point(Vector3(0.0, 10.0, 0.0), direction, 0.0)
-	assert_almost_eq(point.y, 0.0, 0.0001)
-	assert_almost_eq(point.z, -10.0 / tan(angle), 0.0001)
-	var raised: Vector3 = Combat.ground_point(Vector3(0.0, 10.0, 0.0), direction, 0.9)
-	assert_almost_eq(raised.y, 0.9, 0.0001)
-
-
-func test_ground_point_of_a_ray_looking_up_is_infinite() -> void:
-	assert_eq(Combat.ground_point(Vector3(0.0, 10.0, 0.0), Vector3.UP, 0.0), Vector3.INF)
-
-
 func test_fighter_health_ratio() -> void:
 	var full: int = MatchSettings.FIGHTER_HEALTH
 	assert_eq(Combat.health_ratio(full, full), 1.0)

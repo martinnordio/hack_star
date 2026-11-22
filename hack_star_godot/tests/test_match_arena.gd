@@ -14,6 +14,7 @@ func before_each() -> void:
 
 func after_each() -> void:
 	Input.action_release("move_right")
+	Input.action_release("shoot")
 	var tree: SceneTree = get_tree()
 	var shown: Node = tree.current_scene
 	tree.current_scene = _previous
@@ -107,6 +108,7 @@ func test_nobody_moves_or_fires_during_the_countdown() -> void:
 	var camera: Camera3D = arena.get_node("Camera")
 	var east: Vector2 = camera.unproject_position(player.global_position + Vector3(3, 0, 0))
 	Input.action_press("move_right")
+	Input.action_press("shoot")
 	get_tree().root.push_input(_mouse_button(east, true), true)
 	get_tree().root.push_input(_mouse_button(east, false), true)
 	await wait_seconds(0.5)
@@ -190,6 +192,27 @@ func test_a_tap_on_the_aim_stick_fires_at_the_nearest_bot() -> void:
 	get_tree().root.push_input(_screen_touch(centre, false), true)
 	assert_eq(shots.size(), 1, "a tap fires")
 	assert_almost_eq(shots[0], Vector3.RIGHT, Vector3.ONE * 0.05, "at the nearer bot, east")
+
+
+func test_space_fires_at_the_nearest_bot_and_nothing_after_the_end() -> void:
+	var arena: MatchArena = await _open(2, 0)
+	_place(arena.bots()[0], ArenaLayout.START + Vector2(-5.0, 0.0))
+	_place(arena.bots()[1], ArenaLayout.START + Vector2(3.0, 0.0))
+	await wait_physics_frames(2)
+	var shots: Array[Vector3] = _record_shots(arena)
+	arena.read_player_input = true
+	Input.action_press("shoot")
+	await wait_process_frames(2)
+	assert_eq(shots.size(), 1, "Space fires")
+	assert_almost_eq(shots[0], Vector3.RIGHT, Vector3.ONE * 0.05, "at the nearer bot, east")
+	Input.action_release("shoot")
+	for bot: Fighter in arena.bots():
+		bot.knock_out()
+	assert_false(arena.player_can_act(), "the match is over")
+	await wait_seconds(Combat.COOLDOWN + 0.1)
+	Input.action_press("shoot")
+	await wait_process_frames(2)
+	assert_eq(shots.size(), 1, "nothing after the end")
 
 
 func test_a_bot_in_a_bush_is_see_through() -> void:

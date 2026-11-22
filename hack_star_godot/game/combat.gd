@@ -84,13 +84,3 @@ static func nearest_target(from: Vector2, targets: Array[Vector2], max_range: fl
 			best = i
 			best_distance = distance
 	return best
-
-
-## Where a ray meets the plane y = `height`; `Vector3.INF` when it never does.
-static func ground_point(ray_origin: Vector3, ray_direction: Vector3, height: float) -> Vector3:
-	if is_zero_approx(ray_direction.y):
-		return Vector3.INF
-	var t: float = (height - ray_origin.y) / ray_direction.y
-	if t < 0.0:
-		return Vector3.INF
-	return ray_origin + ray_direction * t

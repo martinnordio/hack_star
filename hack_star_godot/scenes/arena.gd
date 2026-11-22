@@ -3,9 +3,9 @@ extends Node3D
 ## The arena: the canyon (`Canyon`, built from `ArenaLayout`), one fighter, a camera above
 ## and behind it, and the HUD. With `training` (the Training arena) the three target dummies
 ## stand in it; `MatchArena` (`match.tscn`) inherits the scene for a match.
-## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); the mouse
-## (aim and click) and the right stick (`AimJoystick`, drag and release or a quick tap) fire
-## shots (`Shot`) under the rules of `game/combat.gd`.
+## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); Space (the
+## `shoot` action, held to keep firing) and the right stick (`AimJoystick`, drag and release or a
+## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
 
 ## The camera looks at the fighter from above and behind (towards +z), at this angle down.
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -40,8 +40,6 @@ var read_player_input: bool = true
 var _fps_timer: float = 0.0
 var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
-var _mouse_held: bool = false
-var _mouse_position: Vector2 = Vector2.ZERO
 var _dust_left: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
@@ -75,8 +73,8 @@ func _process(delta: float) -> void:
 		_camera_target, _wanted_camera_target(), delta, CAMERA_FOLLOW_RATE
 	)
 	_place_camera()
-	if _mouse_held:
-		_fire_at_mouse()
+	if read_player_input and Input.is_action_pressed("shoot"):
+		fire(_aim_direction())
 	_update_aim_line()
 	_dust_left -= delta
 	if _fighter.model.running and _dust_left <= 0.0:
@@ -99,23 +97,6 @@ func _physics_process(_delta: float) -> void:
 		return
 	var keys: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	_fighter.input_direction = Movement.clamp_direction(keys + _joystick.direction)
-
-
-## The mouse aims and fires; GUI controls (Back) take their clicks before this, and mouse
-## events made from touches are ignored, so a touch never fires twice.
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouse and event.device == InputEvent.DEVICE_ID_EMULATION:
-		return
-	if event is InputEventMouseMotion:
-		_mouse_position = (event as InputEventMouseMotion).position
-	elif event is InputEventMouseButton:
-		var button: InputEventMouseButton = event
-		if button.button_index != MOUSE_BUTTON_LEFT:
-			return
-		_mouse_held = button.pressed
-		_mouse_position = button.position
-		if button.pressed:
-			_fire_at_mouse()
 
 
 ## Fires a shot along `direction` (ground plane, x and z) when the cool-down is over: the
@@ -184,28 +165,17 @@ func watch_knock_out(fighter: Fighter) -> void:
 	)
 
 
-func _fire_at_mouse() -> void:
-	var point: Vector3 = Combat.ground_point(
-		_camera.project_ray_origin(_mouse_position),
-		_camera.project_ray_normal(_mouse_position),
-		0.0
-	)
-	if point == Vector3.INF:
-		return
-	fire(Vector2(point.x - _fighter.position.x, point.z - _fighter.position.z))
-
-
 func _on_aim_released(direction: Vector2, held_seconds: float) -> void:
 	var aim: Vector2 = Combat.release_aim(direction, held_seconds)
 	if aim == Combat.NO_SHOT:
 		return
 	if aim == Vector2.ZERO:
-		aim = _tap_direction()
+		aim = _aim_direction()
 	fire(aim)
 
 
-## A quick tap fires at the nearest of `tap_targets` in range, else straight ahead.
-func _tap_direction() -> Vector2:
+## A quick tap and Space fire at the nearest of `tap_targets` in range, else straight ahead.
+func _aim_direction() -> Vector2:
 	var from: Vector2 = Vector2(_fighter.position.x, _fighter.position.z)
 	var targets: Array[Vector2] = tap_targets()
 	var nearest: int = Combat.nearest_target(from, targets, Combat.SHOT_RANGE)

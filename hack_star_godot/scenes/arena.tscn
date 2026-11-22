@@ -70,6 +70,7 @@ mesh = SubResource("BoxMesh_aim")
 [node name="Hud" type="CanvasLayer" parent="."]
 
 [node name="BackButton" parent="Hud" instance=ExtResource("4_back")]
+focus_mode = 0
 
 [node name="TouchJoystick" parent="Hud" instance=ExtResource("3_joystick")]
 anchors_preset = 2

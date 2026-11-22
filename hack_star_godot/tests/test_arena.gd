@@ -106,68 +106,12 @@ func _arena_in_viewport() -> Array:
 	return [viewport, arena]
 
 
-func _mouse_button(position: Vector2, pressed: bool) -> InputEventMouseButton:
-	var event: InputEventMouseButton = InputEventMouseButton.new()
-	event.button_index = MOUSE_BUTTON_LEFT
-	event.pressed = pressed
-	event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
-	event.position = position
-	event.global_position = position
-	return event
-
-
 func _screen_touch(position: Vector2, pressed: bool) -> InputEventScreenTouch:
 	var event: InputEventScreenTouch = InputEventScreenTouch.new()
 	event.index = 0
 	event.pressed = pressed
 	event.position = position
 	return event
-
-
-## The screen point of the ground 3 m east of the fighter.
-func _east_of_fighter(arena: Node3D) -> Vector2:
-	var camera: Camera3D = arena.get_node("Camera")
-	var fighter: Fighter = arena.get_node("Fighter")
-	return camera.unproject_position(fighter.global_position + Vector3(3.0, 0.0, 0.0))
-
-
-func test_a_click_on_the_ground_fires_one_shot_towards_it() -> void:
-	var shown: Array = await _arena_in_viewport()
-	var arena: Node3D = shown[1]
-	var shots: Node3D = arena.get_node("Shots")
-	var model: FighterModel = arena.get_node("Fighter/Model")
-	var at: Vector2 = _east_of_fighter(arena)
-	shown[0].push_input(_mouse_button(at, true), true)
-	shown[0].push_input(_mouse_button(at, false), true)
-	assert_eq(shots.get_child_count(), 1, "one shot")
-	var shot: Shot = shots.get_child(0)
-	assert_almost_eq(shot.direction, Vector3.RIGHT, Vector3.ONE * 0.05, "towards the click")
-	var muzzle: Vector3 = arena.get_node("Fighter/Muzzle").global_position
-	assert_almost_eq(shot.global_position, muzzle, Vector3.ONE * 0.001, "from the muzzle")
-	assert_gt(model.attack_left, 0.0, "the fighter recoils")
-	var fighter_forward: Vector3 = -arena.get_node("Fighter").global_basis.z
-	assert_almost_eq(fighter_forward, Vector3.RIGHT, Vector3.ONE * 0.01, "turned to the aim")
-
-
-func test_holding_the_button_fires_again_only_after_the_cool_down() -> void:
-	var shown: Array = await _arena_in_viewport()
-	var shots: Node3D = shown[1].get_node("Shots")
-	var at: Vector2 = _east_of_fighter(shown[1])
-	shown[0].push_input(_mouse_button(at, true), true)
-	await wait_seconds(0.15)
-	assert_eq(shots.get_child_count(), 1, "still one shot during the cool-down")
-	await wait_seconds(0.3)
-	assert_eq(shots.get_child_count(), 2, "a second shot after the cool-down")
-	shown[0].push_input(_mouse_button(at, false), true)
-
-
-func test_an_emulated_mouse_click_does_not_fire() -> void:
-	var shown: Array = await _arena_in_viewport()
-	var event: InputEventMouseButton = _mouse_button(_east_of_fighter(shown[1]), true)
-	event.device = InputEvent.DEVICE_ID_EMULATION
-	shown[0].push_input(event, true)
-	await wait_process_frames(2)
-	assert_eq(shown[1].get_node("Shots").get_child_count(), 0, "a touch does not fire twice")
 
 
 func test_a_click_on_back_does_not_fire() -> void:

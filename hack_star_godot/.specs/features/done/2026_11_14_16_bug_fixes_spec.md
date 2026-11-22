@@ -30,7 +30,7 @@
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: spec reopened in place for the author's bug reports (issue #33 kept); S26–S32 added (scan only where it works — Godot 4.7 has no camera on Windows; how to scan on this computer; Space shoots at the nearest target; only Space and touch shoot; How to play; controls hint at the start; documentation); no open questions |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 1.60 M (112 k in · 1.47 M cached · 19 k out) | CHF 1.03 (123 credits) | re-planned: author's bug reports — Steps 1–5 kept; Steps 6–10 added (standard, standard, standard, standard, light), D10–D15 (`usage.ps1 -AgentName s16b-lead` from 2026-11-22 10:04:46) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.99 M (96 k in · 2.88 M cached · 14 k out) | CHF 0.56 (67 credits) | Step 6 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:09:00–10:28:40) |---
-
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.66 M (48 k in · 2.60 M cached · 17 k out) | CHF 0.46 (55 credits) | Step 7 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:29:08–10:36:23) |---
 ## Cost summary
 
 This feature used 28.81 M tokens, CHF 10.06 (1200 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
@@ -348,7 +348,7 @@ reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ✅ Done | [→ Step 4](#step-4--progress-across-tabs) |
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 5](#step-5--final-check-readme-and-architecture) |
 | **6** | Scan button only where scanning works | standard (Claude Sonnet 5.5) — one check of the platform, a disabled button and a hint on an existing screen, checked on screenshots (D10) | ✅ Done | [→ Step 6](#step-6--scan-button-only-where-scanning-works) |
-| **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ⬜ Not started | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
+| **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ✅ Done | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
 | **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ⬜ Not started | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
 | **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ⬜ Not started | [→ Step 9](#step-9--controls-hint-at-the-start) |
 | **10** | Final check, README and architecture (author's reports) | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture-authors-reports) |
@@ -576,24 +576,25 @@ In a match and in Training, Space (pressed or held) fires at the nearest target 
 straight ahead, a mouse click fires nothing, and touch works as before (S28, S29).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `project.godot`: the input action `shoot` (physical Space) after D11 (through the editor's
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `project.godot`: the input action `shoot` (physical Space) after D11 (through the editor's
       Input Map or the same `Object(InputEventKey,…)` form as the move actions).
-- [ ] `scenes/arena.gd`: fire while `shoot` is held (`fire(_aim_direction())`), `_tap_direction`
+- [x] `scenes/arena.gd`: fire while `shoot` is held (`fire(_aim_direction())`), `_tap_direction`
       renamed `_aim_direction` and used by the tap and Space; the mouse firing removed (D12) and
       `Combat.ground_point` with its tests; the header comment updated; the arena's **Back**
       `focus_mode = FOCUS_NONE` (`arena.tscn`).
-- [ ] Tests (`test_arena.gd` has 18, `test_match_arena.gd` 9; a new `test_arena_space.gd` if a
+- [x] Tests (`test_arena.gd` has 18, `test_match_arena.gd` 9; a new `test_arena_space.gd` if a
       file would pass 20): Space fires at the nearest dummy in range in Training, straight ahead
       when none is in range; holding Space fires again only after `Combat.COOLDOWN`; in a match
       Space aims at the nearest bot, fires nothing during the countdown and after the end; Space
       does not press **Back** (the scene stays); a mouse click fires nothing; the touch tap and
       drag still fire (existing tests kept).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a short windowed run of Training
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a short windowed run of Training
       (Space held near a dummy) shows the shots going to the dummy.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 10:29
+**Done (2026-11-22 · ~8 min · Claude Sonnet 5.5)** — New input action `shoot` (physical Space) in `project.godot`. `Arena._process` fires `fire(_aim_direction())` while `shoot` is held and `read_player_input` is on (the cool-down `Combat.COOLDOWN` and `player_can_act()` keep the rate and the countdown/end lock); `_tap_direction` is now `_aim_direction`, shared by the tap and Space (nearest target in range, else straight ahead). The mouse code (`_unhandled_input`, `_mouse_held`, `_mouse_position`, `_fire_at_mouse`) and `Combat.ground_point` with its two tests are removed; the header comment says the mouse does not fire; the arena's **Back** has `focus_mode = FOCUS_NONE` (a click and a touch still press it). Tests: new `test_arena_space.gd` (6: nearest dummy, straight ahead, hold and cool-down, a real Space key event, Space does not press Back, a mouse click fires nothing); `test_match_arena.gd` (countdown test now also holds Space; new test: Space at the nearest bot, nothing after the end); the three mouse-fire tests of `test_arena.gd` replaced by the Space tests; touch tap and drag tests kept. A windowed Training run (temporary capture script under `%TEMP%`, not committed) with Space held next to a dummy shows the shots hitting it (damage number on the dummy). `tools/test.ps1` 395/395 passed (exit 0), `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.66 M · CHF 0.46 (55 credits)
 
 ---
 
