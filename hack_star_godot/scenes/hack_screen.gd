@@ -9,6 +9,8 @@ const MAX_CODE_LENGTH: int = 100
 ## The celebration is over after this many seconds (spec S7 and D7: at most 2).
 const CELEBRATION_SECONDS: float = 1.8
 const STAR_COUNT: int = 40
+## The time left of the active hacks is refreshed this often while the screen is open.
+const REFRESH_SECONDS: float = 60.0
 const STAR_TEXTURE_SIZE: int = 32
 ## The camera messages of D8, by the reason `QrScanner` gives.
 const CAMERA_MESSAGES: Dictionary[String, String] = {
@@ -52,6 +54,13 @@ func _ready() -> void:
 	scanner.scanned.connect(_on_scanned)
 	scanner.failed.connect(_on_scan_failed)
 	add_child(scanner)
+	GameState.progress_changed.connect(_refresh)
+	var refresh_timer: Timer = Timer.new()
+	refresh_timer.name = "RefreshTimer"
+	refresh_timer.wait_time = REFRESH_SECONDS
+	refresh_timer.timeout.connect(_refresh)
+	add_child(refresh_timer)
+	refresh_timer.start()
 	_refresh()
 	# A game opened from a QR link (`?hack=`, D9) redeems its code here.
 	if not GameState.start_code.is_empty():
@@ -133,8 +142,10 @@ func _refresh() -> void:
 	for row: Node in _active_list.get_children():
 		_active_list.remove_child(row)
 		row.queue_free()
+	var current: int = GameState.now()
 	for hack_id: String in GameState.active_hacks:
-		_add_row(Hacks.display_name(hack_id))
+		var until: int = GameState.hack_until.get(hack_id, Hacks.FOREVER)
+		_add_row("%s · %s" % [Hacks.display_name(hack_id), Hacks.time_left_text(until, current)])
 	if GameState.active_hacks.is_empty():
 		_add_row("No hacks active")
 	_reset_button.disabled = busy or GameState.active_hacks.is_empty()

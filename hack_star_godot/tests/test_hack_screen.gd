@@ -20,6 +20,7 @@ func before_each() -> void:
 	GameState.save_path = TEST_SAVE
 	DirAccess.remove_absolute(TEST_SAVE)
 	GameState.reset()
+	GameState.clock = func() -> int: return 1_764_000_000
 
 
 func after_each() -> void:
@@ -58,7 +59,7 @@ func test_a_correct_code_unlocks_lists_and_saves_the_hack() -> void:
 	await screen.submit(screen.get_node(EDIT_PATH).text)
 	assert_eq(screen.get_node(MESSAGE_PATH).text, "Unlock everything unlocked!")
 	assert_true(GameState.has_hack(Hacks.UNLOCK_ALL))
-	assert_eq(_listed(screen), ["Unlock everything"])
+	assert_eq(_listed(screen), ["Unlock everything · 3 days left"])
 	assert_eq(screen.get_node(EDIT_PATH).text, "", "the code is cleared")
 	assert_eq(_saved_hacks(), [Hacks.UNLOCK_ALL], "saved")
 	assert_not_null(screen.get_node_or_null("Stars"), "the celebration plays")
@@ -137,7 +138,7 @@ func test_active_hacks_are_listed_when_the_screen_opens() -> void:
 	GameState.activate_hack(Hacks.INFINITE_CREDITS)
 	GameState.activate_hack(Hacks.POWER22)
 	var screen: Control = _show_screen()
-	assert_eq(_listed(screen), ["Unlimited credits", "Power 22"])
+	assert_eq(_listed(screen), ["Unlimited credits · 3 days left", "Power 22 · Lasts for ever"])
 	assert_false(screen.get_node(RESET_PATH).disabled)
 
 

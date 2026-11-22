@@ -18,6 +18,7 @@
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 4.12 M (216 k in · 3.86 M cached · 43 k out) | CHF 2.27 (271 credits) | Part 2 written (5 Steps: reasoning, standard, standard, reasoning, light); also the requirements revision, the moved statements in specs 09, 10, 12 and 15, and the issue (`usage.ps1 -AgentName s16-lead` from 08:20:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.17 M (69 k in · 2.08 M cached · 23 k out) | CHF 1.02 (121 credits) | Step 1 done (`usage.ps1 -AgentName s16-step1` from 08:20:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.52 M (71 k in · 2.43 M cached · 20 k out) | CHF 0.52 (62 credits) | Step 2 done (`usage.ps1 -AgentName s16-steps2-3` from 08:41) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 877 k (7 k in · 867 k cached · 2 k out) | CHF 0.11 (13 credits) | Step 3 done (`usage.ps1 -AgentName s16-steps2-3` from 08:52) |
 ---
 
 # Part 1 · Requirements
@@ -231,7 +232,7 @@ maximum of 15)._
 |------|-------------|-------------------|--------|--------|
 | **1** | Timed hack rules and save file version 3 | reasoning (Claude Opus 5.5) — a new saved format with a migration that starts the 3 days, checks of every field and a clock (D1, D2) | ✅ Done | [→ Step 1](#step-1--timed-hack-rules-and-save-file-version-3) |
 | **2** | Hacks turn off by themselves | standard (Claude Sonnet 5.5) — `GameState` keeps the end times, checks them and keeps the chosen fighter usable; the match keeps its fighter (D3, D4) | ✅ Done | [→ Step 2](#step-2--hacks-turn-off-by-themselves) |
-| **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ⬜ Not started | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
+| **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ✅ Done | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--progress-across-tabs) |
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 5](#step-5--final-check-readme-and-architecture) |
 
@@ -336,16 +337,17 @@ The hack screen shows for each active code how long it stays on, or that it last
 English, and fits the five screen sizes with mouse and touch (S6, S18, S23).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `hack_screen.gd` after D5: rows "<name> · <time left>", refreshed on open, after a code,
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `hack_screen.gd` after D5: rows "<name> · <time left>", refreshed on open, after a code,
       after **Turn all hacks off**, on `progress_changed` and once a minute.
-- [ ] Tests (D8): the rows and their refresh; the hack screen with three rows at the five sizes.
-- [ ] Look check on screenshots: the hack screen with INFINITY, OPENSESAME and POWER22 active at
+- [x] Tests (D8): the rows and their refresh; the hack screen with three rows at the five sizes.
+- [x] Look check on screenshots: the hack screen with INFINITY, OPENSESAME and POWER22 active at
       1280×720 and 390×844 (and 844×390): every row readable, nothing cut or overlapping.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 08:52
+**Done (2026-11-22 · ~3 min · Claude Sonnet 5.5)** — Each row of the active-hacks list reads "<name> · <time left>" (`Hacks.display_name` + `Hacks.time_left_text` from `GameState.hack_until`); the list refreshes when the screen opens, after a code, after **Turn all hacks off**, on `progress_changed` and every 60 s (`RefreshTimer`). New `test_hack_time_rows.gd` (5: the rows, the minute refresh, a hack turning off, all hacks off, three rows at the five sizes); `test_hack_screen` uses a fake clock. Look checked on real windowed screenshots (INFINITY, OPENSESAME, POWER22 active, "1 day 19 hours left" the longest row) at 1280×720, 390×844 and 844×390: every row readable, centred, nothing cut or overlapping (capture code removed). `tools/test.ps1` 375/375 passed (exit 0), `tools/lint.ps1` and `tools/check_tools.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 877 k · CHF 0.11 (13 credits)
 
 ---
 
