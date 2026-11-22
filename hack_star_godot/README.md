@@ -2,8 +2,8 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a home screen, a fighter list with seven fighters (each with
-its skins; the seventh, **Beatbolt**, comes from a child's drawing), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
+It is the first basic game so far: a home screen, a fighter list with nine fighters (each with
+its skins; **Beatbolt** comes from a child's drawing, and **Flarekid** and **Echo** are the author's pictures made from drawings), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
 your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
 codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the chosen world against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. Since spec 09 the game has a new look (see [The look](#the-look)). The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
@@ -97,7 +97,7 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
    [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
 3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
-   arena with three target dummies. **Fighters** lists the seven fighters with their trophies, power
+   arena with three target dummies. **Fighters** lists the nine fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
    the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
    and the hack codes), then explains the words of the game. **Hack** opens the hack screen
@@ -121,6 +121,28 @@ ProtonScatter editor addon and baked into a plain scene (see
 hidden: switch it on in **Info → Show FPS (play-test)** (kept while the game is open). How the
 look is built: [docs/architecture.md](docs/architecture.md) (*UI foundation*, *3D models*); the
 font and icons and their licences: [LICENSES.md](LICENSES.md).
+
+Since the reopening of spec 09:
+
+- **Two picture fighters:** **Flarekid** (a kid whose hood is a flame — the "hero upgrade" of
+  Blaze, Legendary, plays like Blaze) and **Echo** (the sound-powered hero, Mythic, plays like
+  Luna), unlocked for everyone, shown with the author's pictures from `characters/blaze2/` and
+  `characters/echo/`: an outlined cut-out with a soft shadow in 3D, the card picture on the cards.
+  In play they move like paper cut-outs — hop, lean, look left or right, recoil with a muzzle
+  star, flash white when hit, tip over and fade at a knock-out. What one picture cannot do, which
+  pictures would make them better, and the newer art the author has already dropped for a
+  follow-up: [Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo).
+- **Reveal:** every fighter on a pedestal (home, the fighter screen, the result) pops in with a
+  burst of sparks and a halo in its rarity colour; the picture fighters breathe, bob and sway.
+- **Camera views:** **Classic** (the default), **Close**, **Behind** and **Overview** in Training
+  and a match (`V`, `1`–`4`; see [Controls](#controls)). The camera never turns, so the keys move
+  the fighter the same way in every view.
+- **Brighter worlds:** warmer, more saturated colours in both worlds, and new moving decoration —
+  blossoms, waving flags, circling birds and a stream in the canyon; fireflies, pulsing crystals,
+  waterfalls and turning islands in Glimmer Isles.
+- **Lighting presets:** **Bright day** (the default: the brightest and most colourful with the
+  calmest floor, so the fighters stand out most), **Golden sunset**, **Neon night** (the only one
+  with glow), **Candy pop** and **Classic** (the light before), plus a saturation boost (`L`, `K`).
 
 ## How to play a match
 
@@ -339,15 +361,20 @@ the site's data for this address.
   (the shots come with a short cool-down). Space shoots at the nearest target in range (in a match,
   the nearest bot; in Training, the nearest dummy), or straight ahead when none is in range. The
   mouse does not shoot; it does not aim either.
-- **Start hint:** when Training or a match starts, a short hint (Move and Shoot on their own lines,
-  then "More in Info") shows at the bottom of the screen and fades out after a few seconds; it
-  does not block the game.
+- **Start hint:** when Training or a match starts, a short hint (Move, Shoot and the view and light
+  keys on their own lines, then "More in Info") shows at the bottom of the screen and fades out
+  after a few seconds; it does not block the game.
 - **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
   (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
   the nearest dummy in range (straight ahead when none is in range; in a match, the nearest bot).
   A thin line on the ground shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
   The start hint stands above the sticks and names only the sticks.
 - **Info:** the "How to play" section of the Info page repeats these controls and the rules.
+- **Camera views:** in Training and a match **V** switches to the next view — **Classic** (the
+  default, the angled view from above), **Close** (nearer), **Behind** (low, behind the fighter,
+  looking up the arena) and **Overview** (high above, the whole arena) — and **1**–**4** (also on
+  the number pad) choose one directly, also during the countdown. The name shows briefly at the
+  top; the view is kept while the game is open (not saved). Touch players keep Classic.
 - **Lighting:** in Training and a match **L** switches to the next lighting preset — Bright day
   (the default), Golden sunset, Neon night, Candy pop and Classic (the light before the spec 09
   reopening, to compare) — and **K** switches an extra saturation boost on or off, on top of any

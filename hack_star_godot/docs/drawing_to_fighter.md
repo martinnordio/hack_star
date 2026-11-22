@@ -176,6 +176,26 @@ so the outline, the flip, the flash and the see-through keep working). Adding th
 spec; the author's directional gameplay frames in `characters/echo_new/gameplay/frames/` (idle,
 walk and shoot looking down, up and to the side) are such a set, waiting for it (spec 09, D31).
 
+### Art the author has already dropped (for a follow-up)
+
+While spec 09 was being built, the author put newer art next to the two picture fighters. It is
+**not used yet**, not committed and kept out of the web export (`exclude_filter`:
+`characters/*_new/*`, `characters/magmax*/*`, `characters/*.zip`; spec 09, D31), so a follow-up
+spec can pick it up as it is:
+
+| Folder | What is there | What a follow-up can do with it |
+|---|---|---|
+| `characters/echo_new/` | A new hero and card picture of Echo, and `gameplay/frames/`: `echo_<down\|side\|up>_<idle\|walk1\|walk2\|shoot>.png` (directional idle, two walk frames and a shoot pose), a projectile picture, an animation preview and the author's own `SpriteFrames` scene | Echo's in-play animation: the side, back and front views and the walk and shot frames of the table above, chosen by the running direction |
+| `characters/blaze_new/` | The same for Flarekid (Blaze's upgrade): a new hero and card picture and `gameplay/frames/blaze_<down\|side\|up>_<idle\|walk1\|walk2\|shoot>.png`, a projectile, a preview | Flarekid's in-play animation, the same way |
+| `characters/magmax/` | A hero and a card picture of a new character, **Magmax** | A third picture fighter (*Add a picture fighter* below) |
+| `characters/magmax_new/` | Magmax's newer pictures with the same `gameplay/frames/` set | Magmax with its in-play animation from the start |
+
+What such a spec does: import the frames as in step 1 of *Add a picture fighter* (not
+VRAM-compressed, within the web size budget — the frames of the three folders are 36 PNGs, about 8.2 MB, so they need lossy WebP and a `size_limit`), give `CutoutFighters` one texture per pose
+and direction and let `CutoutMotion` choose it, keep the author's preview scripts and scenes out of
+the export, and credit every picture in `LICENSES.md` (which tool made it — still to be confirmed
+by the author for Flarekid and Echo).
+
 ### Add a picture fighter
 
 1. Put the two pictures (`<name>_hero.png`, `<name>_card.png`, transparent background) in a new
