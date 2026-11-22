@@ -59,11 +59,12 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 467 k (271 k in · 184 k cached · 12 k out) | CHF 1.36 (163 credits) | spec runner (coordination) of the reopening (`usage.ps1 -AgentName s09g-runner3` from 2026-11-22 16:55:00) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.37 M (593 k in · 1.77 M cached · 6 k out) | CHF 2.88 (344 credits) | orchestrator (main chat) of the reopening (`usage.ps1 -Agent main` from 2026-11-22 15:11:46; all 4 requests after 16:46, so none counted in the first close's row) |
 | 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 3.99 M (32 k in · 3.94 M cached · 12 k out) | CHF 1.00 (120 credits) | spec closed again after the reopening; web export 41,244,583 bytes (`usage.ps1 -AgentName s09g-close3` from 2026-11-22 20:11:59) |
+| 2026-11-22 | pr | `PR:` | Claude Opus 5.5 | 1.37 M (72 k in · 1.29 M cached · 10 k out) | CHF 0.68 (81 credits) | pull request updated (#36: summary with the reopening and the new Cost summary, both semantic diffs; branch pushed; issue #35 updated; `usage.ps1 -AgentName s09g-pr3` from 2026-11-22 16:55:00) |
 ---
 
 ## Cost summary
 
-This feature used 304.46 M tokens, CHF 102.96 (12283 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md). It covers the first run (Steps 1–20, its review, close and pull request) and the reopening (Steps 21–29, its review and this close).
+This feature used 305.83 M tokens, CHF 103.64 (12364 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md). It covers the first run (Steps 1–20, its review, close and pull request) and the reopening (Steps 21–29, its review, its close and the pull request update).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
 |-------|--------|--------|------------|---------------------------|
@@ -71,8 +72,8 @@ This feature used 304.46 M tokens, CHF 102.96 (12283 credits) — measured, see 
 | plan | Claude Opus 5.5 | 6.51 M | CHF 3.65 (436 credits) | 22.9 % |
 | implementation | Claude Opus 5.5 | 259.59 M | CHF 86.91 (10369 credits) | 545.7 % |
 | review | Claude Opus 5.5 | 33.03 M | CHF 10.07 (1200 credits) | 63.2 % |
-| pr | Claude Opus 5.5 | 1.43 M | CHF 0.66 (78 credits) | 4.1 % |
-| **Total** | | **304.46 M** | **CHF 102.96 (12283 credits)** | **646.5 %** |
+| pr | Claude Opus 5.5 | 2.80 M | CHF 1.34 (159 credits) | 8.4 % |
+| **Total** | | **305.83 M** | **CHF 103.64 (12364 credits)** | **650.7 %** |
 
 **Implementation by Step**
 
