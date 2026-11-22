@@ -29,7 +29,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 12.65 M (86 k in · 12.52 M cached · 43 k out) | CHF 3.18 (379 credits) | Step 12 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:45:43 to 14:56:09) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 13.27 M (54 k in · 13.18 M cached · 37 k out) | CHF 3.05 (364 credits) | Step 13 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:56:50 to 15:09:25) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 650 k (30 k in · 614 k cached · 6 k out) | CHF 0.32 (39 credits) | Step 14 done (`usage.ps1 -AgentName s09g-step14` from 15:12:33 to 15:13:43) |
-
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.32 M (95 k in · 2.22 M cached · 12 k out) | CHF 0.97 (116 credits) | Step 15 done (`usage.ps1 -AgentName s09g-steps15-17` from 15:14:29 to 15:19:30) |
 ---
 
 # Part 1 · Requirements
@@ -341,7 +341,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **12** | Glimmer Isles objects and scatter scene | reasoning (Claude Opus 5.5) — S1; original fantasy props and the ProtonScatter setup (D13) | ✅ Done | [→ Step 12](#step-12--glimmer-isles-objects-and-scatter-scene) |
 | **13** | Glimmer Isles baked and playable | reasoning (Claude Opus 5.5) — S1; the bake tool, the world in a match, web export and frame rate (D12) | ✅ Done | [→ Step 13](#step-13--glimmer-isles-baked-and-playable) |
 | **14** | Gate: author's drawing photo | reasoning (Claude Opus 5.5) — S1; no code: stops the run and tells the author what to do (A0, D14) | ✅ Done | [→ Step 14](#step-14--gate-authors-drawing-photo) |
-| **15** | Drawing workflow document | reasoning (Claude Opus 5.5) — S1; the repeatable workflow, limits and privacy rules (D15) | ⬜ Not started | [→ Step 15](#step-15--drawing-workflow-document) |
+| **15** | Drawing workflow document | reasoning (Claude Opus 5.5) — S1; the repeatable workflow, limits and privacy rules (D15) | ✅ Done | [→ Step 15](#step-15--drawing-workflow-document) |
 | **16** | Drawn fighter in the game | reasoning (Claude Opus 5.5) — S1; reading the drawing and building a recognisable fighter from shapes (D14) | ⬜ Not started | [→ Step 16](#step-16--drawn-fighter-in-the-game) |
 | **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ⬜ Not started | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
 | **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ⬜ Not started | [→ Step 18](#step-18--tool-recommendation-document) |
@@ -748,12 +748,15 @@ No code changed in this Step, so `tools/test.ps1` and `tools/lint.ps1` were not 
 to ask Claude, what the result can and cannot be and how long it takes (A1, A6, A7, D15).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Write the document: photo rules and privacy (A7, as Step 14's request), where the photo goes, metadata removal (D14), the exact request to Claude via Copilot, the limits of A6 (one drawing per run, front view only, no fine lines/texture/writing, name 1–12 letters, a fighter not a new attack, 3D from shapes with the cut-out fallback), expected time; link from the README.
-- [ ] Check: the document's steps match what Step 16 does (re-read after Step 16); links valid; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] Write the document: photo rules and privacy (A7, as Step 14's request), where the photo goes, metadata removal (D14), the exact request to Claude via Copilot, the limits of A6 (one drawing per run, front view only, no fine lines/texture/writing, name 1–12 letters, a fighter not a new attack, 3D from shapes with the cut-out fallback), expected time; link from the README.
+- [x] Check: the document's steps match what Step 16 does (re-read after Step 16); links valid; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 15:14
+**Document** (D15): `docs/drawing_to_fighter.md` — 1 photograph (only the drawing, flat, daylight, nothing else; no people, faces, full names, addresses, places; remove metadata; own idea, no copied character), 2 where it goes (`%USERPROFILE%\hack_star_drawings\` outside the repository or the chat; never committed) and the three choices (name 1–12 letters, the fighter whose attack and starting numbers it copies, the credit name), 3 the exact request to Claude and what Claude then does (re-encode with `Image` ≤ 1024 px `save_png` outside the repository, read shapes and colours, build from shapes in `scenes/drawn/<id>_model.gd` with `ToonMaterials`, the three places of D14 + `SampleProgress`, credit, screenshots next to the photo, the child's "this is my drawing"), the A6 limits (one drawing per run, front view only, shapes not lines, no new attack, name 1–12 letters, the cut-out fallback) and the time (≈ 15 min of the author, 30–60 min of Claude). Linked from the README (*Layout* `docs/` row and a new *How to turn a drawing into a fighter* section). Written before Step 16 from D14 and the Step 16 plan; the re-read against what Step 16 really did is in Step 16's Notes (any change goes into Step 16's commit). *Add another drawing* / *Remove a drawn fighter* come in Step 17.
+**Done (2026-11-22 · ~5 min · Claude Opus 5.5)** — `docs/drawing_to_fighter.md` (photo and privacy rules, where it goes, the request to Claude, limits, time) and the README links; links checked by hand. `tools/test.ps1` 456 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.32 M tokens · CHF 0.97 (116 credits)
 
 ---
 

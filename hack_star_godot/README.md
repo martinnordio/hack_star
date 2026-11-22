@@ -15,7 +15,7 @@ codes: a hack screen to type or scan a code, the three hacks, and a QR code page
 | `scenes/` | Screens and objects (`.tscn`) with their scripts |
 | `game/` | Pure rules (movement, fighters, Prestige, rarity, sample progress, vocabulary, hacks, save file, QR code) without scenes |
 | `tests/` | Automated tests (GUT) |
-| `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)) |
+| `docs/` | The architecture: where each part lives and what comes next ([architecture](docs/architecture.md)); how a drawing becomes a fighter ([drawing to fighter](docs/drawing_to_fighter.md)) |
 | `addons/gut/` | GUT 9.7.1, the test tool, with its licence |
 | `addons/proton_scatter/` | ProtonScatter 4.2.0, the editor tool that places the Glimmer Isles props (not exported), with its licence |
 | `tools/` | PowerShell scripts for the checks, export and serving |
@@ -183,6 +183,12 @@ baked result.
 3. Run `.\tools\test.ps1` (`tests/test_glimmer_isles.gd` checks that every ridge and patch has its
    props, no prop stands on a start point and the baked file needs no addon) and commit both
    scenes.
+
+### How to turn a drawing into a fighter
+
+A child's drawing can become a fighter of the game, built by Claude via Copilot from shapes:
+how to photograph it (privacy first), where to put the photo, the exact request to Claude and
+what the result can and cannot be are in [docs/drawing_to_fighter.md](docs/drawing_to_fighter.md).
 
 ## Run the hack server and the web game
 
