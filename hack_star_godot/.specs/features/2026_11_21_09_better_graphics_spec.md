@@ -23,6 +23,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 11.32 M (74 k in · 11.20 M cached · 39 k out) | CHF 2.84 (339 credits) | Step 6 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:30:18 to 13:42:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.48 M (121 k in · 5.33 M cached · 25 k out) | CHF 1.82 (217 credits) | Step 7 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:43:19 to 13:50:52) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.19 M (251 k in · 5.92 M cached · 25 k out) | CHF 2.47 (295 credits) | Step 8 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:51:50 to 14:13:07) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.44 M (49 k in · 6.37 M cached · 19 k out) | CHF 1.60 (190 credits) | Step 9 done (`usage.ps1 -AgentName s09g-steps7-9` from 14:13:42 to 14:21:06) |
 
 ---
 
@@ -329,7 +330,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ✅ Done | [→ Step 6](#step-6--arena-framing-and-match-hud) |
 | **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ✅ Done | [→ Step 7](#step-7--fighter-cards) |
 | **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ✅ Done | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
-| **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ⬜ Not started | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
+| **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ✅ Done | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
 | **10** | ProtonScatter addon | reasoning (Claude Opus 5.5) — S1; a new pinned dependency kept out of the export (D11) | ⬜ Not started | [→ Step 10](#step-10--protonscatter-addon) |
 | **11** | Worlds and the world choice | reasoning (Claude Opus 5.5) — S1; the arena layout per world, the Glimmer Isles layout and the choice on home (D9, D10) | ⬜ Not started | [→ Step 11](#step-11--worlds-and-the-world-choice) |
 | **12** | Glimmer Isles objects and scatter scene | reasoning (Claude Opus 5.5) — S1; original fantasy props and the ProtonScatter setup (D13) | ⬜ Not started | [→ Step 12](#step-12--glimmer-isles-objects-and-scatter-scene) |
@@ -599,13 +600,18 @@ The result, info, hack and QR screens use the new background, fonts, buttons and
 fighter on the result screen stands on the pedestal (G2, G13, G16).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `MenuBackground`, display font headings, coloured icon buttons and chips on `result_screen`, `info`, `hack_screen`, `qr_page`; the result screen's trophy part (spec 08) in the new look; the QR page keeps printable black-on-white codes.
-- [ ] Update the tests of these screens only where names or the look changed; `test_screen_sizes*.gd` pass.
-- [ ] Check: screenshots of the four screens at five sizes (result: victory with a Prestige celebration); `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] `MenuBackground`, display font headings, coloured icon buttons and chips on `result_screen`, `info`, `hack_screen`, `qr_page`; the result screen's trophy part (spec 08) in the new look; the QR page keeps printable black-on-white codes.
+- [x] Update the tests of these screens only where names or the look changed; `test_screen_sizes*.gd` pass.
+- [x] Check: screenshots of the four screens at five sizes (result: victory with a Prestige celebration); `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 14:13
+**Screens** (G2, G13): `result_screen`, `info`, `hack_screen` and `qr_page` stand on `MenuBackground` (no screen uses `BackgroundPanel` any more); the scrolling content of info, hack and QR codes sits on a dark rounded panel (new theme variation `ContentScroll`, the `ScrollContainer`'s own `panel` style, so no node path changed). `BackButton` shows the back arrow on every screen. **Result**: heading in gold for Victory and light red for Defeat (Time's up white); **Play again** the yellow `PlayButton` with the play icon (60 px text, 40 px on short screens), **Home** a `BlueButton` with the home icon; the trophy part on the new dark `CardPanel` with a gold trophy icon in its corner (`TrophyPanel/TrophyIcon`), the change green for a gain and red for a loss, the count in `NumberLabel`; the Prestige celebration and the gold bar as before; the fighter on its pedestal (Step 4). **Info**: the words in the display font, gold with a dark outline (`WordLabel`; still "bold" for `test_info.gd`), the FPS switch unchanged. **Hack**: **Use code** green with a tick, **Scan QR code** blue with the eye, **Turn all hacks off** pink with a cross, **QR codes** purple with a new drawn `qr` icon (`Icons`, own work), "Active hacks" as a subheading. **QR codes**: the cards on the dark `CardPanel`, **Save image** blue; the codes stay black on white with their quiet zone (`QrImage` unchanged). Chips are not used here — these screens show no trophies, credits or power except the result's trophy part, which got the icon.
+**Tests**: new `tests/test_screens_look.gd` (3: the four screens on the gradient, the back arrow and the dark content panel; the result's yellow Play again, blue Home, trophy icon, gold Victory heading, green gain and pedestal; the hack buttons' colours and icons); no existing test had to change (names and paths kept); `test_screen_sizes*.gd` green. `docs/architecture.md` (theme paragraph: `MenuBackground` on every menu screen, `ContentScroll`, the icons) updated.
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step9\`, viewed): `godot_result_<size>.png` (a victory from 1990 trophies: +10, 2000 / 3000, PRESTIGE 2! with the badge and the gold burst), `godot_info_<size>.png`, `godot_hack_<size>.png` (with Unlimited credits active), `godot_qr_<size>.png` (three codes from a fake server list) at 1280×720, 1180×820, 820×1180, 390×844, 844×390. On the short screen (844×390) the result hides the fighter as spec 08 decided. Nothing changed after looking.
+**Done (2026-11-22 · ~8 min · Claude Opus 5.5)** — the result, info, hack and QR screens on the gradient with the dark content panel, coloured icon buttons, the back arrow, a trophy icon and coloured results; `tests/test_screens_look.gd`. `tools/test.ps1` 433 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 6.44 M tokens · CHF 1.60 (190 credits)
 
 ---
 

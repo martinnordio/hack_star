@@ -9,6 +9,10 @@ extends Control
 const SHORT_HEIGHT: float = 700.0
 ## Seconds the count takes.
 const COUNT_SECONDS: float = 1.0
+const VICTORY_COLOR: Color = Color(1.0, 0.84, 0.2)
+const DEFEAT_COLOR: Color = Color(1.0, 0.5, 0.5)
+const GAIN_COLOR: Color = Color(0.45, 0.95, 0.5)
+const LOSS_COLOR: Color = Color(1.0, 0.5, 0.5)
 
 var _reward: Dictionary = {}
 var _count_tween: Tween
@@ -19,6 +23,7 @@ var _celebrated: bool = false
 @onready var _body: BoxContainer = $Margin/Column/Body
 @onready var _stage: FighterStage = $Margin/Column/Body/FighterStage
 @onready var _trophy_panel: Control = $Margin/Column/TrophyPanel
+@onready var _trophy_icon: TextureRect = $Margin/Column/TrophyPanel/TrophyIcon
 @onready var _change_label: Label = $Margin/Column/TrophyPanel/Trophies/ChangeLabel
 @onready var _count_label: Label = $Margin/Column/TrophyPanel/Trophies/CountLabel
 @onready var _bar: ProgressBar = $Margin/Column/TrophyPanel/Trophies/PrestigeBar
@@ -36,6 +41,10 @@ func _ready() -> void:
 	if result.is_empty():
 		Screens.go_home.call_deferred()
 		return
+	_play_again_button.icon = Icons.get_icon("play")
+	_home_button.icon = Icons.get_icon("home")
+	_trophy_icon.texture = Icons.get_icon("trophy")
+	_trophy_icon.modulate = Rarity.LEGENDARY_GOLD
 	_play_again_button.pressed.connect(_on_play_again_pressed)
 	_home_button.pressed.connect(_on_home_pressed)
 	resized.connect(_arrange)
@@ -52,6 +61,7 @@ func _arrange() -> void:
 	_stage.visible = not short
 	_heading.add_theme_font_size_override("font_size", 56 if short else 96)
 	_play_again_button.custom_minimum_size.y = 72.0 if short else 120.0
+	_play_again_button.add_theme_font_size_override("font_size", 40 if short else 60)
 	_home_button.custom_minimum_size.y = 64.0 if short else 80.0
 
 
@@ -59,9 +69,11 @@ func _show_result(result: Dictionary) -> void:
 	match result["outcome"]:
 		Match.Result.VICTORY:
 			_heading.text = "Victory!"
+			_heading.add_theme_color_override("font_color", VICTORY_COLOR)
 			_line.text = "You are the last one standing!"
 		Match.Result.DEFEAT:
 			_heading.text = "Defeat"
+			_heading.add_theme_color_override("font_color", DEFEAT_COLOR)
 			_line.text = "You finished %s" % Match.ordinal(result["place"])
 		_:
 			_heading.text = "Time's up!"
@@ -100,6 +112,12 @@ func _apply_count(progress: float) -> void:
 	var after: int = _reward["after"]
 	var shown: int = roundi(lerpf(before, after, progress))
 	_change_label.text = "%+d trophies" % (shown - before)
+	var change_color: Color = Color.WHITE
+	if shown > before:
+		change_color = GAIN_COLOR
+	elif shown < before:
+		change_color = LOSS_COLOR
+	_change_label.add_theme_color_override("font_color", change_color)
 	_count_label.text = "%d / %d" % [shown, Prestige.next_at(after)]
 	_bar.value = shown
 	if not _celebrated and _reward["prestige_after"] > _reward["prestige_before"]:

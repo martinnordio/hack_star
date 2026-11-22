@@ -96,6 +96,7 @@ func _build_row(hack: Dictionary) -> Control:
 	save.name = "SaveButton"
 	save.text = "Save image"
 	save.custom_minimum_size = Vector2(0, 80)
+	save.theme_type_variation = &"BlueButton"
 	column.add_child(save)
 	var saved: Label = Label.new()
 	saved.name = "Saved"

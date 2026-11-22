@@ -2,7 +2,7 @@ class_name Icons
 extends RefCounted
 ## The game's icons by name (spec 09, D4): white pictures, tinted where they are used (`modulate`,
 ## `icon_*_color`). Most are Kenney's "Game Icons" (CC0) in `assets/icons/`; the few the pack
-## lacks (coin, bolt, clock, world, eye) are drawn here once, as own work.
+## lacks (coin, bolt, clock, world, eye, qr) are drawn here once, as own work.
 
 const FILES: Dictionary[String, Texture2D] = {
 	"play": preload("res://assets/icons/right.png"),
@@ -20,7 +20,7 @@ const FILES: Dictionary[String, Texture2D] = {
 	"close": preload("res://assets/icons/cross.png"),
 	"star": preload("res://assets/icons/star.png"),
 }
-const DRAWN: Array[String] = ["coin", "bolt", "clock", "world", "eye"]
+const DRAWN: Array[String] = ["coin", "bolt", "clock", "world", "eye", "qr"]
 const DRAWN_SIZE: int = 64
 const SUBSAMPLES: int = 3
 const BOLT: PackedVector2Array = [
@@ -115,3 +115,15 @@ static func _inside_eye(point: Vector2) -> bool:
 	)
 	var iris: float = point.distance_to(Vector2(0.5, 0.5))
 	return lid and (iris > 0.22 or iris < 0.12)
+
+
+# Three finder squares (a ring with a dot) and a few modules, like a QR code.
+static func _inside_qr(point: Vector2) -> bool:
+	for corner: Vector2 in [Vector2(0.04, 0.04), Vector2(0.6, 0.04), Vector2(0.04, 0.6)]:
+		var local: Vector2 = point - corner
+		if local.x >= 0.0 and local.y >= 0.0 and local.x <= 0.36 and local.y <= 0.36:
+			var ring: bool = local.x < 0.08 or local.y < 0.08 or local.x > 0.28 or local.y > 0.28
+			var dot: bool = absf(local.x - 0.18) < 0.07 and absf(local.y - 0.18) < 0.07
+			return ring or dot
+	var cell: Vector2i = Vector2i(floori(point.x * 8.0), floori(point.y * 8.0))
+	return point.x > 0.5 and point.y > 0.5 and (cell.x + cell.y) % 2 == 0

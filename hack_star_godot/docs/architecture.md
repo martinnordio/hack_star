@@ -119,7 +119,12 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   `SubheadingLabel`, `BackgroundPanel`, `CardPanel`, `BadgePanel`, `BadgeLabel`, `WordLabel`,
   `SkinButton` and `LegendarySkinButton` (the gold frame). Screens set no colours or font sizes of
   their own, except the title's size. Colours that code needs (the rarity colours, Legendary
-  gold) are the constants of `Rarity`.
+  gold) are the constants of `Rarity`. Since spec 09 every menu screen (home, fighter list and
+  screen, result, info, hack, QR codes) stands on `scenes/ui/menu_background.tscn`
+  (`MenuBackground`, a gradient with light rays) instead of `BackgroundPanel`; the scrolling
+  content of info, hack and QR codes sits on the dark rounded `ContentScroll` panel; Back shows
+  the back arrow, and the result, hack and fighter screen buttons have their own colours and
+  icons (`Icons`).
 - **Screens:** the autoload `Screens` (`scenes/autoload/screens.gd`) has one constant per screen
   path (`HOME`, `ARENA`, `MATCH`, `RESULT`, `FIGHTERS`, `FIGHTER`, `INFO`, and the hack screens),
   `go_to(path)` and `go_home()`. There is no scene stack: every Back goes home.

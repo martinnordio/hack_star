@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/qr_page.gd" id="1_qr"]
 [ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="2_back"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu_background.tscn" id="9_background"]
 
 [node name="QrPage" type="Control"]
 layout_mode = 3
@@ -12,14 +13,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qr")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" parent="." instance=ExtResource("9_background")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"BackgroundPanel"
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -57,6 +52,7 @@ layout_mode = 2
 [node name="Scroll" type="ScrollContainer" parent="Margin/Column"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_type_variation = &"ContentScroll"
 horizontal_scroll_mode = 0
 
 [node name="Content" type="VBoxContainer" parent="Margin/Column/Scroll"]

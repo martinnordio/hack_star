@@ -395,6 +395,22 @@ border_width_right = 4
 border_width_bottom = 8
 border_color = Color(0.05, 0.03, 0.12, 1)
 
+[sub_resource type="StyleBoxFlat" id="ContentScroll_panel"]
+content_margin_left = 20.0
+content_margin_top = 16.0
+content_margin_right = 20.0
+content_margin_bottom = 16.0
+bg_color = Color(0.08, 0.05, 0.2, 0.78)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.05, 0.03, 0.12, 1)
+
 [sub_resource type="StyleBoxFlat" id="Panel_background"]
 bg_color = Color(0.09, 0.1, 0.16, 1)
 
@@ -555,6 +571,8 @@ BackgroundPanel/base_type = &"Panel"
 BackgroundPanel/styles/panel = SubResource("Panel_background")
 CardPanel/base_type = &"PanelContainer"
 CardPanel/styles/panel = SubResource("CardPanel_panel")
+ContentScroll/base_type = &"ScrollContainer"
+ContentScroll/styles/panel = SubResource("ContentScroll_panel")
 StageFramePanel/base_type = &"PanelContainer"
 StageFramePanel/styles/panel = SubResource("StageFrame_panel")
 BigButton/base_type = &"Button"
@@ -651,8 +669,10 @@ LegendarySkinButton/styles/hover_pressed = SubResource("Legendary_chosen")
 LegendarySkinButton/styles/normal = SubResource("Legendary_normal")
 LegendarySkinButton/styles/pressed = SubResource("Legendary_chosen")
 WordLabel/base_type = &"Label"
-WordLabel/colors/font_outline_color = Color(0.94, 0.95, 1, 1)
-WordLabel/constants/outline_size = 2
+WordLabel/colors/font_color = Color(1, 0.84, 0.2, 1)
+WordLabel/colors/font_outline_color = Color(0.07, 0.05, 0.18, 1)
+WordLabel/constants/outline_size = 6
+WordLabel/fonts/font = ExtResource("1_display")
 LogoHackLabel/base_type = &"Label"
 LogoHackLabel/colors/font_color = Color(1, 0.84, 0.2, 1)
 LogoHackLabel/colors/font_outline_color = Color(0.07, 0.05, 0.18, 1)
