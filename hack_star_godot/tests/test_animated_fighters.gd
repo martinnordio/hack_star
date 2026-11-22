@@ -69,7 +69,7 @@ func test_every_frame_and_projectile_comes_from_the_final_folder() -> void:
 	for fighter_id: String in FOLDERS:
 		var folder: String = FOLDERS[fighter_id]
 		var row: Dictionary = CutoutFighters.FIGHTERS[fighter_id]
-		for kind: String in ["hero", "frames", "projectile"]:
+		for kind: String in ["frames", "projectile"]:
 			assert_true(
 				row[kind] is String, "%s %s: a path, loaded on first use" % [fighter_id, kind]
 			)

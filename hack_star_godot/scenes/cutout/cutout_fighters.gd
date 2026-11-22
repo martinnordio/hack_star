@@ -3,13 +3,14 @@ extends RefCounted
 ## The picture fighters (spec 09, parts C and M, D21, D36): fighters shown as the author's
 ## pictures instead of shapes, animated with the delivered frames. One row per fighter: its card
 ## picture (`card`, shown on its fighter card and skin button as it is, preloaded), the paths of
-## its full-body picture (`hero`), of its delivered `SpriteFrames` (`frames`: `idle_`, `walk_`,
+## its delivered `SpriteFrames` (`frames`: `idle_`, `walk_`,
 ## `shoot_` × `down` (front), `up` (back), `side` (looking right)) and of its shot's picture
 ## (`projectile`) — loaded on first use and kept, so only the fighters in use are in memory —,
 ## the figure's height in metres (`figure_height`, the idle frames' figure), the feet point of the
 ## frames (`feet`, UV, bottom centre) and the figure's top in the idle frames (`top`, UV y), its
 ## main colour, and per view where its shot leaves the shoot frame (`muzzle`, UV: the fist, the
-## blaster, the fireball). All frames of a fighter have one size.
+## blaster, the fireball). All frames of a fighter have one size. The delivered full-body
+## `*_hero.png` is not used (its pose does not match the frames, D39) and not exported.
 ## `FighterModel.setup` asks here after
 ## `DrawnFighters` and builds one outlined, camera-facing quad (`cutout.gdshader`) into the
 ## model's body, so the idle, run and recoil code moves it like the other fighters, plus a soft
@@ -23,7 +24,6 @@ const FIGHTERS: Dictionary[String, Dictionary] = {
 	"flarekid":
 	{
 		"card": preload("res://characters/blaze2/blaze_card.png"),
-		"hero": "res://characters/blaze2/blaze_hero.png",
 		"frames": "res://characters/blaze2/gameplay/blaze_frames.tres",
 		"projectile": "res://characters/blaze2/gameplay/blaze_projectile.png",
 		"figure_height": 2.7,
@@ -36,7 +36,6 @@ const FIGHTERS: Dictionary[String, Dictionary] = {
 	"echo":
 	{
 		"card": preload("res://characters/echo/echo_card.png"),
-		"hero": "res://characters/echo/echo_hero.png",
 		"frames": "res://characters/echo/gameplay/echo_frames.tres",
 		"projectile": "res://characters/echo/gameplay/echo_projectile.png",
 		"figure_height": 2.5,
@@ -49,7 +48,6 @@ const FIGHTERS: Dictionary[String, Dictionary] = {
 	"magmax":
 	{
 		"card": preload("res://characters/magmax2/magmax_card.png"),
-		"hero": "res://characters/magmax2/magmax_hero.png",
 		"frames": "res://characters/magmax2/gameplay/magmax_frames.tres",
 		"projectile": "res://characters/magmax2/gameplay/magmax_projectile.png",
 		"figure_height": 2.5,
@@ -72,7 +70,7 @@ const QUAD_NAME: String = "Cutout"
 const FORESHORTEN: float = 0.4
 
 static var _shadow_material: StandardMaterial3D
-# What was loaded on first use, per fighter id and kind ("frames", "hero", "projectile").
+# What was loaded on first use, per fighter id and kind ("frames", "projectile").
 static var _loaded: Dictionary[String, Resource] = {}
 
 
@@ -100,17 +98,12 @@ static func frame(fighter_id: String, animation: String, index: int = 0) -> Text
 	return sprite_frames(fighter_id).get_frame_texture(animation, index)
 
 
-## The full-body picture, loaded on first use.
-static func hero(fighter_id: String) -> Texture2D:
-	return _load(fighter_id, "hero")
-
-
 ## The picture of the fighter's shot, loaded on first use.
 static func projectile(fighter_id: String) -> Texture2D:
 	return _load(fighter_id, "projectile")
 
 
-## True when the kind ("frames", "hero", "projectile") of the fighter is loaded already.
+## True when the kind ("frames", "projectile") of the fighter is loaded already.
 static func is_loaded(fighter_id: String, kind: String) -> bool:
 	return _loaded.has("%s/%s" % [fighter_id, kind])
 

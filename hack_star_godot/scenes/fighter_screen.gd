@@ -2,7 +2,8 @@ extends Control
 ## The fighter screen: the fighter in 3D on its pedestal in a frame, its rarity, trophies, power
 ## level and Prestige, and one button per skin with the fighter's picture in that skin that
 ## previews it. **Select** makes an unlocked fighter and the previewed skin the home fighter; for
-## a locked fighter it is disabled. The fighter comes from `GameState.viewed_fighter`.
+## a locked fighter it is disabled. The fighter comes from `GameState.viewed_fighter`. An animated
+## picture fighter turns with a drag over it and shoots with a tap (spec 09, M9).
 
 const SKIN_BUTTON: PackedScene = preload("res://scenes/ui/skin_button.tscn")
 
@@ -29,6 +30,7 @@ func _ready() -> void:
 	_rarity_label.text = fighter["rarity"]
 	_rarity_label.add_theme_color_override("font_color", Rarity.color(fighter["rarity"]))
 	_build_skin_buttons(fighter["skins"])
+	_stage.interactive = true
 	_stage.show_fighter(_fighter_id, _skin_id)
 	_select_button.pressed.connect(_on_select_pressed)
 	GameState.progress_changed.connect(_refresh_hack_state)

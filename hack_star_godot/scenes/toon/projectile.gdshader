@@ -8,6 +8,8 @@ render_mode unshaded, cull_disabled, blend_mix, depth_draw_never, shadows_disabl
 
 uniform sampler2D picture : source_color, filter_linear_mipmap, repeat_disable;
 uniform float lift = 0.6;
+// The pedestal's showcase shot fades out with its own material (shots in play stay at 1).
+uniform float fade : hint_range(0.0, 1.0) = 1.0;
 
 void vertex() {
 	vec3 centre = (VIEW_MATRIX * vec4(MODEL_MATRIX[3].xyz, 1.0)).xyz;
@@ -25,5 +27,5 @@ void vertex() {
 void fragment() {
 	vec4 color = texture(picture, UV);
 	ALBEDO = color.rgb;
-	ALPHA = color.a;
+	ALPHA = color.a * fade;
 }
