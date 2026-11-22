@@ -167,6 +167,22 @@ Run them from the `hack_star_godot` folder.
 | `.\tools\lint.ps1` | Runs `gdlint` and `gdformat --check` on `game/`, `scenes/` and `tests/` |
 | `.\tools\export_web.ps1` | Exports the game for the web into `build\web\` |
 | `.\tools\serve_web.ps1` | Serves `build\web\` on port 8060 and forwards `/api` to the hack server; options in [Run the hack server and the web game](#run-the-hack-server-and-the-web-game) |
+| `.\tools\bake_world.ps1` | Bakes Glimmer Isles: rebuilds the ProtonScatter scene `scenes/worlds/glimmer_isles/scatter_source.tscn` with its fixed seeds and writes `baked.tscn`, the only file the game loads (see below) |
+
+### How to change Glimmer Isles
+
+The props of Glimmer Isles are placed with the ProtonScatter addon, but the game never runs the
+addon (it would rebuild on a thread, which the single-threaded web export cannot do): it loads the
+baked result.
+
+1. Open `scenes/worlds/glimmer_isles/scatter_source.tscn` in the editor and change a scatter (its
+   boxes, modifiers or seed), or change a prop in `scenes/worlds/glimmer_isles/props/`. The
+   crystal-ridge and fern-patch boxes follow `game/glimmer_isles_layout.gd`: move them together
+   with the layout.
+2. Run `.\tools\bake_world.ps1`; it writes `scenes/worlds/glimmer_isles/baked.tscn`.
+3. Run `.\tools\test.ps1` (`tests/test_glimmer_isles.gd` checks that every ridge and patch has its
+   props, no prop stands on a start point and the baked file needs no addon) and commit both
+   scenes.
 
 ## Run the hack server and the web game
 

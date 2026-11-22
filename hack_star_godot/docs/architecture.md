@@ -20,7 +20,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen), `GameState` (what the player has and has chosen, with the progress and the active hacks saved), `HackServer` (the calls to the server, see *Server, hack codes and rooms*) and `UiScaler` (the content scale factor of the window, see *Minimum sizes* below) |
 | `game/` | Game rules: plain scripts without scene access |
 | `tests/` | GUT tests, `test_<name>.gd` |
-| `tools/` | PowerShell scripts: `check_tools.ps1`, `test.ps1`, `lint.ps1`, `export_web.ps1`, `serve_web.ps1` (the local setup, with `serve_web.py` and `make_cert.py`), `godot.ps1` (finds Godot), the pinned versions in `versions.json` |
+| `tools/` | PowerShell scripts: `check_tools.ps1`, `test.ps1`, `lint.ps1`, `export_web.ps1`, `serve_web.ps1` (the local setup, with `serve_web.py` and `make_cert.py`), `bake_world.ps1` (with `bake_world.gd`: bakes Glimmer Isles from its ProtonScatter scene), `godot.ps1` (finds Godot), the pinned versions in `versions.json` |
 | `web/` | Browser scripts that `export_web.ps1` copies into `build/web/`: `qr_scanner.js` (the camera and the scan, own work), `jsQR.js` (the QR decoder, unmodified) and its `jsQR-LICENSE.txt` |
 | `addons/gut/` | GUT 9.7.1, the test tool (excluded from the export) |
 | `addons/proton_scatter/` | ProtonScatter 4.2.0 without its `demos/` and `tests/`, the editor tool that places the Glimmer Isles props (excluded from the export; the game uses only its baked result) |
@@ -196,7 +196,16 @@ per kind with fixed seeds: crystals on a grid inside every crystal-ridge rectang
 north, west and east border, ferns and small mushrooms on a grid inside every fern patch, one prop
 per decoration spot, giant mushrooms on the rim and island chunks around and below; negative boxes
 around the start points). The source scene is an editor file only: the game never loads it and the
-export leaves it out. The fighter is `fighter.tscn` with its
+export leaves it out. `tools/bake_world.ps1` runs `tools/bake_world.gd` (headless): it rebuilds
+every scatter on the main thread with its seed, reads the places from each scatter's transform
+list and writes `baked.tscn` — one plain `MultiMeshInstance3D` per prop part, without any script
+or addon reference, the places and the part's colours as metadata (a headless run has no renderer
+to keep MultiMesh transforms). `GlimmerIsles` (`scenes/worlds/glimmer_isles/glimmer_isles.gd`)
+builds the tiled teal-lavender ground with a path of glowing stones, the violet rock border, low
+rock plinths under the crystal ridges, the fern-patch ground, the island's rim and rocky
+underside, a starry-violet gradient sky (`ProceduralSkyMaterial`) and lavender ambient light, and
+loads `baked.tscn` (`load_baked`: fills each MultiMesh and puts the shared `ToonMaterials` on it).
+The fighter is `fighter.tscn` with its
 `FighterModel` on the `Model` node (the same figure as in the fighter screen). Fighters are built the same way by
 `FighterModel` (`scenes/fighter_model.tscn` + `.gd`): the six fighters with their own shapes and
 idea parts (named nodes, e.g. Luna's `RayGun`), and the 14 skins in `FighterModel.LOOKS`. The four
@@ -313,7 +322,9 @@ Tests are GUT 9.7.1 files in `tests/`: `test_movement.gd` checks `game/movement.
 `test_combat.gd` checks the combat rules and `test_arena_layout.gd` the canyon layout (start,
 dummies and bushes free of walls, `in_bush`); `test_world_layouts.gd` the worlds and the Glimmer
 Isles layout (starts free and 4 m apart, every cover reachable on foot) and `test_world_choice.gd`
-the world choice on home and the chosen world in Training and a match (not saved); `test_fighters.gd`, `test_prestige.gd`, `test_rarity.gd`, `test_sample_progress.gd`,
+the world choice on home and the chosen world in Training and a match (not saved);
+`test_glimmer_props.gd` the props and `test_glimmer_isles.gd` the baked Glimmer Isles (no addon,
+props in every ridge and patch, none on a start point, filled with toon materials in the game); `test_fighters.gd`, `test_prestige.gd`, `test_rarity.gd`, `test_sample_progress.gd`,
 `test_vocabulary.gd` and `test_game_state.gd` check the rules and the session (the active hacks,
 saved to a file under `user://test/`); `test_hacks.gd`, `test_save_data.gd` and `test_qr_code.gd`
 check the hack rules, the save file and the QR encoder (against `tests/fixtures/`);

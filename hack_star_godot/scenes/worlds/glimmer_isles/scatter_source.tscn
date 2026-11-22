@@ -29,67 +29,67 @@ stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_dn857"), SubResourc
 
 [sub_resource type="Resource" id="Resource_eq164"]
 script = ExtResource("8_1e26n")
-size = Vector3(3.7, 0.5, 1.2)
+size = Vector3(3.7, 0.75, 1.2)
 
 [sub_resource type="Resource" id="Resource_sl0qi"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.2, 0.5, 3.2)
+size = Vector3(1.2, 0.75, 3.2)
 
 [sub_resource type="Resource" id="Resource_1cyj1"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.2, 0.5, 3.2)
+size = Vector3(1.2, 0.75, 3.2)
 
 [sub_resource type="Resource" id="Resource_8tcp2"]
 script = ExtResource("8_1e26n")
-size = Vector3(2.2, 0.5, 1.2)
+size = Vector3(2.2, 0.75, 1.2)
 
 [sub_resource type="Resource" id="Resource_fq0n5"]
 script = ExtResource("8_1e26n")
-size = Vector3(2.2, 0.5, 1.2)
+size = Vector3(2.2, 0.75, 1.2)
 
 [sub_resource type="Resource" id="Resource_om6ye"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.2, 0.5, 1.2)
+size = Vector3(1.2, 0.75, 1.2)
 
 [sub_resource type="Resource" id="Resource_6jv1i"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.2, 0.5, 1.2)
+size = Vector3(1.2, 0.75, 1.2)
 
 [sub_resource type="Resource" id="Resource_hh1fd"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_64ypl"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_thpwd"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_ti1fi"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_mbgfw"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_w4f2j"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_mbajc"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_ifajh"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_nlvkb"]
 script = ExtResource("8_1e26n")
-size = Vector3(1.5, 0.5, 1.5)
+size = Vector3(1.5, 0.75, 1.5)
 
 [sub_resource type="Resource" id="Resource_d448r"]
 script = ExtResource("9_5v8by")
@@ -453,80 +453,80 @@ lod_generate = false
 path = "res://scenes/worlds/glimmer_isles/props/small_mushroom.tscn"
 
 [node name="Patch0" type="Node3D" parent="Ferns" unique_id=822328001]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.9999995, -0.25, 7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.9999995, 0, 7)
 script = ExtResource("7_cgmee")
 shape = SubResource("Resource_jtf7s")
 
 [node name="Patch1" type="Node3D" parent="Ferns" unique_id=538944915]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -0.25, 7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 7)
 script = ExtResource("7_cgmee")
 shape = SubResource("Resource_801do")
 
 [node name="Patch2" type="Node3D" parent="Ferns" unique_id=149819054]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 script = ExtResource("7_cgmee")
 shape = SubResource("Resource_8casl")
 
 [node name="Patch3" type="Node3D" parent="Ferns" unique_id=1770939246]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.2499995, -0.25, -9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.2499995, 0, -9)
 script = ExtResource("7_cgmee")
 shape = SubResource("Resource_1sxfm")
 
 [node name="Patch4" type="Node3D" parent="Ferns" unique_id=870686927]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, -0.25, -9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, 0, -9)
 script = ExtResource("7_cgmee")
 shape = SubResource("Resource_rjxw2")
 
 [node name="StartGuard0" type="Node3D" parent="Ferns" unique_id=1883938537]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 9.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.5)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_6i6wa")
 
 [node name="StartGuard1" type="Node3D" parent="Ferns" unique_id=776841718]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_rowgk")
 
 [node name="StartGuard2" type="Node3D" parent="Ferns" unique_id=1585207494]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, -0.25, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -4)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_ch6yv")
 
 [node name="StartGuard3" type="Node3D" parent="Ferns" unique_id=2045160686]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, -0.25, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -4)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_st3cu")
 
 [node name="StartGuard4" type="Node3D" parent="Ferns" unique_id=1392416288]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.25, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_mprs5")
 
 [node name="StartGuard5" type="Node3D" parent="Ferns" unique_id=1085085269]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -0.25, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -10)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_1qfd3")
 
 [node name="StartGuard6" type="Node3D" parent="Ferns" unique_id=1654276870]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, -0.25, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 10)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_s1axu")
 
 [node name="StartGuard7" type="Node3D" parent="Ferns" unique_id=1570146846]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, -0.25, 3.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 3.5)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_h8fej")
 
 [node name="StartGuard8" type="Node3D" parent="Ferns" unique_id=1922552449]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, -0.25, 3.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 3.5)
 script = ExtResource("7_cgmee")
 negative = true
 shape = SubResource("Resource_j3klx")
