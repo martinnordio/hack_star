@@ -67,7 +67,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 15.11 M (85 k in · 14.97 M cached · 53 k out) | CHF 3.76 (448 credits) | Step 32 done (`usage.ps1 -AgentName s09g-steps30-32` from 21:00:08 to 21:19:53) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.57 M (115 k in · 4.43 M cached · 26 k out) | CHF 1.67 (199 credits) | Step 33 done (`usage.ps1 -AgentName s09g-steps33-35` from 21:21:08 to 21:37:44) |---
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 9.21 M (300 k in · 8.86 M cached · 46 k out) | CHF 3.52 (420 credits) | Step 34 done; hero pictures unused and out of the export (`usage.ps1 -AgentName s09g-steps33-35` from 21:37:44 to 22:01:54) |---
-## Cost summary
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.81 M (59 k in · 7.72 M cached · 31 k out) | CHF 2.06 (246 credits) | Step 35 done (`usage.ps1 -AgentName s09g-steps33-35` from 22:01:54 to 22:16:19) |---## Cost summary
 
 This feature used 305.83 M tokens, CHF 103.64 (12364 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md). It covers the first run (Steps 1–20, its review, close and pull request) and the reopening (Steps 21–29, its review, its close and the pull request update).
 
@@ -750,7 +750,7 @@ and closed again the same day after Step 29, its review and the review fixes (se
 | **32** | Facing, walk and shoot pose in play | reasoning (Claude Opus 5.5) — S1; the animator with the camera's orientation in every view, keeping every effect (D37) | ✅ Done | [→ Step 32](#step-32--facing-walk-and-shoot-pose-in-play) |
 | **33** | Own projectiles | reasoning (Claude Opus 5.5) — S1; a picture look for the shot without touching the combat rules (D38) | ✅ Done | [→ Step 33](#step-33--own-projectiles) |
 | **34** | Showcase on the pedestal, turn and shoot on the fighter screen | reasoning (Claude Opus 5.5) — S1; a timeline on every pedestal and mouse/touch input, graphics-heavy (D39) | ✅ Done | [→ Step 34](#step-34--showcase-on-the-pedestal-turn-and-shoot-on-the-fighter-screen) |
-| **35** | Living cards on the fighter list | reasoning (Claude Opus 5.5) — S1; animated cards at five sizes without a cost off screen (D40) | ⬜ Not started | [→ Step 35](#step-35--living-cards-on-the-fighter-list) |
+| **35** | Living cards on the fighter list | reasoning (Claude Opus 5.5) — S1; animated cards at five sizes without a cost off screen (D40) | ✅ Done | [→ Step 35](#step-35--living-cards-on-the-fighter-list) |
 | **36** | Performance and the after set | reasoning (Claude Opus 5.5) — S1; measuring four animated fighters against the baseline, the after set compared (D42) | ⬜ Not started | [→ Step 36](#step-36--performance-and-the-after-set) |
 | **37** | Final check of the animated characters, README, architecture and licences | reasoning (Claude Opus 5.5) — S1; every Godot check, the size report and the documents | ⬜ Not started | [→ Step 37](#step-37--final-check-of-the-animated-characters-readme-architecture-and-licences) |
 
@@ -1750,14 +1750,20 @@ sweep in the rarity colour crosses the card — while the list fits and scrolls 
 D40).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `FighterCard`'s `Figure` and `scenes/ui/card_sweep.gdshader` (D40); animated only while visible; locked cards grey and still.
-- [ ] `tests/test_living_cards.gd` (D41); `test_fighter_list.gd` and `test_screen_sizes.gd` green.
-- [ ] Screenshots (D2; 1280×720 and 820×1180): the list at the picture fighters at three moments 0.5 s apart (figure and sweep moving), and with a locked fighter (unlock-all off) for the grey card; viewed; Notes say what was changed after looking.
-- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] `FighterCard`'s `Figure` and `scenes/ui/card_sweep.gdshader` (D40); animated only while visible; locked cards grey and still.
+- [x] `tests/test_living_cards.gd` (D41); `test_fighter_list.gd` and `test_screen_sizes.gd` green.
+- [x] Screenshots (D2; 1280×720 and 820×1180): the list at the picture fighters at three moments 0.5 s apart (figure and sweep moving), and with a locked fighter (unlock-all off) for the grey card; viewed; Notes say what was changed after looking.
+- [x] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 22:02
+**Living cards** (D40): `FighterCard` of an unlocked animated fighter builds, on its first `setup`, a `FigureBox` (a plain `Control`, so the card's layout never resets the figure's stretch) at the bottom right of the picture with a `Figure` (`TextureRect`, 60 % of the picture's height, the frame's aspect, 8 × 6 px from the edges) and a soft oval shadow under its feet, and a `Sweep` over the picture (`scenes/ui/card_sweep.gdshader`: added light in a soft diagonal band, the rarity's colour lightened 55 % towards white, only where the card picture is). Its loop: the front idle frame with breathing for 1.2 s, then the front walk loop (`walk_down`, 7.5 frames a second) with a 4 px hop for 1.6 s; the sweep crosses in 0.8 s once every 4 s, each card 0.6 s after the one before it in the list. The card moves on only while `is_on_screen()` (its rect meets the list's scroll area), so cards out of sight cost nothing but the check; a locked card is grey with its lock as before, without figure and sweep and with no processing. The frames come from `CutoutFighters.frame()` (loaded on first use).
+**Differs from D40** (added after looking): the figure gets the fighters' dark outline (`scenes/ui/card_figure.gdshader`, 2.5 px, the ring of `cutout.gdshader`) and the oval shadow — without them the small figure melted into the card picture of the same fighter behind it (same colours), with them it stands out at both sizes.
+**Tests**: new `tests/test_living_cards.gd` (6: only the three cards live, the figure idles with breathing, walks the four walk frames with a hop and idles again at 60 % height, the sweep in the rarity colour crosses once a period from the top left to the bottom right over the picture only and the next card later, a card below the visible part does not move until the list is scrolled to it, a locked card is grey and still and gets its figure back when unlocked, the figure stays on its card at the five sizes); `test_fighter_list.gd` and `test_screen_sizes.gd` unchanged and green.
+**Screenshots** (D2; a temporary `-s` script under `%TEMP%\hs09d\`, deleted; the list scrolled to the end at 1280×720 and 820×1180, four moments 0.5 s apart, the Echo card every 0.2 s over 2.8 s at 1280×720, and Echo locked): MagMax, Echo and Flarekid stand at the bottom right of their portraits, idle and then walk towards the viewer with a small hop; the light band crosses the portrait diagonally in the rarity's colour and is gone after 0.8 s; the other cards are unchanged; the list fits and scrolls as before; locked Echo is a grey portrait with the lock, no figure, no sweep. **Changed after looking:** the outline and the shadow (above); the sweep made a little wider and brighter (band 0.2, strength 0.75) so it reads on the bright portraits.
+**Done (2026-11-22 · ~15 min · Claude Opus 5.5)** — the cards of MagMax, Echo and Flarekid live on the fighter list: their outlined figure idles and walks on the card picture and a light sweep in the rarity colour crosses it every 4 s, only while the card is in the visible part of the list; locked cards stay grey and still; the list fits and scrolls at the five sizes. `tools/test.ps1` 555 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 7.81 M tokens · CHF 2.06 (246 credits)
 
 ---
 
