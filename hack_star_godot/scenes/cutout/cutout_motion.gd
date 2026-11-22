@@ -1,22 +1,16 @@
 class_name CutoutMotion
 extends RefCounted
-## How a picture fighter (`CutoutFighters`) moves, a flat "paper" figure (spec 09, C4, C5, D23,
-## D24): standing, it breathes (stretch and squash), bobs and sways around the view axis (the
-## shader's `tilt`), each at its own speed; running, it hops with a squash on landing and leans
-## towards where it looks. A shot shows a star at the picture's muzzle, a hit a white flash, and a
-## knock-out tips the picture over and fades it. `FighterModel` applies the poses and effects.
+## How a picture fighter (`CutoutFighters`) moves besides its frames (spec 09, C4, D23, D24, D37):
+## standing, it breathes (stretch and squash) and bobs, each at its own speed (the walk and the
+## views are `CutoutAnimator`'s). A shot shows a star at the shoot frame's muzzle, a hit a white
+## flash, and a knock-out tips the picture over and fades it. `FighterModel` applies the poses and
+## effects.
 
 const BREATH_SPEED: float = 2.2
 const BREATH_STRETCH: float = 0.03
 const BREATH_SQUASH: float = 0.02
 const BOB_SPEED: float = 1.6
 const BOB_HEIGHT: float = 0.04
-const SWAY_SPEED: float = 0.9
-const SWAY_ANGLE: float = 4.0 * PI / 180.0
-const HOP_SPEED: float = 10.0
-const HOP_HEIGHT: float = 0.18
-const LAND_SQUASH: Vector2 = Vector2(1.08, 0.9)
-const LEAN_ANGLE: float = 8.0 * PI / 180.0
 const FLASH_SECONDS: float = 0.12
 const MUZZLE_FLASH_SECONDS: float = 0.08
 const MUZZLE_FLASH_SIZE: float = 1.5
@@ -26,24 +20,14 @@ const KNOCK_OUT_TIP: float = 80.0 * PI / 180.0
 static var _star: Texture2D
 
 
-## The pose at `time` seconds: the body's lift over the feet (`lift`, metres), its scale
-## (`scale`) and the picture's turn around the view axis (`tilt`, radians).
-static func pose(time: float, running: bool, facing_left: bool) -> Dictionary:
-	if running:
-		var hop: float = absf(sin(time * HOP_SPEED))
-		var landing: float = 1.0 - smoothstep(0.0, 0.35, hop)
-		return {
-			"lift": hop * HOP_HEIGHT,
-			"scale":
-			Vector3(lerpf(1.0, LAND_SQUASH.x, landing), lerpf(1.0, LAND_SQUASH.y, landing), 1.0),
-			"tilt": LEAN_ANGLE if facing_left else -LEAN_ANGLE,
-		}
+## The standing pose at `time` seconds: the body's lift over the feet (`lift`, metres) and its
+## scale (`scale`).
+static func pose(time: float) -> Dictionary:
 	var wave: float = sin(time * BREATH_SPEED)
 	return {
 		# Up from the feet only, so the picture never sinks into the ground.
 		"lift": (0.5 + 0.5 * sin(time * BOB_SPEED)) * BOB_HEIGHT,
 		"scale": Vector3(1.0 - wave * BREATH_SQUASH, 1.0 + wave * BREATH_STRETCH, 1.0),
-		"tilt": sin(time * SWAY_SPEED) * SWAY_ANGLE,
 	}
 
 
@@ -72,13 +56,14 @@ static func build_muzzle_flash(parent: Node3D) -> MeshInstance3D:
 	return star
 
 
-## Puts the star where the picture's muzzle shows on screen: the picture stands at `body`, turns
-## to the camera and shrinks with its foreshortening (`cutout.gdshader`), mirrored when `mirrored`.
+## Puts the star where the muzzle of the shoot frame of the animator's view shows on screen: the
+## picture stands at `body`, turns to the camera and shrinks with its foreshortening
+## (`cutout.gdshader`), mirrored as the animator's frame.
 static func place_muzzle_flash(
-	star: Node3D, fighter_id: String, body: Node3D, mirrored: bool, camera: Camera3D
+	star: Node3D, animator: CutoutAnimator, body: Node3D, camera: Camera3D
 ) -> void:
-	var offset: Vector2 = CutoutFighters.muzzle_offset(fighter_id)
-	if mirrored:
+	var offset: Vector2 = CutoutFighters.muzzle_offset(animator.fighter_id, animator.view)
+	if animator.mirrored:
 		offset.x = -offset.x
 	var view: Basis = camera.global_basis.orthonormalized()
 	var shrink: float = lerpf(1.0, clampf(view.y.y, 0.0, 1.0), CutoutFighters.FORESHORTEN)

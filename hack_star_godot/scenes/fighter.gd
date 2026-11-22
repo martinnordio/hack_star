@@ -5,8 +5,8 @@ extends CharacterBody3D
 ## A fighter can be hit: `hit(amount)` lowers `health` (a damage number rises, the health bar,
 ## when `show_health_bar` was called, follows), it heals after a quiet time (`heal_step`) and
 ## at 0 health it is knocked out: it spins and shrinks (a picture fighter tips over and fades),
-## then is hidden with its collision off. A hit flashes a picture fighter white, and the input's
-## x turns its picture left or right (`face`).
+## then is hidden with its collision off. A hit flashes a picture fighter white, and the input turns
+## it to its back, front or side view (`face`).
 
 signal hurt(amount: int)
 signal knocked_out_now
@@ -17,9 +17,6 @@ const NUMBER_Y: float = 2.6
 const PICTURE_BAR_GAP: float = 0.3
 const KNOCK_OUT_SECONDS: float = 0.5
 const KNOCK_OUT_SPINS: float = 2.0
-## A picture fighter turns left or right only when the input's x is at least this (C5: moving
-## straight up or down keeps the last facing).
-const FACING_MIN_X: float = 0.1
 
 @export var speed_per_second: float = 5.0
 ## The fighter counts as running above this speed (m/s).
@@ -73,16 +70,18 @@ func _physics_process(_delta: float) -> void:
 	velocity = Movement.velocity(input_direction, speed_per_second)
 	move_and_slide()
 	model.running = velocity.length() > running_speed
+	if model.cutout_animator() != null:
+		model.cutout_animator().walk_speed = velocity.length()
 	if not input_direction.is_zero_approx():
 		rotation.y = Movement.facing_yaw(input_direction)
 		face(input_direction)
 
 
-## Turns a picture fighter's picture to the left or the right of the screen along `direction`
-## (input or aim; x is the screen's right); a direction straight up or down keeps the facing.
+## Turns a picture fighter to the view of `direction` (input or aim; x is the screen's right, y its
+## down): its back going up the screen, its front going down, its side going left or right
+## (`CutoutAnimator`).
 func face(direction: Vector2) -> void:
-	if absf(direction.x) >= FACING_MIN_X:
-		model.facing_left = direction.x < 0.0
+	model.face(direction)
 
 
 func _process(delta: float) -> void:

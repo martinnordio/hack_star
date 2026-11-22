@@ -293,6 +293,7 @@ func fire_from(fighter: Fighter, direction: Vector2, cooldown: float) -> bool:
 	fighter.note_action()
 	fighter.rotation.y = Movement.facing_yaw(direction)
 	fighter.face(direction)
+	fighter.model.play_shoot(direction)
 	fighter.model.play_attack()
 	fighter.model.muzzle_flash()
 	var shot: Shot = Shot.new()

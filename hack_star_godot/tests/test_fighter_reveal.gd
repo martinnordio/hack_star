@@ -1,7 +1,7 @@
 extends GutTest
 ## The reveal on the pedestal and the picture fighters' idle (spec 09, C3, C4, D23, D30): every
 ## fighter shown on home or the fighter screen pops in with sparks and a halo in its rarity
-## colour; the off-screen pictures do not; the picture fighters breathe, bob and sway.
+## colour; the off-screen pictures do not; the picture fighters breathe and bob (no sway, D37).
 
 const HOME: PackedScene = preload("res://scenes/home.tscn")
 const HomeScript: GDScript = preload("res://scenes/home.gd")
@@ -116,20 +116,19 @@ func test_a_refresh_with_the_same_fighter_does_not_reveal_again() -> void:
 	assert_true(stage.is_revealing(), "another fighter")
 
 
-func test_picture_fighters_breathe_bob_and_sway_when_standing() -> void:
-	for fighter_id: String in ["flarekid", "echo"]:
+func test_picture_fighters_breathe_and_bob_when_standing_without_a_sway() -> void:
+	for fighter_id: String in ["flarekid", "echo", "magmax"]:
 		var model: FighterModel = MODEL_SCENE.instantiate()
 		model.idle_enabled = false
 		add_child_autofree(model)
 		model.setup(fighter_id)
 		var material: ShaderMaterial = model.get_cutout().material_override
 		var heights: Array[float] = []
-		var tilts: Array[float] = []
 		var stretches: Array[float] = []
 		for step: int in 40:
 			model.animate(step * 0.2)
 			heights.append(model.get_body().position.y)
-			tilts.append(material.get_shader_parameter("tilt"))
+			assert_true(material.get_shader_parameter("tilt") in [null, 0.0], "no sway (D37)")
 			stretches.append(model.get_body().scale.y)
 			assert_almost_eq(
 				model.get_body().scale.x * model.get_body().scale.y, 1.0, 0.02, "breathing"
@@ -137,9 +136,6 @@ func test_picture_fighters_breathe_bob_and_sway_when_standing() -> void:
 		assert_gte(heights.min(), 0.0, "%s: never under the ground" % fighter_id)
 		assert_gt(heights.max() - heights.min(), 0.03, "%s: bobs" % fighter_id)
 		assert_lte(heights.max(), CutoutMotion.BOB_HEIGHT + 0.001)
-		assert_gt(tilts.max(), 0.05, "%s: sways one way" % fighter_id)
-		assert_lt(tilts.min(), -0.05, "%s: and the other" % fighter_id)
-		assert_lte(absf(tilts.max()), deg_to_rad(4.0) + 0.001, "at most 4 degrees")
 		assert_gt(stretches.max(), 1.02, "%s: stretches" % fighter_id)
 		assert_lt(stretches.min(), 0.98, "%s: and squashes" % fighter_id)
 
