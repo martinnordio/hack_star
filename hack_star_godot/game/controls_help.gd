@@ -4,7 +4,9 @@ extends RefCounted
 ## the "How to play" section of the Info page. The numbers come from the rules, so the texts
 ## stay true when a rule changes. English only (spec 16, S23).
 
-const KEYBOARD_HINT: String = "Move: WASD or arrow keys\nShoot: Space\nView: V or 1-4"
+const KEYBOARD_HINT: String = (
+	"Move: WASD or arrow keys\nShoot: Space\n" + "View: V or 1-4, light: L and K"
+)
 const TOUCH_HINT: String = "Move: left stick\nShoot: drag or tap the right stick"
 const MORE_IN_INFO: String = "More in Info"
 
@@ -22,9 +24,14 @@ static func how_to_play() -> Array[Dictionary]:
 					+ "shoot that way, or tap it to shoot at the nearest target. Space and a tap fire "
 					+ "at the nearest target in range (%d metres), or straight ahead. "
 					+ "V switches the camera view, 1 to 4 choose one (%s). "
+					+ "L switches the lighting (%s), K a saturation boost. "
 					+ "Back goes home."
 				)
-				% [int(Combat.SHOT_RANGE), ", ".join(_view_names())]
+				% [
+					int(Combat.SHOT_RANGE),
+					", ".join(_view_names()),
+					", ".join(_light_names()),
+				]
 			),
 		},
 		{
@@ -78,4 +85,12 @@ static func _view_names() -> PackedStringArray:
 	var names: PackedStringArray = []
 	for view_id: String in CameraViews.ids():
 		names.append(CameraViews.view_name(view_id))
+	return names
+
+
+# The lighting presets' names in the order of `L`.
+static func _light_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for preset_id: String in LightPresets.ids():
+		names.append(LightPresets.preset_name(preset_id))
 	return names

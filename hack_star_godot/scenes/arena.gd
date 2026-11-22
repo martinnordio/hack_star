@@ -8,7 +8,8 @@ extends Node3D
 ## `shoot` action, held to keep firing) and the right stick (`AimJoystick`, drag and release or a
 ## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
 ## `V` and `1`–`4` switch the camera view (`CameraViews`, spec 09 V1–V6), kept in
-## `GameState.camera_view`; `HudToast` names the view.
+## `GameState.camera_view`; `L` switches the lighting preset and `K` the saturation boost
+## (`LightPresets`, `WorldLighting`, L3–L6), kept in `GameState`; `HudToast` names them.
 
 ## The camera looks at the fighter from above and behind (towards +z), at this angle down.
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -71,6 +72,7 @@ var _view: String = CameraViews.CLASSIC
 var _blend_from: Transform3D = Transform3D.IDENTITY
 var _blend_left: float = 0.0
 var _toast: HudToast
+var _lighting: WorldLighting
 var _dust_left: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
@@ -117,6 +119,12 @@ func _ready() -> void:
 	_toast = HudToast.new()
 	$Hud.add_child(_toast)
 	_view = GameState.camera_view
+	# The world has built its own light by now (its `_ready` runs first).
+	_lighting = WorldLighting.new()
+	_lighting.name = "Lighting"
+	add_child(_lighting)
+	_lighting.setup($WorldEnvironment, $Sun)
+	_lighting.apply(GameState.light_preset, GameState.saturation_boost)
 	if training:
 		for spot: Vector2 in ArenaLayout.dummies():
 			var dummy: TargetDummy = DUMMY_SCENE.instantiate()
@@ -175,6 +183,12 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("light_next"):
+		set_light_preset(LightPresets.next(GameState.light_preset))
+		return
+	if event.is_action_pressed("saturation_boost"):
+		set_saturation_boost(not GameState.saturation_boost)
+		return
 	if event.is_action_pressed("view_next"):
 		set_view(CameraViews.next(_view))
 		return
@@ -203,9 +217,29 @@ func set_view(view_id: String) -> void:
 	_toast.show_text(CameraViews.view_name(view_id))
 
 
-## The toast that names the view (and, from Step 27, the lighting presets).
+## The toast that names the view and the lighting preset.
 func toast() -> HudToast:
 	return _toast
+
+
+## The arena's lighting (`WorldLighting`).
+func lighting() -> WorldLighting:
+	return _lighting
+
+
+## Lights the arena with the preset `preset_id`, kept for the next match and Training, and names
+## it in the toast.
+func set_light_preset(preset_id: String) -> void:
+	_lighting.apply(preset_id, GameState.saturation_boost)
+	GameState.light_preset = _lighting.preset()
+	_toast.show_text(LightPresets.preset_name(_lighting.preset()))
+
+
+## Switches the saturation boost on or off, kept for the next match and Training, and says so.
+func set_saturation_boost(boost: bool) -> void:
+	_lighting.apply(GameState.light_preset, boost)
+	GameState.saturation_boost = boost
+	_toast.show_text(LightPresets.boost_text(boost))
 
 
 func _physics_process(_delta: float) -> void:

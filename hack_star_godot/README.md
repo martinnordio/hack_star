@@ -348,6 +348,10 @@ the site's data for this address.
   A thin line on the ground shows the aim while the stick is dragged. Both sticks appear only on a touch screen.
   The start hint stands above the sticks and names only the sticks.
 - **Info:** the "How to play" section of the Info page repeats these controls and the rules.
+- **Lighting:** in Training and a match **L** switches to the next lighting preset — Bright day
+  (the default), Golden sunset, Neon night, Candy pop and Classic (the light before the spec 09
+  reopening, to compare) — and **K** switches an extra saturation boost on or off, on top of any
+  preset. The name shows briefly at the top; the choice is kept while the game is open (not saved).
 - **Dummies:** in Training three straw dummies stand in the arena. A shot takes off part of the health bar
   and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.
 - **Bushes:** in a cactus patch the fighter turns see-through, so you can look at the ground

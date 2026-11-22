@@ -33,6 +33,11 @@ func test_the_controls_name_the_keys_and_the_sticks() -> void:
 	assert_true(controls.contains("V switches the camera view"), "the view keys (V7)")
 	for view_id: String in CameraViews.ids():
 		assert_true(controls.contains(CameraViews.view_name(view_id)), view_id)
+	assert_true(ControlsHelp.KEYBOARD_HINT.contains("light: L and K"), "the light keys (L3, L4)")
+	assert_true(controls.contains("L switches the lighting"), "the light keys (L3)")
+	assert_true(controls.contains("K a saturation boost"), "the boost key (L4)")
+	for preset_id: String in LightPresets.ids():
+		assert_true(controls.contains(LightPresets.preset_name(preset_id)), preset_id)
 	assert_true(ControlsHelp.TOUCH_HINT.contains("stick"))
 
 
