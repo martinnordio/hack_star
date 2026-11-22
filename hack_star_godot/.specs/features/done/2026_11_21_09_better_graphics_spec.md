@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress — reopened 2026-11-22: two characters, views, lighting
+> **Status:** ✅ Complete — closed on feature/better-graphics (reopened 2026-11-22 for two characters, views and lighting; re-closed 2026-11-22)
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
@@ -56,20 +56,23 @@
 | 2026-11-22 | review | `REVIEW:` | Claude Opus 5.5 | 16.10 M (313 k in · 15.72 M cached · 67 k out) | CHF 5.08 (605 credits) | semantic diff of the reopening written: change record `changes/done/better-graphics-2/` (13 blocks), review page [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html) and index row, PR text `semantic_diff.md`; checks 6 pass · 3 n/a · 0 fail (agent `s09g-review3`, `usage.ps1 -AgentName s09g-review3` from 2026-11-22 16:55:00; `CODE REVIEW:` included) |
 | 2026-11-22 | review | `CODE REVIEW:` | Claude Opus 5.5 | included in the review row | included in the review row | Approve — 0 Blocking · 1 Should-fix · 4 Nit (3 fix now, 2 plan decision); check_tools, lint, test (516 passed), export_web exit 0 |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.47 M (139 k in · 6.30 M cached · 32 k out) | CHF 2.18 (259 credits) | review fixes of the reopening #1 (bar and numbers over the picture in every view) and #2 (crystal pulse on own materials), decisions D32 (#4) and D33 (#5), a Deferred Items row (shader pre-warm); #3 at `CLOSE:`; `tools/test.ps1` 517 passed, `lint.ps1` exit 0; commit `Fix review findings (#35)` (`usage.ps1 -AgentName s09g-close3` 2026-11-22 19:59:31–20:11:59) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 467 k (271 k in · 184 k cached · 12 k out) | CHF 1.36 (163 credits) | spec runner (coordination) of the reopening (`usage.ps1 -AgentName s09g-runner3` from 2026-11-22 16:55:00) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.37 M (593 k in · 1.77 M cached · 6 k out) | CHF 2.88 (344 credits) | orchestrator (main chat) of the reopening (`usage.ps1 -Agent main` from 2026-11-22 15:11:46; all 4 requests after 16:46, so none counted in the first close's row) |
+| 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 3.99 M (32 k in · 3.94 M cached · 12 k out) | CHF 1.00 (120 credits) | spec closed again after the reopening; web export 41,244,583 bytes (`usage.ps1 -AgentName s09g-close3` from 2026-11-22 20:11:59) |
 ---
 
 ## Cost summary
 
-This feature used 187.57 M tokens, CHF 63.20 (7541 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+This feature used 304.46 M tokens, CHF 102.96 (12283 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md). It covers the first run (Steps 1–20, its review, close and pull request) and the reopening (Steps 21–29, its review and this close).
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
 |-------|--------|--------|------------|---------------------------|
 | requirements | Claude Opus 5.5 | 3.90 M | CHF 1.67 (200 credits) | 10.5 % |
-| plan | Claude Opus 5.5 | 2.87 M | CHF 1.86 (222 credits) | 11.7 % |
-| implementation | Claude Opus 5.5 | 162.44 M | CHF 54.02 (6446 credits) | 339.3 % |
-| review | Claude Opus 5.5 | 16.93 M | CHF 4.99 (595 credits) | 31.3 % |
+| plan | Claude Opus 5.5 | 6.51 M | CHF 3.65 (436 credits) | 22.9 % |
+| implementation | Claude Opus 5.5 | 259.59 M | CHF 86.91 (10369 credits) | 545.7 % |
+| review | Claude Opus 5.5 | 33.03 M | CHF 10.07 (1200 credits) | 63.2 % |
 | pr | Claude Opus 5.5 | 1.43 M | CHF 0.66 (78 credits) | 4.1 % |
-| **Total** | | **187.57 M** | **CHF 63.20 (7541 credits)** | **396.9 %** |
+| **Total** | | **304.46 M** | **CHF 102.96 (12283 credits)** | **646.5 %** |
 
 **Implementation by Step**
 
@@ -95,11 +98,24 @@ This feature used 187.57 M tokens, CHF 63.20 (7541 credits) — measured, see [C
 | Step 18 | Claude Opus 5.5 | 2.49 M | CHF 1.13 (135 credits) | 7.1 % |
 | Step 19 | Claude Opus 5.5 | 434 k | CHF 0.14 (17 credits) | 0.9 % |
 | Step 20 | Claude Opus 5.5 | 5.86 M | CHF 1.57 (187 credits) | 9.8 % |
+| Step 21 | Claude Opus 5.5 | 3.98 M | CHF 1.47 (175 credits) | 9.2 % |
+| Step 22 | Claude Opus 5.5 | 18.47 M | CHF 4.98 (594 credits) | 31.3 % |
+| Step 23 | Claude Opus 5.5 | 9.62 M | CHF 3.14 (374 credits) | 19.7 % |
+| Step 24 | Claude Opus 5.5 | 13.91 M | CHF 3.63 (433 credits) | 22.8 % |
+| Step 25 | Claude Opus 5.5 | 7.87 M | CHF 2.89 (345 credits) | 18.2 % |
+| Step 26 | Claude Opus 5.5 | 8.86 M | CHF 2.67 (318 credits) | 16.7 % |
+| Step 27 | Claude Opus 5.5 | 11.93 M | CHF 3.47 (414 credits) | 21.8 % |
+| Step 28 | Claude Opus 5.5 | 3.17 M | CHF 1.76 (210 credits) | 11.1 % |
+| Step 29 | Claude Opus 5.5 | 6.04 M | CHF 1.46 (174 credits) | 9.2 % |
 | Review fixes | Claude Opus 5.5 | 6.41 M | CHF 2.05 (245 credits) | 12.9 % |
 | Spec runner (coordination) | Claude Opus 5.5 | 1.26 M | CHF 2.14 (255 credits) | 13.4 % |
 | Orchestrator (main chat) | Claude Opus 5.5 | 5.19 M | CHF 8.00 (955 credits) | 50.3 % |
-| CLOSE | Claude Opus 5.5 | 4.42 M | CHF 1.21 (145 credits) | 7.6 % |
-| **Total implementation** | | **162.44 M** | **CHF 54.02 (6446 credits)** | **339.3 %** |
+| CLOSE (first close) | Claude Opus 5.5 | 4.42 M | CHF 1.21 (145 credits) | 7.6 % |
+| Review fixes (reopening) | Claude Opus 5.5 | 6.47 M | CHF 2.18 (259 credits) | 13.6 % |
+| Spec runner (coordination, reopening) | Claude Opus 5.5 | 467 k | CHF 1.36 (163 credits) | 8.6 % |
+| Orchestrator (main chat, reopening) | Claude Opus 5.5 | 2.37 M | CHF 2.88 (344 credits) | 18.1 % |
+| CLOSE (reopening) | Claude Opus 5.5 | 3.99 M | CHF 1.00 (120 credits) | 6.3 % |
+| **Total implementation** | | **259.59 M** | **CHF 86.91 (10369 credits)** | **545.7 %** |
 
 # Part 1 · Requirements
 
@@ -522,14 +538,17 @@ their direction (V1, V4); Q13 the reveal → for every fighter (C3).
 ## Closing summary
 
 _First close (2026-11-22, Steps 1–20). The spec was reopened in place the same day for the
-author's request — two new characters, views and lighting (C1–C11, V1–V7, L1–L8, Steps 21–29);
-it is closed again after Step 29._
+author's request — two new characters, views and lighting (C1–C11, V1–V7, L1–L8, Steps 21–29) —
+and closed again the same day after Step 29, its review and the review fixes (see **Reopened
+2026-11-22** below)._
 
 **Built:** The Godot game has the new cartoon look: every menu screen stands on a purple gradient with soft light rays (`MenuBackground`), titles, headings, buttons and numbers use the outlined display font Lilita One, the buttons are coloured with icons (Kenney *Game Icons*, CC0, plus a few drawn in code) and show hover and press from the theme alone, and trophies, credits, power, the timer and the fighters left are icon chips. Home has a two-colour logo, the chosen fighter on a pedestal and a large yellow **Play**; the fighter cards have rarity-coloured backdrops (grey with a lock for locked fighters); the fighter screen a framed stage and skin pictures in rarity frames; the result, info, hack and QR screens follow. Fighters, the canyon and the new world share cel-shaded toon materials with an outline of fixed pixel width (`ToonMaterials`), the camera keeps the near wall under 10 % of the screen in every world, and the FPS label is hidden unless **Show FPS (play-test)** is switched on in Info. A second world, **Glimmer Isles** (crystal ridges, glow-fern cover, giant mushrooms and floating islands, original art), is placed with ProtonScatter 4.2.0 in the editor and baked into plain MultiMeshes (`tools/bake_world.ps1`), so no addon code ships; the world button on home chooses it for **Play** and **Training** (`Worlds`, per-world `ArenaLayout`). Mattia's drawing became **Beatbolt**, a seventh fighter built from shapes (`scenes/drawn/`), unlocked from the start and playable; `docs/drawing_to_fighter.md` says how to add or remove a drawn fighter and `docs/drawing_tools.md` recommends a Google Flow → Meshy → Claude workflow with sources, terms and fit limits. The web export grew by 0.16 MB (budget 5 MB). Nothing in `server/` or `ui/` changed.
 
 **Differs from the plan:** Step 19 (the B6 trial with Google Flow and Meshy) is 🔜 Deferred: it needs the author's own accounts; its instructions are in `docs/drawing_tools.md`. What only the author and Mattia can do is not invented and stays in **Deferred Items**: the G1 side-by-side verdict, Mattia's A3 "this is my drawing", the iPad play-test (G14, W5, G15's 5 s) and the trial — the spec is closed with these open, as D17 foresaw. Step 7 shows a "Locked" chip instead of a price on locked cards, because the game has no prices yet (D19). Step 16 keeps Beatbolt standing instead of the drawing's crouch (the animations need it) and scales him to 0.85. The code review (Approve, 0 Blocking · 2 Should-fix · 8 Nit) was handled: findings 1–7 fixed (the architecture names the five look tests; the near-wall test runs in every world; a Markdown heading in Step 16; the ordered list's status and the double 09 explained; two float/int warnings; `Hacks.power_text`, the theme's `BackgroundPanel` and `IconButton` and the icons `gear`, `star`, `singleplayer` removed; `GameState.reset()` also sets `ArenaLayout` back to the canyon, with a test), findings 8 and 9 deferred (tool scripts without tests and lint; the kit's schema accepts only S-numbered statements), finding 10 decided as D19 (prices come with Unlock and Upgrade S2 and the Skins Shop).
 
 **Files:** `hack_star_godot/assets/` (`fonts/` Lilita One, `icons/` Kenney), `hack_star_godot/scenes/` (`toon/`, `ui/` — theme, `icons`, `icon_chip`, `menu_background`, `world_choice`, `fighter_card`, `fighter_stage`, `fighter_pictures` —, `drawn/`, `worlds/glimmer_isles/`, `home`, `arena`, `match_arena`, `canyon`, `fighter_model`, `fighter_screen`, `result_screen`, `info`, `hack_screen`, `qr_page`, `autoload/game_state`), `hack_star_godot/game/` (`worlds`, `glimmer_isles_layout`, `arena_layout`, `fighters`, `sample_progress`, `hacks`, `bot_brain`, `controls_help`), `hack_star_godot/addons/proton_scatter/` (editor only, excluded from the export), `hack_star_godot/tools/` (`bake_world.ps1`, `bake_world.gd`, `check_tools.ps1`, `versions.json`), `hack_star_godot/tests/` (the look, world, framing and drawn-fighter tests), `hack_star_godot/docs/` (`architecture.md`, `drawing_to_fighter.md`, `drawing_tools.md`), `hack_star_godot/README.md`, `hack_star_godot/LICENSES.md`, `project.godot`, `export_presets.cfg`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
+
+**Reopened 2026-11-22:** *What was added (Steps 21–29).* Two new fighters from the author's pictures, **Flarekid** (`characters/blaze2/`) and **Echo** (`characters/echo/`), unlocked from the start and playable: each is an outlined, camera-facing paper cut-out (`CutoutFighters`, `scenes/toon/cutout.gdshader`) with a soft shadow, its card picture on the cards and skin buttons, see-through in cover; in play it hops with a squash and a lean, looks left or right with the movement and the shot, shows a muzzle star, flashes white on a hit and tips over and fades at a knock-out (`CutoutMotion`); the four pictures are imported web-safe (0.67 MB for both, C11) and credited in `LICENSES.md`. Every fighter on a pedestal pops in with sparks and a halo in its rarity colour (the reveal of `FighterStage`), and the picture fighters breathe, bob and sway. **Views:** `V` and `1`–`4` switch Training and a match between Classic, Close, Behind and Overview (`CameraViews`) with a short blend and the view's name in a toast (`HudToast`); the camera never turns, so the controls stay the same. **Brighter worlds:** both worlds more vivid, with four new kinds of moving decoration each and no collider (`CanyonDecor`: blossoms, flags, birds, a stream; `GlimmerDecor`: fireflies, pulsing crystals, waterfalls, turning islands). **Lighting presets:** `L` switches between Bright day (the default), Golden sunset, Neon night, Candy pop and Classic, `K` a saturation boost (`LightPresets`, `WorldLighting`). Measured on the desktop every preset × world × view stays within L8 (draw calls below the baseline); the web export is 41,244,423 bytes (+0.88 MB vs Step 1, 4.1 MB under the budget). *Differences from the plan:* nothing was trimmed in Step 28 (every row within L8); the author dropped newer art into `characters/` during the run — kept untracked and out of the web export (D31, extended in Step 25); the health bar and the damage numbers of a picture fighter now sit over the picture along the camera's up instead of straight up (review fix, below); L8 is judged on the warm run of each pair (D32) and V5 after the 5 s start hint (D33). *Review* ([2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), range `bccd2ed..f10d71c`): Approve, 0 Blocking · 1 Should-fix · 4 Nit, all handled — #1 (Should-fix: in Overview a picture fighter's bar and numbers showed under him in the lower half of the screen) fixed with a stronger test (both worlds, every view, the fighter at the centre, edges and corners; checked on real 820×1180 screenshots), #2 (the crystal pulse changed the shared `ToonMaterials` entry) fixed with an own copy per crystal part and a test, #3 (the ordered list) set to *closed*, #4 decided as D32 (with a Deferred row for shader pre-warm), #5 decided as D33 (no change). Open with the author (Deferred Items): the iPad check of the reopened parts, the AI image tool's name for `LICENSES.md`, a touch button for views and lighting, more pictures for Flarekid and Echo, the author's newer art for a follow-up, and the shader pre-warm. *Files:* `hack_star_godot/characters/` (`blaze2/`, `echo/`), `scenes/cutout/`, `scenes/toon/` (`cutout`, `flag`, `flowing_water` shaders), `scenes/ui/` (`hud_toast`, `fighter_pictures`, the reveal of `fighter_stage`), `scenes/` (`arena`, `home`, `canyon`, `fighter`, `fighter_model`, `damage_number`, `world_lighting`, `canyon_decor`, `worlds/glimmer_isles/` — `glimmer_decor`, `glimmer_isles`, the props and the re-baked `baked.tscn` —, `autoload/game_state`), `game/` (`camera_views`, `light_presets`, `fighters`, `sample_progress`, `controls_help`), `project.godot` (the view and light keys), `export_presets.cfg` (the filter for the author's art), the reopening's tests (`test_cutout_fighters`, `test_fighter_reveal`, `test_camera_views`, `test_light_presets`, `test_world_decor`), `README.md`, `docs/architecture.md`, `docs/drawing_to_fighter.md`, `LICENSES.md`; the change record `changes/done/better-graphics-2/` and the review page.
 
 ## 2 · Spec Overview
 
@@ -1422,7 +1441,7 @@ Started: 2026-11-22 19:34
 | The iPad check of the reopened parts: ≥ 30 fps with Flarekid and Echo, every view and the default preset (L8, G14) | Needs the author's iPad; Step 28 measures on the desktop only | This spec, Step 29 / author |
 | Side and back views, run, shot and hit frames, or a 3D model for Flarekid and Echo | C8: only one front picture each exists; `docs/drawing_to_fighter.md` *Picture fighters* says what to deliver | The author, then a later spec |
 | Which AI image tool made the Flarekid and Echo pictures, for `LICENSES.md` | C9: "tool to be confirmed by the author" | The author |
-| The author's newer art (echo_new directional gameplay frames, blaze_new, magmax, magmax_new) — a follow-up can use them for Echo's and Flarekid's in-play animation and a new fighter | D31: dropped into `characters/` during the run (`characters/magmax/`, `characters/echo_new/` with `gameplay/frames/`, `characters/blaze_new/`, `characters/magmax_new/`, `characters/echo_godot_gameplay.zip`); not part of this reopening's request, kept untracked and out of the web export (`characters/*_new/*`, `characters/magmax*/*`, `characters/*.zip`) | A later Godot spec |
+| The author's newer art (echo_new directional gameplay frames, blaze_new — renamed by the author to `flarekid_new` during the close, still covered by the export filter `characters/*_new/*` —, magmax, magmax_new) — a follow-up can use them for Echo's and Flarekid's in-play animation and a new fighter | D31: dropped into `characters/` during the run (`characters/magmax/`, `characters/echo_new/` with `gameplay/frames/`, `characters/blaze_new/`, `characters/magmax_new/`, `characters/echo_godot_gameplay.zip`); not part of this reopening's request, kept untracked and out of the web export (`characters/*_new/*`, `characters/magmax*/*`, `characters/*.zip`) | A later Godot spec |
 | Pre-warm the shaders at load (e.g. draw every material once behind the loading screen), so the first match of a session has no compile hitch (up to ~489 ms in Step 28's first runs) | D32 (code review 2026-11-22 of the reopening, finding 4): L8 is judged on the warm run; the first-run hitch is a one-time cost, not part of this reopening | A later Godot performance spec |
 
 ---
@@ -1436,6 +1455,7 @@ Started: 2026-11-22 19:34
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: spec reopened for the author's request — two new characters, views, lighting (C1–C11, V1–V7, L1–L8; Steps 1–20 kept, Steps 21–29 added, D20–D30) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff (reopening) | — | [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html) (change record `changes/done/better-graphics-2/`, 13 blocks; checks 6 pass · 3 n/a · 0 fail) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `bccd2ed..f10d71c` | Approve | 0 Blocking · 1 Should-fix · 4 Nit |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | review fixes of the reopening | handled | #1 and #2 fixed with tests (`Fix review findings (#35)`), #3 at `CLOSE:`, #4 → D32, #5 → D33 |
 
 ### Code review 2026-11-22
 
@@ -1472,7 +1492,7 @@ Range `bccd2ed..f10d71c` (requirements revision, re-plan, Steps 21–29; parts C
 
 - [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29)
-- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items)
+- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items); the reopening's Steps 21–29 are all ✅ Done (`tools/test.ps1` 517 passed after the review fixes), its iPad check (L8, G14) waits for the author too
 - [x] Review · review page written; no Blocking finding open (second review of the reopening: [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), 0 Blocking)
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again after Step 29)_
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again 2026-11-22 after the second review's fixes)_
 - [ ] Pull request · opened with the spec summary ([#36](https://github.com/martinnordio/hack_star/pull/36), from `feature/better-graphics` to `main`); reviewed; merged; branch deleted — *not ticked:* opened, not merged (the author reviews and merges)

@@ -3,7 +3,7 @@
 > Estimate — see [COSTS.md](../../.specs/kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-22; do not edit by hand.
 
-**All specs: ~507.94 M · ~CHF 186.37 (22227 credits)**
+**All specs: ~624.82 M · ~CHF 226.13 (26969 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -15,7 +15,7 @@
 | [Graphics Demo](features/done/2026_11_21_06_graphics_demo_spec.md) | ✅ Complete | — | ~3.35 M · ~CHF 1.76 | ~26.39 M · ~CHF 7.46 | ~7.43 M · ~CHF 3.04 | — | — | ~37.17 M · ~CHF 12.26 |
 | [First Match](features/done/2026_11_21_07_first_match_spec.md) | ✅ Complete | — | ~2.48 M · ~CHF 1.46 | ~20.30 M · ~CHF 5.70 | ~8.22 M · ~CHF 3.06 | — | — | ~31.00 M · ~CHF 10.22 |
 | [Trophies and Prestige](features/done/2026_11_21_08_trophies_spec.md) | ✅ Complete | — | ~2.40 M · ~CHF 1.32 | ~14.72 M · ~CHF 7.36 | ~12.77 M · ~CHF 5.59 | — | — | ~29.89 M · ~CHF 14.27 |
-| [Better Graphics](features/done/2026_11_21_09_better_graphics_spec.md) | ✅ Complete | ~3.90 M · ~CHF 1.67 | ~2.87 M · ~CHF 1.86 | ~162.44 M · ~CHF 54.02 | ~16.93 M · ~CHF 4.99 | ~1.43 M · ~CHF 0.66 | — | ~187.57 M · ~CHF 63.20 |
+| [Better Graphics](features/done/2026_11_21_09_better_graphics_spec.md) | ✅ Complete | ~3.90 M · ~CHF 1.67 | ~6.51 M · ~CHF 3.65 | ~259.59 M · ~CHF 86.91 | ~33.03 M · ~CHF 10.07 | ~1.43 M · ~CHF 0.66 | — | ~304.46 M · ~CHF 102.96 |
 | [Bug Fixes](features/done/2026_11_21_16_bug_fixes_spec.md) | ✅ Complete | — | ~5.72 M · ~CHF 3.30 | ~31.95 M · ~CHF 7.31 | ~18.93 M · ~CHF 6.71 | ~1.76 M · ~CHF 0.05 | — | ~58.36 M · ~CHF 17.37 |
 | [Unlock and Upgrade](features/2026_11_22_09_unlock_and_upgrade_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Skins Shop](features/2026_11_22_10_skins_shop_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
@@ -26,7 +26,7 @@
 | [Accounts, Create a Fighter, New Fighters and Languages](features/2026_11_22_15_accounts_fighters_and_languages_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Fighter Studio, Saves and Music](features/2026_11_22_17_fighter_studio_saves_and_music_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Worlds and World Coins](features/2026_11_22_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| **All specs** | | | | | | | | **~507.94 M · ~CHF 186.37** |
+| **All specs** | | | | | | | | **~624.82 M · ~CHF 226.13** |
 
 ## Implementation by Step
 
@@ -106,6 +106,15 @@
 | Better Graphics | 18 | Claude Opus 5.5 | ~2.49 M | ~CHF 1.13 (135 credits) |
 | Better Graphics | 19 | Claude Opus 5.5 | ~434 k | ~CHF 0.14 (17 credits) |
 | Better Graphics | 20 | Claude Opus 5.5 | ~5.86 M | ~CHF 1.57 (187 credits) |
+| Better Graphics | 21 | Claude Opus 5.5 | ~3.98 M | ~CHF 1.47 (175 credits) |
+| Better Graphics | 22 | Claude Opus 5.5 | ~18.47 M | ~CHF 4.98 (594 credits) |
+| Better Graphics | 23 | Claude Opus 5.5 | ~9.62 M | ~CHF 3.14 (374 credits) |
+| Better Graphics | 24 | Claude Opus 5.5 | ~13.91 M | ~CHF 3.63 (433 credits) |
+| Better Graphics | 25 | Claude Opus 5.5 | ~7.87 M | ~CHF 2.89 (345 credits) |
+| Better Graphics | 26 | Claude Opus 5.5 | ~8.86 M | ~CHF 2.67 (318 credits) |
+| Better Graphics | 27 | Claude Opus 5.5 | ~11.93 M | ~CHF 3.47 (414 credits) |
+| Better Graphics | 28 | Claude Opus 5.5 | ~3.17 M | ~CHF 1.76 (210 credits) |
+| Better Graphics | 29 | Claude Opus 5.5 | ~6.04 M | ~CHF 1.46 (174 credits) |
 | Bug Fixes | 1 | Claude Opus 5.5 | ~2.17 M | ~CHF 1.02 (121 credits) |
 | Bug Fixes | 2 | Claude Sonnet 5.5 | ~2.52 M | ~CHF 0.52 (62 credits) |
 | Bug Fixes | 3 | Claude Sonnet 5.5 | ~877 k | ~CHF 0.11 (13 credits) |
