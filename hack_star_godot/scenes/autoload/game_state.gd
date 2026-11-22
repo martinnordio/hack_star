@@ -79,6 +79,7 @@ func reset() -> void:
 	entrance_played = false
 	show_fps = false
 	world = Worlds.CANYON
+	ArenaLayout.use(world)
 	pictures = {}
 	match_settings = MatchSettings.new()
 	last_result = {}

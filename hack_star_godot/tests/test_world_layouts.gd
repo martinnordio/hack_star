@@ -34,6 +34,15 @@ func test_the_canyon_is_the_default_and_its_layout_is_unchanged() -> void:
 	assert_eq(ArenaLayout.world(), Worlds.CANYON, "an unknown world gives the canyon")
 
 
+func test_game_state_reset_sets_the_active_layout_back_to_the_canyon() -> void:
+	GameState.world = Worlds.GLIMMER_ISLES
+	ArenaLayout.use(Worlds.GLIMMER_ISLES)
+	GameState.reset()
+	assert_eq(GameState.world, Worlds.CANYON)
+	assert_eq(ArenaLayout.world(), Worlds.CANYON)
+	assert_eq(ArenaLayout.walls(), ArenaLayout.WALLS)
+
+
 func test_glimmer_isles_becomes_the_active_layout() -> void:
 	ArenaLayout.use(Worlds.GLIMMER_ISLES)
 	assert_eq(ArenaLayout.world(), Worlds.GLIMMER_ISLES)

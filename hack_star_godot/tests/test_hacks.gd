@@ -46,8 +46,8 @@ func test_unlock_all_unlocks_every_fighter() -> void:
 func test_power_22_raises_the_maximum_and_shows_it() -> void:
 	assert_eq(Hacks.max_power(_none), 11)
 	assert_eq(Hacks.max_power(_power), 22)
-	assert_eq(Hacks.power_text(7, _none), "Power 7 / 11")
-	assert_eq(Hacks.power_text(7, _power), "Power 7 / 22")
+	assert_eq(Hacks.power_amount(7, _none), "7 / 11")
+	assert_eq(Hacks.power_amount(7, _power), "7 / 22")
 
 
 func test_a_qr_link_carries_the_code_and_reads_back_as_the_code() -> void:

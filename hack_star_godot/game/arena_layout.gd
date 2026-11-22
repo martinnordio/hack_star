@@ -2,10 +2,12 @@ class_name ArenaLayout
 extends RefCounted
 ## The arena on the ground plane (x right, z towards the camera, as `Movement`): the border and
 ## the solid blocks, the patches that hide (bushes), the decoration, the dummy spots and the
-## start points. Pure data and rules. The constants below are the canyon's layout (`Canyon`
+## start points. Data and rules. The constants below are the canyon's layout (`Canyon`
 ## builds its scenery from them); Glimmer Isles has its own (`GlimmerIslesLayout`). `use` sets
 ## the active world (spec 09, D9) and the functions and accessors (`walls()`, `bushes()`,
-## `starts()`, ...) read the active layout, so the rules are the same in every world.
+## `starts()`, ...) read the active layout, so the rules are the same in every world. The active
+## layout is static state: it stays after an arena closes, and `GameState.reset()` sets it back
+## to the canyon.
 
 ## Width (x) and depth (z) of the arena in metres, centred on the origin.
 const SIZE: Vector2 = Vector2(20.0, 26.0)

@@ -89,7 +89,7 @@ without a scene.
 | `movement.gd` (`Movement`) | Input direction to velocity on the ground plane (`clamp_direction`, `velocity`, `step`), joystick direction (`joystick_direction`), facing (`facing_yaw`), the camera's smoothing towards the fighter (`follow`) |
 | `controls_help.gd` (`ControlsHelp`) | The texts that say how to play (spec 16, D13, English only): `KEYBOARD_HINT` and `TOUCH_HINT` (the start hint of Training and a match), `MORE_IN_INFO`, and `how_to_play()` (the sections of the Info page, each `{title, text}`); the numbers (shot range, bots, match length, heal delay, respawn, trophies, Prestige size) come from the rules, so the texts stay true (`tests/test_controls_help.gd`) |
 | `combat.gd` (`Combat`) | The combat rules (D3 of specs 06 and 07): the numbers (`SHOT_SPEED` 16 m/s, `SHOT_RANGE` 9 m, `COOLDOWN` 0.35 s, `DAMAGE` 480, `DUMMY_HEALTH` 2400, `RESPAWN_SECONDS` 5, `AIM_DEAD_ZONE` 0.3, `TAP_SECONDS` 0.25), `can_fire(now, last_fire, cooldown)` (bots pass `COOLDOWN × level.cooldown`), `take_damage`, `is_broken`, `health_ratio(health, max_health)` and `health_color` (green, yellow below half, red below a quarter), `heal(health, max_health, quiet_seconds, delta, delay, per_second)` (no healing before the delay, never above full), `release_aim` (a drag or a tap, or no shot) and `nearest_target`; there is no ground-point (mouse) aim any more (spec 16, D12) |
-| `arena_layout.gd` (`ArenaLayout`) | The canyon as data (D2): the size 20 × 26 m (`SIZE`), the border and the rock blocks (`WALLS`), the cactus patches (`BUSHES`), the decoration spots without collision (`DECORATION`), the three dummy spots (`DUMMIES`), the start point (`START`, near the camera side) and the nine match start points (`STARTS`: the first is `START`, the others spread over the canyon, free of walls and bushes, at least 4 m apart); `in_bush(point)` and `is_free(point, radius)` (the spots lie clear of walls, `tests/test_arena_layout.gd`). Per world (spec 09 D9): these constants are the canyon's layout; `use(world_id)` makes a world's layout active (the canyon, or `GlimmerIslesLayout`; an unknown id gives the canyon), and `in_bush`, `is_free` and the accessors `walls()`, `border_count()`, `bushes()`, `decoration()`, `dummies()`, `starts()`, `start()` read the active one, so `Arena`, `MatchArena`, `BotBrain` and `ControlsHelp` work the same in every world |
+| `arena_layout.gd` (`ArenaLayout`) | The canyon as data (D2): the size 20 × 26 m (`SIZE`), the border and the rock blocks (`WALLS`), the cactus patches (`BUSHES`), the decoration spots without collision (`DECORATION`), the three dummy spots (`DUMMIES`), the start point (`START`, near the camera side) and the nine match start points (`STARTS`: the first is `START`, the others spread over the canyon, free of walls and bushes, at least 4 m apart); `in_bush(point)` and `is_free(point, radius)` (the spots lie clear of walls, `tests/test_arena_layout.gd`). Per world (spec 09 D9): these constants are the canyon's layout; `use(world_id)` makes a world's layout active (the canyon, or `GlimmerIslesLayout`; an unknown id gives the canyon), and `in_bush`, `is_free` and the accessors `walls()`, `border_count()`, `bushes()`, `decoration()`, `dummies()`, `starts()`, `start()` read the active one, so `Arena`, `MatchArena`, `BotBrain` and `ControlsHelp` work the same in every world. The active layout is static state: it stays after an arena closes, and `GameState.reset()` sets it back to the canyon with `GameState.world` |
 | `worlds.gd` (`Worlds`) | The worlds (spec 09 W1, D9): `LIST` (`canyon` "Canyon" first, the default; `glimmer_isles` "Glimmer Isles"), `ids()`, `get_world(id)`, `is_unlocked(id)` (every known world, from the start; no save field) |
 | `glimmer_isles_layout.gd` (`GlimmerIslesLayout`) | The layout of Glimmer Isles as data: the canyon's size and border, its own crystal ridges (`WALLS`), glow-fern patches (`BUSHES`, they hide like the cactus patches), decoration spots (crystal, mushroom), three dummy spots and nine start points (free, at least 4 m apart; `tests/test_world_layouts.gd`) |
 | `match_settings.gd` (`MatchSettings`) | The settings of a match in one place (D2 of spec 07): `match_seconds` 120, `bot_count` 3 (1–8, clamped), `bot_level` "easy", `time_up_result` "draw" (or "defeat"), `bots_fight_each_other`, `countdown_seconds` 3, `fighter_health` 3200 (7 hits of 480), `heal_delay` 3 s, `heal_per_second` 0.13, `bush_sight` 2.5 m, `trophies_per_win` 10 and `trophies_per_defeat` 0 (spec 08; the win number is never negative, the defeat number is never above 0, so it may be negative), and `LEVELS` (easy, medium, hard: reaction, aim error, cool-down and speed factors, sight; `level(name)`, an unknown name gives easy). `GameState.match_settings` holds the instance the next match reads at its start; it is not saved |
@@ -102,7 +102,7 @@ without a scene.
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies; `floor_of(trophies)` (the trophies of the last Prestige, 0 below 1000) and `next_at(trophies)` (the trophies of the next one) |
 | `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
 | `vocabulary.gd` (`Vocabulary`) | The 24 words of the info page with their one-sentence meanings (`LIST`); English until spec 15 |
-| `hacks.gd` (`Hacks`) | The hack rules (specs 05 and 16): the ids `infinite_credits`, `unlock_all` and `power22` and their names (`ids`, `is_known`, `display_name`); how long each lasts (`duration_seconds`: `infinite_credits` and `unlock_all` 3 days, `power22` for ever; the same numbers as the server's `duration_seconds`), the end time of a hack entered now (`until_for`, `is_expired`) and the time left text (`time_left_text`: "2 days 5 hours left", "Lasts for ever"); a typed or scanned code (`normalize_code`, `code_from_scan`, `code_from_address`); the QR link of a code (`link`); the effects: `credits_amount` (the number next to the coin, or ∞) and `spend` (unlimited credits), `is_fighter_unlocked` (unlock everything), `max_power`, `power_text` and `power_amount` (power 22). A hack changes no trophies, unlocks or power levels |
+| `hacks.gd` (`Hacks`) | The hack rules (specs 05 and 16): the ids `infinite_credits`, `unlock_all` and `power22` and their names (`ids`, `is_known`, `display_name`); how long each lasts (`duration_seconds`: `infinite_credits` and `unlock_all` 3 days, `power22` for ever; the same numbers as the server's `duration_seconds`), the end time of a hack entered now (`until_for`, `is_expired`) and the time left text (`time_left_text`: "2 days 5 hours left", "Lasts for ever"); a typed or scanned code (`normalize_code`, `code_from_scan`, `code_from_address`); the QR link of a code (`link`); the effects: `credits_amount` (the number next to the coin, or ∞) and `spend` (unlimited credits), `is_fighter_unlocked` (unlock everything), `max_power` and `power_amount` (power 22). A hack changes no trophies, unlocks or power levels |
 | `save_data.gd` (`SaveData`) | The save file's JSON, `{"version": 3, "revision": n, "hacks": [{"id", "until"}], "progress": {...}}` (`to_json`, `from_json`; `VERSION` 3; spec 16 D1): a version 2 file gives its progress and its hacks (3 days from now), a version 1 file its hacks and an empty progress, and a for-ever hack has `until` 0; a missing, broken or newer file gives no hacks and an empty progress. Every field is checked and the ones that fail are left out (unknown fighters, hacks and skins, wrong types, numbers out of range), so the game fills them from the sample progress |
 | `save_store.gd` (`SaveStore`) | Where the save text lives (spec 16, D6): the file `save_path` on the desktop and in the tests; the page's `localStorage` (key `hack_star_save`) in the web export, shared by the browser's tabs of one address (`read`, `write`; a one-time copy of an old `user://` file on the web) |
 | `qr_code.gd` (`QrCode`) | A QR code encoder (ISO/IEC 18004, byte mode, level M, versions 1–10): a text in, a matrix of booleans out; the quiet zone is added by `QrImage` |
@@ -119,12 +119,12 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   in `project.godot`). It holds the colours, the font sizes (label 28, subheading 40, heading
   56, button 36), the button styles (rounded, a minimum height for a thumb) and the panel
   styles. The variations are `BigButton` (the **Play** button), `HeadingLabel`,
-  `SubheadingLabel`, `BackgroundPanel`, `CardPanel`, `BadgePanel`, `BadgeLabel`, `WordLabel`,
+  `SubheadingLabel`, `CardPanel`, `BadgePanel`, `BadgeLabel`, `WordLabel`,
   `SkinButton` and `LegendarySkinButton` (the gold frame). Screens set no colours or font sizes of
   their own, except the title's size. Colours that code needs (the rarity colours, Legendary
   gold) are the constants of `Rarity`. Since spec 09 every menu screen (home, fighter list and
   screen, result, info, hack, QR codes) stands on `scenes/ui/menu_background.tscn`
-  (`MenuBackground`, a gradient with light rays) instead of `BackgroundPanel`; the scrolling
+  (`MenuBackground`, a gradient with light rays) instead of the plain panel of spec 04; the scrolling
   content of info, hack and QR codes sits on the dark rounded `ContentScroll` panel; Back shows
   the back arrow, and the result, hack and fighter screen buttons have their own colours and
   icons (`Icons`).
@@ -133,10 +133,10 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   `SubheadingLabel`, `HudLabel`, `NumberLabel` and `BadgeLabel` (the title, headings, buttons and
   numbers; a drop shadow on headings and the HUD); plain `Label` (body text) keeps Godot's
   default font. Button variations `PlayButton` (large yellow), `GreenButton`, `BlueButton`,
-  `PinkButton`, `IconButton` (round) and the base purple `Button` have a dark border and a bottom
+  `PinkButton` and the base purple `Button` have a dark border and a bottom
   edge, a lighter hover, a darker pressed state 3 px lower and a white focus ring — the theme alone
   shows a press and a hover in the same frame. `Icons` (`scenes/ui/icons.gd`) names every icon
-  (`Icons.get_icon("trophy")`): 14 of Kenney's *Game Icons* (`assets/icons/`, CC0) and coin, bolt,
+  (`Icons.get_icon("trophy")`): 11 of Kenney's *Game Icons* (`assets/icons/`, CC0) and coin, bolt,
   clock, world and eye drawn in code. `scenes/ui/icon_chip.tscn` (`IconChip`) is a dark rounded
   backing with a tinted icon and a number (trophies, credits, power, timer, fighters left).
   `scenes/ui/world_choice.tscn` is the world button on home and its popup (Canyon or Glimmer
@@ -363,7 +363,7 @@ that adds an asset.
 Tests are GUT 9.7.1 files in `tests/`: `test_movement.gd` checks `game/movement.gd` (also `follow`);
 `test_combat.gd` checks the combat rules and `test_arena_layout.gd` the canyon layout (start,
 dummies and bushes free of walls, `in_bush`); `test_world_layouts.gd` the worlds and the Glimmer
-Isles layout (starts free and 4 m apart, every cover reachable on foot) and `test_world_choice.gd`
+Isles layout (starts free and 4 m apart, every cover reachable on foot, `GameState.reset()` back to the canyon) and `test_world_choice.gd`
 the world choice on home and the chosen world in Training and a match (not saved);
 `test_glimmer_props.gd` the props and `test_glimmer_isles.gd` the baked Glimmer Isles (no addon,
 props in every ridge and patch, none on a start point, filled with toon materials in the game); `test_fighters.gd`, `test_prestige.gd`, `test_rarity.gd`, `test_sample_progress.gd`,
@@ -396,7 +396,18 @@ last Prestige); `test_match_trophies.gd` checks the award at the end of a match;
 migration, the progress kept between a restart and the fields checked); `test_save_data_v3.gd` the version 3 file (the end times, the version 2 and 1 migrations with 3 days from now, the checks); `test_hack_times.gd` the durations, the end times and the time left text, `test_hack_expiry.gd` a timed hack turning off (its end time, the chosen fighter, the match keeping its fighter, a for-ever hack); `test_hack_time_rows.gd` the time left on the hack screen; `test_save_tabs.gd` two games on one save file (the merge of hacks, trophies and unlocks, the revision, the sync at the front, the one-time web migration with a fake `localStorage`, `SaveStore` as a file). The controls and the help (spec 16): `test_arena_space.gd` checks Space firing at the nearest
 target and held fire, `test_controls_help.gd` the help texts (their numbers from the rules),
 `test_controls_hint.gd` the start hint (shown, faded, clear of the match HUD at five sizes with the keyboard text and with the touch text, ignores the mouse),
-and `test_hack_screen_scan.gd` the scan button and its hint without and with a scanner. `test_mvp_flow.gd` plays
+and `test_hack_screen_scan.gd` the scan button and its hint without and with a scanner. The look
+(spec 09): `test_theme_look.gd` checks the theme (the display font with its outline on titles,
+buttons and numbers, body text on the default font, the button colours with hover, press and
+focus, every icon of `Icons`, the icon chip); `test_home_look.gd` the home screen (an icon and a
+colour on every button, **Play** the largest and yellow, in the corner when wide and across the
+bottom when tall, the trophy and coin chips, the outlined logo, the gradient and the pedestal);
+`test_canyon_look.gd` the canyon (walls and props cel-shaded with the outline, the ground without
+one); `test_arena_framing.gd` that the near wall covers at most 10 % of the screen height at the
+start of Training and a match, at the five sizes, in every world, with the player in view;
+`test_screens_look.gd` the result, info, hack and QR screens (the gradient, the back arrow, the
+yellow **Play again**, the trophy icon, the pedestal, the hack buttons' colours and icons).
+`test_mvp_flow.gd` plays
 F0–F5 in one run (see *Spec order*). Every test saves to `user://test/run_save.json`, never to the
 player's file: the pre-run hook `tests/pre_run_hook.gd` sets `GameState.save_path` and starts from
 the sample progress. Only `tools/test.ps1` passes the hook (`-gpre_run_script`): GUT started from

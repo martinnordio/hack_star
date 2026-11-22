@@ -4,7 +4,7 @@ The specs of the Godot game, in the order they are worked on. 01, 02 and the fir
 Graphics) are Godot specs; 03–18 are the finished specs of the Python + Svelte game, moved here with their requirements
 only (Part 1), numbered in the order the features were built
 ([2026_11_21_02_move_specs_to_godot_spec.md](done/2026_11_21_02_move_specs_to_godot_spec.md)).
-Each spec only needs features of specs with a lower number.
+Each spec only needs features of specs with a lower number. Two specs carry **09**: Better Graphics, a new Godot spec, was put in front of Unlock and Upgrade after the moved specs had their numbers; the numbers stay as they are (file names, links and issues use them), and Better Graphics comes first.
 
 The MVP is specs 03–08 (features F0–F5, statement S8); the order follows the feature list.
 
@@ -29,7 +29,7 @@ Update the status of a spec here whenever it changes.
 | 06 | [Graphics Demo](done/2026_11_21_06_graphics_demo_spec.md) | [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4) | closed |
 | 07 | [First Match](done/2026_11_21_07_first_match_spec.md) | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | closed |
 | 08 | [Trophies](done/2026_11_21_08_trophies_spec.md) | [2026_11_12_trophies_spec.md](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6) | closed |
-| 09 | [Better Graphics](2026_11_21_09_better_graphics_spec.md) | — (Godot spec) (#35) | planned |
+| 09 | [Better Graphics](2026_11_21_09_better_graphics_spec.md) | — (Godot spec) (#35) | implemented |
 | 09 | [Unlock and Upgrade](2026_11_22_09_unlock_and_upgrade_spec.md) | [2026_11_12_unlock_and_upgrade_spec.md](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7) | requirements |
 | 10 | [Skins Shop](2026_11_22_10_skins_shop_spec.md) | [2026_11_12_skins_shop_spec.md](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8) | requirements |
 | 11 | [Overtime and Match Options](2026_11_22_11_overtime_and_match_options_spec.md) | [2026_11_12_overtime_and_match_options_spec.md](../../../.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) (#9) | requirements |

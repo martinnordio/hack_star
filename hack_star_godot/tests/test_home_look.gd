@@ -56,8 +56,8 @@ func test_play_is_the_largest_yellow_button() -> void:
 func test_play_sits_in_the_corner_when_wide_and_across_the_bottom_when_tall() -> void:
 	var wide: Control = await _show_home(Vector2i(1280, 720))
 	var play: Rect2 = wide.get_node(CONTROLS + "/PlayButton").get_global_rect()
-	assert_gt(play.end.x, 1280 - 64, "right edge")
-	assert_gt(play.end.y, 720 - 64, "bottom edge")
+	assert_gt(play.end.x, 1280.0 - 64.0, "right edge")
+	assert_gt(play.end.y, 720.0 - 64.0, "bottom edge")
 	var tall: Control = await _show_home(Vector2i(820, 1180))
 	var buttons: Rect2 = tall.get_node(CONTROLS + "/MoreRow").get_global_rect()
 	var tall_play: Rect2 = tall.get_node(CONTROLS + "/PlayButton").get_global_rect()

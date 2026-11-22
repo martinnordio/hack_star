@@ -1,6 +1,7 @@
 extends GutTest
 ## At the start of Training and of a match the camera-side wall covers at most 10 % of the screen
-## height at the five screen sizes (spec 09, G11), measured with `Camera3D.unproject_position`.
+## height at the five screen sizes, in every world (spec 09, G11), measured with
+## `Camera3D.unproject_position`.
 
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const MATCH_SCENE: PackedScene = preload("res://scenes/match.tscn")
@@ -47,33 +48,41 @@ func _show_in_viewport(scene: PackedScene, size: Vector2i) -> Arena:
 ## cap) down to the bottom of the screen: the wall and the ground behind it, which hide the arena.
 func _near_wall_share(arena: Arena, view: Vector2) -> float:
 	var camera: Camera3D = arena.get_node("Camera")
-	var cap: float = Arena.WALL_CAP_HEIGHT
+	var height: float = Canyon.CAMERA_SIDE_WALL_HEIGHT
+	if ArenaLayout.world() == Worlds.GLIMMER_ISLES:
+		height = GlimmerIsles.CAMERA_SIDE_WALL_HEIGHT
 	var top: float = INF
 	for x: float in [-ArenaLayout.SIZE.x / 2.0, 0.0, ArenaLayout.SIZE.x / 2.0]:
-		var edge: Vector3 = Vector3(x, Canyon.CAMERA_SIDE_WALL_HEIGHT + cap, Arena.near_wall_z())
+		var edge: Vector3 = Vector3(x, height + Arena.WALL_CAP_HEIGHT, Arena.near_wall_z())
 		top = minf(top, camera.unproject_position(edge).y)
 	return (view.y - clampf(top, 0.0, view.y)) / view.y
 
 
 func test_the_near_wall_covers_at_most_a_tenth_of_the_screen_at_the_start() -> void:
-	for scene: PackedScene in [ARENA_SCENE, MATCH_SCENE]:
-		for label: String in SIZES:
-			var size: Vector2i = SIZES[label]
-			var arena: Arena = await _show_in_viewport(scene, size)
-			var share: float = _near_wall_share(arena, _content_size(size))
-			var where: String = "%s %s" % [scene.resource_path.get_file(), label]
-			assert_lte(share, MAX_SHARE, "%s: the near wall covers %.1f %%" % [where, share * 100])
-			arena.get_parent().queue_free()
+	for world_id: String in Worlds.ids():
+		GameState.world = world_id
+		for scene: PackedScene in [ARENA_SCENE, MATCH_SCENE]:
+			for label: String in SIZES:
+				var size: Vector2i = SIZES[label]
+				var arena: Arena = await _show_in_viewport(scene, size)
+				assert_eq(ArenaLayout.world(), world_id, "the arena uses the chosen world")
+				var share: float = _near_wall_share(arena, _content_size(size))
+				var where: String = "%s %s %s" % [world_id, scene.resource_path.get_file(), label]
+				assert_lte(share, MAX_SHARE, "%s: near wall covers %.1f %%" % [where, share * 100])
+				arena.get_parent().queue_free()
 
 
 func test_the_player_is_in_view_and_above_the_near_wall_at_the_start() -> void:
-	for label: String in SIZES:
-		var size: Vector2i = SIZES[label]
-		var arena: Arena = await _show_in_viewport(MATCH_SCENE, size)
-		var view: Vector2 = _content_size(size)
-		var camera: Camera3D = arena.get_node("Camera")
-		var fighter: Fighter = arena.get_node("Fighter")
-		var feet: Vector2 = camera.unproject_position(fighter.global_position)
-		assert_true(Rect2(Vector2.ZERO, view).has_point(feet), "%s feet %s in view" % [label, feet])
-		assert_lt(feet.y, view.y * (1.0 - MAX_SHARE), "%s above the near wall" % label)
-		arena.get_parent().queue_free()
+	for world_id: String in Worlds.ids():
+		GameState.world = world_id
+		for label: String in SIZES:
+			var size: Vector2i = SIZES[label]
+			var arena: Arena = await _show_in_viewport(MATCH_SCENE, size)
+			var view: Vector2 = _content_size(size)
+			var camera: Camera3D = arena.get_node("Camera")
+			var fighter: Fighter = arena.get_node("Fighter")
+			var feet: Vector2 = camera.unproject_position(fighter.global_position)
+			var where: String = "%s %s" % [world_id, label]
+			assert_true(Rect2(Vector2.ZERO, view).has_point(feet), "%s feet %s" % [where, feet])
+			assert_lt(feet.y, view.y * (1.0 - MAX_SHARE), "%s above the near wall" % where)
+			arena.get_parent().queue_free()

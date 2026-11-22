@@ -8,17 +8,14 @@ const FILES: Dictionary[String, Texture2D] = {
 	"play": preload("res://assets/icons/right.png"),
 	"trophy": preload("res://assets/icons/trophy.png"),
 	"fighters": preload("res://assets/icons/multiplayer.png"),
-	"fighter": preload("res://assets/icons/singleplayer.png"),
 	"info": preload("res://assets/icons/information.png"),
 	"hack": preload("res://assets/icons/wrench.png"),
 	"back": preload("res://assets/icons/arrowLeft.png"),
 	"home": preload("res://assets/icons/home.png"),
-	"settings": preload("res://assets/icons/gear.png"),
 	"training": preload("res://assets/icons/target.png"),
 	"lock": preload("res://assets/icons/locked.png"),
 	"check": preload("res://assets/icons/checkmark.png"),
 	"close": preload("res://assets/icons/cross.png"),
-	"star": preload("res://assets/icons/star.png"),
 }
 const DRAWN: Array[String] = ["coin", "bolt", "clock", "world", "eye", "qr"]
 const DRAWN_SIZE: int = 64

@@ -152,11 +152,6 @@ static func max_power(hacks: Array[String]) -> int:
 	return HACKED_MAX_POWER if POWER22 in hacks else NORMAL_MAX_POWER
 
 
-## "Power 7 / 11", or "Power 7 / 22" with the 22-levels hack.
-static func power_text(level: int, hacks: Array[String]) -> String:
-	return "Power " + power_amount(level, hacks)
-
-
 ## "7 / 11" (next to a power icon), or "7 / 22" with the 22-levels hack.
 static func power_amount(level: int, hacks: Array[String]) -> String:
 	return "%d / %d" % [level, max_power(hacks)]

@@ -6,7 +6,7 @@ const THEME: Theme = preload("res://scenes/ui/hack_star_theme.tres")
 const DISPLAY_FONT: Font = preload("res://assets/fonts/LilitaOne-Regular.ttf")
 const ICON_CHIP: PackedScene = preload("res://scenes/ui/icon_chip.tscn")
 const BUTTONS: Array[StringName] = [
-	&"Button", &"PlayButton", &"GreenButton", &"BlueButton", &"PinkButton", &"IconButton"
+	&"Button", &"PlayButton", &"GreenButton", &"BlueButton", &"PinkButton"
 ]
 
 
