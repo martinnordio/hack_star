@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="SpriteFrames" path="res://characters/echo/gameplay/echo_frames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://characters/echo/gameplay/echo_animator.gd" id="2_anim"]
+
+[node name="EchoGameplay" type="Node3D"]
+
+[node name="Sprite" type="AnimatedSprite3D" parent="."]
+pixel_size = 0.0027
+offset = Vector2(0, 247.5)
+billboard = 2
+shaded = false
+double_sided = true
+alpha_cut = 1
+texture_filter = 4
+sprite_frames = ExtResource("1_frames")
+animation = &"idle_up"
+autoplay = "idle_up"
+script = ExtResource("2_anim")
