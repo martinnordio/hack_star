@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 In progress
+> **Status:** ✅ Complete — closed on feature/better-graphics
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
@@ -9,7 +9,7 @@
 
 ## Stage log
 
-| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
+| Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 3.90 M (143 k in · 3.73 M cached · 27 k out) | CHF 1.67 (200 credits) | Part 1 written (screenshots of both games compared; web research for part B) |
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: Q1–Q7 answered (Q4–Q7 the suggestions) and moved into the statements (A2, A3, B6, G1, G3, G5, new G17, G18); group W added (W1–W7, a new world built with ProtonScatter, repository checked); A0 added |
@@ -35,11 +35,56 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.49 M (114 k in · 2.36 M cached · 15 k out) | CHF 1.13 (135 credits) | Step 18 done (`usage.ps1 -AgentName s09g-steps18-20` from 15:58:18 to 16:03:41) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 434 k (4 k in · 427 k cached · 3 k out) | CHF 0.14 (17 credits) | Step 19 prepared, trial deferred (`usage.ps1 -AgentName s09g-steps18-20` from 16:04:13 to 16:06:57) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.86 M (61 k in · 5.78 M cached · 20 k out) | CHF 1.57 (187 credits) | Step 20 done; the G1 verdict, A3, the iPad play-test and the B6 trial wait for the author (`usage.ps1 -AgentName s09g-steps18-20` from 16:07:28 to 16:17:13) |
-| 2026-11-22 | review | `REVIEW:` | Claude Opus 5.5 | 16.93 M (258 k in · 16.61 M cached · 67 k out) | CHF 4.99 (595 credits) | semantic diff written: change record `changes/better-graphics/` (16 blocks), review page [2026-11-22_better-graphics.html](../review/2026-11-22_better-graphics.html) and index row, PR text `semantic_diff.md`; checks 6 pass · 2 n/a · 1 fail (agent `s09g-review`; `CODE REVIEW:` included) |
+| 2026-11-22 | review | `REVIEW:` | Claude Opus 5.5 | 16.93 M (258 k in · 16.61 M cached · 67 k out) | CHF 4.99 (595 credits) | semantic diff written: change record `changes/better-graphics/` (16 blocks), review page [2026-11-22_better-graphics.html](../../review/2026-11-22_better-graphics.html) and index row, PR text `semantic_diff.md`; checks 6 pass · 2 n/a · 1 fail (agent `s09g-review`; `CODE REVIEW:` included) |
 | 2026-11-22 | review | `CODE REVIEW:` | Claude Opus 5.5 | included in the review row | included in the review row | Approve — 0 Blocking · 2 Should-fix · 8 Nit (7 fix now, 2 deferred, 1 plan decision); check_tools, lint, test (468 passed), export_web exit 0 |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.41 M (130 k in · 6.25 M cached · 27 k out) | CHF 2.05 (245 credits) | review fixes #1–#7, deferred rows #8, #9 and the decision D19 (#10); `tools/test.ps1` 469 passed, `lint.ps1`, `check_tools.ps1` exit 0; commit `Fix review findings (#35)` (`usage.ps1 -AgentName s09g-close` 2026-11-22 16:35:25–16:42:47) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 1.26 M (388 k in · 853 k cached · 22 k out) | CHF 2.14 (255 credits) | spec runner (coordination); two runner agents, s09g-runner and s09g-runner2 — both counted (`usage.ps1 -AgentName s09g-runner,s09g-runner2` from 2026-11-22 12:34:45) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.19 M (1.73 M in · 3.45 M cached · 10 k out) | CHF 8.00 (955 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 12:12:57) |
+| 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 4.42 M (45 k in · 4.36 M cached · 18 k out) | CHF 1.21 (145 credits) | spec closed (`usage.ps1 -AgentName s09g-close` from 2026-11-22 16:42:47) |
 
 ---
+
+## Cost summary
+
+This feature used 186.14 M tokens, CHF 62.54 (7463 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md).
+
+| Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
+|-------|--------|--------|------------|---------------------------|
+| requirements | Claude Opus 5.5 | 3.90 M | CHF 1.67 (200 credits) | 10.5 % |
+| plan | Claude Opus 5.5 | 2.87 M | CHF 1.86 (222 credits) | 11.7 % |
+| implementation | Claude Opus 5.5 | 162.44 M | CHF 54.02 (6446 credits) | 339.3 % |
+| review | Claude Opus 5.5 | 16.93 M | CHF 4.99 (595 credits) | 31.3 % |
+| **Total** | | **186.14 M** | **CHF 62.54 (7463 credits)** | **392.8 %** |
+
+**Implementation by Step**
+
+| Step | Model | Tokens | Cost (CHF) | Share of Copilot Business |
+|------|-------|--------|------------|---------------------------|
+| Step 1 | Claude Opus 5.5 | 2.82 M | CHF 1.15 (138 credits) | 7.3 % |
+| Step 2 | Claude Opus 5.5 | 8.99 M | CHF 2.50 (298 credits) | 15.7 % |
+| Step 3 | Claude Opus 5.5 | 10.98 M | CHF 2.89 (345 credits) | 18.2 % |
+| Step 4 | Claude Opus 5.5 | 7.56 M | CHF 2.19 (261 credits) | 13.7 % |
+| Step 5 | Claude Opus 5.5 | 7.15 M | CHF 1.75 (208 credits) | 10.9 % |
+| Step 6 | Claude Opus 5.5 | 11.32 M | CHF 2.84 (339 credits) | 17.8 % |
+| Step 7 | Claude Opus 5.5 | 5.48 M | CHF 1.82 (217 credits) | 11.4 % |
+| Step 8 | Claude Opus 5.5 | 6.19 M | CHF 2.47 (295 credits) | 15.5 % |
+| Step 9 | Claude Opus 5.5 | 6.44 M | CHF 1.60 (190 credits) | 10.0 % |
+| Step 10 | Claude Opus 5.5 | 4.78 M | CHF 1.68 (201 credits) | 10.6 % |
+| Step 11 | Claude Opus 5.5 | 10.98 M | CHF 2.93 (349 credits) | 18.4 % |
+| Step 12 | Claude Opus 5.5 | 12.65 M | CHF 3.18 (379 credits) | 19.9 % |
+| Step 13 | Claude Opus 5.5 | 13.27 M | CHF 3.05 (364 credits) | 19.2 % |
+| Step 14 | Claude Opus 5.5 | 650 k | CHF 0.32 (39 credits) | 2.1 % |
+| Step 15 | Claude Opus 5.5 | 2.32 M | CHF 0.97 (116 credits) | 6.1 % |
+| Step 16 | Claude Opus 5.5 | 18.96 M | CHF 4.94 (589 credits) | 31.0 % |
+| Step 17 | Claude Opus 5.5 | 5.84 M | CHF 1.50 (179 credits) | 9.4 % |
+| Step 18 | Claude Opus 5.5 | 2.49 M | CHF 1.13 (135 credits) | 7.1 % |
+| Step 19 | Claude Opus 5.5 | 434 k | CHF 0.14 (17 credits) | 0.9 % |
+| Step 20 | Claude Opus 5.5 | 5.86 M | CHF 1.57 (187 credits) | 9.8 % |
+| Review fixes | Claude Opus 5.5 | 6.41 M | CHF 2.05 (245 credits) | 12.9 % |
+| Spec runner (coordination) | Claude Opus 5.5 | 1.26 M | CHF 2.14 (255 credits) | 13.4 % |
+| Orchestrator (main chat) | Claude Opus 5.5 | 5.19 M | CHF 8.00 (955 credits) | 50.3 % |
+| CLOSE | Claude Opus 5.5 | 4.42 M | CHF 1.21 (145 credits) | 7.6 % |
+| **Total implementation** | | **162.44 M** | **CHF 54.02 (6446 credits)** | **339.3 %** |
 
 # Part 1 · Requirements
 
@@ -54,11 +99,11 @@ drawing become a character of the game with what Claude (via Copilot) can do on 
 Google Flow among them (part B). Every stage and Step of this spec runs on Claude Opus 5.5.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
-- [Basic UI](done/2026_11_21_04_basic_ui_spec.md) (spec 04) — the screens (home, fighter list,
+- [Basic UI](2026_11_21_04_basic_ui_spec.md) (spec 04) — the screens (home, fighter list,
   fighter screen, info), the shared theme `scenes/ui/hack_star_theme.tres`, `FighterStage`,
   `FighterCard`, `SkinButton`, `PrestigeBadge`, the minimum sizes (44 px buttons, 14 px text,
   D13) and the five screen sizes of `tests/test_screen_sizes.gd`.
-- [Graphics Demo](done/2026_11_21_06_graphics_demo_spec.md) (spec 06) — the canyon arena, the
+- [Graphics Demo](2026_11_21_06_graphics_demo_spec.md) (spec 06) — the canyon arena, the
   effects, the see-through in a bush and S10 (30 frames per second or more on a recent iPad and
   phone, checked by the author with the FPS label).
 - `scenes/fighter_model.gd` (`FighterModel`) — the 6 fighters and 14 skins built in code from
@@ -75,18 +120,18 @@ Google Flow among them (part B). Every stage and Step of this spec runs on Claud
   or free licence (Quaternius and Kenney, CC0), a line per asset, no Supercell art, names or
   logos; root README **Art** and **Licence and disclaimer**.
 - Root specs still open (Python + Svelte game, requirements only) whose findings this spec
-  reuses: [Graphics review](../../../.specs/features/2026_11_14_2_graphics_review_spec.md)
+  reuses: [Graphics review](../../../../.specs/features/2026_11_14_2_graphics_review_spec.md)
   (#20: candidate packs, licence first — CC0, or CC BY with credit — and a phone-size check per
-  model), [Art tools research](../../../.specs/features/2026_11_14_3_art_tools_research_spec.md)
+  model), [Art tools research](../../../../.specs/features/2026_11_14_3_art_tools_research_spec.md)
   (#21: the questions to ask each tool — cost, ownership, training on uploads, age, formats,
   weight; free use only; Martin owns the accounts; only drawings uploaded),
-  [Originality review](../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22:
+  [Originality review](../../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22:
   our own identity, no copied look). Part B answers #21's question for the Godot game in a
   narrower form; it does not replace #21.
 - The canyon is the only world: `game/arena_layout.gd` (`ArenaLayout`, constants for the walls,
   cactus patches, decoration and start points, read by `Canyon`, `Arena`, `MatchArena`,
   `BotBrain` and `ControlsHelp`) and `scenes/canyon.gd`. More worlds, world coins, prices and
-  three sizes are [Worlds and World Coins](2026_11_22_18_worlds_and_world_coins_spec.md)
+  three sizes are [Worlds and World Coins](../2026_11_22_18_worlds_and_world_coins_spec.md)
   (spec 18, requirements only); part W adds one world and a minimal choice, nothing of spec 18.
 - **ProtonScatter** (checked 2026-11-22: [Godot Asset Store](https://store.godotengine.org/asset/hungryproton/protonscatter/),
   version 4.2.0 of 2026-07-28; [source](https://codeberg.org/hungryproton/proton_scatter),
@@ -158,10 +203,10 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 
 | Document | Purpose |
 |----------|---------|
-| [overall_req.md](../../../.specs/overall_req.md) | Overall game idea ("very good graphics", "woww effect for kids") |
-| [architecture.md](../../docs/architecture.md) | How the Godot game is organised (UI foundation, 3D models, art and licences) |
-| [README](../../README.md) | How to open, run, test and export the Godot game |
-| [LICENSES.md](../../LICENSES.md) | Every asset of the Godot game and its licence |
+| [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea ("very good graphics", "woww effect for kids") |
+| [architecture.md](../../../docs/architecture.md) | How the Godot game is organised (UI foundation, 3D models, art and licences) |
+| [README](../../../README.md) | How to open, run, test and export the Godot game |
+| [LICENSES.md](../../../LICENSES.md) | Every asset of the Godot game and its licence |
 
 ## 1 · Specs
 
@@ -225,7 +270,7 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   canyon and Glimmer Isles with a minimal choice (both names shown, the current one marked; the
   canyon is the default); the choice is used by **Play** and **Training** and kept while the
   game is open. World coins, prices, sizes, more worlds and saving the choice stay with
-  [Worlds and World Coins](2026_11_22_18_worlds_and_world_coins_spec.md) (spec 18).
+  [Worlds and World Coins](../2026_11_22_18_worlds_and_world_coins_spec.md) (spec 18).
 - **W3 — Own look:** Glimmer Isles has its own ground, cover (the hiding patches), walls and
   decoration, placed with ProtonScatter, in the outlined cartoon look of G9 and G10; every
   object placed is made for Hack star (the addon's demo assets are not used).
@@ -332,6 +377,14 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 
 # Part 2 · Plan
 
+## Closing summary
+
+**Built:** The Godot game has the new cartoon look: every menu screen stands on a purple gradient with soft light rays (`MenuBackground`), titles, headings, buttons and numbers use the outlined display font Lilita One, the buttons are coloured with icons (Kenney *Game Icons*, CC0, plus a few drawn in code) and show hover and press from the theme alone, and trophies, credits, power, the timer and the fighters left are icon chips. Home has a two-colour logo, the chosen fighter on a pedestal and a large yellow **Play**; the fighter cards have rarity-coloured backdrops (grey with a lock for locked fighters); the fighter screen a framed stage and skin pictures in rarity frames; the result, info, hack and QR screens follow. Fighters, the canyon and the new world share cel-shaded toon materials with an outline of fixed pixel width (`ToonMaterials`), the camera keeps the near wall under 10 % of the screen in every world, and the FPS label is hidden unless **Show FPS (play-test)** is switched on in Info. A second world, **Glimmer Isles** (crystal ridges, glow-fern cover, giant mushrooms and floating islands, original art), is placed with ProtonScatter 4.2.0 in the editor and baked into plain MultiMeshes (`tools/bake_world.ps1`), so no addon code ships; the world button on home chooses it for **Play** and **Training** (`Worlds`, per-world `ArenaLayout`). Mattia's drawing became **Beatbolt**, a seventh fighter built from shapes (`scenes/drawn/`), unlocked from the start and playable; `docs/drawing_to_fighter.md` says how to add or remove a drawn fighter and `docs/drawing_tools.md` recommends a Google Flow → Meshy → Claude workflow with sources, terms and fit limits. The web export grew by 0.16 MB (budget 5 MB). Nothing in `server/` or `ui/` changed.
+
+**Differs from the plan:** Step 19 (the B6 trial with Google Flow and Meshy) is 🔜 Deferred: it needs the author's own accounts; its instructions are in `docs/drawing_tools.md`. What only the author and Mattia can do is not invented and stays in **Deferred Items**: the G1 side-by-side verdict, Mattia's A3 "this is my drawing", the iPad play-test (G14, W5, G15's 5 s) and the trial — the spec is closed with these open, as D17 foresaw. Step 7 shows a "Locked" chip instead of a price on locked cards, because the game has no prices yet (D19). Step 16 keeps Beatbolt standing instead of the drawing's crouch (the animations need it) and scales him to 0.85. The code review (Approve, 0 Blocking · 2 Should-fix · 8 Nit) was handled: findings 1–7 fixed (the architecture names the five look tests; the near-wall test runs in every world; a Markdown heading in Step 16; the ordered list's status and the double 09 explained; two float/int warnings; `Hacks.power_text`, the theme's `BackgroundPanel` and `IconButton` and the icons `gear`, `star`, `singleplayer` removed; `GameState.reset()` also sets `ArenaLayout` back to the canyon, with a test), findings 8 and 9 deferred (tool scripts without tests and lint; the kit's schema accepts only S-numbered statements), finding 10 decided as D19 (prices come with Unlock and Upgrade S2 and the Skins Shop).
+
+**Files:** `hack_star_godot/assets/` (`fonts/` Lilita One, `icons/` Kenney), `hack_star_godot/scenes/` (`toon/`, `ui/` — theme, `icons`, `icon_chip`, `menu_background`, `world_choice`, `fighter_card`, `fighter_stage`, `fighter_pictures` —, `drawn/`, `worlds/glimmer_isles/`, `home`, `arena`, `match_arena`, `canyon`, `fighter_model`, `fighter_screen`, `result_screen`, `info`, `hack_screen`, `qr_page`, `autoload/game_state`), `hack_star_godot/game/` (`worlds`, `glimmer_isles_layout`, `arena_layout`, `fighters`, `sample_progress`, `hacks`, `bot_brain`, `controls_help`), `hack_star_godot/addons/proton_scatter/` (editor only, excluded from the export), `hack_star_godot/tools/` (`bake_world.ps1`, `bake_world.gd`, `check_tools.ps1`, `versions.json`), `hack_star_godot/tests/` (the look, world, framing and drawn-fighter tests), `hack_star_godot/docs/` (`architecture.md`, `drawing_to_fighter.md`, `drawing_tools.md`), `hack_star_godot/README.md`, `hack_star_godot/LICENSES.md`, `project.godot`, `export_presets.cfg`; this spec, now in `done/`, its change record in `changes/done/` and the review page in `review/`.
+
 ## 2 · Spec Overview
 
 | Step | Description | Model (suggested) | Status | Detail |
@@ -381,7 +434,7 @@ prepares everything and records their answers (D17).
 > there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
 > the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
 > `export_web.ps1` (all exit 0) and the guideline is
-> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../../AGENTS.md)). Each
 > Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0. Nothing in `server/` or `ui/`
 > changes (S5). `gdlint` allows at most 20 public tests per file: new tests go into new files
 > where a file is full. **Looks are checked on real screenshots** (D2): a windowed Godot run
@@ -412,7 +465,7 @@ prepares everything and records their answers (D17).
 | D16 | **Web size budget (G15):** Step 1 measures the web export (`build/web` total and the `.pck`); the budget for the whole spec is **+5 MB**, planned as font ≤ 0.1 MB, icons ≤ 0.3 MB, shaders and scenes ≤ 0.5 MB, Glimmer Isles baked scene ≤ 1.5 MB, drawn fighter (code) ≈ 0 — ProtonScatter is excluded (D11). Steps 2, 10, 13 and 16 note the size after their change; Step 20 fails if the total grows by more than 5 MB. | G15: checked as it grows, not only at the end. |
 | D17 | **What needs the author:** Step 14 stops the run (A0) and Steps 15–20 wait for the photo. The B6 trial (Step 19) is done by the author with his accounts; the agent prepares the instructions, records the result and imports it only if D14's licence rules and Mattia allow it. The G1 verdict and the G14/W5 iPad play-test (Step 20) are done by the author and Mattia; a mid-way look (G1) is sent after Step 6 without stopping. A Step that waits says *waiting for the author* in its Notes and is not ✅ Done until the answer is recorded. | A0, B6, G1, G14, W5: what only the author can do is visible in the table and never invented. |
 | D18 | **Tests:** looks are checked on screenshots; what a script can check is tested: the theme's fonts and button styles exist and every home button has an icon (`test_home.gd` / new `test_home_look.gd`); the toon and outline materials on every fighter part (`test_fighter_model.gd`); the nearest wall's share of the screen height ≤ 10 % at the five sizes (new `test_arena_framing.gd`); the FPS label hidden by default (`test_match_hud.gd`); `Worlds`, `ArenaLayout.use` and the Glimmer Isles layout (starts free and ≥ 4 m apart, every cover reachable, walls inside the bounds — new `test_world_layouts.gd`); the world choice used by Play and Training (new `test_world_choice.gd`); the baked scene has no addon reference and has props in every wall and cover rectangle (new `test_glimmer_isles.gd`); the drawn fighter in the list, selectable, playable, and the fallback after removal (new `test_drawn_fighter.gd`); the existing screen-size tests at the five sizes with the new layouts. Tests that count fighters (`test_fighters.gd`, `test_fighter_list.gd`, `test_sample_progress.gd`) are updated in Step 16. | S2, S3, G16: behaviour stays tested; tests change only where the look changes. |
-| D19 | **Review finding 10 (runner decision): no price on locked fighters yet.** A locked fighter's card shows the lock icon on a grey backdrop, a grey picture and a lock chip "Locked" instead of a price, and the fighter screen a disabled **Locked** button, because the game has no prices yet (a fighter is unlocked only by the start list or the unlock-all hack). G5's price tag on locked fighters comes with the prices: [Unlock and Upgrade](2026_11_22_09_unlock_and_upgrade_spec.md) S2 (the unlock price by rarity, also on locked cards); skin prices with [Skins Shop](2026_11_22_10_skins_shop_spec.md) (spec 10). | S2 (nothing invented: no number without a rule behind it); Part 1, the plan (Step 7) and the result now agree. |
+| D19 | **Review finding 10 (runner decision): no price on locked fighters yet.** A locked fighter's card shows the lock icon on a grey backdrop, a grey picture and a lock chip "Locked" instead of a price, and the fighter screen a disabled **Locked** button, because the game has no prices yet (a fighter is unlocked only by the start list or the unlock-all hack). G5's price tag on locked fighters comes with the prices: [Unlock and Upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) S2 (the unlock price by rarity, also on locked cards); skin prices with [Skins Shop](../2026_11_22_10_skins_shop_spec.md) (spec 10). | S2 (nothing invented: no number without a rule behind it); Part 1, the plan (Step 7) and the result now agree. |
 
 ---
 
@@ -898,18 +951,18 @@ Started: 2026-11-22 16:07
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| An own visual identity instead of matching the Svelte look | G18: match now, identity later | Root [Originality review](../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22) |
-| Saving the world choice, more worlds, sizes, world coins and prices | W2: only a minimal choice here | [Worlds and World Coins](2026_11_22_18_worlds_and_world_coins_spec.md) (spec 18) |
-| More skins for a drawn fighter | A2: one default skin | [Skins Shop](2026_11_22_10_skins_shop_spec.md) (spec 10) |
-| The new texts in every game language | S6: English until then | [Accounts, Fighters and Languages](2026_11_22_15_accounts_fighters_and_languages_spec.md) (spec 15) |
-| Overtime and closing walls in Glimmer Isles | W4: they come with spec 11 for every world | [Overtime and Match Options](2026_11_22_11_overtime_and_match_options_spec.md) (spec 11) |
+| An own visual identity instead of matching the Svelte look | G18: match now, identity later | Root [Originality review](../../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22) |
+| Saving the world choice, more worlds, sizes, world coins and prices | W2: only a minimal choice here | [Worlds and World Coins](../2026_11_22_18_worlds_and_world_coins_spec.md) (spec 18) |
+| More skins for a drawn fighter | A2: one default skin | [Skins Shop](../2026_11_22_10_skins_shop_spec.md) (spec 10) |
+| The new texts in every game language | S6: English until then | [Accounts, Fighters and Languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) (spec 15) |
+| Overtime and closing walls in Glimmer Isles | W4: they come with spec 11 for every world | [Overtime and Match Options](../2026_11_22_11_overtime_and_match_options_spec.md) (spec 11) |
 | Mattia's confirmation "this is my drawing" for Beatbolt (A3), from the Step 16 screenshots in `%LOCALAPPDATA%\hack_star\screens\09\step16\` | Needs the author and Mattia; the agent cannot ask them and does not invent the answer | This spec, Step 20 / author |
 | The B6 trial with Google Flow + Meshy (free use) and the possible import of its GLB (Step 19; instructions in `docs/drawing_tools.md` § *Trial (B6)*) | Needs the author's own Google Flow and Meshy accounts (and Mattia's preference); the agent has neither | This spec's follow-up by the author / a later spec |
 | The side-by-side verdict of the author and Mattia per screen (G1), from the before and after sets in `%LOCALAPPDATA%\hack_star\screens\09\before\` and `…\after\` (Step 20) | Needs the author and Mattia; the agent cannot judge for them and does not invent the verdict | This spec, Step 20 / author |
 | The iPad (and phone) play-test: ≥ 30 fps with 4 fighters in the canyon and in Glimmer Isles with **Show FPS (play-test)**, and playable within 5 s after **Play** (G14, G15, W5) | Needs the author's iPad; the agent has no device | This spec, Step 20 / author |
 | Lint and format-check `tools/*.gd` (first file: `tools/bake_world.gd`) and smoke-test `tools/check_tools.ps1` and `tools/bake_world.ps1` | Code review 2026-11-22 finding 8: outside this spec's scope (the Godot tooling) | A later Godot tooling spec |
 | Allow letter-prefixed statement ids (G1, W1, A0, B1) in the kit's `change_record.schema.json` | Code review 2026-11-22 finding 9: the kit lives in the root `.specs/kit/`, which a Godot spec does not change | A kit spec in the root `.specs/` |
-| The price tag on locked fighter cards and on the fighter screen (G5; D19) — and the skin prices | Code review 2026-11-22 finding 10: the game has no prices yet; the unlock price by rarity is that spec's S2, skin prices come with the shop | [Unlock and Upgrade](2026_11_22_09_unlock_and_upgrade_spec.md) (S2) · [Skins Shop](2026_11_22_10_skins_shop_spec.md) (spec 10) |
+| The price tag on locked fighter cards and on the fighter screen (G5; D19) — and the skin prices | Code review 2026-11-22 finding 10: the game has no prices yet; the unlock price by rarity is that spec's S2, skin prices come with the shop | [Unlock and Upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) (S2) · [Skins Shop](../2026_11_22_10_skins_shop_spec.md) (spec 10) |
 
 ---
 
@@ -917,12 +970,12 @@ Started: 2026-11-22 16:07
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [2026-11-22_better-graphics.html](../review/2026-11-22_better-graphics.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [2026-11-22_better-graphics.html](../../review/2026-11-22_better-graphics.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `91cc8be..060ff79` | Approve | 0 Blocking · 2 Should-fix · 8 Nit |
 
 ### Code review 2026-11-22
 
-Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; page [2026-11-22_better-graphics.html](../review/2026-11-22_better-graphics.html). Accepted as deferred, not findings: the G1 verdict, Mattia's A3 confirmation, the iPad G14/W5 play-test and the B6 trial (Step 19).
+Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; page [2026-11-22_better-graphics.html](../../review/2026-11-22_better-graphics.html). Accepted as deferred, not findings: the G1 verdict, Mattia's A3 confirmation, the iPad G14/W5 play-test and the B6 trial (Step 19).
 
 | # | Finding | Layer | Class | Severity | Target |
 |---|---------|-------|-------|----------|--------|
@@ -943,7 +996,7 @@ Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; pag
 
 - [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded
+- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items)
 - [x] Review · review page written; no Blocking finding open
-- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
-- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
+- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Pull request · opened by the next stage (`PR:`) from `feature/better-graphics`
