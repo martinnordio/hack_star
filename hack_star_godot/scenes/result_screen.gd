@@ -85,7 +85,7 @@ func _show_trophies(reward: Dictionary) -> void:
 	_count_tween.tween_method(_apply_count, 0.0, 1.0, COUNT_SECONDS)
 
 
-## Jumps the count to its end (the tests, and a player who taps).
+## Jumps the count to its end (the tests; no input calls it).
 func finish_count() -> void:
 	if _reward.is_empty():
 		return
@@ -116,6 +116,7 @@ func _celebrate() -> void:
 	var pop: Tween = create_tween()
 	pop.tween_property(_celebration, "scale", Vector2.ONE * 1.1, 0.25)
 	pop.tween_property(_celebration, "scale", Vector2.ONE, 0.15)
+	_burst.color = Rarity.LEGENDARY_GOLD
 	_burst.position = _celebration.size / 2.0
 	_burst.restart()
 

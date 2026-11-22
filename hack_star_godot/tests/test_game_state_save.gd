@@ -112,6 +112,13 @@ func test_a_saved_fighter_that_is_not_unlocked_is_not_selected() -> void:
 	assert_eq(GameState.selected_fighter, "blaze")
 
 
+func test_a_fighter_open_through_the_unlock_all_hack_is_kept_after_a_restart() -> void:
+	GameState.activate_hack("unlock_all")
+	GameState.select("pixel", "default")
+	_restart()
+	assert_eq(GameState.selected_fighter, "pixel")
+
+
 func test_award_trophies_adds_and_saves() -> void:
 	var reward: Dictionary = GameState.award_trophies("blaze", Match.Result.VICTORY)
 	assert_eq(reward["change"], 10)

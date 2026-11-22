@@ -155,7 +155,7 @@ Run them from the `hack_star_godot` folder.
 | Command | What it does |
 |---------|--------------|
 | `.\tools\check_tools.ps1` | Checks the pinned versions of Godot, the export templates, gdtoolkit and GUT |
-| `.\tools\test.ps1` | Runs the GUT tests headless (without the editor); fails if a test fails |
+| `.\tools\test.ps1` | Runs the GUT tests headless (without the editor); fails if a test fails. Use it, not the editor's GUT panel: only this script sets the pre-run hook (`tests/pre_run_hook.gd`) that keeps the tests off your save file |
 | `.\tools\lint.ps1` | Runs `gdlint` and `gdformat --check` on `game/`, `scenes/` and `tests/` |
 | `.\tools\export_web.ps1` | Exports the game for the web into `build\web\` |
 | `.\tools\serve_web.ps1` | Serves `build\web\` on port 8060 and forwards `/api` to the hack server; options in [Run the hack server and the web game](#run-the-hack-server-and-the-web-game) |

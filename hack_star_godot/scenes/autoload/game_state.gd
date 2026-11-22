@@ -127,7 +127,7 @@ func load_saved() -> void:
 			unlocked.append(fighter_id)
 	credits = progress.get("credits", credits)
 	var chosen: String = progress.get("selected_fighter", "")
-	if unlocked.has(chosen):
+	if is_unlocked(chosen):
 		selected_fighter = chosen
 		viewed_fighter = chosen
 
