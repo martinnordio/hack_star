@@ -86,10 +86,10 @@ func test_without_the_hack_luna_stays_locked() -> void:
 func test_power_shows_its_maximum_with_and_without_power_22() -> void:
 	assert_eq(_card(_show(LIST), "blaze").get_node(CARD_POWER).text, "7 / 11")
 	GameState.viewed_fighter = "blaze"
-	assert_eq(_show(FIGHTER).get_node(DETAILS + "/PowerLabel").text, "Power 7 / 11")
+	assert_eq(_show(FIGHTER).get_node(DETAILS + "/Stats/PowerChip").text, "7 / 11")
 	GameState.activate_hack(Hacks.POWER22)
 	assert_eq(_card(_show(LIST), "blaze").get_node(CARD_POWER).text, "7 / 22")
-	assert_eq(_show(FIGHTER).get_node(DETAILS + "/PowerLabel").text, "Power 7 / 22")
+	assert_eq(_show(FIGHTER).get_node(DETAILS + "/Stats/PowerChip").text, "7 / 22")
 	GameState.reset_hacks()
 	assert_eq(_card(_show(LIST), "blaze").get_node(CARD_POWER).text, "7 / 11")
 

@@ -22,6 +22,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.15 M (48 k in · 7.08 M cached · 22 k out) | CHF 1.75 (208 credits) | Step 5 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:22:37 to 13:30:18) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 11.32 M (74 k in · 11.20 M cached · 39 k out) | CHF 2.84 (339 credits) | Step 6 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:30:18 to 13:42:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 5.48 M (121 k in · 5.33 M cached · 25 k out) | CHF 1.82 (217 credits) | Step 7 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:43:19 to 13:50:52) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.19 M (251 k in · 5.92 M cached · 25 k out) | CHF 2.47 (295 credits) | Step 8 done (`usage.ps1 -AgentName s09g-steps7-9` from 13:51:50 to 14:13:07) |
 
 ---
 
@@ -327,7 +328,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ✅ Done | [→ Step 5](#step-5--arena-look) |
 | **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ✅ Done | [→ Step 6](#step-6--arena-framing-and-match-hud) |
 | **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ✅ Done | [→ Step 7](#step-7--fighter-cards) |
-| **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
+| **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ✅ Done | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
 | **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ⬜ Not started | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
 | **10** | ProtonScatter addon | reasoning (Claude Opus 5.5) — S1; a new pinned dependency kept out of the export (D11) | ⬜ Not started | [→ Step 10](#step-10--protonscatter-addon) |
 | **11** | Worlds and the world choice | reasoning (Claude Opus 5.5) — S1; the arena layout per world, the Glimmer Isles layout and the choice on home (D9, D10) | ⬜ Not started | [→ Step 11](#step-11--worlds-and-the-world-choice) |
@@ -575,13 +576,19 @@ The fighter screen frames the fighter on its stage, and every skin button shows 
 fighter in that skin in its rarity frame with its name (G2, G8, G16).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Fighter screen on `MenuBackground`, the stage framed with the pedestal; `SkinButton` shows the skin's picture (rendered once per skin and cached, as `fighter_pictures.gd`), a rarity-coloured frame (Legendary gold as today) and the name; select and back actions unchanged.
-- [ ] Update `test_fighter_screen.gd` (every skin button has a picture and the frame colour of its rarity).
-- [ ] Check: screenshots for a fighter with several skins at five sizes; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] Fighter screen on `MenuBackground`, the stage framed with the pedestal; `SkinButton` shows the skin's picture (rendered once per skin and cached, as `fighter_pictures.gd`), a rarity-coloured frame (Legendary gold as today) and the name; select and back actions unchanged.
+- [x] Update `test_fighter_screen.gd` (every skin button has a picture and the frame colour of its rarity).
+- [x] Check: screenshots for a fighter with several skins at five sizes; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 13:51
+**Screen** (G2, G8): `fighter_screen.tscn` on `MenuBackground`; the `FighterStage` (with the pedestal of Step 4) now sits in `Body/StageFrame`, a `PanelContainer` with the new theme variation `StageFramePanel` (a translucent lighter purple inside a dark rounded border, like the Svelte stage frame). The rarity is upper case; trophies and power are `IconChip`s next to the Prestige badge in one `Details/Stats` row (G5; saves height on a phone held sideways); **Select** is a `GreenButton` with a tick icon (a lock icon while it reads "Locked"); "Skins" in the outlined display font. Select, preview and Back unchanged.
+**Skin pictures** (G8): `FighterPictures` renders any list of fighter/skin pairs (`_render`); `ensure` (the list, as before) and new `ensure_skins(host, fighter_id)` (every skin of one fighter), `cached_skin`; the fighter screen shows the cached pictures at once and the rest after rendering (once per skin per game start, headless renders nothing). `SkinButton` (150×190) shows the picture as its expanded icon above the name and rarity (`clip_text` on, otherwise Godot subtracts the text width from the icon's room), frames it in `Rarity.color` (a duplicate of the theme's frame per state with the border in that colour; Legendary keeps the thicker gold frame; Default the plain frame), `frame_color()`. Theme: skin frames 4 px on a dark violet fill, text 24 px, `icon_max_width` 0 for both skin variations.
+**Tests**: `test_fighter_screen.gd` +2 (every skin of Blaze and Luna shows its cached picture and the frame colour of its rarity, Default the plain frame; the gradient background, the `StageFramePanel` frame and the pedestal); values read from the chips; `test_hack_effects.gd` and `test_screen_sizes.gd` paths for the chips and `StageFrame/FighterStage`. `docs/architecture.md` (fighter screen row, `FighterPictures`) updated.
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step8\`, viewed): `godot_fighter_blaze_<size>.png` (3 skins: Default, Lava Epic, Phoenix Legendary) and `godot_fighter_luna_<size>.png` (locked; Default, Galaxy Mythic, Supernova Legendary) at 1280×720, 1180×820, 820×1180, 390×844, 844×390. After looking: the skin pictures first drew at ~40 px — the theme's `icon_max_width` 48 and Godot subtracting the text width — fixed with `icon_max_width` 0 and `clip_text`; now the fighter fills the frame above its name at every size. One test run hung in Godot's `--import` step (no output for 10 min, the author's editor open on the same project); the process was stopped and the re-run passed — not a code problem.
+**Done (2026-11-22 · ~21 min · Claude Opus 5.5)** — the fighter screen on the gradient with the fighter framed on its pedestal, chips for trophies and power, a green Select, and skin buttons with the fighter's picture in each skin in a rarity-coloured frame. `tools/test.ps1` 430 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 6.19 M tokens · CHF 2.47 (295 credits)
 
 ---
 

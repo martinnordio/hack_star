@@ -1,8 +1,8 @@
 class_name FighterPictures
 extends RefCounted
-## The pictures of the fighter list: each fighter in its chosen skin is rendered once by an
-## off-screen `FighterStage` into an `ImageTexture` and cached in `GameState.pictures` (a live 3D
-## view per card would cost six renders per frame on a phone).
+## The pictures of the fighter list and of the skin buttons: a fighter in one skin is rendered
+## once by an off-screen `FighterStage` into an `ImageTexture` and cached in `GameState.pictures`
+## (a live 3D view per card or skin would cost a render per picture per frame on a phone).
 
 const STAGE: PackedScene = preload("res://scenes/ui/fighter_stage.tscn")
 const PICTURE_SIZE: Vector2 = Vector2(256.0, 320.0)
@@ -16,19 +16,38 @@ static func key(fighter_id: String, skin_id: String) -> String:
 
 ## The cached picture of a fighter in its chosen skin, or null while it is not rendered.
 static func cached(fighter_id: String) -> Texture2D:
-	return GameState.pictures.get(key(fighter_id, GameState.selected_skins[fighter_id]))
+	return cached_skin(fighter_id, GameState.selected_skins[fighter_id])
 
 
-## Renders the pictures that are not cached yet. A run without a renderer (headless) has nothing
-## to draw and caches nothing.
+## The cached picture of a fighter in one skin, or null while it is not rendered.
+static func cached_skin(fighter_id: String, skin_id: String) -> Texture2D:
+	return GameState.pictures.get(key(fighter_id, skin_id))
+
+
+## Renders the pictures of every fighter in its chosen skin that are not cached yet.
 static func ensure(host: Node) -> void:
+	var pairs: Array[PackedStringArray] = []
+	for fighter_id: String in Fighters.ids():
+		pairs.append(PackedStringArray([fighter_id, GameState.selected_skins[fighter_id]]))
+	await _render(host, pairs)
+
+
+## Renders the pictures of one fighter in each of its skins that are not cached yet.
+static func ensure_skins(host: Node, fighter_id: String) -> void:
+	var pairs: Array[PackedStringArray] = []
+	for skin: Dictionary in Fighters.get_fighter(fighter_id).get("skins", []):
+		pairs.append(PackedStringArray([fighter_id, skin["id"]]))
+	await _render(host, pairs)
+
+
+# A run without a renderer (headless) has nothing to draw and caches nothing.
+static func _render(host: Node, pairs: Array[PackedStringArray]) -> void:
 	if DisplayServer.get_name() == "headless":
 		return
 	var stages: Dictionary[String, FighterStage] = {}
-	for fighter_id: String in Fighters.ids():
-		var skin_id: String = GameState.selected_skins[fighter_id]
-		var picture_key: String = key(fighter_id, skin_id)
-		if GameState.pictures.has(picture_key):
+	for pair: PackedStringArray in pairs:
+		var picture_key: String = key(pair[0], pair[1])
+		if GameState.pictures.has(picture_key) or stages.has(picture_key):
 			continue
 		var stage: FighterStage = STAGE.instantiate()
 		stage.position = FAR_AWAY
@@ -36,7 +55,7 @@ static func ensure(host: Node) -> void:
 		host.add_child(stage)
 		stage.size = PICTURE_SIZE
 		stage.model.idle_enabled = false
-		stage.show_fighter(fighter_id, skin_id)
+		stage.show_fighter(pair[0], pair[1])
 		stages[picture_key] = stage
 	if stages.is_empty():
 		return

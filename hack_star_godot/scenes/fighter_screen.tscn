@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="2_back"]
 [ext_resource type="PackedScene" path="res://scenes/ui/fighter_stage.tscn" id="3_stage"]
 [ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="4_badge"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu_background.tscn" id="5_background"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icon_chip.tscn" id="6_chip"]
 
 [node name="FighterScreen" type="Control"]
 layout_mode = 3
@@ -14,14 +16,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_screen")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" parent="." instance=ExtResource("5_background")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"BackgroundPanel"
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -61,11 +57,15 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="FighterStage" parent="Margin/Column/Body" instance=ExtResource("3_stage")]
-custom_minimum_size = Vector2(240, 160)
+[node name="StageFrame" type="PanelContainer" parent="Margin/Column/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_type_variation = &"StageFramePanel"
+
+[node name="FighterStage" parent="Margin/Column/Body/StageFrame" instance=ExtResource("3_stage")]
+custom_minimum_size = Vector2(240, 160)
+layout_mode = 2
 
 [node name="Details" type="VBoxContainer" parent="Margin/Column/Body"]
 layout_mode = 2
@@ -78,35 +78,43 @@ layout_mode = 2
 theme_type_variation = &"SubheadingLabel"
 text = "Rare"
 horizontal_alignment = 1
+uppercase = true
 
-[node name="TrophiesLabel" type="Label" parent="Margin/Column/Body/Details"]
+[node name="Stats" type="HFlowContainer" parent="Margin/Column/Body/Details"]
 layout_mode = 2
-text = "Trophies: 0"
-horizontal_alignment = 1
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+alignment = 1
 
-[node name="PowerLabel" type="Label" parent="Margin/Column/Body/Details"]
+[node name="TrophiesChip" parent="Margin/Column/Body/Details/Stats" instance=ExtResource("6_chip")]
 layout_mode = 2
-text = "Power 1 / 11"
-horizontal_alignment = 1
+text = "0"
 
-[node name="PrestigeBadge" parent="Margin/Column/Body/Details" instance=ExtResource("4_badge")]
+[node name="PowerChip" parent="Margin/Column/Body/Details/Stats" instance=ExtResource("6_chip")]
 layout_mode = 2
-size_flags_horizontal = 4
+icon_name = "bolt"
+icon_color = Color(1, 0.6, 0.15, 1)
+text = "1 / 11"
+
+[node name="PrestigeBadge" parent="Margin/Column/Body/Details/Stats" instance=ExtResource("4_badge")]
+layout_mode = 2
+size_flags_vertical = 4
 
 [node name="SkinsLabel" type="Label" parent="Margin/Column/Body/Details"]
 layout_mode = 2
+theme_type_variation = &"RarityLabel"
 text = "Skins"
 horizontal_alignment = 1
 
 [node name="SkinRow" type="HFlowContainer" parent="Margin/Column/Body/Details"]
 layout_mode = 2
-theme_override_constants/h_separation = 16
-theme_override_constants/v_separation = 16
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
 alignment = 1
 
 [node name="SelectButton" type="Button" parent="Margin/Column/Body/Details"]
-custom_minimum_size = Vector2(320, 110)
+custom_minimum_size = Vector2(320, 100)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"BigButton"
+theme_type_variation = &"GreenButton"
 text = "Select"

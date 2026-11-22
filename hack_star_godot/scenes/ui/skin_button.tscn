@@ -3,6 +3,10 @@
 [ext_resource type="Script" path="res://scenes/ui/skin_button.gd" id="1_skin"]
 
 [node name="SkinButton" type="Button"]
-custom_minimum_size = Vector2(160, 90)
+custom_minimum_size = Vector2(150, 190)
 text = "Default"
+icon_alignment = 1
+vertical_icon_alignment = 0
+clip_text = true
+expand_icon = true
 script = ExtResource("1_skin")

@@ -3,6 +3,8 @@ extends GutTest
 const SCREEN: PackedScene = preload("res://scenes/fighter_screen.tscn")
 const HOME: PackedScene = preload("res://scenes/home.tscn")
 const BODY: String = "Margin/Column/Body"
+const STAGE: String = BODY + "/StageFrame/FighterStage"
+const STATS: String = BODY + "/Details/Stats"
 
 
 func before_each() -> void:
@@ -43,10 +45,10 @@ func test_shows_the_fighter_and_its_values() -> void:
 	var screen: Control = _show("blaze")
 	assert_eq(screen.get_node("Margin/Column/Header/Title").text, "Blaze")
 	assert_eq(screen.get_node(BODY + "/Details/RarityLabel").text, "Rare")
-	assert_eq(screen.get_node(BODY + "/Details/TrophiesLabel").text, "Trophies: 1240")
-	assert_eq(screen.get_node(BODY + "/Details/PowerLabel").text, "Power 7 / 11")
-	assert_true(screen.get_node(BODY + "/Details/PrestigeBadge").visible)
-	var stage: FighterStage = screen.get_node(BODY + "/FighterStage")
+	assert_eq(screen.get_node(STATS + "/TrophiesChip").text, "1240")
+	assert_eq(screen.get_node(STATS + "/PowerChip").text, "7 / 11")
+	assert_true(screen.get_node(STATS + "/PrestigeBadge").visible)
+	var stage: FighterStage = screen.get_node(STAGE)
 	assert_eq(stage.model.fighter_id, "blaze")
 	assert_eq(stage.model.skin_id, "default")
 
@@ -69,11 +71,38 @@ func test_only_the_legendary_skin_has_the_gold_frame() -> void:
 	assert_gt(gold.border_width_left, plain.border_width_left)
 
 
+func test_every_skin_has_its_picture_in_a_frame_of_its_rarity_colour() -> void:
+	for fighter_id: String in ["blaze", "luna"]:
+		var textures: Dictionary = {}
+		for skin: Dictionary in Fighters.get_fighter(fighter_id)["skins"]:
+			var texture: ImageTexture = ImageTexture.create_from_image(
+				Image.create(4, 4, false, Image.FORMAT_RGBA8)
+			)
+			GameState.pictures[FighterPictures.key(fighter_id, skin["id"])] = texture
+			textures[skin["id"]] = texture
+		var screen: Control = _show(fighter_id)
+		for button: SkinButton in screen.get_node(BODY + "/Details/SkinRow").get_children():
+			assert_eq(button.icon, textures[button.skin_id], "%s picture" % button.skin_id)
+			var rarity: String = Fighters.get_skin(fighter_id, button.skin_id)["rarity"]
+			if rarity.is_empty():
+				assert_ne(button.frame_color(), Rarity.LEGENDARY_GOLD, "Default: plain frame")
+			else:
+				assert_eq(button.frame_color(), Rarity.color(rarity), "%s frame" % button.skin_id)
+
+
+func test_the_screen_is_on_the_gradient_with_the_fighter_framed_on_its_pedestal() -> void:
+	var screen: Control = _show("rocko")
+	assert_true((screen.get_node("Background") as ColorRect).material is ShaderMaterial)
+	var frame: PanelContainer = screen.get_node(BODY + "/StageFrame")
+	assert_eq(frame.theme_type_variation, &"StageFramePanel")
+	assert_not_null(screen.get_node(STAGE + "/Viewport/Pedestal"))
+
+
 func test_a_click_or_a_touch_on_a_skin_previews_it() -> void:
 	GameState.viewed_fighter = "blaze"
 	var opened: Dictionary = await UiInput.open(self, SCREEN)
 	var screen: Control = opened["screen"]
-	var stage: FighterStage = screen.get_node(BODY + "/FighterStage")
+	var stage: FighterStage = screen.get_node(STAGE)
 	UiInput.click(opened["viewport"], _skin_button(screen, "Lava"))
 	assert_eq(stage.model.skin_id, "lava", "a click previews the skin")
 	UiInput.touch(opened["viewport"], _skin_button(screen, "Phoenix"))
@@ -86,7 +115,7 @@ func test_starts_on_the_chosen_skin() -> void:
 	GameState.select("rocko", "crystal")
 	var screen: Control = _show("rocko")
 	assert_true(_skin_button(screen, "Crystal").button_pressed)
-	var stage: FighterStage = screen.get_node(BODY + "/FighterStage")
+	var stage: FighterStage = screen.get_node(STAGE)
 	assert_eq(stage.model.skin_id, "crystal")
 
 
@@ -130,7 +159,7 @@ func test_a_locked_fighter_cannot_be_selected() -> void:
 	assert_eq(button.text, "Locked")
 	UiInput.click(opened["viewport"], _skin_button(screen, "Glitch"))
 	assert_eq(
-		(screen.get_node(BODY + "/FighterStage") as FighterStage).model.skin_id,
+		(screen.get_node(STAGE) as FighterStage).model.skin_id,
 		"glitch",
 		"a locked fighter can be looked at"
 	)
@@ -173,10 +202,10 @@ func test_back_goes_home_by_click_and_by_touch() -> void:
 
 func test_trophies_and_prestige_follow_progress_from_another_tab() -> void:
 	var screen: Control = _show("turbo")
-	var badge: Control = screen.get_node(BODY + "/Details/PrestigeBadge")
+	var badge: Control = screen.get_node(STATS + "/PrestigeBadge")
 	assert_false(badge.visible)
 	GameState.trophies["turbo"] = 1005
 	GameState.progress_changed.emit()
-	assert_eq(screen.get_node(BODY + "/Details/TrophiesLabel").text, "Trophies: 1005")
+	assert_eq(screen.get_node(STATS + "/TrophiesChip").text, "1005")
 	assert_true(badge.visible)
 	assert_eq(badge.get_node("Label").text, "Prestige 1")
