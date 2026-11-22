@@ -23,6 +23,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 1.54 M (76 k in · 1.45 M cached · 14 k out) | CHF 0.40 (48 credits) | review fixes #1, #2 (D7), #3, #5, #7; commit `Fix review findings (#27)` (`usage.ps1 -Agent subagents` 16:03:42–16:07:00) |
 | 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.18 M (25 k in · 1.14 M cached · 9 k out) | CHF 0.23 (27 credits) | spec closed (`usage.ps1 -Agent subagents` from 16:07) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.89 M (503 k in · 3.38 M cached · 10 k out) | CHF 2.85 (339 credits) | orchestrator of this spec (main chat, `-Agent main` from 15:46) |
+| 2026-11-22 | pr | `PR:` | Claude Haiku 5.5 | included in spec 16 | included in spec 16 | pull request opened (one PR for the MVP) |
 ---
 
 ## Cost summary

@@ -26,6 +26,7 @@
 | 2026-11-22 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 702 k (14 k in · 683 k cached · 5 k out) | CHF 0.13 (15 credits) | spec closed (`usage.ps1 -AgentName s16-close` from 2026-11-22 09:41:07) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 328 k (179 k in · 144 k cached · 5 k out) | CHF 0.43 (51 credits) | spec runner (coordination) (`usage.ps1 -AgentName s16-runner` from 2026-11-22 08:20:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 526 k (0 k in · 525 k cached · 1 k out) | CHF 0.11 (13 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 08:20:24) |
+| 2026-11-22 | pr | `PR:` | Claude Haiku 5.5 | 1.20 M (88 k in · 1.09 M cached · 21 k out) | CHF 0.03 (3 credits) | pull request opened (one PR for the MVP, #34; `usage.ps1 -AgentName mvp-pr` from 08:20:24) |
 ---
 
 ## Cost summary

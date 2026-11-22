@@ -30,6 +30,7 @@
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 8.26 M (142 k in · 8.06 M cached · 54 k out) | CHF 1.43 (171 credits) | review fixes #1, #2, #3 (D13 minimum sizes: UiScale + UiScaler), #5–#8; commit `Fix review findings (#28)` (`usage.ps1 -Agent subagents` 17:12:44–17:22) |
 | 2026-11-21 | implementation | `CLOSE:` | Claude Sonnet 5.5 | 1.98 M (15 k in · 1.95 M cached · 8 k out) | CHF 0.26 (32 credits) | spec closed (`usage.ps1 -Agent subagents` from 17:22:25) |
 | 2026-11-21 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.51 M (2.52 M in · 1.99 M cached · 8 k out) | CHF 11.01 (1313 credits) | orchestrator of this spec (main chat, `-Agent main` from 16:09) |
+| 2026-11-22 | pr | `PR:` | Claude Haiku 5.5 | included in spec 16 | included in spec 16 | pull request opened (one PR for the MVP) |
 
 ---
 
