@@ -6,7 +6,7 @@ const HOME: PackedScene = preload("res://scenes/home.tscn")
 const LIST: PackedScene = preload("res://scenes/fighter_list.tscn")
 const FIGHTER: PackedScene = preload("res://scenes/fighter_screen.tscn")
 const TEST_SAVE: String = "user://test/hack_effects_save.json"
-const CREDITS_PATH: String = "Margin/Column/TopBar/CreditsLabel"
+const CREDITS_PATH: String = "Margin/Column/TopBar/CreditsChip"
 const GRID_PATH: String = "Margin/Column/Scroll/Grid"
 const DETAILS: String = "Margin/Column/Body/Details"
 
@@ -41,11 +41,11 @@ func _card(screen: Control, fighter_id: String) -> FighterCard:
 
 
 func test_home_shows_infinity_with_unlimited_credits_and_the_number_without() -> void:
-	assert_eq(_show(HOME).get_node(CREDITS_PATH).text, "Credits: 500")
+	assert_eq(_show(HOME).get_node(CREDITS_PATH).text, "500")
 	GameState.activate_hack(Hacks.INFINITE_CREDITS)
-	assert_eq(_show(HOME).get_node(CREDITS_PATH).text, "Credits: ∞")
+	assert_eq(_show(HOME).get_node(CREDITS_PATH).text, "∞")
 	GameState.reset_hacks()
-	assert_eq(_show(HOME).get_node(CREDITS_PATH).text, "Credits: 500")
+	assert_eq(_show(HOME).get_node(CREDITS_PATH).text, "500")
 
 
 func test_unlock_all_unlocks_every_card_and_reset_locks_them_again() -> void:

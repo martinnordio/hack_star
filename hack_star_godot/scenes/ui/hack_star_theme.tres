@@ -529,6 +529,10 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="FontVariation" id="Logo_font"]
+base_font = ExtResource("1_display")
+variation_transform = Transform2D(1, 0, 0.22, 1, 0, 0)
+
 [resource]
 default_font_size = 28
 BackgroundPanel/base_type = &"Panel"
@@ -624,6 +628,26 @@ LegendarySkinButton/styles/pressed = SubResource("Legendary_chosen")
 WordLabel/base_type = &"Label"
 WordLabel/colors/font_outline_color = Color(0.94, 0.95, 1, 1)
 WordLabel/constants/outline_size = 2
+LogoHackLabel/base_type = &"Label"
+LogoHackLabel/colors/font_color = Color(1, 0.84, 0.2, 1)
+LogoHackLabel/colors/font_outline_color = Color(0.07, 0.05, 0.18, 1)
+LogoHackLabel/colors/font_shadow_color = Color(0.07, 0.05, 0.18, 0.6)
+LogoHackLabel/constants/outline_size = 18
+LogoHackLabel/constants/shadow_offset_x = 3
+LogoHackLabel/constants/shadow_offset_y = 7
+LogoHackLabel/constants/shadow_outline_size = 18
+LogoHackLabel/font_sizes/font_size = 88
+LogoHackLabel/fonts/font = SubResource("Logo_font")
+LogoStarLabel/base_type = &"Label"
+LogoStarLabel/colors/font_color = Color(1, 0.38, 0.72, 1)
+LogoStarLabel/colors/font_outline_color = Color(0.07, 0.05, 0.18, 1)
+LogoStarLabel/colors/font_shadow_color = Color(0.07, 0.05, 0.18, 0.6)
+LogoStarLabel/constants/outline_size = 18
+LogoStarLabel/constants/shadow_offset_x = 3
+LogoStarLabel/constants/shadow_offset_y = 7
+LogoStarLabel/constants/shadow_outline_size = 18
+LogoStarLabel/font_sizes/font_size = 88
+LogoStarLabel/fonts/font = SubResource("Logo_font")
 HeadingLabel/base_type = &"Label"
 HeadingLabel/colors/font_outline_color = Color(0.07, 0.05, 0.18, 1)
 HeadingLabel/colors/font_shadow_color = Color(0, 0, 0, 0.45)

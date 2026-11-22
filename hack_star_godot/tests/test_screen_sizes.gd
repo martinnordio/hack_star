@@ -66,8 +66,8 @@ func _drop_handlers(button: Button) -> void:
 
 func test_home_fits_every_size() -> void:
 	var paths: Array[String] = [
-		"Margin/Column/TopBar/TrophiesLabel",
-		"Margin/Column/TopBar/CreditsLabel",
+		"Margin/Column/TopBar/TrophiesChip",
+		"Margin/Column/TopBar/CreditsChip",
 		"Margin/Column/Title",
 		"Margin/Column/Body/FighterStage",
 		"Margin/Column/Body/Controls/NameRow/NameLabel",

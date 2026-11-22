@@ -25,9 +25,9 @@ func test_the_game_address_gives_the_code_only_with_hack() -> void:
 
 
 func test_credits_show_the_infinity_sign_only_with_the_hack() -> void:
-	assert_eq(Hacks.credits_text(500, _none), "Credits: 500")
-	assert_eq(Hacks.credits_text(500, _credits), "Credits: ∞")
-	assert_eq(Hacks.credits_text(500, _power), "Credits: 500")
+	assert_eq(Hacks.credits_amount(500, _none), "500")
+	assert_eq(Hacks.credits_amount(500, _credits), "∞")
+	assert_eq(Hacks.credits_amount(500, _power), "500")
 
 
 func test_spend_keeps_the_credits_with_the_hack() -> void:

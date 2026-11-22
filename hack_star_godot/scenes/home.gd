@@ -13,6 +13,14 @@ const DROP_SCALE: float = 0.3
 const TITLE_POP: float = 1.0
 const UI_FADE_IN: float = 1.5
 const BURST_COLOR: Color = Color(1.0, 0.9, 0.55)
+## The icon of each home button (`Icons`), by the button's node name.
+const BUTTON_ICONS: Dictionary[String, String] = {
+	"PlayButton": "play",
+	"TrainingButton": "training",
+	"FightersButton": "fighters",
+	"InfoButton": "info",
+	"HackButton": "hack",
+}
 
 ## True while the entrance plays.
 var entrance_playing: bool = false
@@ -20,10 +28,10 @@ var entrance_playing: bool = false
 var _tween: Tween
 var _effects: Node3D
 
-@onready var _trophies_label: Label = $Margin/Column/TopBar/TrophiesLabel
-@onready var _credits_label: Label = $Margin/Column/TopBar/CreditsLabel
+@onready var _trophies_chip: IconChip = $Margin/Column/TopBar/TrophiesChip
+@onready var _credits_chip: IconChip = $Margin/Column/TopBar/CreditsChip
 @onready var _top_bar: Control = $Margin/Column/TopBar
-@onready var _title: Label = $Margin/Column/Title
+@onready var _title: Control = $Margin/Column/Title
 @onready var _stage: FighterStage = $Margin/Column/Body/FighterStage
 @onready var _name_label: Label = $Margin/Column/Body/Controls/NameRow/NameLabel
 @onready var _badge: PrestigeBadge = $Margin/Column/Body/Controls/NameRow/PrestigeBadge
@@ -48,6 +56,10 @@ func _ready() -> void:
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)
 	_hack_button.pressed.connect(_on_hack_pressed)
+	for button: Button in [
+		_play_button, _training_button, _fighters_button, _info_button, _hack_button
+	]:
+		button.icon = Icons.get_icon(BUTTON_ICONS[button.name])
 	GameState.progress_changed.connect(_refresh)
 	resized.connect(_arrange)
 	_title.resized.connect(_center_title_pivot)
@@ -73,17 +85,19 @@ func skip_entrance() -> void:
 	_finish_entrance()
 
 
-# Wide: the fighter on the left, the buttons on the right. Tall: one column.
+# Wide: the fighter on the left, the buttons on the right and Play in the bottom-right corner.
+# Tall: one column with Play across the bottom.
 func _arrange() -> void:
 	var wide: bool = size.x > size.y
 	_body.vertical = not wide
 	_controls.size_flags_vertical = Control.SIZE_EXPAND_FILL if wide else Control.SIZE_FILL
+	_play_button.size_flags_horizontal = Control.SIZE_SHRINK_END if wide else Control.SIZE_FILL
 
 
 func _refresh() -> void:
 	var fighter_id: String = GameState.selected_fighter
-	_trophies_label.text = "Trophies: %d" % GameState.total_trophies()
-	_credits_label.text = Hacks.credits_text(GameState.credits, GameState.active_hacks)
+	_trophies_chip.text = str(GameState.total_trophies())
+	_credits_chip.text = Hacks.credits_amount(GameState.credits, GameState.active_hacks)
 	_name_label.text = Fighters.get_fighter(fighter_id)["name"]
 	_badge.show_for_trophies(GameState.trophies[fighter_id])
 	_stage.show_fighter(fighter_id, GameState.selected_skin())

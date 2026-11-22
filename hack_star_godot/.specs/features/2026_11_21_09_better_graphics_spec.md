@@ -18,6 +18,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.82 M (117 k in · 2.69 M cached · 13 k out) | CHF 1.15 (138 credits) | Step 1 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:35:00 to 12:42:16) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 8.99 M (88 k in · 8.86 M cached · 39 k out) | CHF 2.50 (298 credits) | Step 2 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:42:16 to 12:55:30) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 10.98 M (93 k in · 10.84 M cached · 41 k out) | CHF 2.89 (345 credits) | Step 3 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:55:30 to 13:11:15) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.56 M (72 k in · 7.45 M cached · 38 k out) | CHF 2.19 (261 credits) | Step 4 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:12:53 to 13:22:37) |
 
 ---
 
@@ -319,7 +320,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **1** | Before screenshots and size baseline | reasoning (Claude Opus 5.5) — S1; capturing both games the same way, the reference for G1 and G15 | ✅ Done | [→ Step 1](#step-1--before-screenshots-and-size-baseline) |
 | **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ✅ Done | [→ Step 2](#step-2--font-icons-and-theme) |
 | **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ✅ Done | [→ Step 3](#step-3--toon-look-of-the-fighters) |
-| **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--home-screen) |
+| **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ✅ Done | [→ Step 4](#step-4--home-screen) |
 | **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ⬜ Not started | [→ Step 5](#step-5--arena-look) |
 | **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ⬜ Not started | [→ Step 6](#step-6--arena-framing-and-match-hud) |
 | **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ⬜ Not started | [→ Step 7](#step-7--fighter-cards) |
@@ -473,15 +474,22 @@ buttons with a large yellow **Play**, and icon chips for trophies and credits (G
 G16, G17, G18).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Add `MenuBackground` (D6) and use it on home; the pedestal in `FighterStage`.
-- [ ] Logo: "Hack" and "star" in two colours, outlined, slightly slanted, in the display font; the entrance animation as today.
-- [ ] Buttons: **Play** large yellow (corner in wide layout, bottom in tall), Training, Fighters, Info, Hack as coloured buttons with icons (D7); trophies and credits as `IconChip`s.
-- [ ] Update `test_home.gd` / add `test_home_look.gd` (each button has an icon and its colour variation; chips show the numbers; button names and actions unchanged); `test_screen_sizes.gd` passes at the five sizes.
-- [ ] Check: screenshots at the five sizes and with a press and a hover; compared with the Svelte before shot; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] Add `MenuBackground` (D6) and use it on home; the pedestal in `FighterStage`.
+- [x] Logo: "Hack" and "star" in two colours, outlined, slightly slanted, in the display font; the entrance animation as today.
+- [x] Buttons: **Play** large yellow (corner in wide layout, bottom in tall), Training, Fighters, Info, Hack as coloured buttons with icons (D7); trophies and credits as `IconChip`s.
+- [x] Update `test_home.gd` / add `test_home_look.gd` (each button has an icon and its colour variation; chips show the numbers; button names and actions unchanged); `test_screen_sizes.gd` passes at the five sizes.
+- [x] Check: screenshots at the five sizes and with a press and a hover; compared with the Svelte before shot; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 13:12
+**Background and pedestal** (D6): `scenes/ui/menu_background.tscn` (a `ColorRect`, mouse ignored) with `menu_background.gdshader` — purple gradient (lighter top, dark bottom), a soft glow above the middle and 14 slow light rays (one turn in ~170 s); used on home instead of the flat `BackgroundPanel` (the other screens follow in Steps 7–9). `FighterStage` builds a `Pedestal` (three outlined toon drums from `ToonMaterials`: blue side, cream rim, lavender top just under the feet) and moves its camera back and up to show it; `@export var pedestal` (default on) — `FighterPictures` turns it off, so the card pictures are unchanged until Step 7. The fighter screen and result screen now also show the pedestal (G2).
+**Logo** (G4): `Title` is an `HBoxContainer` with `Hack` (yellow) and `Star` ("star", pink) labels; theme variations `LogoHackLabel` / `LogoStarLabel` use a `FontVariation` of Lilita One slanted by `variation_transform` (0.22), 88 px, 18 px dark outline, dark drop shadow; the entrance pops it as before (scale/alpha on `Title`).
+**Buttons and chips** (G5, G6, G18): Training `PinkButton`, Fighters `BlueButton`, Info the base purple `Button`, Hack `GreenButton`, each with its icon (`home.gd` `BUTTON_ICONS` → `Icons`: target, two people, i, wrench); **Play** `PlayButton` (yellow, play arrow, 360×120) now after the other buttons — bottom-right corner when wide, across the bottom when tall (`_arrange`). Trophies and credits are `IconChip`s (`TrophiesChip` trophy, `CreditsChip` drawn coin) with the number only; `Hacks.credits_text` ("Credits: 500") became `Hacks.credits_amount` ("500" / "∞"); `docs/architecture.md` updated for the rename. Node paths of the buttons unchanged.
+**Tests**: new `tests/test_home_look.gd` (6: every button has an icon and its own colour; Play the largest and yellow; Play in the corner when wide and under the buttons, across the screen when tall; chips with trophy/coin icons and numbers; the two-colour outlined slanted logo; gradient background and outlined toon pedestal); `test_home.gd`, `test_hacks.gd`, `test_hack_effects.gd`, `test_hack_expiry.gd`, `test_mvp_flow.gd`, `test_screen_sizes.gd` updated for the chips and the logo labels only.
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step4\`, viewed): home at 1280×720, 1180×820, 820×1180, 390×844, 844×390; Play hovered and pressed at 1280×720 and 390×844 (real mouse events: lighter on hover, darker and 3 px lower when pressed). Compared with `before\svelte_home_1280x720.png`: gradient with rays, a pedestal, a two-colour slanted logo, coloured icon buttons, a big yellow Play in the corner and dark chips — the same layout ideas; the Svelte's square icon tiles and player chip are not copied (wide buttons stay readable at 390 px). After looking: the logo slant checked on an enlarged crop (leans right as intended); nothing else changed. Also captured the fighter screen at 1280×720 (`godot_fighter_1280x720.png`): Blaze on the pedestal, nothing cut off.
+**Done (2026-11-22 · ~10 min · Claude Opus 5.5)** — home on the gradient background with the fighter on a pedestal, the two-colour slanted logo, coloured icon buttons with a large yellow Play in the corner / at the bottom, trophy and coin chips; `tests/test_home_look.gd`. `tools/test.ps1` 421 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 7.56 M tokens · CHF 2.19 (261 credits)
 
 ---
 

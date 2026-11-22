@@ -32,6 +32,7 @@ static func ensure(host: Node) -> void:
 			continue
 		var stage: FighterStage = STAGE.instantiate()
 		stage.position = FAR_AWAY
+		stage.pedestal = false
 		host.add_child(stage)
 		stage.size = PICTURE_SIZE
 		stage.model.idle_enabled = false
