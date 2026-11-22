@@ -26,6 +26,8 @@ static var _star_texture: ImageTexture
 var busy: bool = false
 ## Opens the camera; a test emits its signals instead.
 var scanner: QrScanner
+## Whether this build can scan (D10); a test sets it before the screen is added.
+var can_scan: bool = QrScanner.can_scan()
 
 var _pop: Tween
 var _stars: CPUParticles2D
@@ -33,6 +35,7 @@ var _stars: CPUParticles2D
 @onready var _code_edit: LineEdit = $Margin/Column/Scroll/Content/CodeRow/CodeEdit
 @onready var _use_button: Button = $Margin/Column/Scroll/Content/CodeRow/UseButton
 @onready var _scan_button: Button = $Margin/Column/Scroll/Content/ScanButton
+@onready var _scan_hint: Label = $Margin/Column/Scroll/Content/ScanHint
 @onready var _message: Label = $Margin/Column/Scroll/Content/Message
 @onready var _active_list: VBoxContainer = $Margin/Column/Scroll/Content/ActiveList
 @onready var _reset_button: Button = $Margin/Column/Scroll/Content/ResetButton
@@ -54,6 +57,9 @@ func _ready() -> void:
 	scanner.scanned.connect(_on_scanned)
 	scanner.failed.connect(_on_scan_failed)
 	add_child(scanner)
+	_scan_hint.visible = not can_scan
+	_scan_hint.add_theme_color_override("font_color", MESSAGE_COLOR)
+	_scan_button.disabled = not can_scan
 	GameState.progress_changed.connect(_refresh)
 	var refresh_timer: Timer = Timer.new()
 	refresh_timer.name = "RefreshTimer"
@@ -133,7 +139,7 @@ func _set_busy(value: bool) -> void:
 	busy = value
 	_code_edit.editable = not value
 	_use_button.disabled = value
-	_scan_button.disabled = value
+	_scan_button.disabled = value or not can_scan
 	_qr_button.disabled = value
 	_reset_button.disabled = value or GameState.active_hacks.is_empty()
 

@@ -20,6 +20,11 @@ var scanning: bool = false
 var _callback: JavaScriptObject
 
 
+## Only the web export has the browser's camera; Godot 4.7 has no camera feed on the desktop.
+static func can_scan() -> bool:
+	return OS.has_feature("web")
+
+
 func start() -> void:
 	if scanning:
 		return

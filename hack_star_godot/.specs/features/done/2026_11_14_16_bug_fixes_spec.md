@@ -29,7 +29,7 @@
 | 2026-11-22 | pr | `PR:` | Claude Haiku 5.5 | 1.20 M (88 k in · 1.09 M cached · 21 k out) | CHF 0.03 (3 credits) | pull request opened (one PR for the MVP, #34; `usage.ps1 -AgentName mvp-pr` from 08:20:24) |
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: spec reopened in place for the author's bug reports (issue #33 kept); S26–S32 added (scan only where it works — Godot 4.7 has no camera on Windows; how to scan on this computer; Space shoots at the nearest target; only Space and touch shoot; How to play; controls hint at the start; documentation); no open questions |
 | 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 1.60 M (112 k in · 1.47 M cached · 19 k out) | CHF 1.03 (123 credits) | re-planned: author's bug reports — Steps 1–5 kept; Steps 6–10 added (standard, standard, standard, standard, light), D10–D15 (`usage.ps1 -AgentName s16b-lead` from 2026-11-22 10:04:46) |
----
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.99 M (96 k in · 2.88 M cached · 14 k out) | CHF 0.56 (67 credits) | Step 6 done (`usage.ps1 -AgentName s16b-steps6-9` 2026-11-22 10:09:00–10:28:40) |---
 
 ## Cost summary
 
@@ -347,7 +347,7 @@ reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
 | **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ✅ Done | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ✅ Done | [→ Step 4](#step-4--progress-across-tabs) |
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 5](#step-5--final-check-readme-and-architecture) |
-| **6** | Scan button only where scanning works | standard (Claude Sonnet 5.5) — one check of the platform, a disabled button and a hint on an existing screen, checked on screenshots (D10) | ⬜ Not started | [→ Step 6](#step-6--scan-button-only-where-scanning-works) |
+| **6** | Scan button only where scanning works | standard (Claude Sonnet 5.5) — one check of the platform, a disabled button and a hint on an existing screen, checked on screenshots (D10) | ✅ Done | [→ Step 6](#step-6--scan-button-only-where-scanning-works) |
 | **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ⬜ Not started | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
 | **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ⬜ Not started | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
 | **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ⬜ Not started | [→ Step 9](#step-9--controls-hint-at-the-start) |
@@ -550,21 +550,22 @@ disabled with a hint to use the browser version or type the code; the web export
 before (S26, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `QrScanner.can_scan()` after D10.
-- [ ] `hack_screen.tscn`: a `ScanHint` label under **Scan QR code**; `hack_screen.gd`: `can_scan`
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `QrScanner.can_scan()` after D10.
+- [x] `hack_screen.tscn`: a `ScanHint` label under **Scan QR code**; `hack_screen.gd`: `can_scan`
       read in `_ready`, the button disabled and the hint shown without it (also after a code was
       checked, `_set_busy(false)`), the hint hidden with it.
-- [ ] Tests: `test_hack_screen.gd` (15 tests; or a new file if it would pass 20) — without the
+- [x] Tests: `test_hack_screen.gd` (15 tests; or a new file if it would pass 20) — without the
       scanner the button is disabled after opening and after a code, and the hint shows the text;
       with it (`can_scan = true`) the button works and the hint is hidden; `test_qr_scanner.gd`:
       `can_scan()` is false in the headless test run.
-- [ ] Look check on screenshots: the hack screen of the desktop run at 1280×720, 390×844 and
+- [x] Look check on screenshots: the hack screen of the desktop run at 1280×720, 390×844 and
       844×390 — the disabled button and the hint readable, nothing cut or overlapping.
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 10:09
+**Done (2026-11-22 · ~20 min · Claude Sonnet 5.5)** — `QrScanner.can_scan()` (static, `OS.has_feature("web")`); the hack screen reads it once into `can_scan` (settable by a test before the screen is added), disables **Scan QR code** without it (also after `_set_busy(false)`) and shows the new `ScanHint` label ("Camera scanning works in the browser version — type the code here", centred, wrapped, `MESSAGE_COLOR`); the web export is unchanged. New `test_hack_screen_scan.gd` (2 tests, a new file because `test_hack_screen.gd` is at the lint limit of 20 public methods with them) and a `can_scan()` test in `test_qr_scanner.gd`; `test_hack_time_rows.gd` now scrolls each row into view (the hint makes the phone-landscape content one line taller than the screen, which scrolls by design). Real screenshots of the windowed desktop run (temporary capture script under `%TEMP%`, not committed) at 1280×720, 390×844 and 844×390: the disabled button and the hint are readable, nothing cut or overlapping. `tools/test.ps1` 393/393 passed (exit 0), `tools/lint.ps1` exit 0. suggested: standard (Claude Sonnet 5.5) · ran: Claude Sonnet 5.5 · 2.99 M · CHF 0.56 (67 credits)
 
 ---
 

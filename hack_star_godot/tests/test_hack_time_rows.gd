@@ -115,6 +115,8 @@ func test_the_hack_screen_with_three_rows_fits_every_size() -> void:
 		var rows: Array[Node] = screen.get_node(LIST_PATH).get_children()
 		assert_eq(rows.size(), 3, label)
 		for row: Label in rows:
+			scroll.ensure_control_visible(row)
+			await wait_process_frames(2)
 			var rect: Rect2 = row.get_global_rect()
 			assert_true(
 				visible.grow(0.5).encloses(rect), "%s row %s fits %s" % [label, rect, visible]
