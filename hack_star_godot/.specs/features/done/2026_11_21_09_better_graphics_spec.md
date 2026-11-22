@@ -61,6 +61,7 @@
 | 2026-11-22 | implementation | `CLOSE:` | Claude Opus 5.5 | 3.99 M (32 k in · 3.94 M cached · 12 k out) | CHF 1.00 (120 credits) | spec closed again after the reopening; web export 41,244,583 bytes (`usage.ps1 -AgentName s09g-close3` from 2026-11-22 20:11:59) |
 | 2026-11-22 | pr | `PR:` | Claude Opus 5.5 | 1.37 M (72 k in · 1.29 M cached · 10 k out) | CHF 0.68 (81 credits) | pull request updated (#36: summary with the reopening and the new Cost summary, both semantic diffs; branch pushed; issue #35 updated; `usage.ps1 -AgentName s09g-pr3` from 2026-11-22 16:55:00) |
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 4.06 M (159 k in · 3.86 M cached · 35 k out) | CHF 1.90 (226 credits) | Part 1 revised: spec reopened in place a second time for the author's request (issue #35 kept); group M added (M1–M16, animated characters: MagMax a new fighter, Echo and Flarekid with the new delivery, facing, walk, shoot pose and own projectiles in play, showcase on the pedestal, the fighter screen and the list); C2, C5, C8, C9, C11 superseded; Q14–Q18 answered with the suggestions; the image tool and the name MagMax open with the author (agent `s09g-lead4`; `usage.ps1 -AgentName s09g-lead4` from 2026-11-22 20:22:00 to 20:28:42) |
+| 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 2.36 M (28 k in · 2.31 M cached · 24 k out) | CHF 0.90 (107 credits) | re-planned: animated characters — Steps 1–29 kept; Steps 30–37 added, all reasoning (Claude Opus 5.5); D34–D43 (D31 superseded by D43) (agent `s09g-lead4`; `usage.ps1 -AgentName s09g-lead4` from 2026-11-22 20:28:42) |
 ---
 
 ## Cost summary
@@ -741,10 +742,25 @@ and closed again the same day after Step 29, its review and the review fixes (se
 | **27** | Lighting presets and saturation boost | reasoning (Claude Opus 5.5) — S1; environment and light presets in the Compatibility renderer, the default chosen from screenshots (D27) | ✅ Done | [→ Step 27](#step-27--lighting-presets-and-saturation-boost) |
 | **28** | Performance comparison | reasoning (Claude Opus 5.5) — S1; measuring every preset, world and view against the baseline and trimming what is over (D28) | ✅ Done | [→ Step 28](#step-28--performance-comparison) |
 | **29** | Final check of the reopening, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size report, the after set and the documents | ✅ Done | [→ Step 29](#step-29--final-check-of-the-reopening-readme-and-architecture) |
+| **30** | Delivery into the final folders, imports and export filter | reasoning (Claude Opus 5.5) — S1; the before set, moving the author's files with fixed paths, web-safe imports within the size budget (D35, D42) | ⬜ Not started | [→ Step 30](#step-30--delivery-into-the-final-folders-imports-and-export-filter) |
+| **31** | MagMax joins and the frame table | reasoning (Claude Opus 5.5) — S1; a new fighter and the frames behind the existing cut-out look, loaded on demand (D34, D36) | ⬜ Not started | [→ Step 31](#step-31--magmax-joins-and-the-frame-table) |
+| **32** | Facing, walk and shoot pose in play | reasoning (Claude Opus 5.5) — S1; the animator with the camera's orientation in every view, keeping every effect (D37) | ⬜ Not started | [→ Step 32](#step-32--facing-walk-and-shoot-pose-in-play) |
+| **33** | Own projectiles | reasoning (Claude Opus 5.5) — S1; a picture look for the shot without touching the combat rules (D38) | ⬜ Not started | [→ Step 33](#step-33--own-projectiles) |
+| **34** | Showcase on the pedestal, turn and shoot on the fighter screen | reasoning (Claude Opus 5.5) — S1; a timeline on every pedestal and mouse/touch input, graphics-heavy (D39) | ⬜ Not started | [→ Step 34](#step-34--showcase-on-the-pedestal-turn-and-shoot-on-the-fighter-screen) |
+| **35** | Living cards on the fighter list | reasoning (Claude Opus 5.5) — S1; animated cards at five sizes without a cost off screen (D40) | ⬜ Not started | [→ Step 35](#step-35--living-cards-on-the-fighter-list) |
+| **36** | Performance and the after set | reasoning (Claude Opus 5.5) — S1; measuring four animated fighters against the baseline, the after set compared (D42) | ⬜ Not started | [→ Step 36](#step-36--performance-and-the-after-set) |
+| **37** | Final check of the animated characters, README, architecture and licences | reasoning (Claude Opus 5.5) — S1; every Godot check, the size report and the documents | ⬜ Not started | [→ Step 37](#step-37--final-check-of-the-animated-characters-readme-architecture-and-licences) |
 
 **Reopened 2026-11-22:** Steps 1–20 were done in the first run and are kept unchanged with their
 Notes. Steps 21–29 cover the added parts C, V and L; every one runs on Claude Opus 5.5 (S1, D1)
 and is done by the agent; the iPad check of the new parts stays with the author (Deferred Items).
+
+**Reopened again 2026-11-22 (animated characters):** Steps 1–29 are kept unchanged with their
+Notes. Steps 30–37 cover part M (M1–M16, D34–D43); every one runs on Claude Opus 5.5 (S1, D1),
+is done by the agent and checks the look on real screenshots (D2; PNGs under `%TEMP%\hs09c\`);
+the iPad check, the image tool's name and the name MagMax stay with the author (Deferred Items).
+Step 30 moves the author's untracked `*_new` folders and commits them; `characters/magmax/` and
+the zips are never touched.
 
 **Who does what:** Steps 1–13, 15–18 and 20 are done by the agent. **Step 14 is a gate:** it
 stops the run until the author has sent the photo (A0); Steps 15–20 start only after it.
@@ -816,6 +832,16 @@ prepares everything and records their answers (D17).
 | D31 | **The author's newer files (runner decision, during Step 23):** during the run the author dropped new untracked files — `characters/magmax/`, `characters/echo_new/` (with `gameplay/frames/`: directional idle, walk and shoot frames) and `characters/echo_godot_gameplay.zip`. They are not part of this reopening's request: never committed, modified or moved; `.gitignore` gets `/characters/*.zip`; the web export's `exclude_filter` gets `characters/magmax/*`, `characters/echo_new/*` and `characters/*.zip`, so the web budget (C11, G15) holds in the author's working tree; a Deferred Items row says a follow-up can use them (Echo's in-play animation, a new fighter). Committed with Step 23. **Extended in Step 25 (runner decision):** the author also dropped `characters/blaze_new/` and `characters/magmax_new/`; the filter is made robust — `characters/*_new/*` and `characters/magmax*/*` replace the two folder entries (`characters/*.zip` and the D22 entries stay), so only the game files of `characters/blaze2/` and `characters/echo/` are exported, measured with `tools/export_web.ps1` in Step 25. | C10, C11, G15: the reopening ships only what it planned; the author's files stay as he left them. |
 | D32 | **L8 is judged on the warm run (runner decision, code review 2026-11-22 of the reopening, finding 4):** Step 28 measures every row twice in a fresh process; L8 (frame time at most 30 % over the baseline and every frame under 33 ms) is judged on the **second (warm) run** of each pair. The first run includes Godot's one-time shader compilation: its average (up to 17.62 ms, canyon, Classic, Bright day) and its worst-frame hitches (21–489 ms) are reported in Step 28's Notes but do not count against L8. Pre-warming the shaders (so the first match has no hitch) stays a deferred idea (Deferred Items). | L8 asks about the look's cost while playing, not about the one-time compile on the first load; the rule makes Step 28's "every row within L8" checkable. |
 | D33 | **V5 is judged after the start hint (runner decision, code review 2026-11-22 of the reopening, finding 5):** "Overview shows all four border walls" (V5) is judged once the 5 s start hint has faded; the hint is transient in every view, as it was in Classic before the views. No change to Overview's framing. | V5 is about what the player sees while playing; the hint is shown for 5 s at the start of each match and Training only. |
+| D34 | **MagMax's data (reopened again, Q14):** a row in `Fighters.LIST` after Echo — id `magmax`, name **MagMax**, rarity **Epic**, idea "The author's hero: a masked brawler with flame hair and lava-rock fists", `"unlocked": true`, `"cutout": true`, `"plays_like": "rocko"`, one `default` skin; `SampleProgress` 0 trophies and power level 1 (as Step 22 did for the picture fighters: no Prestige never earned, the sample totals stay); old saves get him through `Fighters.start_unlocked()` (spec 08 D4). Main colour (shot, damage numbers) lava orange `ff6a1a`. | M1: a known rule (`plays_like`) gives the numbers without inventing an attack (A6); Epic has only Frosty. |
+| D35 | **Folders, paths, imports, git and export (M2, M12, M14):** Step 30 **moves** (`Move-Item`, never copies) the delivery: `characters/echo_new/*` → `characters/echo/` and `characters/flarekid_new/*` → `characters/blaze2/` (the hero and card pictures are the same bytes as the committed ones: the committed files and their `.import` stay, so their uids stay; the delivered README, helper scenes and `character_preview.gd` replace the committed ones), `characters/magmax_new/` → `characters/magmax2/`. Every `res://characters/blaze/` becomes `res://characters/blaze2/` and every `res://characters/magmax/` becomes `res://characters/magmax2/` in the moved `.tscn`, `.tres`, `.gd` and README files; the delivered `.import` files of moved pictures are deleted (they name the `_new` source) and Godot writes new ones. Imports, all **not** VRAM-compressed (`detect_3d/compress_to` off): the **frames** lossy WebP at quality 0.85 with `process/size_limit` 512 and mipmaps (small in the arena) — Step 30 checks the pedestal at 820×1180 and the size and may change the limit (384–640); MagMax's **hero** and **card** as D22 (hero lossy WebP 0.9, 768; card lossless, 256); the **projectiles** lossless. `.gitignore` gets `/characters/magmax/`; the export's `exclude_filter` replaces `characters/magmax*/*` by `characters/magmax/*` (otherwise `magmax2` would be cut) and adds `characters/*/gameplay/*_animation_preview.png`, `*_animator.gd`, `*_gameplay.tscn`, `*_projectile.gd`, `*_projectile.tscn` (under `characters/*/gameplay/`); `characters/*_new/*`, `characters/*.zip` and the D22 entries stay. The game uses only the frame PNGs, the `*_frames.tres` (data, no script), the projectile PNGs, the cards and — if Step 34 keeps it — the heroes. `characters/magmax/` and the zips are never touched (a SHA-256 list before Step 30 and after Step 37 is the same). | M2, M12, M14: one folder per fighter, delivered files kept as the author made them except the paths; the web export ships only what the game uses. |
+| D36 | **Frame table and memory (M1, M7, M15):** `CutoutFighters` rows get `frames` (the path of the delivered `*_frames.tres`: `idle_`, `walk_`, `shoot_` × `down`, `up`, `side`), `projectile` (the path of the projectile PNG), `figure_height` in metres (the figure's height in the idle frames, so each reads about as tall as today: MagMax 2.5 m, Echo 2.5 m, Flarekid 2.7 m), the feet point of the frames (bottom centre) and per view the `muzzle` point of the shoot frame (UV; replaces the one-picture `muzzle`). Frames and heroes are **loaded on first use** (`load()`, cached per fighter in a static dictionary), not preloaded, so only the fighters on screen are in memory (12 frames at 512 px are about 12 MB of texture memory each fighter); the cards stay preloaded (small, needed by the list). The quad's size is the frame's aspect (all frames of a fighter are the same size), so nothing jumps between frames. | M7, M15: the delivered `SpriteFrames` is the single source of which frame belongs to which animation; memory grows only with the fighters in use. |
+| D37 | **Animator in play (M3, M4, M5, M7):** a new `CutoutAnimator` (`scenes/cutout/cutout_animator.gd`, `RefCounted`, owned by `FighterModel` for animated fighters; `FighterModel` is at 996 of gdlint's 1000 lines, so it only forwards): `view_for(direction: Vector2)` on the screen (x right, y down = +z, as `Movement`) — `side` when |x| > |y| (mirrored when x < 0), otherwise `up` (back view) when y < 0, else `down` (front view) — the delivery's rule; standing keeps the last view; the start view is `down`. `Fighter._physics_process` and `Fighter.face()` hand the input direction and `running` to the model; `Arena.fire_from` calls `model.play_shoot(direction)`: the shoot frame of the shot's view for 0.25 s. The walk loop (walk1 → idle → walk2 → idle) runs at 8 frames a second at 5 m/s (scaled with the speed, 6–10), with a hop of 0.05 m; standing keeps the breathing of C4 (no sway and no lean: the frames lean themselves). The animator swaps the shader's `picture` and sets `flip`; `flash`, `fade`, `tip`, the shadow, the outline and the bar over the figure (`CutoutFighters.top_offset` with `figure_height`) are unchanged. **Camera:** every view of `CameraViews` looks north (−z) with a fixed yaw (D25), so up on the screen is −z in all four views and W shows the back view in each (a test pins it; a view that turns the camera would have to pass its yaw to `view_for`). C5's left/right flip and hop are replaced for the animated fighters (all three picture fighters are animated). | M3–M5, M7: one small class holds the rule and the timing; the shader, effects and existing hooks stay. |
+| D38 | **Projectile look (M6):** `Shot.launch` gets an optional `picture: Texture2D` (from `CutoutFighters.projectile(id)`, passed by `Arena.fire_from`); with a picture the shot shows a camera-facing quad of it (a small `scenes/toon/projectile.gdshader`: billboard, rotated on the screen along the direction it flies, unshaded, alpha-blended, about 1.0 m long — between the ball's halo of 0.72 m and its 1.1 m tail —, drawn over the floor) instead of the ball, halo and tail; one material per picture, shared like today's per-colour materials. The ray, speed, range, damage and the hit burst (in the fighter's main colour) do not change; other fighters pass no picture and keep the ball. | M6, S2: only the look changes; the combat rules stay in `Combat` and `Shot`. |
+| D39 | **Showcase and the fighter screen (M8, M9):** a new `CutoutShowcase` (`scenes/cutout/cutout_showcase.gd`, static timeline): 0–1.2 s idle front; 1.2–3.2 s a turn front → side → back → other side → front (0.4 s each); 3.2–4.8 s the front walk loop on the spot; 4.8–5.4 s the side shoot pose with the projectile flying out 1.5 m and fading and a burst of the stage's sparks in the fighter's main colour; 5.4–7.0 s idle; then again (7 s, ≤ 8 s). `FighterStage` (pedestal stages: home, the fighter screen, the result) runs it for animated fighters after the reveal (C3, unchanged); fighters of shapes keep their idle. On the fighter screen a drag over the stage turns the figure (every 80 px one view in the ring front, side, back, other side), a press and release within 0.25 s and 10 px is a tap and shoots; the showcase pauses and starts again 3 s after the last drag or tap. The **hero picture** is used only if Step 34's screenshots show a smooth switch from it (a short hero pose before the loop); otherwise it is not used and `characters/*/*_hero.png` is added to the export filter (size). | M8, M9: one timeline for every pedestal; the input is the fighter screen's only. |
+| D40 | **Living cards (M10):** `FighterCard` of an animated fighter gets a `Figure` (`TextureRect`, the front frames: idle 1.2 s, then the walk loop 1.6 s, at the card's bottom right, about 60 % of the card picture's height) and a light sweep on its picture (`scenes/ui/card_sweep.gdshader`: a soft diagonal band in the rarity colour, every 4 s, phase shifted by the card's place in the list). It animates only while the card is inside the visible part of the list (its global rect intersects the viewport), so a long list costs nothing; a locked card is grey and still (G7). | M10, G16: livelier cards without a cost for cards out of sight. |
+| D41 | **Tests (reopened again):** new files, at most 20 tests each (D18): `test_animated_fighters.gd` (MagMax's data, unlocked, old save; every frame and projectile loads from its final folder and no resource names `characters/blaze/`, `characters/magmax/` or `_new`; 12 frames of one size per fighter; the card on the card), `test_cutout_animator.gd` (the view per direction, diagonals, mirrored left, the last view kept, the front view at the start, the walk loop's order and pace, the shoot frame for 0.25 s in the shot's view, bots too, W → back view in all four camera views, flash, fade, tip and the bar with frames), `test_projectile_look.gd` (the three with their pictures, others the ball, same speed, range and damage, turned along the direction), `test_showcase.gd` (order and ≤ 8 s, never still, drag turns, tap shoots, resumes after 3 s, home, fighter screen and result, shapes unchanged), `test_living_cards.gd` (the figure changes frames, the sweep, locked grey and still, only visible cards animate, the five sizes). Tests that count fighters or expect C5's flip and hop (`test_cutout_fighters.gd`, `test_fighter_reveal.gd`, `test_fighter_list.gd`, …) are updated in the Step that changes the behaviour. | S2, S3: what a script can check is tested; looks on screenshots (D2). |
+| D42 | **Measurements (M11, M14, M15):** Step 30 takes the **before** set before it moves anything (D2 method; home, the fighter list scrolled to the picture fighters, the fighter screen with Echo and with Flarekid, a 4-fighter match 4 s in with Echo as the player in the canyon; 1280×720 and 820×1180; `%LOCALAPPDATA%\hack_star\screens\09c\before\`), the SHA-256 list of `characters/magmax/` and the web size. Step 36 takes the **after** set (the same names, plus MagMax and short frame sequences) into `…\09c\after\` and the performance run of D28/D32 (warm run) with four animated fighters (a temporary script picks MagMax, Echo and Flarekid for the bots) in both worlds, Classic and Overview, Bright day and Neon night, against Step 21's baseline (the higher of its two runs): within L8; texture memory (`Performance.RENDER_TEXTURE_MEM_USED`) reported. Size budget (M14): the three fighters' imported files ≤ 3.5 MB, the export ≤ 45,361,090 bytes — measured in Steps 30 and 37. | M11, M14, M15: measured the same way before and after, in the author's working tree. |
+| D43 | **D31 superseded (reopened again):** the `*_new` folders are now the author's request and are moved into the game's folders by Step 30 (D35); `characters/magmax/` stays the author's untracked older art, now also ignored by git, and excluded from the export; the zips stay ignored and excluded. | M2, M12. |
 
 ---
 
@@ -1579,6 +1605,162 @@ Started: 2026-11-22 19:34
 
 ---
 
+## Step 30 — Delivery into the final folders, imports and export filter
+
+### Goal
+The before set exists, the author's three deliveries are moved into `characters/echo/`,
+`characters/blaze2/` and `characters/magmax2/` with every path fixed, imported web-safe within
+the size budget, credited, committed, and everything the game does not use is out of the export;
+`characters/magmax/` and the zips are untouched (M2, M12, M13, M14; D35, D42, D43).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Before set (D42, D2) into `%LOCALAPPDATA%\hack_star\screens\09c\before\` **before moving anything**: home, the fighter list at the picture fighters, the fighter screen with Echo and with Flarekid, a 4-fighter match 4 s in with Echo as the player (canyon); 1280×720 and 820×1180; viewed; the capture script outside the repository, deleted. The SHA-256 list of `characters/magmax/` written in Notes.
+- [ ] Move (D35): `echo_new` → `echo/`, `flarekid_new` → `blaze2/`, `magmax_new` → `magmax2/` (`Move-Item`; the `_new` folders gone); paths `res://characters/blaze/` → `blaze2/`, `res://characters/magmax/` → `magmax2/` in every moved `.tscn`, `.tres`, `.gd` and README; the delivered `.import` files of moved pictures replaced by Godot's (the committed hero and card `.import` kept); `git grep` and a search of `characters/` find no `characters/blaze/`, `characters/magmax/` (other than the folder's own files) or `_new` path.
+- [ ] Imports (D35): frames lossy WebP 0.85, `size_limit` 512, mipmaps, not VRAM (also `detect_3d/compress_to` off); MagMax hero and card as D22; projectiles lossless; one frame of each fighter checked on a pedestal screenshot at 820×1180 for sharpness (the limit changed only if it is blurred or the size is over budget; the choice in Notes).
+- [ ] `.gitignore`: `/characters/magmax/`; `export_presets.cfg` `exclude_filter`: `characters/magmax*/*` → `characters/magmax/*`, plus the `characters/*/gameplay/` entries of D35; `LICENSES.md`: the rows of M13 (hero, card, frames, projectile of each of the three; the existing Echo and Flarekid rows updated).
+- [ ] `tools/export_web.ps1` in the working tree: total and `.pck` size, the three fighters' imported files (M14 ≤ 3.5 MB; total ≤ 45,361,090 bytes) in Notes; the `.pck` searched: no preview, animator, gameplay scene, projectile script, `magmax/` or `_new` path.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` exit 0 (Echo and Flarekid look as before — the game does not use the frames yet); `git status --short` shows no `_new` folder, no zip and `characters/magmax/` as ignored; the moved folders committed with this Step.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 31 — MagMax joins and the frame table
+
+### Goal
+MagMax is an unlocked, playable fighter, and all three picture fighters are shown with their
+delivered frames (the front idle frame for now) through the existing outlined cut-out, loaded
+only when used (M1, M7; D34, D36).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `Fighters.LIST` row and `SampleProgress` numbers for MagMax (D34); `CutoutFighters` rows get `frames`, `projectile`, `figure_height`, the frames' feet point and the per-view `muzzle` (measured on the shoot frames); frames, projectiles and heroes loaded on first use and cached (D36); the quad sized to the frame's aspect; MagMax's card on his card and skin button.
+- [ ] `FighterModel` shows the `idle_down` frame of an animated fighter instead of the hero picture (outline, shadow, see-through, flash and knock-out unchanged); `FighterModel` stays under 1000 lines.
+- [ ] `tests/test_animated_fighters.gd` (D41: data, unlocked, old save, final-folder paths, 12 frames of one size, card); the tests that count fighters updated.
+- [ ] Screenshots (D2) at 1280×720 and 820×1180: home and the fighter screen with MagMax, the fighter list (three picture cards), a match with MagMax, Echo and Flarekid next to Blaze (outline width and height compared) and one of them in a bush; viewed; Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0; MagMax selectable and playable in Training and a match (a test and the screenshots).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 32 — Facing, walk and shoot pose in play
+
+### Goal
+In Training and a match the animated fighters — the player and the bots — show their back, front
+or side view from the movement, walk with the walk loop, idle when still, and show the shoot pose
+in the shot's direction, the same in all four camera views, with every effect kept (M3, M4, M5,
+M7; D37).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `CutoutAnimator` (D37): view from the screen direction, mirrored left, last view kept, front at the start; walk loop with the pace and small hop; idle with breathing; `play_shoot(direction)` for 0.25 s; `Fighter` and `Arena.fire_from` hand it the input and the shot; the muzzle flash at the shoot frame's muzzle of that view; C5's flip, hop and lean removed for the animated fighters.
+- [ ] Camera orientation checked in code and pinned by a test: in Classic, Close, Behind and Overview the camera looks north with a fixed yaw, so W shows the back view, S the front, A and D the side (Notes say what was found per view).
+- [ ] `tests/test_cutout_animator.gd` (D41); `test_cutout_fighters.gd` and `test_fighter_reveal.gd` updated where they expected C5's flip and hop.
+- [ ] Screenshots (D2; frame sequences, 1280×720, and 820×1180 for Classic): each of the three walking up, down, left, right and diagonally, stopping, shooting in each direction, hit (white), knocked out at 0.25 s, in a bush — in Classic, and walking up and right in Close, Behind and Overview; viewed; Notes say what was changed after looking (feet steady, no size jump between frames, outline and bar over the figure).
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 33 — Own projectiles
+
+### Goal
+The shots of MagMax, Echo and Flarekid look like their delivered projectile pictures, turned along
+their flight, readable in every view and preset, with the combat rules unchanged (M6; D38).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `Shot.launch` with an optional picture and `scenes/toon/projectile.gdshader` (D38); `Arena.fire_from` passes `CutoutFighters.projectile(id)`; other fighters keep the ball.
+- [ ] `tests/test_projectile_look.gd` (D41); `test_shot.gd` and `test_fighter_health.gd` green unchanged (same speed, range, damage, walls).
+- [ ] Screenshots (D2; 1280×720): each projectile in flight in Classic, Close, Behind and Overview, in Bright day and Neon night, and hitting a dummy; viewed; Notes say the size and what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 34 — Showcase on the pedestal, turn and shoot on the fighter screen
+
+### Goal
+On home, the fighter screen and the result an animated fighter pops in and then plays a lively
+showcase (idle, a turn through its views, walk steps, a shot with its projectile and sparks); on
+the fighter screen the player turns it by dragging and makes it shoot with a tap (M8, M9; D39).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `CutoutShowcase` (D39) and its use in `FighterStage` after the reveal (C3 unchanged; shapes unchanged); the projectile and the spark burst on the shot.
+- [ ] The fighter screen's drag (turn) and tap (shoot) with mouse and touch, the pause and the restart after 3 s.
+- [ ] The hero picture: a short hero pose before the loop tried on screenshots — kept only if the switch is smooth; otherwise unused and `characters/*/*_hero.png` added to the export filter (D39); the choice and the size change in Notes.
+- [ ] `tests/test_showcase.gd` (D41); `test_fighter_reveal.gd`, home and fighter-screen tests green.
+- [ ] Screenshots (D2; 1280×720 and 820×1180): a sequence through one loop (about every 0.4 s) on home and on the fighter screen for MagMax, Echo and Flarekid, and on the fighter screen after a drag and after a tap; viewed; Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 35 — Living cards on the fighter list
+
+### Goal
+On the fighter list the cards of the animated fighters move — the figure idles and walks, a light
+sweep in the rarity colour crosses the card — while the list fits and scrolls as before (M10;
+D40).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `FighterCard`'s `Figure` and `scenes/ui/card_sweep.gdshader` (D40); animated only while visible; locked cards grey and still.
+- [ ] `tests/test_living_cards.gd` (D41); `test_fighter_list.gd` and `test_screen_sizes.gd` green.
+- [ ] Screenshots (D2; 1280×720 and 820×1180): the list at the picture fighters at three moments 0.5 s apart (figure and sweep moving), and with a locked fighter (unlock-all off) for the grey card; viewed; Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 36 — Performance and the after set
+
+### Goal
+Four animated fighters in a match stay within L8 of the baseline in both worlds, and the after set
+shows that the animated fighters are clearly livelier than before (M11, M15; D42).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Performance run (D42; warm run as D32): four animated fighters, both worlds, Classic and Overview, Bright day and Neon night; frame time average and worst, draw calls, primitives and texture memory in a table in Notes next to Step 21's baseline; anything over L8 trimmed (e.g. the frames' `size_limit`) and measured again; temporary scripts deleted.
+- [ ] After set into `%LOCALAPPDATA%\hack_star\screens\09c\after\` with Step 30's names plus MagMax (home, fighter screen, a match) and the frame sequences of Steps 32–35; viewed next to the before set; Notes say what changed (M11).
+- [ ] Check: every row within L8 in Notes; `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 37 — Final check of the animated characters, README, architecture and licences
+
+### Goal
+Everything that worked before still works, the size budget is met and reported, the author's
+older files are untouched, and the documents describe the animated fighters (M1–M16, S2–S6).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` (all exit 0); every `.ps1` changed parses with `[System.Management.Automation.Language.Parser]::ParseFile`; nothing outside `hack_star_godot/` changed (S5); `characters/magmax/`'s SHA-256 list equals Step 30's; `git status` shows no `_new` folder, no zip, `characters/magmax/` ignored.
+- [ ] Web export size report in Notes: total and `.pck` vs the last close (41,244,583), Step 30 and Step 1; the three fighters' share (M14 ≤ 3.5 MB); total ≤ 45,361,090 bytes (G15); the `.pck` searched for files the game does not use (M12).
+- [ ] `README.md` (MagMax, the animated fighters in play, the showcase, turn and shoot on the fighter screen, the living cards), `docs/architecture.md` (`CutoutAnimator`, `CutoutShowcase`, the frame table and on-demand loading, the projectile look, the living cards, the new tests), `docs/drawing_to_fighter.md` *Picture fighters* rewritten (how the animated fighters work and how to add one from a delivery: folder, paths, imports, `CutoutFighters` row, `Fighters.LIST`, `SampleProgress`, `LICENSES.md`, the export filter) (M16); `LICENSES.md` complete (M13); Deferred Items: the image tool and per-character origin, the name MagMax, the iPad check.
+- [ ] Check: every statement M1–M16 has a Step that is ✅ Done (the iPad check of M15 in Deferred Items).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
 ## Deferred Items
 
 | Task | Reason | Target Spec |
@@ -1599,8 +1781,11 @@ Started: 2026-11-22 19:34
 | The iPad check of the reopened parts: ≥ 30 fps with Flarekid and Echo, every view and the default preset (L8, G14) | Needs the author's iPad; Step 28 measures on the desktop only | This spec, Step 29 / author |
 | Side and back views, run, shot and hit frames, or a 3D model for Flarekid and Echo | C8: only one front picture each exists; `docs/drawing_to_fighter.md` *Picture fighters* says what to deliver | The author, then a later spec |
 | Which AI image tool made the Flarekid and Echo pictures, for `LICENSES.md` | C9: "tool to be confirmed by the author" | The author |
-| The author's newer art (echo_new directional gameplay frames, blaze_new — renamed by the author to `flarekid_new` during the close, still covered by the export filter `characters/*_new/*` —, magmax, magmax_new) — a follow-up can use them for Echo's and Flarekid's in-play animation and a new fighter | D31: dropped into `characters/` during the run (`characters/magmax/`, `characters/echo_new/` with `gameplay/frames/`, `characters/blaze_new/`, `characters/magmax_new/`, `characters/echo_godot_gameplay.zip`); not part of this reopening's request, kept untracked and out of the web export (`characters/*_new/*`, `characters/magmax*/*`, `characters/*.zip`) | A later Godot spec |
+| The author's newer art (echo_new directional gameplay frames, blaze_new — renamed by the author to `flarekid_new` during the close, still covered by the export filter `characters/*_new/*` —, magmax, magmax_new) — a follow-up can use them for Echo's and Flarekid's in-play animation and a new fighter | D31: dropped into `characters/` during the run (`characters/magmax/`, `characters/echo_new/` with `gameplay/frames/`, `characters/blaze_new/`, `characters/magmax_new/`, `characters/echo_godot_gameplay.zip`); not part of this reopening's request, kept untracked and out of the web export (`characters/*_new/*`, `characters/magmax*/*`, `characters/*.zip`) | A later Godot spec — _taken up by the second reopening of 2026-11-22 (part M, Steps 30–37; D43)_ |
 | Pre-warm the shaders at load (e.g. draw every material once behind the loading screen), so the first match of a session has no compile hitch (up to ~489 ms in Step 28's first runs) | D32 (code review 2026-11-22 of the reopening, finding 4): L8 is judged on the warm run; the first-run hitch is a one-time cost, not part of this reopening | A later Godot performance spec |
+| Which AI image tool made the MagMax, Echo and Flarekid pictures, frames and projectiles, and per character whether it comes from Mattia's drawing or the author's own idea, for `LICENSES.md` | M13: "to be confirmed by the author" (reopened again 2026-11-22) | The author |
+| Whether the name **MagMax** is fine: a 1985 arcade game by Nichibutsu is called "MagMax" (no fighter, skin or brand of the repository uses it) | Q14: the author's name is kept; only the author can decide to rename | The author |
+| The iPad check of the animated fighters: ≥ 30 fps with four of them in a match, the showcase and the living cards (M15, G14) | Needs the author's iPad; Step 36 measures on the desktop only | This spec, Step 37 / author |
 
 ---
 
@@ -1614,6 +1799,7 @@ Started: 2026-11-22 19:34
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff (reopening) | — | [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html) (change record `changes/done/better-graphics-2/`, 13 blocks; checks 6 pass · 3 n/a · 0 fail) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `bccd2ed..f10d71c` | Approve | 0 Blocking · 1 Should-fix · 4 Nit |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | review fixes of the reopening | handled | #1 and #2 fixed with tests (`Fix review findings (#35)`), #3 at `CLOSE:`, #4 → D32, #5 → D33 |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: spec reopened again for the author's request — animated characters (M1–M16; Steps 1–29 kept, Steps 30–37 added, D34–D43; D31 superseded by D43) |
 
 ### Code review 2026-11-22
 
@@ -1649,7 +1835,7 @@ Range `bccd2ed..f10d71c` (requirements revision, re-plan, Steps 21–29; parts C
 ## Definition of Done
 
 - [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered; reopened again 2026-11-22: M1–M16 added, C2, C5, C8, C9, C11 superseded, open questions answered)
-- [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29)
+- [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29; re-planned again 2026-11-22: Steps 30–37)
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items); the reopening's Steps 21–29 are all ✅ Done (`tools/test.ps1` 517 passed after the review fixes), its iPad check (L8, G14) waits for the author too
 - [x] Review · review page written; no Blocking finding open (second review of the reopening: [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), 0 Blocking)
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again 2026-11-22 after the second review's fixes; reopened in place again 2026-11-22 for the animated characters — closed again after the last new Step)_
