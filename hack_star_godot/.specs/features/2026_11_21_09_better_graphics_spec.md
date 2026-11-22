@@ -1,16 +1,20 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** ⬜ Requirements in progress
+> **Status:** ⬜ Not started — plan ready
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/better-graphics`
+> **Issue:** #35
 
 ## Stage log
 
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 3.90 M (143 k in · 3.73 M cached · 27 k out) | CHF 1.67 (200 credits) | Part 1 written (screenshots of both games compared; web research for part B) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: Q1–Q7 answered (Q4–Q7 the suggestions) and moved into the statements (A2, A3, B6, G1, G3, G5, new G17, G18); group W added (W1–W7, a new world built with ProtonScatter, repository checked); A0 added |
+| 2026-11-22 | requirements | `CREATE ISSUE:` | Claude Opus 5.5 | included in the plan row | included in the plan row | issue #35 created (no parent) |
+| 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 2.87 M (138 k in · 2.69 M cached · 50 k out) | CHF 1.86 (222 credits) | Part 2 written: 20 Steps, all reasoning (Claude Opus 5.5) per S1; Step 14 is the gate for the author's drawing (A0) (agent `s09g-lead`; requirements revision and issue included) |
 
 ---
 
@@ -21,10 +25,10 @@
 The author and Mattia find that the Godot game's screens and characters look much worse than
 the Python + Svelte game, and Mattia is unhappy with the new game. This spec makes the UI and
 the characters clearly better (judged side by side with the Svelte game on the same screens),
-lets a child's drawing become a character of the game with what Claude (via Copilot) can do
-on its own (part A), and recommends a better drawing-to-character workflow with one or a few
-tools, Google Flow among them (part B). Every stage and Step of this spec runs on Claude
-Opus 5.5.
+adds a second, fantasy world built with the ProtonScatter addon (part W), lets a child's
+drawing become a character of the game with what Claude (via Copilot) can do on its own
+(part A), and recommends a better drawing-to-character workflow with one or a few tools,
+Google Flow among them (part B). Every stage and Step of this spec runs on Claude Opus 5.5.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - [Basic UI](done/2026_11_21_04_basic_ui_spec.md) (spec 04) — the screens (home, fighter list,
@@ -56,6 +60,24 @@ Opus 5.5.
   [Originality review](../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22:
   our own identity, no copied look). Part B answers #21's question for the Godot game in a
   narrower form; it does not replace #21.
+- The canyon is the only world: `game/arena_layout.gd` (`ArenaLayout`, constants for the walls,
+  cactus patches, decoration and start points, read by `Canyon`, `Arena`, `MatchArena`,
+  `BotBrain` and `ControlsHelp`) and `scenes/canyon.gd`. More worlds, world coins, prices and
+  three sizes are [Worlds and World Coins](2026_11_22_18_worlds_and_world_coins_spec.md)
+  (spec 18, requirements only); part W adds one world and a minimal choice, nothing of spec 18.
+- **ProtonScatter** (checked 2026-11-22: [Godot Asset Store](https://store.godotengine.org/asset/hungryproton/protonscatter/),
+  version 4.2.0 of 2026-07-28; [source](https://codeberg.org/hungryproton/proton_scatter),
+  `addons/proton_scatter/`, MIT, "Copyright (c) 2019 HungryProton") is a **placement tool**,
+  not a world: a `ProtonScatter` node with a modifier stack (points on a grid, at random, along
+  an edge; then moved, rotated, scaled, projected), `ScatterItem` nodes naming the scene to
+  place, and `ScatterShape` nodes (box, sphere, path; can be negative) for the area. It places
+  instanced meshes (MultiMesh) or copies of scenes. In a running game it rebuilds on load
+  (`force_rebuild_on_load`, default on) **on a `Thread`** unless `dbg_disable_thread` is set —
+  a risk for the single-threaded web export. Its repository has demo assets
+  (`addons/proton_scatter/demos/assets/`: rocks, grass, bush, pine tree, mushroom, fence,
+  brick, dead branch, the Godot mascot Gobot, a `source.blend` with textures) under the addon's
+  MIT licence; they are textured and realistic, not Hack star's outlined cartoon look, so the
+  objects to scatter are made for Hack star (W3).
 
 **Compared on screenshots (2026-11-22, 1280 × 720, same screens, both games run locally; the
 Svelte game rendered in a headless browser with software 3D, so its colours are paler than on a
@@ -105,6 +127,8 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 **New:**
 - A clearly better look of the Godot game's screens and characters, checked side by side with
   the Svelte game.
+- A second world, a fantasy place unlocked from the start, its objects placed with
+  ProtonScatter, and a minimal choice between the two worlds.
 - A drawing → character workflow that Claude runs on its own (part A), with a first drawing of
   Mattia's in the game.
 - A written recommendation for a better workflow with Google Flow and few other tools (part B).
@@ -123,18 +147,21 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 - **G1 — Side by side:** Before and after this spec, the home screen, the fighter list, the
   fighter screen and a match of both games are captured at the same size (desktop landscape and
   iPad portrait); the author and Mattia judge each Godot screen "as good as or better than" the
-  Svelte one, and their verdict per screen is written in this spec.
+  Svelte one, and their verdict per screen is written in this spec. Mattia decides per screen and
+  the author breaks a tie, in one session at the end of the spec, with a mid-way look after the
+  first screens (home and match).
 - **G2 — Background:** No Godot screen has a plain flat background: menus have a coloured
   gradient or pattern with depth, and the fighter on home, the fighter screen and the result
   screen stands on a visible pedestal or stage.
 - **G3 — Fonts:** The title, headings, buttons and numbers use a bold display font with a dark
-  outline or shadow; body text stays readable; the font has a free licence named in
-  `LICENSES.md`.
+  outline or shadow; body text stays readable; the font is one free display font under the SIL
+  Open Font License, in `assets/`, named in `LICENSES.md`.
 - **G4 — Logo:** "Hack star" on home is a logo (more than one colour, outline, not plain text)
   and plays in the entrance as today.
 - **G5 — Buttons and icons:** Every home action is a button with an icon and its own colour,
   **Play** is the largest and most visible button, and trophies, credits, power, lock and price
-  are shown with icons instead of words like "Trophies:"; icons are original or CC0.
+  are shown with   icons instead of words like "Trophies:"; the icons are Kenney's (CC0) or original, in
+  `assets/`.
 - **G6 — Press feedback:** Every button visibly reacts to a press (mouse and touch) within one
   frame, and to hovering with a mouse.
 - **G7 — Fighter cards:** A card shows the fighter's picture on a coloured backdrop (unlocked)
@@ -160,19 +187,57 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   5 s after **Play** on the iPad, as before.
 - **G16 — Sizes and input:** Every screen still fits the five screen sizes, buttons stay at least
   44 px and text at least 14 px on screen, and every button works with mouse and touch.
+- **G17 — Order:** Home and the match get the new look first (what Mattia sees most), then the
+  fighter list and the fighter screen, then the result, info, hack and QR screens; all of them
+  in this spec.
+- **G18 — Style:** The new look matches the Svelte game's layout and style (gradient, coloured
+  icon buttons, a large yellow **Play**); an own identity (root spec #22) comes later.
+
+### W — A new world, built with ProtonScatter
+
+- **W1 — Glimmer Isles:** A second world, **Glimmer Isles** (floating islands with glowing
+  crystals and giant mushrooms — not a real place; original art), is unlocked for every account
+  from the start, old saves included.
+- **W2 — Choose the world:** Before a match and before Training the player chooses between the
+  canyon and Glimmer Isles with a minimal choice (both names shown, the current one marked; the
+  canyon is the default); the choice is used by **Play** and **Training** and kept while the
+  game is open. World coins, prices, sizes, more worlds and saving the choice stay with
+  [Worlds and World Coins](2026_11_22_18_worlds_and_world_coins_spec.md) (spec 18).
+- **W3 — Own look:** Glimmer Isles has its own ground, cover (the hiding patches), walls and
+  decoration, placed with ProtonScatter, in the outlined cartoon look of G9 and G10; every
+  object placed is made for Hack star (the addon's demo assets are not used).
+- **W4 — Same rules:** The match rules stay as in the canyon: the arena is as big, bots find
+  the player, the cover hides as the cactus patches do, start points are free of walls and
+  cover and at least 4 m apart, and overtime and closing walls work as in the canyon (once spec
+  11 adds them).
+- **W5 — Smooth and on the web:** A match with 4 fighters in Glimmer Isles runs at 30 frames per
+  second or more on a recent iPad (as G14) and works in the single-threaded web export; nothing
+  of the world is computed on a thread while the game runs (if ProtonScatter cannot run there,
+  its result is baked in the editor — the plan decides).
+- **W6 — Credit:** ProtonScatter (HungryProton, MIT, version 4.2.0, its source) is credited in
+  `LICENSES.md` with its licence file, and its version is pinned.
+- **W7 — Canyon unchanged:** The canyon looks (apart from G10, G11) and plays as before.
 
 ### A — Drawing → character, done by Claude in this spec
 
+- **A0 — Author's drawing first:** Part A starts only after the author has sent the photo of
+  the drawing. Before part A the implementation stops, tells the author exactly what to do
+  (photograph the whole drawing flat, in daylight, on plain paper with nothing else in the
+  picture; no people, faces, full names or places; remove the photo's metadata such as GPS —
+  as A1 and A7 say) and where to put it, and reminds him while it waits; nothing of part A is
+  built from an invented drawing.
 - **A1 — Workflow:** A short document in the repository says how to take the photo (whole
   drawing, flat, daylight, plain paper, nothing else in the picture), where to put it, and the
   exact request to give Claude via Copilot; following it, Claude turns one drawing into a
   character of the game without other tools.
-- **A2 — In the game:** The drawn character is a new **fighter** (open question 2) with the name
-  the child chooses: shown in the fighter list and the fighter screen, selectable, shown on home,
-  and playable in Training and a match like every other fighter.
-- **A3 — Recognisable:** The character has the drawing's main shapes and colours (head, body,
-  limbs, special parts such as a hat or a weapon) in the game's outlined cartoon style;
-  Mattia confirms "this is my drawing".
+- **A2 — In the game:** The drawn character is a new **fighter**, unlocked from the start with
+  one default skin (more skins come with spec 10), with the name the child chooses: shown in the
+  fighter list and the fighter screen, selectable, shown on home, and playable in Training and a
+  match like every other fighter.
+- **A3 — Recognisable:** The character is a 3D figure built from shapes, with the drawing's main
+  shapes and colours (head, body, limbs, special parts such as a hat or a weapon) in the game's
+  outlined cartoon style; a flat "paper cut-out" of the photo is the fallback only for a drawing
+  too detailed for shapes. Mattia confirms "this is my drawing".
 - **A4 — Moves like the others:** The drawn character has the idle, run and attack animations,
   its picture on the card, and the see-through in a bush, as the other fighters.
 - **A5 — First drawing done:** At least one of Mattia's drawings is in the game at the end of this
@@ -210,9 +275,10 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 - **B5 — Fit for the game:** The document states the limits a generated character must meet to
   join the game (size in MB and triangles for an iPad at 30 frames per second, the outlined
   cartoon look, the animations of A4).
-- **B6 — Trial:** Whether a trial of the B1 workflow with one drawing is done in this spec is
-  decided by the author (open question 4); if it is done, its result, time and cost are
-  recorded in the document, and its files join the game only if their licence allows it.
+- **B6 — Trial:** One drawing goes through the B1 workflow in this spec, done by the author with
+  his own accounts (Google Flow; Meshy free plan — CC BY 4.0, credit Meshy), on free use only;
+  its result, time and cost are recorded in the document, and it joins the game only if its
+  licence allows it and Mattia prefers it to the part A version.
 
 ### Everywhere
 
@@ -232,27 +298,10 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 
 ### Open questions
 
-- **Q1 — 3D or flat for drawn characters (part A):** a 3D figure Claude builds from shapes
-  (matches the other fighters, animates well, loses the drawing's lines), or a flat "paper
-  cut-out" of the photo standing in the arena (keeps the drawing exactly, only bobs and turns)?
-  Suggestion: 3D built from shapes, with the cut-out as the fallback for drawings too detailed
-  for shapes.
-- **Q2 — Fighter or skin:** the drawn character as a new fighter (same rules as all fighters
-  today, so no gameplay change) or as a skin of an existing fighter? Suggestion: a new fighter,
-  unlocked from the start, with one default skin; skins come with spec 10.
-- **Q3 — Which screens first:** Suggestion: home and the match first (what Mattia sees most),
-  then the fighter list and screen, then the result, info and hack screens; all in this spec.
-- **Q4 — Trial of part B in this spec:** Suggestion: yes, one drawing, by the author with his
-  accounts (Google Flow, Meshy free plan — CC BY 4.0, credit Meshy), on free use only; the
-  result is described in the document and joins the game only if Mattia prefers it to the part A
-  version.
-- **Q5 — Who judges "better" (G1):** Suggestion: Mattia decides per screen, the author breaks a
-  tie; one session at the end of the spec, with a mid-way look after the first screens.
-- **Q6 — How close to the Svelte look:** match it (same gradient, icon buttons, yellow Play), or
-  use it as the minimum and give Godot its own look (root spec #22, our own identity)?
-  Suggestion: match the Svelte layout and style now, own identity later.
-- **Q7 — Fonts and icons:** a free display font (OFL) and a CC0 icon pack (for example Kenney's),
-  or icons built in code? Suggestion: one OFL font and Kenney CC0 icons, both in `assets/`.
+None. The author answered Q1–Q7 on 2026-11-22 (Q1 3D built from shapes, cut-out as the
+fallback → A3; Q2 a new fighter, unlocked from the start, one default skin → A2; Q3 home and the
+match first, then the fighter list and screen, then the result, info and hack screens, all in
+this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added part W and A0.
 
 <!-- spec-nx:plan -->
 
@@ -260,4 +309,470 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 
 # Part 2 · Plan
 
-_Written by the plan stage once Part 1 is agreed._
+## 2 · Spec Overview
+
+| Step | Description | Model (suggested) | Status | Detail |
+|------|-------------|-------------------|--------|--------|
+| **1** | Before screenshots and size baseline | reasoning (Claude Opus 5.5) — S1; capturing both games the same way, the reference for G1 and G15 | ⬜ Not started | [→ Step 1](#step-1--before-screenshots-and-size-baseline) |
+| **2** | Font, icons and theme | reasoning (Claude Opus 5.5) — S1; new pinned assets with licences and a theme that every screen inherits (D3, D4, D7) | ⬜ Not started | [→ Step 2](#step-2--font-icons-and-theme) |
+| **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ⬜ Not started | [→ Step 3](#step-3--toon-look-of-the-fighters) |
+| **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--home-screen) |
+| **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ⬜ Not started | [→ Step 5](#step-5--arena-look) |
+| **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ⬜ Not started | [→ Step 6](#step-6--arena-framing-and-match-hud) |
+| **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ⬜ Not started | [→ Step 7](#step-7--fighter-cards) |
+| **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
+| **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ⬜ Not started | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
+| **10** | ProtonScatter addon | reasoning (Claude Opus 5.5) — S1; a new pinned dependency kept out of the export (D11) | ⬜ Not started | [→ Step 10](#step-10--protonscatter-addon) |
+| **11** | Worlds and the world choice | reasoning (Claude Opus 5.5) — S1; the arena layout per world, the Glimmer Isles layout and the choice on home (D9, D10) | ⬜ Not started | [→ Step 11](#step-11--worlds-and-the-world-choice) |
+| **12** | Glimmer Isles objects and scatter scene | reasoning (Claude Opus 5.5) — S1; original fantasy props and the ProtonScatter setup (D13) | ⬜ Not started | [→ Step 12](#step-12--glimmer-isles-objects-and-scatter-scene) |
+| **13** | Glimmer Isles baked and playable | reasoning (Claude Opus 5.5) — S1; the bake tool, the world in a match, web export and frame rate (D12) | ⬜ Not started | [→ Step 13](#step-13--glimmer-isles-baked-and-playable) |
+| **14** | Gate: author's drawing photo | reasoning (Claude Opus 5.5) — S1; no code: stops the run and tells the author what to do (A0, D14) | ⬜ Not started | [→ Step 14](#step-14--gate-authors-drawing-photo) |
+| **15** | Drawing workflow document | reasoning (Claude Opus 5.5) — S1; the repeatable workflow, limits and privacy rules (D15) | ⬜ Not started | [→ Step 15](#step-15--drawing-workflow-document) |
+| **16** | Drawn fighter in the game | reasoning (Claude Opus 5.5) — S1; reading the drawing and building a recognisable fighter from shapes (D14) | ⬜ Not started | [→ Step 16](#step-16--drawn-fighter-in-the-game) |
+| **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ⬜ Not started | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
+| **18** | Tool recommendation document | reasoning (Claude Opus 5.5) — S1; research with sources and dates, licence first (D15) | ⬜ Not started | [→ Step 18](#step-18--tool-recommendation-document) |
+| **19** | Trial of the recommended workflow | reasoning (Claude Opus 5.5) — S1; the author's trial with his accounts, recorded and judged (D17) | ⬜ Not started | [→ Step 19](#step-19--trial-of-the-recommended-workflow) |
+| **20** | Final check, README and architecture | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the side-by-side verdict and the documents | ⬜ Not started | [→ Step 20](#step-20--final-check-readme-and-architecture) |
+
+**Who does what:** Steps 1–13, 15–18 and 20 are done by the agent. **Step 14 is a gate:** it
+stops the run until the author has sent the photo (A0); Steps 15–20 start only after it.
+**Step 19 needs the author** (his Google Flow and Meshy accounts, B6); Step 20 needs the author
+and Mattia for the side-by-side verdict (G1) and the iPad play-test (G14, W5) — the agent
+prepares everything and records their answers (D17).
+
+> **Step completion protocol (required):** every time a Step is finished, in the same edit:
+> 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
+> 2. Append a **`**Done (YYYY-MM-DD · ~<duration> · <model>)**`** line to that Step's
+>    **Notes**: date, time it took, the AI model that did the work, a one-line summary and
+>    the verifying test/command result. With per-Step models, end it with
+>    `suggested: <tier> (<model>) · ran: <model>`; with cost tracking on, with
+>    `· ~<tokens> · ~<currency> <amount>` from the `usage` script.
+>
+> The table and the Step sections must **always agree**.
+
+> **Time tracking (required for every Step):** each Step's **first task** is
+> `Record the start time in Notes` (e.g. `Started: YYYY-MM-DD HH:MM`); the Done line records
+> the finish and the duration.
+
+> **Godot spec:** this spec lives in `hack_star_godot/.specs/`. Every stage writes its files
+> there (`changes/`, `review/`, `costs.md`, `features/done/`), never in the root `.specs/`;
+> the checks are `hack_star_godot/tools/check_tools.ps1`, `test.ps1`, `lint.ps1`,
+> `export_web.ps1` (all exit 0) and the guideline is
+> `hack_star_godot/.specs/guidelines/gdscript.md` ([AGENTS.md](../../../AGENTS.md)). Each
+> Step ends with `tools/test.ps1` and `tools/lint.ps1` exit 0. Nothing in `server/` or `ui/`
+> changes (S5). `gdlint` allows at most 20 public tests per file: new tests go into new files
+> where a file is full. **Looks are checked on real screenshots** (D2): a windowed Godot run
+> (not headless) with a temporary capture script (PNGs under `%TEMP%`, viewed, then the script
+> removed, never committed), at 1280×720 and 820×1180 (iPad portrait) unless the Step says
+> otherwise; the Step's Notes say what was looked at and what was changed after looking.
+> **Every Step runs on Claude Opus 5.5** (S1, D1).
+
+### Decisions
+
+| # | Decision | Why |
+|---|----------|-----|
+| D1 | **One model:** every Step's Model column is `reasoning (Claude Opus 5.5)`; the implementation, review and close run on Claude Opus 5.5 too, and the Done lines say `suggested: reasoning (Claude Opus 5.5) · ran: <model>`. | S1, the author's choice for this spec. |
+| D2 | **Screenshots:** looks are judged on real screenshots of a windowed Godot run (the GPU renders as on a device; headless has no image). A temporary script (an autoload added for the run, or `--script`) waits for the screen, saves `get_viewport().get_texture().get_image()` as PNG and quits; it is removed before the commit. The **before** and **after** sets for G1 (home, fighter list, fighter screen, a match; both games; 1280×720 and 820×1180) are kept outside the repository in `%LOCALAPPDATA%\hack_star\screens\09\before\` and `…\after\` with the same file names (`godot_home_1280x720.png`, `svelte_home_1280x720.png`, …) — not committed (size, and the Svelte side is software-rendered); the Svelte game is run with `npm run dev` in `ui/` and captured in a headless browser, as the requirements stage did, without changing `ui/`. | G1, G17; the same method for both sets makes the comparison fair; the repository stays small. |
+| D3 | **Font:** **Lilita One** (Google Fonts, Juan Montoreano, SIL Open Font License 1.1, one heavy weight, about 30–60 KB) in `assets/fonts/LilitaOne-Regular.ttf` with `assets/fonts/OFL.txt`; pinned in `tools/versions.json` (`"font_lilita_one"`: the version in the font's name table) with its source (the `ofl/lilitaone/` folder of `github.com/google/fonts` at a named commit) and SHA-256 in `LICENSES.md`. It is used for the title, headings, buttons and numbers, with `outline_size` and a dark `font_outline_color` plus a shadow in the theme; body text keeps Godot's default font (readable, no download). | G3, G15, S4: one bold, rounded display font close to the Svelte look's weight 900 text; OFL allows shipping it in an MIT game with its licence file. |
+| D4 | **Icons:** **Kenney "Game Icons"** (kenney.nl, CC0 1.0): only the icons used (play, trophy, credits/coin, power, lock, price tag, fighters, info, hack/key, back, home, clock, fighters left, eye, world, settings — about 15–20 white PNGs, tinted in Godot with `modulate` or `icon_*_color`) are copied into `assets/icons/` with Kenney's `License.txt`; the pack version (from its `License.txt`/download page) is pinned in `tools/versions.json` (`"kenney_game_icons"`), the download URL and date in `LICENSES.md`. An icon missing from the pack is drawn in code (own work, MIT). | G5, G15, S4: CC0 needs no credit but we credit anyway, as `ui/public/assets/LICENSES.md`; copying only the used icons keeps the export small. |
+| D5 | **Toon look (outline technique):** two shaders in `scenes/toon/`: `toon.gdshader` (3 clear bands — light, mid, shadow — in `light()`, a thin rim; colour, emission and see-through alpha as uniforms; works in the Compatibility renderer) and `outline.gdshader`, an **inverted hull** as the material's `next_pass` (`cull_front`, `unshaded`, dark colour) that grows each vertex **along its normal in clip space by a fixed number of pixels** (about 3 px at 720 px height, scaled with the viewport height), so the outline keeps its width on a 150 px card and in the arena — unlike today's `OUTLINE_GROW` 0.022 in metres. `ToonMaterials` (`scenes/toon/toon_materials.gd`) caches one material pair per colour, shared by fighters, arena and world props (also on `MultiMeshInstance3D` via `material_override`). It replaces `DIFFUSE_TOON` and the grown copy in `FighterModel` and the toon materials of `Canyon`. | G9, G10, W3, G14: the Svelte look (`parts.ts`: 3-step shading, dark hull 7 % larger) in a form that stays visible at every size; one pair per colour keeps draw state small for the iPad. |
+| D6 | **Menu background and stage:** a `MenuBackground` scene (`scenes/ui/menu_background.tscn`, a `ColorRect` with `menu_background.gdshader`: a purple gradient with slow soft light rays) behind every menu screen; `FighterStage` gets a round pedestal (a toon-shaded cylinder with outline and a soft shadow disc) and a frame on the fighter screen. | G2: one shared background instead of a flat colour per screen; drawn by the GPU, no texture to download. |
+| D7 | **Buttons in the theme:** `hack_star_theme.tres` gets type variations per colour (`PlayButton` large yellow, `GreenButton`, `BlueButton`, `PinkButton`, `IconButton` round) with `StyleBoxFlat`s for normal, hover (lighter), pressed (darker, content moved 3 px down, no bottom edge) and focus; icons are set as `Button.icon`. A press and a hover are shown by the theme in the same frame, with no script; the entrance animation stays in `home.gd`. Chips (trophies, credits, power, timer, fighters left) are one small scene `scenes/ui/icon_chip.tscn` (dark rounded backing, icon, number in the display font). | G5, G6, G12, G18: a theme change reaches every screen; no per-button script to forget. |
+| D8 | **FPS label:** hidden for players; the info screen gets a **Show FPS (play-test)** switch that sets `GameState.show_fps` (kept while the game is open, not saved — no save change). | G12, S2: the author can switch it on on the iPad without a keyboard; saves stay as they are. |
+| D9 | **Worlds and layouts:** `game/worlds.gd` (`Worlds`, static): the list `[{id: "canyon", name: "Canyon"}, {id: "glimmer_isles", name: "Glimmer Isles"}]`, `ids()`, `get_world(id)`, all unlocked from the start (no save field). `ArenaLayout` becomes per world: today's constants become the canyon's layout data, a second layout holds Glimmer Isles (same `SIZE` 20 × 26 m, own walls, cover patches, decoration spots, dummies and start points); `ArenaLayout.use(world_id)` sets the active layout (default canyon) and the existing functions (`bounds`, `in_bush`, `is_free`, …) and accessors (`walls()`, `bushes()`, `starts()`, …) read it, so `BotBrain`, `ControlsHelp`, `Arena` and `MatchArena` keep their logic. `GameState.world` (memory only, default `"canyon"`) holds the choice; `Arena` and `MatchArena` call `ArenaLayout.use(GameState.world)` and build `Canyon` or `GlimmerIsles`. Collisions and hiding come from the layout rectangles, never from scattered meshes. | W1, W2, W4, W7, S2: one source of truth for the rules per world; the canyon's numbers do not change; saving the choice is spec 18 (S19), so the save version stays. |
+| D10 | **World choice (minimal):** on home, a `WorldButton` (world icon + the current world's name) next to **Play** opens a small popup with the two worlds (the current one marked); the choice applies to **Play** and **Training**. Spec 18 replaces it with its world screen. | W2: the smallest UI that lets the player choose before a match and before Training. |
+| D11 | **ProtonScatter in the project:** version **4.2.0** from the Godot Asset Store download (its `plugin.cfg` says 4.2.0) is copied into `addons/proton_scatter/` **without** `demos/` and `tests/` (not used — the demo assets are textured and realistic, Gobot is Godot's mascot — and they are most of the repository's 15 MiB); its `LICENSE` stays in the folder. The plugin is enabled in `project.godot` (`editor_plugins`, next to GUT). `tools/versions.json` gets `"protonscatter": "4.2.0"`, and `check_tools.ps1` checks `addons/proton_scatter/plugin.cfg` like GUT. `LICENSES.md` gets a row (MIT, "Copyright (c) 2019 HungryProton", source URL, download date and SHA-256 of the zip). `lint.ps1` already skips `addons/`; `export_presets.cfg` excludes `addons/proton_scatter/*` (the game uses only the baked result, D12). | W3, W6, G15: a new dependency, pinned and credited like GUT; nothing of it ships. |
+| D12 | **Always baked:** ProtonScatter rebuilds on load on a `Thread` (`force_rebuild_on_load`, `dbg_disable_thread`) — a risk in the single-threaded web export and extra start-up time — so the scatter result is **baked**: `tools/bake_world.ps1` runs `tools/bake_world.gd` with Godot (headless; a windowed run if headless cannot rebuild), which loads `scenes/worlds/glimmer_isles/scatter_source.tscn`, sets every `ProtonScatter` to `dbg_disable_thread = true` and `enable_updates_in_game = true` with a fixed `global_seed`, waits for the rebuild, and saves the outputs as plain `MultiMeshInstance3D` nodes (toon materials of D5) in `scenes/worlds/glimmer_isles/baked.tscn`, which references no addon script. The game loads only `baked.tscn`; the source scene is re-baked by hand when it changes (README *How to…*). | W5, G15: no thread and no addon code while the game runs; the same result every time; the decision Part 1 leaves to the plan. |
+| D13 | **Glimmer Isles look:** own props in `scenes/worlds/glimmer_isles/props/`, built from Godot's primitive meshes with the D5 materials: crystal clusters (walls: tall prisms with glowing tips), glow-fern and small-mushroom patches (cover), giant mushrooms and floating island chunks with hanging roots (decoration, outside the border), a soft teal-lavender tiled ground with a glowing path and a starry sky gradient. ProtonScatter places them: one scatter per kind, its `ScatterShape` boxes taken from the layout rectangles (crystals inside each wall, cover plants inside each cover patch, a negative box around the start points, islands outside the border). `GlimmerIsles` (`scenes/worlds/glimmer_isles/glimmer_isles.gd`) adds the floor, the colliders from the layout and the baked scene. Original art, MIT. | W1, W3, W4, S4: not a real place; readable like the canyon (walls block, cover hides); scatter only decides where the looks go. |
+| D14 | **Drawn fighters:** the author sends the photo in the chat or puts it in `%USERPROFILE%\hack_star_drawings\` (outside the repository; never committed unless he says so, A7); the agent re-encodes it with Godot's `Image` (load → resize to at most 1024 px → `save_png`), which drops EXIF/GPS metadata, and checks it shows only the drawing. The fighter is a new entry in `Fighters.LIST` (`drawn: true`, the child's name, one `default` skin, stats and attack copied from an existing fighter the child picks — no new attack, A6), unlocked through `Fighters.start_unlocked()` (old saves join it, spec 08 D4); its look is code in `scenes/drawn/<id>_model.gd` (shapes and colours from the drawing, D5 materials, the same idle, run and attack animation hooks and see-through as `FighterModel`), registered in one table `scenes/drawn/drawn_fighters.gd`. Removing it = deleting its file, its table row and its list entry; a save that chose it falls back to the default fighter through the existing checks (`SaveData` drops unknown ids, spec 08 D3/D11). If the drawing is too detailed for shapes, the fallback (A3) is a flat cut-out: the re-encoded picture on a double-sided quad with an outline, bobbing and turning. | A2–A5, A7–A9: no change to the rules or the save format; one place per drawn fighter, so adding or removing one touches nothing else. |
+| D15 | **Documents:** `hack_star_godot/docs/drawing_to_fighter.md` (A1, A6, A7, A9: photo rules, where to put it, the exact request to Claude, limits, time, add/remove) and `hack_star_godot/docs/drawing_tools.md` (B1–B6: the recommended workflow Google Flow → Meshy → Claude in Godot, the fallback Claude alone, the facts per tool with sources and dates, the fit limits, the trial result). Both linked from the README. | A1, B1: the author follows them without this spec open. |
+| D16 | **Web size budget (G15):** Step 1 measures the web export (`build/web` total and the `.pck`); the budget for the whole spec is **+5 MB**, planned as font ≤ 0.1 MB, icons ≤ 0.3 MB, shaders and scenes ≤ 0.5 MB, Glimmer Isles baked scene ≤ 1.5 MB, drawn fighter (code) ≈ 0 — ProtonScatter is excluded (D11). Steps 2, 10, 13 and 16 note the size after their change; Step 20 fails if the total grows by more than 5 MB. | G15: checked as it grows, not only at the end. |
+| D17 | **What needs the author:** Step 14 stops the run (A0) and Steps 15–20 wait for the photo. The B6 trial (Step 19) is done by the author with his accounts; the agent prepares the instructions, records the result and imports it only if D14's licence rules and Mattia allow it. The G1 verdict and the G14/W5 iPad play-test (Step 20) are done by the author and Mattia; a mid-way look (G1) is sent after Step 6 without stopping. A Step that waits says *waiting for the author* in its Notes and is not ✅ Done until the answer is recorded. | A0, B6, G1, G14, W5: what only the author can do is visible in the table and never invented. |
+| D18 | **Tests:** looks are checked on screenshots; what a script can check is tested: the theme's fonts and button styles exist and every home button has an icon (`test_home.gd` / new `test_home_look.gd`); the toon and outline materials on every fighter part (`test_fighter_model.gd`); the nearest wall's share of the screen height ≤ 10 % at the five sizes (new `test_arena_framing.gd`); the FPS label hidden by default (`test_match_hud.gd`); `Worlds`, `ArenaLayout.use` and the Glimmer Isles layout (starts free and ≥ 4 m apart, every cover reachable, walls inside the bounds — new `test_world_layouts.gd`); the world choice used by Play and Training (new `test_world_choice.gd`); the baked scene has no addon reference and has props in every wall and cover rectangle (new `test_glimmer_isles.gd`); the drawn fighter in the list, selectable, playable, and the fallback after removal (new `test_drawn_fighter.gd`); the existing screen-size tests at the five sizes with the new layouts. Tests that count fighters (`test_fighters.gd`, `test_fighter_list.gd`, `test_sample_progress.gd`) are updated in Step 16. | S2, S3, G16: behaviour stays tested; tests change only where the look changes. |
+
+---
+
+## Step 1 — Before screenshots and size baseline
+
+### Goal
+The **before** screenshots of both games and the web export size are recorded, the reference for
+the side-by-side verdict and the size budget (G1, G15, G17).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Capture the Godot game (D2): home, fighter list, fighter screen, a match a few seconds in, at 1280×720 and 820×1180, into `%LOCALAPPDATA%\hack_star\screens\09\before\`.
+- [ ] Capture the Svelte game the same way (`ui/`: `npm run dev`, headless browser), the same screens and sizes, same folder; stop the dev server; `git status` shows nothing in `ui/`.
+- [ ] Run `tools/export_web.ps1`; write the total size of `build/web` and of the `.pck` in Notes (D16).
+- [ ] Check: 16 PNGs present and viewed; the size line in Notes; `tools/test.ps1` and `tools/lint.ps1` exit 0 (nothing in the game changed).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 2 — Font, icons and theme
+
+### Goal
+The display font and the icons are in `assets/`, pinned and credited, and the theme gives every
+screen bold outlined text and buttons that react to a press and a hover (G3, G5, G6, G16, S4).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Add Lilita One and `OFL.txt` to `assets/fonts/` (D3); add the used Kenney icons and `License.txt` to `assets/icons/` (D4); pin both in `tools/versions.json`; rows in `LICENSES.md` (source, version, date, SHA-256, licence).
+- [ ] Theme (`scenes/ui/hack_star_theme.tres`): the display font with outline and shadow for the title, heading, button and number types; body text unchanged; the button type variations and states of D7; the `IconChip` scene.
+- [ ] Keep every button ≥ 44 px and text ≥ 14 px (`UiScale`, spec 04 D13).
+- [ ] Check: screenshots of home and info at 1280×720 and 390×844 show the new text and buttons, hover and pressed states captured; `test.ps1`, `lint.ps1`, `check_tools.ps1` exit 0; export size noted (D16).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 3 — Toon look of the fighters
+
+### Goal
+Every fighter and skin has 3-band cel shading and a dark outline that stays visible on a card and
+in the arena, with readable eyes; shapes, names and colours unchanged (G9).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Add `scenes/toon/toon.gdshader`, `outline.gdshader` and `toon_materials.gd` (D5).
+- [ ] `FighterModel`: use the shared materials on every part (replacing `DIFFUSE_TOON` and the grown copy); eyes with a white and a dark part large enough for a card; the see-through in a bush still works.
+- [ ] Update `test_fighter_model.gd` (every visible part has the toon material with the outline pass; see-through).
+- [ ] Check: screenshots of all 6 fighters and the 14 skins on cards (150 px) and in Training; outline visible at both sizes, two or more tones per colour; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 4 — Home screen
+
+### Goal
+Home has the gradient background, the fighter on a pedestal, the "Hack star" logo, coloured icon
+buttons with a large yellow **Play**, and icon chips for trophies and credits (G2, G4, G5, G6,
+G16, G17, G18).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Add `MenuBackground` (D6) and use it on home; the pedestal in `FighterStage`.
+- [ ] Logo: "Hack" and "star" in two colours, outlined, slightly slanted, in the display font; the entrance animation as today.
+- [ ] Buttons: **Play** large yellow (corner in wide layout, bottom in tall), Training, Fighters, Info, Hack as coloured buttons with icons (D7); trophies and credits as `IconChip`s.
+- [ ] Update `test_home.gd` / add `test_home_look.gd` (each button has an icon and its colour variation; chips show the numbers; button names and actions unchanged); `test_screen_sizes.gd` passes at the five sizes.
+- [ ] Check: screenshots at the five sizes and with a press and a hover; compared with the Svelte before shot; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 5 — Arena look
+
+### Goal
+The canyon's floor, walls, cacti and props have the outlined cartoon look, and the floor is less
+saturated than the fighters (G10, W7).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `Canyon`: softer sand tiles (lower saturation), D5 materials with outline on walls, boulders, cacti, crates, skulls and bones (also on its `MultiMeshInstance3D`s); layout and collisions unchanged.
+- [ ] Note the draw calls (`Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME`) and the frame time of Training on the desktop before and after in Notes.
+- [ ] Check: screenshots of Training and a match at 1280×720 and 820×1180; fighters stand out from the floor; `test_arena*.gd` unchanged and green; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 6 — Arena framing and match HUD
+
+### Goal
+The nearest wall covers at most 10 % of the screen height at the start, the HUD shows the timer,
+fighters left and the controls hint on dark backings with icons, and the FPS label is hidden
+unless switched on (G11, G12, G1 mid-way look).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Camera framing and/or the camera-side wall height so that the projected nearest wall is ≤ 10 % of the screen height at the start of a match and of Training at the five sizes; new `test_arena_framing.gd` measures it with `Camera3D.unproject_position`.
+- [ ] HUD: timer and fighters left as `IconChip`s, the controls hint on a dark rounded backing with icons; the FPS label hidden by default; the info screen's **Show FPS (play-test)** switch (D8); `test_match_hud.gd` updated.
+- [ ] Mid-way look (G1, D17): copy the current home and match screenshots to `%LOCALAPPDATA%\hack_star\screens\09\midway\` and write in Notes that they are ready for the author and Mattia (not blocking).
+- [ ] Check: screenshots of a match and Training at five sizes; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 7 — Fighter cards
+
+### Goal
+Each card shows the fighter's picture on a coloured backdrop (or grey with a lock icon and price
+when locked), its name, rarity in its colour, trophies and power with icons, and the Prestige
+badge (G5, G7, G16).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `FighterCard`: backdrop by unlock state and rarity, picture from `fighter_pictures.gd` with the new look, lock icon and price for locked fighters, icon chips for trophies and power, rarity label in `Rarity` colours, `PrestigeBadge` as today; the fighter list on `MenuBackground`.
+- [ ] Update `test_fighter_list.gd` (lock icon only on locked cards; numbers shown); screen sizes pass.
+- [ ] Check: screenshots of the list (unlocked and locked cards, with the unlock-all hack and without) at five sizes; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 8 — Fighter screen and skin pictures
+
+### Goal
+The fighter screen frames the fighter on its stage, and every skin button shows a picture of the
+fighter in that skin in its rarity frame with its name (G2, G8, G16).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Fighter screen on `MenuBackground`, the stage framed with the pedestal; `SkinButton` shows the skin's picture (rendered once per skin and cached, as `fighter_pictures.gd`), a rarity-coloured frame (Legendary gold as today) and the name; select and back actions unchanged.
+- [ ] Update `test_fighter_screen.gd` (every skin button has a picture and the frame colour of its rarity).
+- [ ] Check: screenshots for a fighter with several skins at five sizes; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 9 — Result, info, hack and QR screens
+
+### Goal
+The result, info, hack and QR screens use the new background, fonts, buttons and icons; the
+fighter on the result screen stands on the pedestal (G2, G13, G16).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `MenuBackground`, display font headings, coloured icon buttons and chips on `result_screen`, `info`, `hack_screen`, `qr_page`; the result screen's trophy part (spec 08) in the new look; the QR page keeps printable black-on-white codes.
+- [ ] Update the tests of these screens only where names or the look changed; `test_screen_sizes*.gd` pass.
+- [ ] Check: screenshots of the four screens at five sizes (result: victory with a Prestige celebration); `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 10 — ProtonScatter addon
+
+### Goal
+ProtonScatter 4.2.0 is in the project, pinned, credited and kept out of the export (W6, D11).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Download 4.2.0 from the Godot Asset Store page; copy `addons/proton_scatter/` without `demos/` and `tests/`; keep `LICENSE`; note the zip's SHA-256.
+- [ ] Enable the plugin in `project.godot`; `tools/versions.json` `"protonscatter": "4.2.0"`; `check_tools.ps1` checks its `plugin.cfg` version (pending/fail rules as GUT); `export_presets.cfg` excludes `addons/proton_scatter/*`; `LICENSES.md` row.
+- [ ] Check: `check_tools.ps1` shows ProtonScatter 4.2.0; Godot imports the project headless without errors from the addon; `test.ps1`, `lint.ps1`, `export_web.ps1` exit 0; no addon file in the `.pck` (export file list); export size unchanged (D16).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 11 — Worlds and the world choice
+
+### Goal
+The arena layout is per world with a tested Glimmer Isles layout, and the player chooses the
+world on home for **Play** and **Training** (W1, W2, W4, W7, S2).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `game/worlds.gd` and the per-world `ArenaLayout` (D9); callers read the active layout; the canyon's data unchanged.
+- [ ] The Glimmer Isles layout: walls, cover patches, decoration spots, dummies, start points (same size).
+- [ ] `GameState.world`; `WorldButton` and popup on home (D10); `Arena` and `MatchArena` use the chosen world; until Step 13, `GlimmerIsles` builds plain toon blocks and patches from the layout so the world is playable.
+- [ ] Tests: new `test_world_layouts.gd` (both layouts: starts free and ≥ 4 m apart, walls inside the bounds, every cover reachable, `in_bush` per world) and `test_world_choice.gd` (default canyon; the choice used by Play and Training; a bot finds the player in Glimmer Isles; saves unchanged); all existing arena and bot tests green for the canyon.
+- [ ] Check: screenshot of home with the world button and popup at 1280×720 and 390×844; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 12 — Glimmer Isles objects and scatter scene
+
+### Goal
+The fantasy props exist in the outlined look, and a ProtonScatter scene places them from the
+layout (W1, W3, D13).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Props in `scenes/worlds/glimmer_isles/props/` (crystal cluster, glow fern, small mushroom, giant mushroom, floating island chunk), each a small scene from primitive meshes with D5 materials.
+- [ ] `scatter_source.tscn`: one `ProtonScatter` per kind with its `ScatterItem`s and `ScatterShape` boxes from the layout (negative boxes around the start points), fixed seeds; `LICENSES.md` own-work row for the props.
+- [ ] Check: a windowed run of the source scene with the scatter rebuilt shows the props in the right places (screenshot from above and from the game camera); `test.ps1`, `lint.ps1` exit 0 (the source scene is not loaded by the game).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 13 — Glimmer Isles baked and playable
+
+### Goal
+The scatter result is baked into a plain scene, Glimmer Isles is played with it in Training and a
+match, also in the web export, at a good frame rate (W3, W4, W5, D12).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `tools/bake_world.ps1` + `tools/bake_world.gd` (D12) write `baked.tscn`; `GlimmerIsles` loads it with the floor and the layout colliders; the sky gradient and glow.
+- [ ] New `test_glimmer_isles.gd`: `baked.tscn` loads without the addon and references no `addons/proton_scatter` path; props in every wall and cover rectangle; no prop on a start point.
+- [ ] Desktop: draw calls and frame time of a 4-fighter match in Glimmer Isles vs the canyon in Notes; web: `export_web.ps1`, `serve_web.ps1`, a match in Glimmer Isles in a browser starts and runs (screenshot); export size noted (D16).
+- [ ] Check: screenshots of Training and a match in Glimmer Isles at 1280×720 and 820×1180; `test.ps1`, `lint.ps1`, `export_web.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 14 — Gate: author's drawing photo
+
+### Goal
+Part A starts only with the author's real photo: the run stops here and tells the author exactly
+what to do (A0, A1, A7, D14, D17). No code.
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Stop the implementation and send the author this request (also written in Notes): *"Please photograph one of Mattia's drawings: the whole drawing, lying flat, in daylight, on plain paper, with nothing else in the picture — no people, faces, full names, addresses or places. Remove the photo's location and other metadata (or send it as a screenshot of the photo). Send it in the chat or put it in `%USERPROFILE%\hack_star_drawings\`, and tell me the fighter's name (1–12 letters), which existing fighter's attack it should use, and the first name or nickname for `LICENSES.md`. If you also want the part B trial (Step 19), it needs your Google Flow and Meshy accounts."*
+- [ ] While waiting, remind the author at every new message of the run; build nothing of part A from an invented or sample drawing.
+- [ ] Check: the photo has arrived and its location is noted (not the photo itself); the author's answers (name, attack, credit name) are in Notes.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 15 — Drawing workflow document
+
+### Goal
+`docs/drawing_to_fighter.md` tells the author how to photograph a drawing, where to put it, what
+to ask Claude, what the result can and cannot be and how long it takes (A1, A6, A7, D15).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Write the document: photo rules and privacy (A7, as Step 14's request), where the photo goes, metadata removal (D14), the exact request to Claude via Copilot, the limits of A6 (one drawing per run, front view only, no fine lines/texture/writing, name 1–12 letters, a fighter not a new attack, 3D from shapes with the cut-out fallback), expected time; link from the README.
+- [ ] Check: the document's steps match what Step 16 does (re-read after Step 16); links valid; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 16 — Drawn fighter in the game
+
+### Goal
+Mattia's drawing is a new fighter built from shapes, unlocked from the start, with its name,
+card, animations and see-through, playable in Training and a match (A2, A3, A4, A5, A8).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Re-encode the photo without metadata (D14); describe the drawing's main shapes and colours in Notes (no personal data).
+- [ ] Add the fighter (D14): `Fighters.LIST` entry, `scenes/drawn/<id>_model.gd`, the `drawn_fighters.gd` row; the cut-out fallback only if shapes cannot carry the drawing (say why in Notes).
+- [ ] `LICENSES.md`: the drawn character as the child's own work under the repository licence, with the chosen name; confirm it is not copied from a game, film or brand.
+- [ ] Tests: new `test_drawn_fighter.gd` (in the list, selectable, shown on home, plays in Training and a match, has idle/run/attack and see-through); update the fighter counts in existing tests.
+- [ ] Check: screenshots of the card, the fighter screen, home and a match next to the photo; send them to the author for Mattia's "this is my drawing" (A3) — record the answer in Notes; export size noted (D16); `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 17 — Adding and removing drawn fighters
+
+### Goal
+A second drawing can be added the same way without touching other fighters, and a drawn fighter
+can be removed with saves falling back to the default fighter (A9).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `docs/drawing_to_fighter.md`: *Add another drawing* and *Remove a drawn fighter* sections (the three places of D14).
+- [ ] Tests in `test_drawn_fighter.gd`: a save that selected an unknown (removed) drawn fighter loads with the default fighter and keeps the rest; adding a drawn fighter changes no other fighter's data.
+- [ ] Check: a dry run of the removal on a scratch copy (not committed) leaves the tests green; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 18 — Tool recommendation document
+
+### Goal
+`docs/drawing_tools.md` recommends one main workflow with at most three tools and one fallback,
+with the facts, terms and limits of each tool (B1, B2, B3, B4, B5, D15).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Re-check the sources of Part 1's research table (Google Flow, Meshy, Tripo/Hunyuan3D/TRELLIS, Godot import) and date every fact.
+- [ ] Write the document: main workflow (Google Flow → Meshy → Claude in Godot) step by step, fallback (Claude alone, or Google Flow → Claude), facts per tool (what it does, cannot do, cost, account and minimum age, output format and Godot import, training on uploads, terms for an MIT game), Google Flow's place (B3), licence first and credits for `LICENSES.md` (B4), the fit limits (MB and triangles for 30 fps on an iPad, outlined look via D5, the A4 animations) (B5); "not legal advice"; link from the README.
+- [ ] Check: every fact has a source and date; no tool with unclear terms recommended; `test.ps1`, `lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 19 — Trial of the recommended workflow
+
+### Goal
+The author runs the B1 workflow with one drawing on his own accounts; the result, time and cost are
+recorded, and it joins the game only if its licence allows it and Mattia prefers it (B6, D17).
+**Needs the author.**
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Send the author the trial steps from `docs/drawing_tools.md` (free use only; Meshy free plan = CC BY 4.0, credit Meshy); wait — *waiting for the author* in Notes.
+- [ ] Record in the document: what came out, time, credits used, problems.
+- [ ] If Mattia prefers it to the Step 16 version and the licence allows: import the GLB (size and triangle limits of B5, D5 outline, A4 animations), credit in `LICENSES.md`; else keep the files out of the repository and say why.
+- [ ] Check: the trial section of the document is filled; if imported, `test.ps1`, `lint.ps1`, `export_web.ps1` exit 0 and the export size noted (D16).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 20 — Final check, README and architecture
+
+### Goal
+Everything that worked before still works, the size budget is met, the after-screenshots and the
+author's verdict are recorded, and the documents describe the new look, the world and the
+workflows (G1, G14, G15, G16, W5, S2, S3, S4, S5, S6).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` (all exit 0); every `.ps1` changed parses with `[System.Management.Automation.Language.Parser]::ParseFile`; `git status` shows nothing outside `hack_star_godot/` (S5).
+- [ ] Size: compare `build/web` with Step 1; ≤ +5 MB (G15, D16); write both numbers in Notes.
+- [ ] After screenshots (D2) into `%LOCALAPPDATA%\hack_star\screens\09\after\`; the side-by-side session with the author and Mattia (G1, D17): their verdict per screen recorded in this Step's Notes; the iPad play-test (G14, W5: ≥ 30 fps with 4 fighters in the canyon and in Glimmer Isles, FPS switch of D8; playable within 5 s after **Play**) recorded — *waiting for the author* until then.
+- [ ] `README.md`: the new look, the world choice, Glimmer Isles and its re-bake (`tools/bake_world.ps1`), the FPS switch, links to both documents; `docs/architecture.md`: *UI foundation* (font, icons, theme, `MenuBackground`, `IconChip`), *3D models* (toon shaders, `ToonMaterials`, drawn fighters), worlds (`Worlds`, per-world `ArenaLayout`, `GlimmerIsles`, ProtonScatter bake), *Art and licences*; `LICENSES.md` complete (S4).
+- [ ] Check: every statement G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 has a Step that is ✅ Done or a Note saying what waits for the author.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Deferred Items
+
+| Task | Reason | Target Spec |
+|------|--------|------------------|
+| An own visual identity instead of matching the Svelte look | G18: match now, identity later | Root [Originality review](../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22) |
+| Saving the world choice, more worlds, sizes, world coins and prices | W2: only a minimal choice here | [Worlds and World Coins](2026_11_22_18_worlds_and_world_coins_spec.md) (spec 18) |
+| More skins for a drawn fighter | A2: one default skin | [Skins Shop](2026_11_22_10_skins_shop_spec.md) (spec 10) |
+| The new texts in every game language | S6: English until then | [Accounts, Fighters and Languages](2026_11_22_15_accounts_fighters_and_languages_spec.md) (spec 15) |
+| Overtime and closing walls in Glimmer Isles | W4: they come with spec 11 for every world | [Overtime and Match Options](2026_11_22_11_overtime_and_match_options_spec.md) (spec 11) |
+
+---
+
+## Review Log
+
+| Date | Reviewer | Scope | Outcome | Findings |
+|------|----------|-------|---------|----------|
+
+---
+
+## Definition of Done
+
+- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered)
+- [x] Plan · Part 2 written; every Step has a goal and tasks
+- [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded
+- [ ] Review · review page written; no Blocking finding open
+- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Pull request · opened with the spec summary; reviewed; merged; branch deleted
