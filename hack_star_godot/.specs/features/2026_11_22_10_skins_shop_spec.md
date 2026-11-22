@@ -12,7 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_skins_shop_spec.md (requirements only) |
-| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | S13 added from spec 16 (its S0: bugs whose feature comes with this spec) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_21_16_bug_fixes_spec.md) | included in [16](done/2026_11_21_16_bug_fixes_spec.md) | S13 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -24,18 +24,18 @@ Kids love skins, especially Legendary ones ("something like a costume"), and in 
 are bought, which makes them special. In Hack star every skin is free to pick today. This spec
 adds a **Shop** where skins are bought with credits, with a "skin of the day" on offer, and makes
 the "unlock everything" hack really unlock every skin. It is F7 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md).
+[MVP and architecture spec](done/2026_11_21_03_mvp_and_architecture_spec.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8).
-- [Basic UI spec](done/2026_11_12_04_basic_ui_spec.md) — the skins of the fighters with their
+- [Basic UI spec](done/2026_11_21_04_basic_ui_spec.md) — the skins of the fighters with their
   rarities (Default, Epic, Mythic, Legendary), their 3D looks and portraits, the skin choice on
   the fighter screen (S7) and the chosen skins in the saved progress.
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter
+- [Hack codes spec](done/2026_11_21_05_hack_codes_spec.md) — `OPENSESAME` "unlocks every fighter
   and every skin" (S5), `INFINITY` unlimited credits.
-- [Unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — credits earned in
+- [Unlock and upgrade spec](2026_11_22_09_unlock_and_upgrade_spec.md) — credits earned in
   matches, purchases, "UNLOCKED!" celebrations.
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_21_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 
@@ -82,7 +82,7 @@ the "unlock everything" hack really unlock every skin. It is F7 in the
   `hack_star_godot/docs/architecture.md` and the Info vocabulary ("Shop", "Skin of the day") are
   updated.
 - **S13 — Skins bought with a code stay:** Skins bought while INFINITY was active stay owned when
-  the code turns off by itself after its 3 days ([spec 16](done/2026_11_14_16_bug_fixes_spec.md),
+  the code turns off by itself after its 3 days ([spec 16](done/2026_11_21_16_bug_fixes_spec.md),
   S16), as after resetting the hacks (S8); when OPENSESAME turns off, the skins that were not
   bought are no longer owned. _(added from spec 16, 2026-11-22)_
 

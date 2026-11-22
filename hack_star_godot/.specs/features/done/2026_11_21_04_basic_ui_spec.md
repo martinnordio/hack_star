@@ -77,7 +77,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_basic_ui_spec.md) (#2).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — browser, screen sizes,
+- [MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) — browser, screen sizes,
   input, own art and smooth animation (S1–S3, S6, S7) apply here too; Brawl Stars investigation
   and feature list; the Godot technology, the architecture document
   `hack_star_godot/docs/architecture.md` and how to run the game (S12–S14).
@@ -125,7 +125,7 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   does not play it again. _(revised 2026-11-21: "the first time" made testable — once per
   game start — and a key added for the desktop.)_
 - **S3 — Play button:** Tapping **Play** opens the 3D arena with the fighter of spec 01 (the
-  arena that the [graphics demo spec](2026_11_12_06_graphics_demo_spec.md) builds on); its
+  arena that the [graphics demo spec](2026_11_21_06_graphics_demo_spec.md) builds on); its
   **Back** returns to the home screen. _(revised 2026-11-21: the Godot game already has the
   arena of spec 01, so Play keeps opening it instead of showing "Coming soon".)_
 - **S4 — Fighter list:** A **Fighters** button opens a list of all 6 fighters (S11), each
@@ -166,14 +166,14 @@ kids use, so adults can understand them. This is F1 / Spec 1 in
   screens (colours, text styles, buttons, the Back button), one way to go from screen to
   screen that later specs reuse, and layouts that fit desktop, iPad and phone in landscape
   and portrait, with touch and mouse; it is written down in
-  `hack_star_godot/docs/architecture.md` ([spec 03](2026_11_12_03_mvp_and_architecture_spec.md)).
+  `hack_star_godot/docs/architecture.md` ([spec 03](2026_11_21_03_mvp_and_architecture_spec.md)).
 - **S13 — Choice kept while playing:** The chosen fighter and skin stay chosen while the game
   is open (after the arena, the list or the info page and back); after a reload the game
   starts again from the sample progress (S8). Saving between visits comes with the first spec
   that saves (05 or 08, `docs/architecture.md`). _(added 2026-11-21: the Godot game saves
   nothing yet.)_
 - **S14 — Language:** All new text is in English; translations come with
-  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_22_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet, `docs/architecture.md`.)_
 
 ### Vocabulary for the info page
@@ -541,12 +541,12 @@ Started: 2026-11-21 17:01
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](2026_11_12_08_trophies_spec.md) |
-| The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](2026_11_12_06_graphics_demo_spec.md) (its S2) |
-| **Hack** button on the home screen | F2 | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) (its S1) |
-| Unlocking fighters with credits | F6 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Music and sound effects with a mute button | Left out of this spec (Open questions) | [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
-| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Save the chosen fighter, skin and progress between visits | Nothing is saved yet; the first saving spec defines the file (D4, S13) | [05 Hack codes](2026_11_21_05_hack_codes_spec.md) / [08 Trophies](2026_11_21_08_trophies_spec.md) |
+| The selected fighter and skin in the arena | The arena keeps spec 01's fighter (D6) | [06 Graphics demo](2026_11_21_06_graphics_demo_spec.md) (its S2) |
+| **Hack** button on the home screen | F2 | [05 Hack codes](2026_11_21_05_hack_codes_spec.md) (its S1) |
+| Unlocking fighters with credits | F6 | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
+| Music and sound effects with a mute button | Left out of this spec (Open questions) | [17 Fighter studio, saves and music](../2026_11_22_17_fighter_studio_saves_and_music_spec.md) |
+| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
 | Play-test on a real iPad and phone (touch, ≥ 30 fps on home and the list) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
 
 ---

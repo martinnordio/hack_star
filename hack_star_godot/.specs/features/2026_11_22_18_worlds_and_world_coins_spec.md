@@ -30,28 +30,28 @@ collecting trophies or get from special hack codes that can be used again after 
 - One arena, `CANYON` (30 × 24, with walls, bushes, decorations, Training dummies, start and
   spawn points), read for the movement limits; overtime removes its walls and bushes. Today's
   arena becomes the first free world in Small. In the Godot game: spec 01's arena and
-  [graphics demo spec](done/2026_11_12_06_graphics_demo_spec.md),
-  [first match spec](done/2026_11_12_07_first_match_spec.md) and
-  [overtime and match options spec](2026_11_12_11_overtime_and_match_options_spec.md).
+  [graphics demo spec](done/2026_11_21_06_graphics_demo_spec.md),
+  [first match spec](done/2026_11_21_07_first_match_spec.md) and
+  [overtime and match options spec](2026_11_22_11_overtime_and_match_options_spec.md).
 - **Play** and **Training** start the same arena in a different mode (spec 07).
-- [Play with friends spec](2026_11_12_14_play_with_friends_spec.md) — the host sends the match
+- [Play with friends spec](2026_11_22_14_play_with_friends_spec.md) — the host sends the match
   settings (match length, overtime, bot count and level) to friends when the room starts;
   friends mirror the host's match.
 - Per-account progress: trophies per fighter, total trophies, credits, unlocked fighters,
   active hacks with expiry dates; accounts kept in sync across tabs; the
-  [Fighter studio, saves and music spec](2026_11_14_17_fighter_studio_saves_and_music_spec.md)
+  [Fighter studio, saves and music spec](2026_11_22_17_fighter_studio_saves_and_music_spec.md)
   made sure every choice is kept.
-- [Trophies spec](done/2026_11_12_08_trophies_spec.md) — trophies per match (+10 for a win, never
+- [Trophies spec](done/2026_11_21_08_trophies_spec.md) — trophies per match (+10 for a win, never
   below the last Prestige level); Prestige every 1000 total trophies.
-- [Unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) and
-  [skins shop spec](2026_11_12_10_skins_shop_spec.md) — credits: earning, paying, prices;
+- [Unlock and upgrade spec](2026_11_22_09_unlock_and_upgrade_spec.md) and
+  [skins shop spec](2026_11_22_10_skins_shop_spec.md) — credits: earning, paying, prices;
   refusal when there are not enough.
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — hack codes are checked and applied to
-  the account; timed hacks last 72 hours (3 days, [bug fixes spec](done/2026_11_14_16_bug_fixes_spec.md));
+- [Hack codes spec](done/2026_11_21_05_hack_codes_spec.md) — hack codes are checked and applied to
+  the account; timed hacks last 72 hours (3 days, [bug fixes spec](done/2026_11_21_16_bug_fixes_spec.md));
   the QR page (password `M6D2`) prints every code. There is no per-code "already used" record
   today.
 - Five languages (English, Deutsch, Schwiizerdütsch, Español, Italiano) — spec
-  [15](2026_11_13_15_accounts_fighters_and_languages_spec.md).
+  [15](2026_11_22_15_accounts_fighters_and_languages_spec.md).
 
 **New:**
 - Several original worlds, each in three sizes, and a world choice before Play, Training and

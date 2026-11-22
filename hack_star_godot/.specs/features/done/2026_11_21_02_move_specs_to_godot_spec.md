@@ -114,7 +114,7 @@ after the other. It needs the folder, and the rule for Godot specs with the root
   specs of this folder are 01 and 02, and the moved specs continue with 03.
 - **S3 — File name:** A moved spec is named `<original date>_<NN>_<original name>_spec.md`,
   with the two-digit order number right after the date (for example
-  `2026_11_12_03_mvp_and_architecture_spec.md`); an older number in the name is replaced
+  `2026_11_21_03_mvp_and_architecture_spec.md`); an older number in the name is replaced
   (`2026_11_14_1_fighter_studio_…` becomes `2026_11_14_17_fighter_studio_…`).
 - **S4 — Requirements only:** A moved spec keeps its title and Part 1 statements word for
   word; everything below the marker `<!-- spec-nx:plan -->` is replaced by the empty Part 2
@@ -246,8 +246,8 @@ and Godot UI statements (S2–S8, S11, S13–S16).
 - [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
 - [x] `hack_star_godot/.specs/features/README.md` (D9) with all 18 rows (03–18 status
       *to move* until moved).
-- [x] `2026_11_12_03_mvp_and_architecture_spec.md` from the root original (D2–D7).
-- [x] `2026_11_12_04_basic_ui_spec.md` from the root original (D2–D6, D8).
+- [x] `2026_11_21_03_mvp_and_architecture_spec.md` from the root original (D2–D7).
+- [x] `2026_11_21_04_basic_ui_spec.md` from the root original (D2–D6, D8).
 - [x] Check: both files have the header of D2, S0 first, no Part 2 content, every link
       resolves (`Test-Path` from the folder; the GitHub link of D6 not needed here); the
       README lists 03–04 as *requirements*; `git status` shows nothing under the root

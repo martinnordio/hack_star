@@ -74,18 +74,18 @@ This feature used 41.31 M tokens, CHF 12.35 (1476 credits) — measured, see [CO
 Hack codes are what makes Hack star different from Brawl Stars: by typing a secret code or
 scanning a QR code, a player gets unlimited credits, all fighters unlocked, and power levels up
 to 22 instead of 11. This is F2 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) and the "hack codes" part
+[MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) and the "hack codes" part
 of [overall_req.md](../../../../.specs/overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_hack_codes_spec.md) (#3).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input) and S9 (progress kept on the device) apply here too; the Godot technology,
   the architecture document `hack_star_godot/docs/architecture.md` and how to run the game
   (S12–S14).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — its open question
+- [MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) — its open question
   "Server for rooms and hack codes" decides whether the hack codes need a server in the Godot game.
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
+- [Basic UI spec](2026_11_21_04_basic_ui_spec.md) — credits on the home screen (S1), fighter list
   with locks and power levels (S4), the fighter screen with skins (S7); the UI foundation of
   the Godot game (S12).
 - Checked 2026-11-21 (S0) in the code: the home screen (`scenes/home.tscn`) has **Play**,
@@ -162,7 +162,7 @@ of [overall_req.md](../../../../.specs/overall_req.md).
   expire until spec 16. _(revised 2026-11-21: the server already knows later codes and
   durations.)_
 - **S12 — Power 22 for now:** Until power levels affect matches
-  ([spec 09](../2026_11_12_09_unlock_and_upgrade_spec.md)), the power-22 hack changes only what
+  ([spec 09](../2026_11_22_09_unlock_and_upgrade_spec.md)), the power-22 hack changes only what
   the fighter list and fighter screen show. _(revised 2026-11-21: F6 is spec 09 in the
   ordered list.)_
 - **S13 — No server:** If the game cannot reach the server to check a code, the hack screen
@@ -170,7 +170,7 @@ of [overall_req.md](../../../../.specs/overall_req.md).
   the active hacks keep working without the server. _(added 2026-11-21: the Godot game calls
   a server for the first time.)_
 - **S14 — Language:** All new text is in English; translations come with
-  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_22_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet, `docs/architecture.md`.)_
 - **S15 — Web game reaches the server:** The web export finds the server at the address the
   page came from (spec 03, D3); one documented local command serves the web export with the
@@ -527,14 +527,14 @@ Started: 2026-11-21 18:16
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Hacks that expire after 72 hours | The server has durations, but expiry is spec 16's statement (S11) | [16 Bug fixes](2026_11_14_16_bug_fixes_spec.md) |
-| `HYPERCHARGE` and `CREATOR` codes | Their effects come with their specs; until then "Unknown code" (S11, D1) | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md), [17 Fighter studio, saves and music](../2026_11_14_17_fighter_studio_saves_and_music_spec.md) |
-| Buying with unlimited credits | Nothing can be bought yet; `Hacks.spend` is ready (S4, D4) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md), [10 Skins shop](../2026_11_12_10_skins_shop_spec.md) |
-| Power 22 in matches | Power levels do not affect matches yet (S12) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
-| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Hacks that expire after 72 hours | The server has durations, but expiry is spec 16's statement (S11) | [16 Bug fixes](2026_11_21_16_bug_fixes_spec.md) |
+| `HYPERCHARGE` and `CREATOR` codes | Their effects come with their specs; until then "Unknown code" (S11, D1) | [12 Super and hypercharge](../2026_11_22_12_super_and_hypercharge_spec.md), [17 Fighter studio, saves and music](../2026_11_22_17_fighter_studio_saves_and_music_spec.md) |
+| Buying with unlimited credits | Nothing can be bought yet; `Hacks.spend` is ready (S4, D4) | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md), [10 Skins shop](../2026_11_22_10_skins_shop_spec.md) |
+| Power 22 in matches | Power levels do not affect matches yet (S12) | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
+| Saving trophies, unlocks, selection and credits | Only the active hacks are saved (D5) | [08 Trophies](2026_11_21_08_trophies_spec.md) |
+| Translations of the new text | English only (S14, D11) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
 | Play-test on a real iPad and phone (in-game camera over `-Https`, camera app with a QR link, on-screen keyboard) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
-| WebSocket tunnel of `tools/serve_web.py` to an `https://` `-ApiUrl` (code review finding 6) | Plain TCP today; only rooms use WebSockets | [14 Play with friends](../2026_11_12_14_play_with_friends_spec.md) |
+| WebSocket tunnel of `tools/serve_web.py` to an `https://` `-ApiUrl` (code review finding 6) | Plain TCP today; only rooms use WebSockets | [14 Play with friends](../2026_11_22_14_play_with_friends_spec.md) |
 
 ---
 

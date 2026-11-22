@@ -69,7 +69,7 @@ This feature used 31.00 M tokens, CHF 10.22 (1218 credits) — measured, see [CO
 Hack star can be played: the player runs and shoots in the canyon, but nothing shoots back and
 nobody wins. This spec adds the first real match, a "last fighter standing" fight against bots,
 like Showdown in Brawl Stars. It is F4 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md). The numbers Mattia
+[MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md). The numbers Mattia
 still has to choose (see "Questions to Mattia" in [overall_req.md](../../../../.specs/overall_req.md)) are
 settings with a default, so his answers change one value each.
 
@@ -78,13 +78,13 @@ settings with a default, so his answers change one value each.
   — its numbers (fighters 3200 health = 7 hits of 480, healing 13 % of full health per second
   after 3 s, a fighter in a bush seen only within 2.5 m, the bot levels easy / medium / hard)
   and its flow (countdown, timer, knock-out order, place = fighters still in + 1) are the model.
-- [Graphics demo spec](2026_11_12_06_graphics_demo_spec.md) — the canyon arena, controls,
+- [Graphics demo spec](2026_11_21_06_graphics_demo_spec.md) — the canyon arena, controls,
   shots, effects, bushes, camera, target dummies, fighters and skins in 3D.
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the home screen with **Play**; the
+- [Basic UI spec](2026_11_21_04_basic_ui_spec.md) — the home screen with **Play**; the
   selected fighter and skin; the UI foundation of the Godot game (S12).
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — the hacks change nothing in the
+- [Hack codes spec](2026_11_21_05_hack_codes_spec.md) — the hacks change nothing in the
   arena (its S12).
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) — the Godot
   technology, the architecture document `hack_star_godot/docs/architecture.md` and how to run
   the game (S12–S14); S6 (30 frames per second) and D6 (the device play-test stays with the
   author).
@@ -168,12 +168,12 @@ settings with a default, so his answers change one value each.
   "the nearest target" of a tap becomes a bot in a match.)_
 - **S15 — Language:** All new text (countdown, timer, fighters left, the results, the buttons)
   is in English; translations come with
-  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_22_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet, `docs/architecture.md`.)_
 - **S16 — What worked before:** Home, the fighter list, the fighter screen, the info page, the
   hack screen and the QR page work as before; **Back** in a match goes home at any time without
   a result; a match changes no trophies, credits or unlocks (trophies come with
-  [spec 08](2026_11_12_08_trophies_spec.md)), and the hacks change nothing in a match (spec 05,
+  [spec 08](2026_11_21_08_trophies_spec.md)), and the hacks change nothing in a match (spec 05,
   S12). _(added 2026-11-21: the match is shared with the screens of specs 01–06.)_
 
 ### Open questions
@@ -476,10 +476,10 @@ suggested: light (Claude Haiku 5.5) · ran: Claude Haiku 5.5 · 2.18 M · CHF 0.
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (a full match with 3 bots at ≥ 30 frames per second, both sticks) and the browser check of the web export | Needs a person with the devices and a browser (spec 03, D6) | the author, before spec 08 is closed |
-| Trophies and credits for a result | Not part of the first match (S16) | [08 Trophies](2026_11_12_08_trophies_spec.md) |
-| Overtime and choosing match length, bot count and level in the game; address overrides of the settings (`?seconds=…`) | The defaults are set in code (S10, D12) | [11 Overtime and match options](../2026_11_12_11_overtime_and_match_options_spec.md) |
-| Bot Supers and Hypercharge | Not part of the first match | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
-| Translations of new text | English only (S15, D12) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Trophies and credits for a result | Not part of the first match (S16) | [08 Trophies](2026_11_21_08_trophies_spec.md) |
+| Overtime and choosing match length, bot count and level in the game; address overrides of the settings (`?seconds=…`) | The defaults are set in code (S10, D12) | [11 Overtime and match options](../2026_11_22_11_overtime_and_match_options_spec.md) |
+| Bot Supers and Hypercharge | Not part of the first match | [12 Super and hypercharge](../2026_11_22_12_super_and_hypercharge_spec.md) |
+| Translations of new text | English only (S15, D12) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
 
 ---
 

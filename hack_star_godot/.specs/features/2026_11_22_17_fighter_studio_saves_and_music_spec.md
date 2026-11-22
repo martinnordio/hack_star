@@ -30,19 +30,19 @@ review to the same page.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_14_1_fighter_studio_saves_and_music_spec.md) (#19).
-- [Bug fixes spec](done/2026_11_14_16_bug_fixes_spec.md) — created-fighter collection, stable
+- [Bug fixes spec](done/2026_11_21_16_bug_fixes_spec.md) — created-fighter collection, stable
   ids, account saving and cross-tab sync; this spec builds on it.
-- [Accounts, fighters and languages spec](2026_11_13_15_accounts_fighters_and_languages_spec.md)
+- [Accounts, fighters and languages spec](2026_11_22_15_accounts_fighters_and_languages_spec.md)
   — up to 5 accounts per browser, each with its own name, language and progress; the
   creator (type, two colours from 8, head and body from 3 each).
-- [Skins shop spec](2026_11_12_10_skins_shop_spec.md) — owning, choosing and wearing skins.
-- [Overtime and match options spec](2026_11_12_11_overtime_and_match_options_spec.md) — bot
+- [Skins shop spec](2026_11_22_10_skins_shop_spec.md) — owning, choosing and wearing skins.
+- [Overtime and match options spec](2026_11_22_11_overtime_and_match_options_spec.md) — bot
   level and number of bots saved in the Settings.
-- [Play with friends spec](2026_11_12_14_play_with_friends_spec.md) — friends in a room see
+- [Play with friends spec](2026_11_22_14_play_with_friends_spec.md) — friends in a room see
   each other's fighter and skin.
-- [First match spec](done/2026_11_12_07_first_match_spec.md) — rewards are given only when a match
+- [First match spec](done/2026_11_21_07_first_match_spec.md) — rewards are given only when a match
   ends.
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — the QR page asks for a code every time
+- [Hack codes spec](done/2026_11_21_05_hack_codes_spec.md) — the QR page asks for a code every time
   (a lock for kids, not security).
 - The Settings have language, bots and account reset; no sound yet. There is no music in the
   repository (spec 01, D13: music goes to the git-ignored `hack_star_godot/assets/music/`).

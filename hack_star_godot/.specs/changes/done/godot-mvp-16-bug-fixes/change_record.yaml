@@ -19,7 +19,7 @@ why: |
   ever), shows the time left, keeps the chosen and the played fighter usable, and shares one save
   between the tabs.
 spec:
-  path: .specs/features/done/2026_11_14_16_bug_fixes_spec.md
+  path: .specs/features/done/2026_11_21_16_bug_fixes_spec.md
   statements: [S4, S6, S16, S17, S18, S19, S22, S23, S25]
 changes:
   - id: hack-screen

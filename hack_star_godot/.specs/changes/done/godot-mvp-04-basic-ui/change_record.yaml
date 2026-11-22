@@ -15,7 +15,7 @@ why: |
   foundation (one theme, one way between screens, one Back button, session state) that the
   later specs reuse.
 spec:
-  path: .specs/features/done/2026_11_12_04_basic_ui_spec.md
+  path: .specs/features/done/2026_11_21_04_basic_ui_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14]
 changes:
   - id: home-screen

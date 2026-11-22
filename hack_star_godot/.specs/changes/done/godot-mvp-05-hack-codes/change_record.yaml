@@ -17,7 +17,7 @@ why: |
   (the active hacks), a QR page to print, camera scanning in the browser, and the local web
   setup that serves the export with the server's /api at the same address.
 spec:
-  path: .specs/features/done/2026_11_12_05_hack_codes_spec.md
+  path: .specs/features/done/2026_11_21_05_hack_codes_spec.md
   statements: [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15]
 changes:
   - id: home-screen

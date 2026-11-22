@@ -19,7 +19,7 @@ why: |
   shot (the mouse no longer fires), adds "How to play" to the Info page and a controls hint at the
   start of Training and a match.
 spec:
-  path: .specs/features/done/2026_11_14_16_bug_fixes_spec.md
+  path: .specs/features/done/2026_11_21_16_bug_fixes_spec.md
   statements: [S6, S23, S25, S26, S27, S28, S29, S30, S31, S32]
 changes:
   - id: hack-screen

@@ -91,9 +91,9 @@ other features build on.
 | Document | Purpose |
 |----------|---------|
 | [overall_req.md](../../../../.specs/overall_req.md) | Overall game idea and planned specs |
-| [Basic UI spec](2026_11_12_04_basic_ui_spec.md) | F1 |
-| [Hack codes spec](2026_11_12_05_hack_codes_spec.md) | F2 |
-| [Graphics demo spec](2026_11_12_06_graphics_demo_spec.md) | F3 |
+| [Basic UI spec](2026_11_21_04_basic_ui_spec.md) | F1 |
+| [Hack codes spec](2026_11_21_05_hack_codes_spec.md) | F2 |
+| [Graphics demo spec](2026_11_21_06_graphics_demo_spec.md) | F3 |
 
 ### Investigation: Brawl Stars (the parts that matter for Hack star)
 
@@ -133,19 +133,19 @@ names and logos are copyrighted and are not used.
 | # | Feature | Spec | In MVP |
 |---|---------|------|--------|
 | F0 | Architecture and foundation of the Godot game: architecture document, the existing FastAPI server for rooms and hack codes, runs in the browser on desktop, iPad, phone | this spec | ✅ |
-| F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_12_04_basic_ui_spec.md) | ✅ |
-| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_12_05_hack_codes_spec.md) | ✅ |
-| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_12_06_graphics_demo_spec.md) | ✅ |
-| F4 | First real match: last fighter standing against bots, win or lose | [first match](2026_11_12_07_first_match_spec.md) | ✅ |
-| F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](2026_11_12_08_trophies_spec.md) | ✅ |
-| F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) | later |
-| F7 | Skins shop | [skins shop](../2026_11_12_10_skins_shop_spec.md) | later |
-| F8 | Overtime (one more minute without walls) and a Settings screen for bot level and number of bots | [overtime and match options](../2026_11_12_11_overtime_and_match_options_spec.md) | later |
-| F9 | More fighters (10) with fighter types and different attacks | [more fighters](../2026_11_12_13_more_fighters_spec.md) | later |
-| F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) | later |
-| F11 | Play with up to 2 friends on their own devices | [play with friends](../2026_11_12_14_play_with_friends_spec.md) | later |
+| F1 | Home screen with the wow effect, fighter showcase, trophies, Prestige badge, skins, info page with the game's vocabulary | [basic UI](2026_11_21_04_basic_ui_spec.md) | ✅ |
+| F2 | Hack codes (typed or QR): unlimited credits, all fighters unlocked, 22 power levels | [hack codes](2026_11_21_05_hack_codes_spec.md) | ✅ |
+| F3 | Graphics demo: one fighter runs and shoots in an animated 3D arena | [graphics demo](2026_11_21_06_graphics_demo_spec.md) | ✅ |
+| F4 | First real match: last fighter standing against bots, win or lose | [first match](2026_11_21_07_first_match_spec.md) | ✅ |
+| F5 | Trophies after each match and Prestige levels, saved between visits | [trophies](2026_11_21_08_trophies_spec.md) | ✅ |
+| F6 | Unlock fighters with credits; power levels change health and damage | [unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) | later |
+| F7 | Skins shop | [skins shop](../2026_11_22_10_skins_shop_spec.md) | later |
+| F8 | Overtime (one more minute without walls) and a Settings screen for bot level and number of bots | [overtime and match options](../2026_11_22_11_overtime_and_match_options_spec.md) | later |
+| F9 | More fighters (10) with fighter types and different attacks | [more fighters](../2026_11_22_13_more_fighters_spec.md) | later |
+| F10 | Super, Hypercharge and the HYPERCHARGE hack code | [super and hypercharge](../2026_11_22_12_super_and_hypercharge_spec.md) | later |
+| F11 | Play with up to 2 friends on their own devices | [play with friends](../2026_11_22_14_play_with_friends_spec.md) | later |
 | F12 | A second mode (Gem Grab or another, Mattia to choose) | — | later |
-| F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](2026_11_14_16_bug_fixes_spec.md) | only the fixes that fit what is built (its S0) |
+| F13 | Bug fixes: created-fighter creation, account-tab sync, timed hack status and room identity | [bug fixes](2026_11_21_16_bug_fixes_spec.md) | only the fixes that fit what is built (its S0) |
 
 _"In MVP" is for the Godot game: "(done)" of the Python + Svelte game was removed (S0,
 2026-11-21) — none of F1–F13 is built in Godot yet; the order of work is the
@@ -353,8 +353,8 @@ Started: 2026-11-21 15:56
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (Safari, landscape and portrait, touch, ≥ 30 fps) — S1, S3, S6, S11 device parts | Needs a person with the devices (D6); open since spec 01 | the author, before the MVP's last spec (08) is closed; `tools\export_web.ps1` + `tools\serve_web.ps1` |
-| Local tool that serves the web export and forwards `/api` (HTTP and WebSocket) to the FastAPI server | No spec calls the server yet (D3) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) |
-| Saved-progress file and its fields | Nothing is saved yet (D4) | [05 Hack codes](2026_11_12_05_hack_codes_spec.md) / [08 Trophies](2026_11_12_08_trophies_spec.md) |
+| Local tool that serves the web export and forwards `/api` (HTTP and WebSocket) to the FastAPI server | No spec calls the server yet (D3) | [05 Hack codes](2026_11_21_05_hack_codes_spec.md) |
+| Saved-progress file and its fields | Nothing is saved yet (D4) | [05 Hack codes](2026_11_21_05_hack_codes_spec.md) / [08 Trophies](2026_11_21_08_trophies_spec.md) |
 
 ---
 

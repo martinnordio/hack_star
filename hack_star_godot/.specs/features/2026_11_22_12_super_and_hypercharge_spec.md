@@ -12,7 +12,7 @@
 | Date | Stage | Command | Model | Tokens (estimate — see [COSTS.md](../../../.specs/kit/COSTS.md)) | Cost (CHF) | Note |
 |------|-------|---------|-------|--------|------|------|
 | 2026-11-21 | requirements | move | Claude Sonnet 5.5 | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | included in [02](done/2026_11_21_02_move_specs_to_godot_spec.md) | moved from 2026_11_12_super_and_hypercharge_spec.md (requirements only) |
-| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | included in [16](done/2026_11_14_16_bug_fixes_spec.md) | S11 added from spec 16 (its S0: bugs whose feature comes with this spec) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in [16](done/2026_11_21_16_bug_fixes_spec.md) | included in [16](done/2026_11_21_16_bug_fixes_spec.md) | S11 added from spec 16 (its S0: bugs whose feature comes with this spec) |
 
 ---
 
@@ -24,19 +24,19 @@ Mattia asked for a **Hypercharge QR code**. In Brawl Stars a fighter charges its
 special attack) by hitting enemies, and a **Hypercharge** makes the Super extra strong for a
 short time. Hack star has neither yet, so this spec adds the Super, the Hypercharge, and a hack
 code that gives Hypercharge. It is F10 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) (it was planned as
+[MVP and architecture spec](done/2026_11_21_03_mvp_and_architecture_spec.md) (it was planned as
 part of F8).
 
 **Already in the repository** (reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_super_and_hypercharge_spec.md) (#11).
-- [Hack codes spec](done/2026_11_12_05_hack_codes_spec.md) — codes typed or scanned as QR, the
+- [Hack codes spec](done/2026_11_21_05_hack_codes_spec.md) — codes typed or scanned as QR, the
   printable QR codes, the list of hack codes, **Reset all hacks**.
-- [First match spec](done/2026_11_12_07_first_match_spec.md) — match rules, bots, HUD and joysticks;
-  [graphics demo spec](done/2026_11_12_06_graphics_demo_spec.md) — the arena, touch controls and
+- [First match spec](done/2026_11_21_07_first_match_spec.md) — match rules, bots, HUD and joysticks;
+  [graphics demo spec](done/2026_11_21_06_graphics_demo_spec.md) — the arena, touch controls and
   Training.
-- Fighter types come later with the [more fighters spec](2026_11_12_13_more_fighters_spec.md)
+- Fighter types come later with the [more fighters spec](2026_11_22_13_more_fighters_spec.md)
   (each type can have its own Super then); this spec does not need them.
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_21_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 
@@ -62,7 +62,7 @@ part of F8).
   to the aim joystick) on touch screens, the **E** key or right mouse button on a computer. The
   Super is a **Super blast**: a fan of 5 big shots that fly farther, go through walls and do more
   damage than normal shots. Using it empties the meter. (A different Super per fighter comes
-  with the fighter types of the [more fighters spec](2026_11_12_13_more_fighters_spec.md).)
+  with the fighter types of the [more fighters spec](2026_11_22_13_more_fighters_spec.md).)
 - **S3 — Hypercharge:** After 2 Supers the Hypercharge meter is full; the next Super is a
   **Hypercharge**: for 5 seconds the fighter glows, moves 25% faster, does 25% more damage and
   its Super blast has 7 shots.
@@ -83,7 +83,7 @@ part of F8).
 - **S11 — HYPERCHARGE lasts 3 days:** HYPERCHARGE is a 3-day code: it turns off by itself 3 days
   after it is entered, entering it again while it is active starts a new 3 days, and the hack
   screen shows its time left, like INFINITY and OPENSESAME
-  ([spec 16](done/2026_11_14_16_bug_fixes_spec.md), S16–S18). _(added from spec 16, 2026-11-22)_
+  ([spec 16](done/2026_11_21_16_bug_fixes_spec.md), S16–S18). _(added from spec 16, 2026-11-22)_
 
 ### Open questions
 

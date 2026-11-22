@@ -23,17 +23,17 @@ Mattia's feedback ([overall_req.md](../../../.specs/overall_req.md), "Feedback f
 2 minutes against 3 bots that also fight each other, but the **bot level should be chosen in a
 configuration**, and when time runs out with bots still in, **the match goes on for another
 minute without walls**. This is F8 in the
-[MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md).
+[MVP and architecture spec](done/2026_11_21_03_mvp_and_architecture_spec.md).
 
 **Already in the repository** (reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) (#9).
-- [First match spec](done/2026_11_12_07_first_match_spec.md) — the match (countdown, timer,
+- [First match spec](done/2026_11_21_07_first_match_spec.md) — the match (countdown, timer,
   results), the match settings with the bot levels easy/medium/hard, the arena with its walls,
   the bots.
-- [Trophies spec](done/2026_11_12_08_trophies_spec.md) and
-  [unlock and upgrade spec](2026_11_12_09_unlock_and_upgrade_spec.md) — rewards for the
+- [Trophies spec](done/2026_11_21_08_trophies_spec.md) and
+  [unlock and upgrade spec](2026_11_22_09_unlock_and_upgrade_spec.md) — rewards for the
   "time's up" result, and the saved progress they extend.
-- [MVP and architecture spec](done/2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](done/2026_11_21_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14).
 

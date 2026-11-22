@@ -3,34 +3,44 @@
 > Estimate — see [COSTS.md](../../.specs/kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-22; do not edit by hand.
 
-**All specs: ~319.81 M · ~CHF 123.15 (14684 credits)**
+**All specs: ~320.36 M · ~CHF 123.17 (14686 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
-| [MVP and Architecture](features/done/2026_11_12_03_mvp_and_architecture_spec.md) | ✅ Complete | — | ~1.56 M · ~CHF 1.07 | ~9.43 M · ~CHF 4.32 | ~2.16 M · ~CHF 1.12 | — | — | ~13.15 M · ~CHF 6.51 |
-| [Basic UI](features/done/2026_11_12_04_basic_ui_spec.md) | ✅ Complete | — | ~2.32 M · ~CHF 1.34 | ~39.76 M · ~CHF 20.12 | ~8.35 M · ~CHF 2.84 | — | — | ~50.43 M · ~CHF 24.30 |
-| [Hack Codes](features/done/2026_11_12_05_hack_codes_spec.md) | ✅ Complete | — | ~3.39 M · ~CHF 1.70 | ~29.65 M · ~CHF 7.67 | ~8.27 M · ~CHF 2.98 | — | — | ~41.31 M · ~CHF 12.35 |
-| [Graphics Demo](features/done/2026_11_12_06_graphics_demo_spec.md) | ✅ Complete | — | ~3.35 M · ~CHF 1.76 | ~26.39 M · ~CHF 7.46 | ~7.43 M · ~CHF 3.04 | — | — | ~37.17 M · ~CHF 12.26 |
-| [First Match](features/done/2026_11_12_07_first_match_spec.md) | ✅ Complete | — | ~2.48 M · ~CHF 1.46 | ~20.30 M · ~CHF 5.70 | ~8.22 M · ~CHF 3.06 | — | — | ~31.00 M · ~CHF 10.22 |
-| [Trophies and Prestige](features/done/2026_11_12_08_trophies_spec.md) | ✅ Complete | — | ~2.40 M · ~CHF 1.32 | ~14.72 M · ~CHF 7.36 | ~12.77 M · ~CHF 5.59 | — | — | ~29.89 M · ~CHF 14.27 |
-| [Unlock and Upgrade](features/2026_11_12_09_unlock_and_upgrade_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Skins Shop](features/2026_11_12_10_skins_shop_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Overtime and Match Options](features/2026_11_12_11_overtime_and_match_options_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Super and Hypercharge](features/2026_11_12_12_super_and_hypercharge_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [More Fighters](features/2026_11_12_13_more_fighters_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Play with Friends](features/2026_11_12_14_play_with_friends_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Accounts, Create a Fighter, New Fighters and Languages](features/2026_11_13_15_accounts_fighters_and_languages_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Bug Fixes](features/done/2026_11_14_16_bug_fixes_spec.md) | ✅ Complete | — | ~5.72 M · ~CHF 3.30 | ~31.95 M · ~CHF 7.31 | ~18.93 M · ~CHF 6.71 | ~1.20 M · ~CHF 0.03 | — | ~57.80 M · ~CHF 17.35 |
-| [Fighter Studio, Saves and Music](features/2026_11_14_17_fighter_studio_saves_and_music_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
-| [Worlds and World Coins](features/2026_11_16_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | [Godot Setup and First Game](features/done/2026_11_21_01_godot_setup_and_first_game_spec.md) | ✅ Complete | ~7.75 M · ~CHF 4.23 | ~2.07 M · ~CHF 0.78 | ~24.78 M · ~CHF 10.03 | ~5.47 M · ~CHF 2.65 | ~473 k · ~CHF 0.03 | — | ~40.55 M · ~CHF 17.72 |
 | [Move Specs to Godot](features/done/2026_11_21_02_move_specs_to_godot_spec.md) | ✅ Complete | — | ~3.05 M · ~CHF 0.88 | ~12.86 M · ~CHF 5.74 | ~2.60 M · ~CHF 1.55 | — | — | ~18.51 M · ~CHF 8.17 |
-| **All specs** | | | | | | | | **~319.81 M · ~CHF 123.15** |
+| [MVP and Architecture](features/done/2026_11_21_03_mvp_and_architecture_spec.md) | ✅ Complete | — | ~1.56 M · ~CHF 1.07 | ~9.43 M · ~CHF 4.32 | ~2.16 M · ~CHF 1.12 | — | — | ~13.15 M · ~CHF 6.51 |
+| [Basic UI](features/done/2026_11_21_04_basic_ui_spec.md) | ✅ Complete | — | ~2.32 M · ~CHF 1.34 | ~39.76 M · ~CHF 20.12 | ~8.35 M · ~CHF 2.84 | — | — | ~50.43 M · ~CHF 24.30 |
+| [Hack Codes](features/done/2026_11_21_05_hack_codes_spec.md) | ✅ Complete | — | ~3.39 M · ~CHF 1.70 | ~29.65 M · ~CHF 7.67 | ~8.27 M · ~CHF 2.98 | — | — | ~41.31 M · ~CHF 12.35 |
+| [Graphics Demo](features/done/2026_11_21_06_graphics_demo_spec.md) | ✅ Complete | — | ~3.35 M · ~CHF 1.76 | ~26.39 M · ~CHF 7.46 | ~7.43 M · ~CHF 3.04 | — | — | ~37.17 M · ~CHF 12.26 |
+| [First Match](features/done/2026_11_21_07_first_match_spec.md) | ✅ Complete | — | ~2.48 M · ~CHF 1.46 | ~20.30 M · ~CHF 5.70 | ~8.22 M · ~CHF 3.06 | — | — | ~31.00 M · ~CHF 10.22 |
+| [Trophies and Prestige](features/done/2026_11_21_08_trophies_spec.md) | ✅ Complete | — | ~2.40 M · ~CHF 1.32 | ~14.72 M · ~CHF 7.36 | ~12.77 M · ~CHF 5.59 | — | — | ~29.89 M · ~CHF 14.27 |
+| [Bug Fixes](features/done/2026_11_21_16_bug_fixes_spec.md) | ✅ Complete | — | ~5.72 M · ~CHF 3.30 | ~31.95 M · ~CHF 7.31 | ~18.93 M · ~CHF 6.71 | ~1.76 M · ~CHF 0.05 | — | ~58.36 M · ~CHF 17.37 |
+| [Unlock and Upgrade](features/2026_11_22_09_unlock_and_upgrade_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Skins Shop](features/2026_11_22_10_skins_shop_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Overtime and Match Options](features/2026_11_22_11_overtime_and_match_options_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Super and Hypercharge](features/2026_11_22_12_super_and_hypercharge_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [More Fighters](features/2026_11_22_13_more_fighters_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Play with Friends](features/2026_11_22_14_play_with_friends_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Accounts, Create a Fighter, New Fighters and Languages](features/2026_11_22_15_accounts_fighters_and_languages_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Fighter Studio, Saves and Music](features/2026_11_22_17_fighter_studio_saves_and_music_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| [Worlds and World Coins](features/2026_11_22_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+| **All specs** | | | | | | | | **~320.36 M · ~CHF 123.17** |
 
 ## Implementation by Step
 
 | Spec | Step | Model | Tokens | Cost |
 |------|------|-------|--------|------|
+| Godot Setup and First Game | 1 | Claude Sonnet 5.5 | ~737 k | ~CHF 0.26 (32 credits) |
+| Godot Setup and First Game | 2 | Claude Sonnet 5.5 | ~879 k | ~CHF 0.26 (30 credits) |
+| Godot Setup and First Game | 3 | Claude Opus 5.5 | ~2.75 M | ~CHF 1.49 (177 credits) |
+| Godot Setup and First Game | 4 | Claude Sonnet 5.5 | ~3.08 M | ~CHF 0.61 (72 credits) |
+| Godot Setup and First Game | 5 | Claude Haiku 5.5 | ~3.53 M | ~CHF 0.12 (14 credits) |
+| Move Specs to Godot | 1 | Claude Opus 5.5 | ~714 k | ~CHF 0.74 (88 credits) |
+| Move Specs to Godot | 2 | Claude Sonnet 5.5 | ~801 k | ~CHF 0.41 (49 credits) |
+| Move Specs to Godot | 3 | Claude Sonnet 5.5 | ~653 k | ~CHF 0.35 (41 credits) |
+| Move Specs to Godot | 4 | Claude Sonnet 5.5 | ~1.69 M | ~CHF 0.50 (60 credits) |
+| Move Specs to Godot | 5 | Claude Haiku 5.5 | ~946 k | ~CHF 0.03 (3 credits) |
 | MVP and Architecture | 1 | Claude Sonnet 5.5 | ~1.33 M | ~CHF 0.57 (68 credits) |
 | MVP and Architecture | 2 | Claude Sonnet 5.5 | ~839 k | ~CHF 0.26 (30 credits) |
 | MVP and Architecture | 3 | Claude Haiku 5.5 | ~651 k | ~CHF 0.01 (2 credits) |
@@ -85,13 +95,3 @@
 | Bug Fixes | 8 | Claude Sonnet 5.5 | ~2.48 M | ~CHF 0.33 (39 credits) |
 | Bug Fixes | 9 | Claude Sonnet 5.5 | ~2.29 M | ~CHF 0.32 (38 credits) |
 | Bug Fixes | 10 | Claude Haiku 5.5 | ~2.27 M | ~CHF 0.04 (4 credits) |
-| Godot Setup and First Game | 1 | Claude Sonnet 5.5 | ~737 k | ~CHF 0.26 (32 credits) |
-| Godot Setup and First Game | 2 | Claude Sonnet 5.5 | ~879 k | ~CHF 0.26 (30 credits) |
-| Godot Setup and First Game | 3 | Claude Opus 5.5 | ~2.75 M | ~CHF 1.49 (177 credits) |
-| Godot Setup and First Game | 4 | Claude Sonnet 5.5 | ~3.08 M | ~CHF 0.61 (72 credits) |
-| Godot Setup and First Game | 5 | Claude Haiku 5.5 | ~3.53 M | ~CHF 0.12 (14 credits) |
-| Move Specs to Godot | 1 | Claude Opus 5.5 | ~714 k | ~CHF 0.74 (88 credits) |
-| Move Specs to Godot | 2 | Claude Sonnet 5.5 | ~801 k | ~CHF 0.41 (49 credits) |
-| Move Specs to Godot | 3 | Claude Sonnet 5.5 | ~653 k | ~CHF 0.35 (41 credits) |
-| Move Specs to Godot | 4 | Claude Sonnet 5.5 | ~1.69 M | ~CHF 0.50 (60 credits) |
-| Move Specs to Godot | 5 | Claude Haiku 5.5 | ~946 k | ~CHF 0.03 (3 credits) |

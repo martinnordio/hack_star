@@ -68,20 +68,20 @@ Matches can be won and lost, but nothing is earned. The kids' favourite part of 
 pushing a fighter's trophies and reaching **Prestige** at 1000 trophies ("if I win, the
 fighter gets 10 trophies; at 1000 it gets a diamond with a number"). This spec gives trophies
 after each match and celebrates Prestige. It is F5 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md), and with it the
+[MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md), and with it the
 first playable version (F0–F5) is complete.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6).
-- [First match spec](2026_11_12_07_first_match_spec.md) — matches with a result (victory,
+- [First match spec](2026_11_21_07_first_match_spec.md) — matches with a result (victory,
   defeat with place, time's up) and the result screen; match settings.
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — trophies per fighter in the saved
+- [Basic UI spec](2026_11_21_04_basic_ui_spec.md) — trophies per fighter in the saved
   progress, total trophies on home, the Prestige badge on home, list and fighter screen.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — the Godot
+- [MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) — the Godot
   architecture document `hack_star_godot/docs/architecture.md` (where the parts are) and how
   to run the game (S12–S14); its S8 (the MVP is F0–F5) and S9 (progress kept on the same
   device and browser).
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — the first save file (D5).
+- [Hack codes spec](2026_11_21_05_hack_codes_spec.md) — the first save file (D5).
 - Checked 2026-11-21 (S0) in the code: `GameState` (`scenes/autoload/game_state.gd`) holds
   trophies, power levels, unlocked fighters, credits and the selected fighter and skins for the
   session only; it starts from `SampleProgress` (`game/sample_progress.gd`: Blaze 1240, Rocko
@@ -159,7 +159,7 @@ first playable version (F0–F5) is complete.
   spec; the save file of spec 05 holds only the hacks.)_
 - **S12 — Language:** All new text (the trophy change, the count, the bar, the celebration) is
   in English; translations come with
-  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
+  [spec 15](../2026_11_22_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-21: the
   Godot game has no languages yet.)_
 - **S13 — What worked before:** Home, the fighter list, the fighter screen, the info page, the
   hack screen with its codes, Training, the match and the result screen work as before; the
@@ -453,10 +453,10 @@ Started: 2026-11-21 22:17
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone of the whole MVP (specs 04–08: touch, ≥ 30 frames per second, the camera for hack codes, a full match, the trophies kept after a reload) and the browser check of the web export | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
-| Credits, unlocks and power upgrades that change with play (saved with `save()`) | Not part of trophies; the fields are already in the save file (D3) | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| An upper limit for saved power levels (an edited file can give power 50; `SaveData` checks only ≥ 1) | Code review finding 6 (2026-11-22); power levels change with play only in spec 09 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Progress on another device or browser (accounts) | No login in the MVP (spec 03, S9) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| Translations of new text | English only (S12, D8) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Credits, unlocks and power upgrades that change with play (saved with `save()`) | Not part of trophies; the fields are already in the save file (D3) | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
+| An upper limit for saved power levels (an edited file can give power 50; `SaveData` checks only ≥ 1) | Code review finding 6 (2026-11-22); power levels change with play only in spec 09 | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
+| Progress on another device or browser (accounts) | No login in the MVP (spec 03, S9) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
+| Translations of new text | English only (S12, D8) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
 
 ---
 
@@ -464,7 +464,7 @@ Started: 2026-11-21 22:17
 
 | Date | Reviewer | Scope | Outcome | Findings |
 |------|----------|-------|---------|----------|
-| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../review/2026-11-21_godot-mvp-08-trophies.html) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-08-trophies.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 2 Should-fix · 5 Nit |
 
 ### Code review 2026-11-22
@@ -489,7 +489,7 @@ nothing in `server/` or `ui/` changed.
 | 3 | `docs/architecture.md` wording: line 44 gives the change as ("+10", or "0") — the screen writes "+10 trophies" / "+0 trophies"; line 90 (`trophies.gd`) cites "spec 08, D5" — the rules are D1; line 89 (`match_settings.gd`) says "never negative, the defeat number is never above 0" — `trophies_per_defeat` may be negative (≤ 0) | architecture | docs | Nit | fix now |
 | 4 | The pre-run hook (D7) is passed only by `tools/test.ps1` (`-gpre_run_script`); there is no `res://.gutconfig.json`, so GUT started from the editor's GUT panel or `gut_cmdln` without the flag lets the match, select and award tests write the player's `user://hack_star_save.json`. Decide: a `.gutconfig.json` with `pre_run_script`, or a README line "run the tests only with `tools/test.ps1`" | architecture | test | Nit | plan decision |
 | 5 | The burst's gold is a copy: `scenes/result_screen.tscn:107` `Burst` `color = Color(1, 0.82, 0.2, 1)`, while D6 says the burst is in `Rarity.LEGENDARY_GOLD` (the one own colour, held by `Rarity`). Set `_burst.color` from `Rarity.LEGENDARY_GOLD` in `result_screen.gd` (the theme's `Bar_fill` cannot reference a constant) | code | guideline | Nit | fix now |
-| 6 | Saved power levels have no upper bound: `SaveData._read_progress` (`game/save_data.gd:54`) keeps any whole number ≥ 1, so an edited file gives power 50 although the game's maximum is 11 (22 with the hack). D3 asks only ≥ 1; spec 09 changes power levels with play and owns their limits | code | security | Nit | deferred — [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
+| 6 | Saved power levels have no upper bound: `SaveData._read_progress` (`game/save_data.gd:54`) keeps any whole number ≥ 1, so an edited file gives power 50 although the game's maximum is 11 (22 with the hack). D3 asks only ≥ 1; spec 09 changes power levels with play and owns their limits | code | security | Nit | deferred — [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
 | 7 | Definition of Done: the *Implementation* line is not ticked although all seven Steps are ✅ Done and Step 7 ran `tools/check_tools.ps1`, `test.ps1`, `lint.ps1` and `export_web.ps1` (exit 0) and updated README and architecture; spec 07 ticked it in its last Step | spec | docs | Nit | fix now |
 
 **Outcome:** Approve — no Blocking finding; findings 2, 3, 5 and 7 to fix now, 1 and 4 need a

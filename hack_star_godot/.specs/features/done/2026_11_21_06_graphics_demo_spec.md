@@ -72,7 +72,7 @@ This feature used 37.17 M tokens, CHF 12.26 (1462 credits) — measured, see [CO
 Before adding game rules, Hack star needs an impressive, playable demo that looks like a
 Brawl Stars match: a fighter running and shooting in a colourful arena. The rules (win, lose,
 trophies) are kept out on purpose and come from F4 on. This is F3 in the
-[MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) and "Spec 2" in
+[MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) and "Spec 2" in
 [overall_req.md](../../../../.specs/overall_req.md).
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
@@ -80,14 +80,14 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
   — its numbers (speed 6/s, shots 16/s with range 9, cool-down 0.35 s, 480 damage, dummies
   2400 health) and its controls (left stick moves, right stick aims and fires on release, a
   quick tap fires at the nearest target) are the model.
-- [MVP and architecture spec](2026_11_12_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
+- [MVP and architecture spec](2026_11_21_03_mvp_and_architecture_spec.md) — S1–S3 (browser,
   screens, input), S6 (30 frames per second), S7 (own art) and S11 (3D from above at an angle)
   apply here too; the Godot technology, the architecture document
   `hack_star_godot/docs/architecture.md` and how to run the game (S12–S14); D5 (the screen
   sizes of the tests) and D6 (the device play-test stays with the author).
-- [Basic UI spec](2026_11_12_04_basic_ui_spec.md) — the Play button (S3) opens the arena; the
+- [Basic UI spec](2026_11_21_04_basic_ui_spec.md) — the Play button (S3) opens the arena; the
   selected fighter and skin (S5, S7); every Back goes home (S10); the UI foundation (S12).
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) — `OPENSESAME` makes every fighter
+- [Hack codes spec](2026_11_21_05_hack_codes_spec.md) — `OPENSESAME` makes every fighter
   selectable, so every fighter and skin can appear in the arena; the hacks change nothing in the
   arena (its S12).
 - Checked 2026-11-21 (S0) in the code: **Play** on home opens `scenes/arena.tscn` (`arena.gd`):
@@ -160,7 +160,7 @@ trophies) are kept out on purpose and come from F4 on. This is F3 in the
 - **S11 — One arena:** There is one arena with a sunny canyon theme (sand, rocks, cacti as
   bushes); the target dummies stand still.
 - **S12 — Language:** All new text (the damage numbers and any label) is in English;
-  translations come with [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md).
+  translations come with [spec 15](../2026_11_22_15_accounts_fighters_and_languages_spec.md).
   _(added 2026-11-21: the Godot game has no languages yet, `docs/architecture.md`.)_
 - **S13 — What worked before:** Home, the fighter list, the fighter screen, the info page,
   the hack screen and the QR page work as before, and the arena keeps its FPS label. _(added
@@ -572,10 +572,10 @@ Started: 2026-11-21 19:46
 | Task | Reason | Target Spec |
 |------|--------|------------------|
 | Play-test on a real iPad and phone (both sticks, ≥ 30 frames per second, arena within 5 s after Play) | Needs a person with the devices (spec 03, D6) | the author, before spec 08 is closed |
-| Shots that hurt fighters, winning and losing | The demo has no rules on purpose (Context) | [07 First match](2026_11_12_07_first_match_spec.md) |
-| Super attacks | Not part of the demo | [12 Super and hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
+| Shots that hurt fighters, winning and losing | The demo has no rules on purpose (Context) | [07 First match](2026_11_21_07_first_match_spec.md) |
+| Super attacks | Not part of the demo | [12 Super and hypercharge](../2026_11_22_12_super_and_hypercharge_spec.md) |
 | More arenas and moving targets | One arena with still dummies (S11) | a later spec (not in the ordered list yet) |
-| Translations of new text | English only (S12, D12) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
+| Translations of new text | English only (S12, D12) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
 | Browser and iPad check of S10: "playable within 5 seconds after Play" (time from tapping **Play** to a playable arena in the web export), and ≥ 30 frames per second on a recent iPad and phone | Needs a browser and the devices; the agents had no browser session (D15). Measured only: a windowed desktop run, arena ready in 249 ms, 59.8 fps (code review) | the author, with the play-test (spec 03, D6) |
 | Windowed FPS run and browser check of the web export (FPS ≥ 30 while running and shooting; Play to the arena ≤ 5 s; home, fighter list, fighter screen, info, hack screen and QR page open as before) | Needs a display and a desktop browser; not run in Step 8 (the checks and the export pass) | the author, with the device play-test (spec 03, D6) |
 

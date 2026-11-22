@@ -85,15 +85,15 @@ This feature used 57.80 M tokens, CHF 17.35 (2069 credits) — measured, see [CO
 
 This spec collects the bugs that players report (mostly Mattia and his friends) so they are fixed
 together in one branch. Each reported bug gets its own group of statements below; new bugs are
-added with `REQUIREMENTS: 2026_11_14_16_bug_fixes_spec.md — <bug>` until the plan is written.
+added with `REQUIREMENTS: 2026_11_21_16_bug_fixes_spec.md — <bug>` until the plan is written.
 
 **Already in the repository** (found by the requirements stage — reuse, don't rebuild):
 - How the Python + Svelte game did it: [original spec](../../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17).
-- [Accounts, fighters and languages spec](../2026_11_13_15_accounts_fighters_and_languages_spec.md) —
+- [Accounts, fighters and languages spec](../2026_11_22_15_accounts_fighters_and_languages_spec.md) —
   the created fighter, its price and its lock: creating is free the first time, every change
   costs 500 C, only the CREATOR code unlocks it.
-- [Hack codes spec](2026_11_12_05_hack_codes_spec.md) and
-  [unlock and upgrade spec](../2026_11_12_09_unlock_and_upgrade_spec.md) — INFINITY (unlimited
+- [Hack codes spec](2026_11_21_05_hack_codes_spec.md) and
+  [unlock and upgrade spec](../2026_11_22_09_unlock_and_upgrade_spec.md) — INFINITY (unlimited
   credits: paying does not take credits).
 - Progress is saved per account (spec 15): in the Python game each open browser tab kept its
   own copy in memory and wrote the whole save on every change.
@@ -211,7 +211,7 @@ not be played.
   lock: its card in the Fighters list looks like the other unlocked fighters, it can be selected,
   then shows on the Home screen and is played in matches, Training and with friends — no hack
   code needed. This changes S10/S11 of
-  [2026_11_13_15_accounts_fighters_and_languages_spec.md](../2026_11_13_15_accounts_fighters_and_languages_spec.md).~~
+  [2026_11_22_15_accounts_fighters_and_languages_spec.md](../2026_11_22_15_accounts_fighters_and_languages_spec.md).~~
   (moved to spec 15: created fighters come with spec 15, its S29)
 - ~~**S8 — Prices stay:** Without INFINITY, the first creation stays free and every change costs
   500 C; the created fighter keeps its trophies and power level when it is changed.~~ (moved to
@@ -276,7 +276,7 @@ Added 2026-11-14 together with the CREATOR change.
   playable today.)_
 - **S23 — Language:** All new text (the time left, the for-ever line) is in English;
   translations come with
-  [spec 15](../2026_11_13_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-22: the
+  [spec 15](../2026_11_22_15_accounts_fighters_and_languages_spec.md). _(added 2026-11-22: the
   Godot game has no languages yet.)_
 - **S24 — Documentation (Godot):** `hack_star_godot/README.md` and
   `hack_star_godot/docs/architecture.md` describe how long each code lasts, the time left on
@@ -712,14 +712,14 @@ Started: 2026-11-22 10:46
 
 | Task | Reason | Target Spec |
 |------|--------|------------------|
-| Creating and changing a fighter with INFINITY, the new fighter at once, the creator's title and button, created fighters usable at once, prices, place in the list, one fighter without CREATOR and more with it, not enough credits, the CREATOR text, created fighters with friends, the maximum of 15, CREATOR lasting 3 days, created fighters waiting for CREATOR, the first created fighter staying (S1–S3, S7–S15, S16's CREATOR part, S20, S21) | Accounts, created fighters and CREATOR come with spec 15; moved there as its S25–S40 (S0) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| Created fighters and their credits across tabs (S4's created-fighter part) | Created fighters come with spec 15; moved there as its S28 | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| HYPERCHARGE lasting 3 days (S16's HYPERCHARGE part) | The HYPERCHARGE code comes with spec 12; moved there as its S11 | [12 Super and Hypercharge](../2026_11_12_12_super_and_hypercharge_spec.md) |
-| Fighters and power levels bought with a code stay when it turns off (S19's bought part) | Nothing is bought before spec 09; moved there as its S13 | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Skins bought with a code stay when it turns off (S19's bought part) | Skins are bought from spec 10; moved there as its S13 | [10 Skins shop](../2026_11_12_10_skins_shop_spec.md) |
-| The merge rule for credits across tabs (D7 keeps the writing tab's credits) | Credits change with play only from spec 09; that spec decides how two tabs' credits combine | [09 Unlock and upgrade](../2026_11_12_09_unlock_and_upgrade_spec.md) |
-| Translations of the new text (the time left) | English only (S23) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| A hack turned off in one tab can return when another tab that has not synced saves (the merge of hacks is a union, D7); needs a per-hack removal marker in the save | Known limitation, accepted (D9, code review finding 1); **Turn all hacks off** in a single tab works; documented in the README | a later spec on the save file (for example [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md), accounts) |
+| Creating and changing a fighter with INFINITY, the new fighter at once, the creator's title and button, created fighters usable at once, prices, place in the list, one fighter without CREATOR and more with it, not enough credits, the CREATOR text, created fighters with friends, the maximum of 15, CREATOR lasting 3 days, created fighters waiting for CREATOR, the first created fighter staying (S1–S3, S7–S15, S16's CREATOR part, S20, S21) | Accounts, created fighters and CREATOR come with spec 15; moved there as its S25–S40 (S0) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
+| Created fighters and their credits across tabs (S4's created-fighter part) | Created fighters come with spec 15; moved there as its S28 | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
+| HYPERCHARGE lasting 3 days (S16's HYPERCHARGE part) | The HYPERCHARGE code comes with spec 12; moved there as its S11 | [12 Super and Hypercharge](../2026_11_22_12_super_and_hypercharge_spec.md) |
+| Fighters and power levels bought with a code stay when it turns off (S19's bought part) | Nothing is bought before spec 09; moved there as its S13 | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
+| Skins bought with a code stay when it turns off (S19's bought part) | Skins are bought from spec 10; moved there as its S13 | [10 Skins shop](../2026_11_22_10_skins_shop_spec.md) |
+| The merge rule for credits across tabs (D7 keeps the writing tab's credits) | Credits change with play only from spec 09; that spec decides how two tabs' credits combine | [09 Unlock and upgrade](../2026_11_22_09_unlock_and_upgrade_spec.md) |
+| Translations of the new text (the time left) | English only (S23) | [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md) |
+| A hack turned off in one tab can return when another tab that has not synced saves (the merge of hacks is a union, D7); needs a per-hack removal marker in the save | Known limitation, accepted (D9, code review finding 1); **Turn all hacks off** in a single tab works; documented in the README | a later spec on the save file (for example [15 Accounts, fighters and languages](../2026_11_22_15_accounts_fighters_and_languages_spec.md), accounts) |
 | Play-test on a real iPad and phone (the hack screen with the time left, touch) and the part of the two-tab browser check Step 4 could not drive (a match won in tab 1, then both the hack and the trophies after a reload) | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
 | A camera scan in the desktop run (S26) | Godot 4.7's `CameraServer` has no camera feed on Windows, and the scanner is the browser's; the desktop run shows a hint instead (D10) | none planned (a later Godot version with a Windows camera feed) |
 | Play-test of the author's reports: Space and the start hint on the computer, touch and the hint on an iPad and a phone, scanning in the browser on `localhost` | Needs a person with the devices and a camera | the author, before the MVP pull request |
