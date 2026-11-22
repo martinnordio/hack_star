@@ -28,8 +28,6 @@ func _ready() -> void:
 	_title.text = fighter["name"]
 	_rarity_label.text = fighter["rarity"]
 	_rarity_label.add_theme_color_override("font_color", Rarity.color(fighter["rarity"]))
-	_trophies_label.text = "Trophies: %d" % GameState.trophies[_fighter_id]
-	_badge.show_for_trophies(GameState.trophies[_fighter_id])
 	_build_skin_buttons(fighter["skins"])
 	_stage.show_fighter(_fighter_id, _skin_id)
 	_select_button.pressed.connect(_on_select_pressed)
@@ -39,8 +37,11 @@ func _ready() -> void:
 	_arrange()
 
 
-# What the hacks change: the power maximum and whether the fighter can be selected.
+# What changes while the screen is open (a hack, or progress from another tab): the trophies and
+# Prestige badge, the power maximum and whether the fighter can be selected.
 func _refresh_hack_state() -> void:
+	_trophies_label.text = "Trophies: %d" % GameState.trophies[_fighter_id]
+	_badge.show_for_trophies(GameState.trophies[_fighter_id])
 	_power_label.text = Hacks.power_text(
 		GameState.power_levels[_fighter_id], GameState.active_hacks
 	)

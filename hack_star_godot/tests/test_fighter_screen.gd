@@ -169,3 +169,14 @@ func test_back_goes_home_by_click_and_by_touch() -> void:
 		assert_eq(shown.scene_file_path, Screens.HOME, "touch: %s" % use_touch)
 		assert_eq(GameState.selected_fighter, "blaze", "Back changes nothing")
 		await UiInput.close(self, shown)
+
+
+func test_trophies_and_prestige_follow_progress_from_another_tab() -> void:
+	var screen: Control = _show("turbo")
+	var badge: Control = screen.get_node(BODY + "/Details/PrestigeBadge")
+	assert_false(badge.visible)
+	GameState.trophies["turbo"] = 1005
+	GameState.progress_changed.emit()
+	assert_eq(screen.get_node(BODY + "/Details/TrophiesLabel").text, "Trophies: 1005")
+	assert_true(badge.visible)
+	assert_eq(badge.get_node("Label").text, "Prestige 1")

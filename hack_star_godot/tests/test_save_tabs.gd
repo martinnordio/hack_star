@@ -179,3 +179,37 @@ func test_the_file_store_reads_what_it_wrote() -> void:
 	assert_eq(store.read(), "")
 	assert_true(store.write("text"))
 	assert_eq(store.read(), "text")
+
+
+func test_the_game_coming_to_the_front_syncs_from_the_store() -> void:
+	var first: Node = _open_tab()
+	var second: Node = _open_tab()
+	second.activate_hack("unlock_all")
+	first.notification(Node.NOTIFICATION_APPLICATION_FOCUS_IN)
+	assert_true(first.has_hack("unlock_all"))
+
+
+## A game whose page visibility is set by the test.
+class PageGameState:
+	extends "res://scenes/autoload/game_state.gd"
+
+	var visible: bool = true
+
+	func _page_is_visible() -> bool:
+		return visible
+
+
+func test_the_page_becoming_visible_syncs_but_a_hidden_page_does_not() -> void:
+	var first: PageGameState = autofree(PageGameState.new())
+	first.reset()
+	first.save_path = TEST_SAVE
+	first.clock = func() -> int: return _now
+	first.load_saved()
+	var second: Node = _open_tab()
+	second.activate_hack("power22")
+	first.visible = false
+	first._on_page_visibility([])
+	assert_false(first.has_hack("power22"))
+	first.visible = true
+	first._on_page_visibility([])
+	assert_true(first.has_hack("power22"))

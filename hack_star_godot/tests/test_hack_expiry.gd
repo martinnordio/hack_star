@@ -212,3 +212,14 @@ func test_a_match_keeps_its_fighter_when_a_hack_turns_off() -> void:
 	arena.bots()[0].knock_out()
 	assert_eq(GameState.last_result["fighter"], locked)
 	assert_eq(GameState.trophies[locked], before + 10)
+
+
+func test_the_thirty_second_timer_turns_an_expired_hack_off() -> void:
+	GameState.activate_hack(Hacks.INFINITE_CREDITS)
+	var timer: Timer = GameState.get_node("ExpiryTimer")
+	assert_eq(timer.wait_time, GameState.EXPIRY_CHECK_SECONDS)
+	timer.timeout.emit()
+	assert_true(GameState.has_hack(Hacks.INFINITE_CREDITS))
+	_now = START + Hacks.TIMED_SECONDS
+	timer.timeout.emit()
+	assert_false(GameState.has_hack(Hacks.INFINITE_CREDITS))

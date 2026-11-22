@@ -225,8 +225,12 @@ func _watch_page_visibility() -> void:
 
 
 func _on_page_visibility(_args: Array) -> void:
-	if JavaScriptBridge.eval("document.visibilityState") == "visible":
+	if _page_is_visible():
 		sync_from_store()
+
+
+func _page_is_visible() -> bool:
+	return JavaScriptBridge.eval("document.visibilityState") == "visible"
 
 
 func _store() -> SaveStore:

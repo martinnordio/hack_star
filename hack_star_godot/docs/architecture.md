@@ -232,8 +232,10 @@ and emits `progress_changed` when a merge happened. `sync_from_store()` lays a n
 over the tab (`_lay_over`), keeps the chosen fighter usable and turns expired hacks off; it runs
 when the game gets the focus (`NOTIFICATION_APPLICATION_FOCUS_IN`) and, on the web, when the page
 becomes `visible` (`visibilitychange`), so a tab that comes back to the front shows the others'
-changes without reloading. Screens that show hacks, the chosen fighter or the power levels
-connect to `progress_changed`.
+changes without reloading. Screens that show hacks, the chosen fighter, the trophies or the power
+levels connect to `progress_changed`. **Known limitation (spec 16, D9):** because hacks merge as a
+union, a hack turned off in one tab can return when another tab that has not synced saves; there
+is no per-hack removal marker.
 
 **Hacks turning off:** `expire_hacks()` runs at each load, at every sync and every 30 s
 (`EXPIRY_CHECK_SECONDS`, a timer of `GameState`). A hack whose `until` has passed is removed,

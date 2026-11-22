@@ -232,14 +232,19 @@ it was the chosen fighter, the Home screen shows another unlocked fighter. A mat
 keeps the fighter it started with and gets its trophies. **Turn all hacks off** does the same at once.
 
 **Two tabs:** the game can be open in several tabs of the same browser and address (for example a
-hack QR code opened in a new tab). A hack, trophies, unlocked fighters or a skin gained in one tab
-are kept when another tab saves, because each save first merges the newer save of the other tab. A
-tab that comes back to the front shows the others' changes without a reload. Credits and the chosen
-fighter and skin come from the tab that saved last.
+hack QR code opened in a new tab). A hack, trophies or unlocked fighters gained in one tab are kept
+when another tab saves, because each save first merges the newer save of the other tab. A tab that
+comes back to the front shows the others' changes without a reload. Credits and the chosen fighter
+and skin come from the tab that saved last (the merge keeps the saving tab's skins).
+
+**Known limitation (two tabs):** a hack turned off in one tab (**Turn all hacks off**) can come
+back when another tab, which has not come to the front since, saves: the merge of hacks is a union.
+Turning all hacks off in a single tab works; with two tabs open, turn them off in the tab you
+use and reload the other one first.
 
 **Saved:** the progress and the active hacks, in one save: the trophies,
 power levels, unlocked fighters, credits, the chosen fighter and skins, and the hacks, each with the time it turns off. The game
-saves each change at once. The file is in the browser's storage for this address (so on the same
+saves each change at once.
 In the browser the save is in the storage of this address (`localStorage`, key
 `hack_star_save`), so it is kept on the same device and browser only, and every tab of that address
 shares it; on the computer it is the file `hack_star_save.json` in
