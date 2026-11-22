@@ -2,7 +2,9 @@ extends Node
 ## What the player has and has chosen while the game is open: trophies, power levels, unlocked
 ## fighters, credits, the chosen fighter and skin, and whether the entrance has played.
 ## It starts from `SampleProgress` and lays the saved progress over it (`load_saved`); the whole
-## progress and the active hacks are saved in one file (`SaveData`).
+## progress and the active hacks are saved together (`SaveData`) in one store (`SaveStore`), which
+## the browser's tabs share; a newer save of another tab is merged on write and read when the
+## game comes to the front (spec 16, D7).
 
 ## Emitted when the hacks or the chosen fighter changed on their own (a hack turned off).
 signal progress_changed
@@ -39,6 +41,8 @@ var match_settings: MatchSettings = MatchSettings.new()
 var last_result: Dictionary = {}
 # The revision of the save file this game last read or wrote.
 var _revision: int = 0
+# Keeps the page's `visibilitychange` callback alive (web only).
+var _visibility_callback: JavaScriptObject = null
 
 
 func _ready() -> void:
@@ -52,6 +56,7 @@ func _ready() -> void:
 	expiry_timer.start()
 	if OS.has_feature("web"):
 		start_code = _take_start_code()
+		_watch_page_visibility()
 
 
 ## Back to the sample progress of a fresh game start.
@@ -185,9 +190,51 @@ func _keep_usable_selection() -> void:
 ## skins, unlocked fighters, credits and chosen fighter. A missing, broken or newer file leaves
 ## the sample progress without hacks.
 func load_saved() -> void:
-	if not FileAccess.file_exists(save_path):
+	var text: String = _store().read()
+	if text.is_empty():
 		return
-	var saved: Dictionary = SaveData.from_json(FileAccess.get_file_as_string(save_path), now())
+	_lay_over(SaveData.from_json(text, now()))
+	expire_hacks()
+
+
+## Reads the store again when another tab saved since this game last read or wrote it (spec 16,
+## D7): the stored hacks replace this game's, the stored progress is laid over it, expired hacks
+## turn off and `progress_changed` is emitted. Returns true when something was read.
+func sync_from_store() -> bool:
+	var saved: Dictionary = SaveData.from_json(_store().read(), now())
+	if saved["revision"] <= _revision:
+		return false
+	_lay_over(saved)
+	_keep_usable_selection()
+	if not expire_hacks():
+		progress_changed.emit()
+	return true
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		sync_from_store()
+
+
+# Calls `sync_from_store` when the page becomes visible again (another tab was in front).
+func _watch_page_visibility() -> void:
+	_visibility_callback = JavaScriptBridge.create_callback(_on_page_visibility)
+	var page: JavaScriptObject = JavaScriptBridge.get_interface("document")
+	if page != null:
+		page.addEventListener("visibilitychange", _visibility_callback)
+
+
+func _on_page_visibility(_args: Array) -> void:
+	if JavaScriptBridge.eval("document.visibilityState") == "visible":
+		sync_from_store()
+
+
+func _store() -> SaveStore:
+	return SaveStore.for_this_platform(save_path)
+
+
+# The saved hacks replace this game's; the saved progress is laid over it.
+func _lay_over(saved: Dictionary) -> void:
 	hack_until = saved["hacks"]
 	active_hacks.assign(hack_until.keys())
 	_revision = saved["revision"]
@@ -201,18 +248,49 @@ func load_saved() -> void:
 	credits = progress.get("credits", credits)
 	var chosen: String = progress.get("selected_fighter", "")
 	if is_unlocked(chosen):
+		if viewed_fighter == selected_fighter:
+			viewed_fighter = chosen
 		selected_fighter = chosen
-		viewed_fighter = chosen
-	expire_hacks()
 
 
-## Writes the hacks and the progress to `save_path`.
+# Another tab's newer save joins this game's (spec 16, D7): hacks a union with the later end,
+# `unlocked` a union, trophies and power levels per fighter the higher; credits, the chosen
+# fighter and the skins stay this game's. Expired hacks are left out.
+func _merge(saved: Dictionary) -> void:
+	var current: int = now()
+	var stored_hacks: Dictionary = saved["hacks"]
+	for hack_id: String in stored_hacks:
+		var until: int = stored_hacks[hack_id]
+		if Hacks.is_expired(until, current):
+			continue
+		if not has_hack(hack_id):
+			active_hacks.append(hack_id)
+			hack_until[hack_id] = until
+		elif Hacks.is_timed(hack_id):
+			hack_until[hack_id] = maxi(hack_until.get(hack_id, until), until)
+	var progress: Dictionary = saved["progress"]
+	var stored_trophies: Dictionary = progress.get("trophies", {})
+	for fighter_id: String in stored_trophies:
+		trophies[fighter_id] = maxi(trophies.get(fighter_id, 0), stored_trophies[fighter_id])
+	var stored_levels: Dictionary = progress.get("power_levels", {})
+	for fighter_id: String in stored_levels:
+		power_levels[fighter_id] = maxi(power_levels.get(fighter_id, 1), stored_levels[fighter_id])
+	for fighter_id: String in progress.get("unlocked", []):
+		if not fighter_id in unlocked:
+			unlocked.append(fighter_id)
+
+
+## Writes the hacks and the progress to the store; when another tab saved since this game last
+## read or wrote it, its save is merged in first (`_merge`) and `progress_changed` is emitted.
 func save() -> void:
-	DirAccess.make_dir_recursive_absolute(save_path.get_base_dir())
-	var file: FileAccess = FileAccess.open(save_path, FileAccess.WRITE)
-	if file == null:
-		push_warning("Could not save %s (error %d)" % [save_path, FileAccess.get_open_error()])
-		return
+	var merged: bool = false
+	var stored_text: String = _store().read()
+	if not stored_text.is_empty():
+		var stored: Dictionary = SaveData.from_json(stored_text, now())
+		if stored["revision"] > _revision:
+			_merge(stored)
+			_revision = stored["revision"]
+			merged = true
 	var progress: Dictionary = {
 		"trophies": trophies,
 		"power_levels": power_levels,
@@ -222,7 +300,9 @@ func save() -> void:
 		"selected_skins": selected_skins,
 	}
 	_revision += 1
-	file.store_string(SaveData.to_json(hack_until, progress, _revision))
+	_store().write(SaveData.to_json(hack_until, progress, _revision))
+	if merged:
+		progress_changed.emit()
 
 
 ## Gives the fighter the trophies of a match result (`Trophies.reward` with the match

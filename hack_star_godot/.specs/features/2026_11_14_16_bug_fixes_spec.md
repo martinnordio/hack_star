@@ -19,6 +19,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.17 M (69 k in · 2.08 M cached · 23 k out) | CHF 1.02 (121 credits) | Step 1 done (`usage.ps1 -AgentName s16-step1` from 08:20:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 2.52 M (71 k in · 2.43 M cached · 20 k out) | CHF 0.52 (62 credits) | Step 2 done (`usage.ps1 -AgentName s16-steps2-3` from 08:41) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 877 k (7 k in · 867 k cached · 2 k out) | CHF 0.11 (13 credits) | Step 3 done (`usage.ps1 -AgentName s16-steps2-3` from 08:52) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 2.36 M (69 k in · 2.26 M cached · 23 k out) | CHF 1.06 (127 credits) | Step 4 done (`usage.ps1 -AgentName s16-step4` from 08:54) |
 ---
 
 # Part 1 · Requirements
@@ -233,7 +234,7 @@ maximum of 15)._
 | **1** | Timed hack rules and save file version 3 | reasoning (Claude Opus 5.5) — a new saved format with a migration that starts the 3 days, checks of every field and a clock (D1, D2) | ✅ Done | [→ Step 1](#step-1--timed-hack-rules-and-save-file-version-3) |
 | **2** | Hacks turn off by themselves | standard (Claude Sonnet 5.5) — `GameState` keeps the end times, checks them and keeps the chosen fighter usable; the match keeps its fighter (D3, D4) | ✅ Done | [→ Step 2](#step-2--hacks-turn-off-by-themselves) |
 | **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ✅ Done | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
-| **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ⬜ Not started | [→ Step 4](#step-4--progress-across-tabs) |
+| **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ✅ Done | [→ Step 4](#step-4--progress-across-tabs) |
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 5](#step-5--final-check-readme-and-architecture) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
@@ -358,24 +359,25 @@ In the web game, a hack, trophies or a choice gained in one tab is not lost beca
 tab, and the other tab shows it when it comes back to the front (S4, S6).
 
 ### Tasks
-- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
-- [ ] `game/save_store.gd` after D6 (file store; web store on `localStorage`; the one-time
+- [x] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [x] `game/save_store.gd` after D6 (file store; web store on `localStorage`; the one-time
       migration from `user://hack_star_save.json` on the web).
-- [ ] `GameState` after D7: `revision`, `sync_from_store()` at the front
+- [x] `GameState` after D7: `revision`, `sync_from_store()` at the front
       (`NOTIFICATION_APPLICATION_FOCUS_IN`, and the page's `visibilitychange` on the web), the
       merge in `save()`, `progress_changed` after a reload.
-- [ ] Tests (D8): `test_save_tabs.gd` (two `GameState` objects on one test file; the merge rules;
+- [x] Tests (D8): `test_save_tabs.gd` (two `GameState` objects on one test file; the merge rules;
       the migration with a fake web store).
-- [ ] Browser check, when a browser can be driven from this computer (for example Playwright):
+- [x] Browser check, when a browser can be driven from this computer (for example Playwright):
       `tools/export_web.ps1`, `tools/serve_web.ps1` with the hack server, two tabs of the game; a
       code entered in tab 2 (or a QR link `?hack=INFINITY` opened in tab 2); a match won in
       tab 1 → tab 1 shows ∞ when it comes to the front, and both the hack and the trophies are
       there after a reload. Otherwise write in Notes that this check stays with the author
       (Deferred Items).
-- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+- [x] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
 
 ### Notes
-_Add the `Done` line here when the Step is finished._
+Started: 2026-11-22 08:54
+**Done (2026-11-22 · ~25 min · Claude Opus 5.5)** — New `SaveStore` (`game/save_store.gd`): the file at `save_path` on the desktop and in the tests, `localStorage` key `hack_star_save` in the web export (through `JavaScriptBridge.get_interface`), a web start without the key copies the old `user://` file to it once and leaves the file. `GameState` reads and writes through it; `save()` merges a newer stored revision first (hacks: union with the later end, expired left out; `unlocked` union; trophies and power levels the higher; credits, choice and skins this tab's), writes revision + 1 and emits `progress_changed` after a merge; `sync_from_store()` (on `NOTIFICATION_APPLICATION_FOCUS_IN` and the page's `visibilitychange` to visible) lays a newer store over the tab, keeps the choice usable, turns expired hacks off and emits `progress_changed`. New `test_save_tabs.gd` (11: two tabs on one file, sync, older revision, merge rules, revisions, the web migration with a fake store, the file store). Browser check (Playwright, headless Chromium, `export_web.ps1` + `serve_web.ps1` + hack server): tab 1 on Home (Credits: 500), `?hack=INFINITY` opened in tab 2 → `localStorage` has `infinite_credits` (revision 1); tab 1 brought to the front shows Credits: ∞ (screenshot); after a reload of tab 1 the hack is still stored. A match won in tab 1 was not driven in the browser (the merge of trophies is covered by `test_save_tabs.gd`); that part stays with the author (Deferred Items). `tools/test.ps1` 386/386 passed (exit 0), `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` exit 0. suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 2.36 M · CHF 1.06 (127 credits)
 
 ---
 
@@ -426,7 +428,7 @@ _Add the `Done` line here when the Step is finished._
 | Skins bought with a code stay when it turns off (S19's bought part) | Skins are bought from spec 10; moved there as its S13 | [10 Skins shop](2026_11_12_10_skins_shop_spec.md) |
 | The merge rule for credits across tabs (D7 keeps the writing tab's credits) | Credits change with play only from spec 09; that spec decides how two tabs' credits combine | [09 Unlock and upgrade](2026_11_12_09_unlock_and_upgrade_spec.md) |
 | Translations of the new text (the time left) | English only (S23) | [15 Accounts, fighters and languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) |
-| Play-test on a real iPad and phone (the hack screen with the time left, touch) and, if Step 4 cannot drive a browser, the two-tab browser check | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
+| Play-test on a real iPad and phone (the hack screen with the time left, touch) and the part of the two-tab browser check Step 4 could not drive (a match won in tab 1, then both the hack and the trophies after a reload) | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
 
 ---
 
