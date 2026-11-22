@@ -28,6 +28,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 10.98 M (91 k in · 10.84 M cached · 44 k out) | CHF 2.93 (349 credits) | Step 11 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:31:56 to 14:44:53) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 12.65 M (86 k in · 12.52 M cached · 43 k out) | CHF 3.18 (379 credits) | Step 12 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:45:43 to 14:56:09) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 13.27 M (54 k in · 13.18 M cached · 37 k out) | CHF 3.05 (364 credits) | Step 13 done (`usage.ps1 -AgentName s09g-steps10-13` from 14:56:50 to 15:09:25) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 650 k (30 k in · 614 k cached · 6 k out) | CHF 0.32 (39 credits) | Step 14 done (`usage.ps1 -AgentName s09g-step14` from 15:12:33 to 15:13:43) |
 
 ---
 
@@ -339,7 +340,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **11** | Worlds and the world choice | reasoning (Claude Opus 5.5) — S1; the arena layout per world, the Glimmer Isles layout and the choice on home (D9, D10) | ✅ Done | [→ Step 11](#step-11--worlds-and-the-world-choice) |
 | **12** | Glimmer Isles objects and scatter scene | reasoning (Claude Opus 5.5) — S1; original fantasy props and the ProtonScatter setup (D13) | ✅ Done | [→ Step 12](#step-12--glimmer-isles-objects-and-scatter-scene) |
 | **13** | Glimmer Isles baked and playable | reasoning (Claude Opus 5.5) — S1; the bake tool, the world in a match, web export and frame rate (D12) | ✅ Done | [→ Step 13](#step-13--glimmer-isles-baked-and-playable) |
-| **14** | Gate: author's drawing photo | reasoning (Claude Opus 5.5) — S1; no code: stops the run and tells the author what to do (A0, D14) | ⬜ Not started | [→ Step 14](#step-14--gate-authors-drawing-photo) |
+| **14** | Gate: author's drawing photo | reasoning (Claude Opus 5.5) — S1; no code: stops the run and tells the author what to do (A0, D14) | ✅ Done | [→ Step 14](#step-14--gate-authors-drawing-photo) |
 | **15** | Drawing workflow document | reasoning (Claude Opus 5.5) — S1; the repeatable workflow, limits and privacy rules (D15) | ⬜ Not started | [→ Step 15](#step-15--drawing-workflow-document) |
 | **16** | Drawn fighter in the game | reasoning (Claude Opus 5.5) — S1; reading the drawing and building a recognisable fighter from shapes (D14) | ⬜ Not started | [→ Step 16](#step-16--drawn-fighter-in-the-game) |
 | **17** | Adding and removing drawn fighters | reasoning (Claude Opus 5.5) — S1; the add/remove path and the save fallback, with tests (D14) | ⬜ Not started | [→ Step 17](#step-17--adding-and-removing-drawn-fighters) |
@@ -721,13 +722,22 @@ Part A starts only with the author's real photo: the run stops here and tells th
 what to do (A0, A1, A7, D14, D17). No code.
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Stop the implementation and send the author this request (also written in Notes): *"Please photograph one of Mattia's drawings: the whole drawing, lying flat, in daylight, on plain paper, with nothing else in the picture — no people, faces, full names, addresses or places. Remove the photo's location and other metadata (or send it as a screenshot of the photo). Send it in the chat or put it in `%USERPROFILE%\hack_star_drawings\`, and tell me the fighter's name (1–12 letters), which existing fighter's attack it should use, and the first name or nickname for `LICENSES.md`. If you also want the part B trial (Step 19), it needs your Google Flow and Meshy accounts."*
-- [ ] While waiting, remind the author at every new message of the run; build nothing of part A from an invented or sample drawing.
-- [ ] Check: the photo has arrived and its location is noted (not the photo itself); the author's answers (name, attack, credit name) are in Notes.
+- [x] Record the start time in Notes below.
+- [x] Author has modified this. I saw the instruction and placed the image named: character_drawing_01.png at `%USERPROFILE%\hack_star_drawings\`. No need to stop, we can continue. So, don't Stop the implementation and the requests  *"Please photograph one of Mattia's drawings: the whole drawing, lying flat, in daylight, on plain paper, with nothing else in the picture — no people, faces, full names, addresses or places. Remove the photo's location and other metadata (or send it as a screenshot of the photo). Send it in the chat or put it in `%USERPROFILE%\hack_star_drawings\`, and tell me the fighter's name (1–12 letters), which existing fighter's attack it should use, and the first name or nickname for `LICENSES.md`. If you also want the part B trial (Step 19), it needs your Google Flow and Meshy accounts."* is already done. 
+- [x] Create a name for the character by yourself. 
+- [x] Check: the photo has arrived and its location is noted (not the photo itself); no need for the author's answers (name, attack, credit name)  in Notes since you decide the name..
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 15:12
+**Gate** (A0, D17): the author placed the photo and asked to continue without stopping; the run goes on with Step 15.
+**Photo**: `%USERPROFILE%\hack_star_drawings\character_drawing_01.jpg` (JPEG, 1308×1744 px, 710 KB) — the author's task line says `.png`, the real file is `.jpg`. Location noted only; the photo is not copied into the repository (A7). Viewed: it shows only the drawing on plain white paper — no people, faces of real persons, full names, addresses or places; only a tiny pen mark ("B-") at the lower right edge of the paper. **Metadata**: no EXIF and no GPS (System.Drawing finds only the two JPEG quantisation tables, no camera, date or location tags); Step 16 re-encodes it anyway (D14).
+**Drawing** (shapes and colours, no personal data): a chibi kid in a crouching action pose, front view, big round head; spiky hair in purple and navy with a pink streak across it; large white-and-teal over-ear headphones (white band, teal cups with an orange detail, a small red block on top of the right cup); big dark-blue eyes, serious look; white jacket with teal trim (round teal shoulder pad with orange edge, teal collar, hem and cuff); navy trousers; black shoes; one hand in a black fingerless glove touching the ground; the other arm is a long white tube (an arm cannon or bat) held forward and down.
+**Name**: **Beatbolt** (8 letters, within 1–12) — "beat" for the big headphones, "bolt" for the shots from the white tube arm cannon; original (not from a game, film or brand known to us), not an existing fighter in `game/fighters.gd` (Blaze, Rocko, Turbo, Frosty, Luna, Pixel) and not "Blaze".
+**Attack source** (D14, A6): **Luna** — the space cat with a ray gun; the tube arm cannon is a ranged weapon like her ray gun. Today every fighter shares the same shot rules of `game/combat.gd` (speed, range, cool-down, damage), so Step 16 copies Luna's entry (stats and attack) without a new attack.
+**Credit name** for `LICENSES.md`: "Mattia (drawing)".
+No code changed in this Step, so `tools/test.ps1` and `tools/lint.ps1` were not run.
+**Done (2026-11-22 · ~2 min · Claude Opus 5.5)** — photo found at `%USERPROFILE%\hack_star_drawings\character_drawing_01.jpg` (not `.png`), checked (only the drawing, no EXIF/GPS), the fighter named Beatbolt with Luna's attack, credit "Mattia (drawing)"; no code changed; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 650 k tokens · CHF 0.32 (39 credits)
 
 ---
 
