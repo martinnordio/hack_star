@@ -21,6 +21,9 @@ var selected_skins: Dictionary[String, String] = {}
 ## The fighter the fighter screen shows (set by the list before it opens the screen).
 var viewed_fighter: String = ""
 var entrance_played: bool = false
+## The arena's FPS label is shown (the info screen's play-test switch, spec 09 D8); kept while
+## the game is open, not saved.
+var show_fps: bool = false
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
 ## When each active hack turns off: Unix time in seconds, `Hacks.FOREVER` for never.
@@ -71,6 +74,7 @@ func reset() -> void:
 	for fighter_id: String in Fighters.ids():
 		selected_skins[fighter_id] = Fighters.DEFAULT_SKIN
 	entrance_played = false
+	show_fps = false
 	pictures = {}
 	match_settings = MatchSettings.new()
 	last_result = {}

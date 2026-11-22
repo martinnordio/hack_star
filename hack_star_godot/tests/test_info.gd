@@ -4,6 +4,10 @@ const INFO: PackedScene = preload("res://scenes/info.tscn")
 const ROWS_PATH: String = "Margin/Column/Scroll/Rows"
 
 
+func after_each() -> void:
+	GameState.show_fps = false
+
+
 func _show_info() -> Control:
 	var screen: Control = autofree(INFO.instantiate())
 	add_child(screen)
@@ -50,3 +54,17 @@ func test_back_goes_home_by_click_and_by_touch() -> void:
 		var shown: Node = await UiInput.settle(self, opened)
 		assert_eq(shown.scene_file_path, Screens.HOME, "Back opens home (touch: %s)" % use_touch)
 		await UiInput.close(self, shown)
+
+
+func test_the_fps_switch_turns_the_play_test_fps_on_by_click_and_off_by_touch() -> void:
+	GameState.show_fps = false
+	var opened: Dictionary = await UiInput.open(self, INFO)
+	var switch: CheckButton = opened["screen"].get_node("Margin/Column/FpsSwitch")
+	assert_eq(switch.text, "Show FPS (play-test)")
+	assert_false(switch.button_pressed, "off by default")
+	UiInput.click(opened["viewport"], switch)
+	assert_true(GameState.show_fps, "a click turns it on")
+	UiInput.touch(opened["viewport"], switch)
+	assert_false(GameState.show_fps, "a touch turns it off")
+	var shown: Node = await UiInput.settle(self, opened)
+	await UiInput.close(self, shown)

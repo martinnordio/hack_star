@@ -114,8 +114,8 @@ at the start and fades by itself; **How to play** on the Info page has the same 
 3. **Bots:** they walk around, go for the nearest opponent they can see and shoot at it. They
    fight each other too. On "easy" they react late, miss more often and shoot more slowly. A bot
    in a bush is hard to see: it only sees you in a bush within 2.5 m, and a bot in a bush turns see-through, like you.
-4. **Knock-out:** a fighter with no health left is knocked out and leaves the arena. The label
-   top-right shows "Fighters left".
+4. **Knock-out:** a fighter with no health left is knocked out and leaves the arena. The chip
+   top-right shows how many fighters are left.
 5. **Timer:** 2:00 at the top of the screen, red in the last 10 seconds.
 6. **Result:** after the match the result screen shows **Victory!** (you are the last one
    standing), **Defeat** with your place (for example "You finished 3rd") when you are knocked

@@ -62,8 +62,8 @@ func test_the_match_hud_fits_every_size() -> void:
 		var arena: MatchArena = shown[1]
 		var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
 		var countdown: Control = arena.get_node("Hud/MatchHud/CountdownLabel")
-		var timer: Control = arena.get_node("Hud/MatchHud/TimerLabel")
-		var left: Control = arena.get_node("Hud/MatchHud/FightersLeftLabel")
+		var timer: Control = arena.get_node("Hud/MatchHud/TimerChip")
+		var left: Control = arena.get_node("Hud/MatchHud/FightersLeftChip")
 		var back: Control = arena.get_node("Hud/BackButton")
 		var fps: Control = arena.get_node("Hud/FpsLabel")
 		var sticks: Array[Control] = [

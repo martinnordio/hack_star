@@ -1,5 +1,6 @@
 extends GutTest
-## The match HUD (`Hud/MatchHud` of `match.tscn`, spec 07 D9): countdown, timer, fighters left.
+## The match HUD (`Hud/MatchHud` of `match.tscn`, spec 07 D9): countdown, timer, fighters left;
+## the timer and fighters left as icon chips and the FPS label hidden for players (spec 09, G12).
 
 const MATCH_SCENE: PackedScene = preload("res://scenes/match.tscn")
 
@@ -28,6 +29,10 @@ func _label(label_name: String) -> Label:
 	return _arena.get_node("Hud/MatchHud/%s" % label_name)
 
 
+func _chip(chip_name: String) -> IconChip:
+	return _arena.get_node("Hud/MatchHud/%s" % chip_name)
+
+
 func test_the_countdown_shows_3_then_fight_then_nothing() -> void:
 	await _open(1, 3, 120.0)
 	assert_eq(_label("CountdownLabel").text, "3")
@@ -41,22 +46,38 @@ func test_the_countdown_shows_3_then_fight_then_nothing() -> void:
 
 func test_the_timer_counts_down_and_turns_red_in_the_last_ten_seconds() -> void:
 	await _open(1, 0, 12.0)
-	var timer: Label = _label("TimerLabel")
+	var timer: IconChip = _chip("TimerChip")
 	assert_eq(timer.text, "0:12")
-	assert_false(timer.has_theme_color_override("font_color"), "not red at first")
+	assert_eq(timer.text_color, Color.WHITE, "not red at first")
 	await wait_seconds(3.5)
 	assert_eq(timer.text, "0:09")
-	assert_true(timer.has_theme_color_override("font_color"), "red in the last 10 s")
-	assert_eq(timer.get_theme_color("font_color"), Combat.COLOR_RED)
+	assert_eq(timer.text_color, Combat.COLOR_RED, "red in the last 10 s")
+	assert_eq(timer.get_node("Row/Label").get_theme_color("font_color"), Combat.COLOR_RED)
 
 
 func test_a_full_match_starts_at_two_minutes() -> void:
 	await _open(3, 3, 120.0)
-	assert_eq(_label("TimerLabel").text, "2:00")
+	assert_eq(_chip("TimerChip").text, "2:00")
 
 
 func test_fighters_left_drops_after_a_knock_out() -> void:
 	await _open(3, 0, 120.0)
-	assert_eq(_label("FightersLeftLabel").text, "Fighters left: 4")
+	assert_eq(_chip("FightersLeftChip").text, "4")
 	_arena.bots()[0].knock_out()
-	assert_eq(_label("FightersLeftLabel").text, "Fighters left: 3")
+	assert_eq(_chip("FightersLeftChip").text, "3")
+
+
+func test_timer_and_fighters_left_have_their_icons() -> void:
+	await _open(1, 0, 120.0)
+	assert_eq(_chip("TimerChip").get_node("Row/Icon").texture, Icons.get_icon("clock"))
+	assert_eq(_chip("FightersLeftChip").get_node("Row/Icon").texture, Icons.get_icon("fighters"))
+
+
+func test_the_fps_label_is_hidden_unless_switched_on() -> void:
+	await _open(1, 0, 120.0)
+	assert_false(_arena.get_node("Hud/FpsLabel").visible, "hidden for players")
+	_arena.queue_free()
+	await wait_process_frames(1)
+	GameState.show_fps = true
+	await _open(1, 0, 120.0)
+	assert_true(_arena.get_node("Hud/FpsLabel").visible, "shown for the play-test")

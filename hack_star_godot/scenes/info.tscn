@@ -63,3 +63,10 @@ horizontal_scroll_mode = 3
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 20
+
+[node name="FpsSwitch" type="CheckButton" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 28
+text = "Show FPS (play-test)"

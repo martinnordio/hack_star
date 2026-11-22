@@ -15,8 +15,8 @@ const CLEAR_OF: Array[String] = [
 	"BackButton",
 	"FpsLabel",
 	"MatchHud/CountdownLabel",
-	"MatchHud/TimerLabel",
-	"MatchHud/FightersLeftLabel",
+	"MatchHud/TimerChip",
+	"MatchHud/FightersLeftChip",
 ]
 
 
@@ -52,27 +52,36 @@ func _show_in_viewport(scene: PackedScene, size: Vector2i, touch: bool = false) 
 	return root
 
 
-func _hint(arena: Node) -> Label:
+## The hint on its dark backing (spec 09, G12).
+func _hint(arena: Node) -> Control:
 	return arena.get_node("Hud/ControlsHint")
+
+
+func _hint_text(arena: Node) -> Label:
+	return arena.get_node("Hud/ControlsHint/Row/Label")
 
 
 func test_training_shows_the_keyboard_hint_and_hides_it_after_the_time() -> void:
 	var arena: Node = await _show_in_viewport(ARENA_SCENE, Vector2i(1280, 720))
-	var hint: Label = _hint(arena)
+	var hint: Control = _hint(arena)
 	assert_true(hint.visible)
 	assert_eq(hint.modulate.a, 1.0, "fully visible at first")
-	assert_true(hint.text.begins_with(ControlsHelp.KEYBOARD_HINT), "the keyboard text")
-	assert_true(hint.text.ends_with(ControlsHelp.MORE_IN_INFO), "More in Info")
-	assert_eq(hint.mouse_filter, Control.MOUSE_FILTER_IGNORE, "it ignores the mouse and touch")
+	var text: String = _hint_text(arena).text
+	assert_true(text.begins_with(ControlsHelp.KEYBOARD_HINT), "the keyboard text")
+	assert_true(text.ends_with(ControlsHelp.MORE_IN_INFO), "More in Info")
+	assert_eq(hint.theme_type_variation, &"ChipPanel", "on a dark rounded backing")
+	assert_not_null(arena.get_node("Hud/ControlsHint/Row/Icon").texture, "with an icon")
+	for part: Control in [hint] + hint.find_children("*", "Control", true, false):
+		assert_eq(part.mouse_filter, Control.MOUSE_FILTER_IGNORE, "%s ignores input" % part.name)
 	await wait_seconds(Arena.HINT_SECONDS + Arena.HINT_FADE_SECONDS + 0.3)
 	assert_false(hint.visible, "hidden after the time")
 
 
 func test_a_match_shows_the_hint_over_the_countdown() -> void:
 	var arena: Node = await _show_in_viewport(MATCH_SCENE, Vector2i(1280, 720))
-	var hint: Label = _hint(arena)
+	var hint: Control = _hint(arena)
 	assert_true(hint.visible)
-	assert_true(hint.text.begins_with(ControlsHelp.KEYBOARD_HINT))
+	assert_true(_hint_text(arena).text.begins_with(ControlsHelp.KEYBOARD_HINT))
 	assert_eq(hint.mouse_filter, Control.MOUSE_FILTER_IGNORE)
 	assert_true(arena.get_node("Hud/MatchHud/CountdownLabel").visible, "the countdown runs")
 
@@ -84,16 +93,18 @@ func test_the_hint_is_clear_of_the_other_controls_at_every_size() -> void:
 				var size: Vector2i = SIZES[label]
 				var arena: Node = await _show_in_viewport(scene, size, touch)
 				var visible_rect: Rect2 = Rect2(Vector2.ZERO, _content_size(size))
-				var hint: Label = _hint(arena)
+				var hint: Control = _hint(arena)
 				var hint_rect: Rect2 = hint.get_global_rect()
+				var hint_text: Label = _hint_text(arena)
 				var where: String = (
 					"%s %s%s" % [scene.resource_path.get_file(), label, " (touch)" if touch else ""]
 				)
 				assert_true(
 					visible_rect.encloses(hint_rect), "%s: hint %s fits" % [where, hint_rect]
 				)
-				var text_height: float = hint.get_line_count() * hint.get_line_height()
-				assert_true(text_height <= hint_rect.size.y, "%s: the text fits its box" % where)
+				var text_height: float = hint_text.get_line_count() * hint_text.get_line_height()
+				var text_box: float = hint_text.size.y
+				assert_true(text_height <= text_box, "%s: the text fits its box" % where)
 				for path: String in CLEAR_OF:
 					var other: Control = arena.get_node_or_null("Hud/%s" % path)
 					if other != null:
@@ -105,9 +116,9 @@ func test_the_hint_is_clear_of_the_other_controls_at_every_size() -> void:
 
 func test_touch_shows_only_the_sticks() -> void:
 	var arena: Node = await _show_in_viewport(ARENA_SCENE, Vector2i(844, 390), true)
-	var hint: Label = _hint(arena)
-	assert_true(hint.text.begins_with(ControlsHelp.TOUCH_HINT), "the sticks")
-	assert_false(hint.text.contains("WASD"), "no keyboard text on a touch screen")
+	var text: String = _hint_text(arena).text
+	assert_true(text.begins_with(ControlsHelp.TOUCH_HINT), "the sticks")
+	assert_false(text.contains("WASD"), "no keyboard text on a touch screen")
 
 
 func test_space_fires_while_the_hint_shows() -> void:

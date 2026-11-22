@@ -27,8 +27,8 @@ var _end_left: float = -1.0
 
 @onready var _bots: Node3D = $Bots
 @onready var _countdown_label: Label = $Hud/MatchHud/CountdownLabel
-@onready var _timer_label: Label = $Hud/MatchHud/TimerLabel
-@onready var _fighters_left_label: Label = $Hud/MatchHud/FightersLeftLabel
+@onready var _timer_chip: IconChip = $Hud/MatchHud/TimerChip
+@onready var _fighters_left_chip: IconChip = $Hud/MatchHud/FightersLeftChip
 
 
 func _ready() -> void:
@@ -94,12 +94,9 @@ func _update_hud() -> void:
 	var countdown: String = match_state.countdown_text()
 	_countdown_label.text = countdown
 	_countdown_label.visible = not countdown.is_empty()
-	_timer_label.text = match_state.timer_text()
-	if match_state.timer_red():
-		_timer_label.add_theme_color_override("font_color", Combat.COLOR_RED)
-	else:
-		_timer_label.remove_theme_color_override("font_color")
-	_fighters_left_label.text = "Fighters left: %d" % match_state.fighters_left()
+	_timer_chip.text = match_state.timer_text()
+	_timer_chip.text_color = Combat.COLOR_RED if match_state.timer_red() else Color.WHITE
+	_fighters_left_chip.text = str(match_state.fighters_left())
 
 
 func _add_to_match(fighter: Fighter, bar_color: Color, number_color: Color) -> void:

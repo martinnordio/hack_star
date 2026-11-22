@@ -16,8 +16,15 @@ extends PanelContainer
 ## The number or word next to the icon.
 @export var text: String = "":
 	set(value):
-		text = value
-		_update()
+		if value != text:
+			text = value
+			_update()
+## The colour of the number (white, or for example red for a timer running out).
+@export var text_color: Color = Color.WHITE:
+	set(value):
+		if value != text_color:
+			text_color = value
+			_update()
 
 
 func _ready() -> void:
@@ -32,3 +39,4 @@ func _update() -> void:
 	icon.modulate = icon_color
 	var label: Label = $Row/Label
 	label.text = text
+	label.add_theme_color_override("font_color", text_color)

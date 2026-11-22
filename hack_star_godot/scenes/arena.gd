@@ -22,7 +22,13 @@ const FIGHTER_HEIGHT: float = 1.9
 ## Free border around that box as a share of the screen; more at the top for the Back button.
 const FRAME_MARGIN: float = 0.03
 const FRAME_TOP_MARGIN: float = 0.12
-## The FPS label (only while the first game is being checked) refreshes this often.
+## The camera-side border wall covers at most this share of the screen height (spec 09, G11):
+## the camera never looks farther south than that, so the extra height of a tall screen shows
+## the arena ahead instead of the wall and the ground behind it.
+const NEAR_WALL_SHARE: float = 0.08
+## The near wall's top above its height: the cap `Canyon` puts on every wall.
+const WALL_CAP_HEIGHT: float = 0.1
+## The FPS label (hidden unless the info screen's play-test switch is on) refreshes this often.
 const FPS_LABEL_INTERVAL: float = 0.25
 ## The controls hint at the start is fully visible for this long, then fades out over the next.
 const HINT_SECONDS: float = 5.0
@@ -48,6 +54,8 @@ var touch_controls: bool = DisplayServer.is_touchscreen_available()
 var _fps_timer: float = 0.0
 var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
+# The southmost the camera target may go (see `NEAR_WALL_SHARE`).
+var _camera_max_z: float = INF
 var _dust_left: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
@@ -59,7 +67,8 @@ var _dust_left: float = 0.0
 @onready var _dummies: Node3D = $Dummies
 @onready var _effects: ArenaEffects = $Effects
 @onready var _fps_label: Label = $Hud/FpsLabel
-@onready var _controls_hint: Label = $Hud/ControlsHint
+@onready var _controls_hint: Control = $Hud/ControlsHint
+@onready var _controls_hint_label: Label = $Hud/ControlsHint/Row/Label
 
 
 func _ready() -> void:
@@ -71,9 +80,11 @@ func _ready() -> void:
 			var dummy: TargetDummy = DUMMY_SCENE.instantiate()
 			dummy.position = Vector3(spot.x, 0.0, spot.y)
 			_dummies.add_child(dummy)
-	_camera_target = _wanted_camera_target()
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
+	_camera_target = _wanted_camera_target()
+	_place_camera()
+	_fps_label.visible = GameState.show_fps
 	_update_fps_label()
 	_show_controls_hint()
 
@@ -90,7 +101,8 @@ func _show_controls_hint() -> void:
 	else:
 		lines.append(ControlsHelp.KEYBOARD_HINT)
 		lines.append(ControlsHelp.MORE_IN_INFO)
-	_controls_hint.text = "\n".join(lines)
+	_controls_hint_label.text = "\n".join(lines)
+	($Hud/ControlsHint/Row/Icon as TextureRect).texture = Icons.get_icon("info")
 	_controls_hint.modulate.a = 1.0
 	_controls_hint.show()
 	var fade: Tween = create_tween()
@@ -112,7 +124,7 @@ func _process(delta: float) -> void:
 		_dust_left = DUST_INTERVAL
 		_effects.play(ArenaEffects.DUST, _fighter.global_position + Vector3.UP * 0.1, DUST_COLOR)
 	_fps_timer += delta
-	if _fps_timer >= FPS_LABEL_INTERVAL:
+	if _fps_label.visible and _fps_timer >= FPS_LABEL_INTERVAL:
 		_fps_timer = 0.0
 		_update_fps_label()
 
@@ -230,7 +242,9 @@ func _update_aim_line() -> void:
 
 
 func _wanted_camera_target() -> Vector3:
-	return _fighter.position + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
+	var target: Vector3 = _fighter.position + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
+	target.z = minf(target.z, _camera_max_z)
+	return target
 
 
 func _place_camera() -> void:
@@ -239,8 +253,16 @@ func _place_camera() -> void:
 	_camera.look_at_from_position(_camera_target + backwards * _camera_distance, _camera_target)
 
 
+## The z of the camera-side border wall's inner face (the border wall farthest south).
+static func near_wall_z() -> float:
+	var nearest: float = -INF
+	for index: int in ArenaLayout.BORDER_COUNT:
+		nearest = maxf(nearest, ArenaLayout.WALLS[index].position.y)
+	return nearest
+
+
 ## Moves the camera back until the box around the fighter fits the screen, so it works in
-## landscape and portrait.
+## landscape and portrait; then finds how far south the camera may look.
 func _frame_camera() -> void:
 	var view_size: Vector2 = get_viewport().get_visible_rect().size
 	var allowed: Rect2 = Rect2(
@@ -251,8 +273,29 @@ func _frame_camera() -> void:
 	while _camera_distance < CAMERA_MAX_DISTANCE:
 		_place_camera()
 		if _box_inside(allowed):
-			return
+			break
 		_camera_distance += CAMERA_DISTANCE_STEP
+	_camera_max_z = near_wall_z() - _near_wall_offset(view_size.y)
+	_place_camera()
+
+
+# How far south of the camera target the near wall's top edge may be, so that the wall covers
+# at most `NEAR_WALL_SHARE` of the screen height. The camera moves with its target, so the answer
+# does not depend on where the target is.
+func _near_wall_offset(view_height: float) -> float:
+	var wall_top: float = Canyon.CAMERA_SIDE_WALL_HEIGHT + WALL_CAP_HEIGHT
+	var wanted_y: float = view_height * (1.0 - NEAR_WALL_SHARE)
+	var near: float = 0.0
+	# Not past the camera itself, where a point would be behind it.
+	var far: float = _camera_distance * cos(deg_to_rad(CAMERA_PITCH_DEGREES))
+	for _step: int in 40:
+		var offset: float = (near + far) / 2.0
+		var edge: Vector3 = _camera_target + Vector3(0.0, wall_top, offset)
+		if _camera.unproject_position(edge).y < wanted_y:
+			near = offset
+		else:
+			far = offset
+	return near
 
 
 func _box_inside(allowed: Rect2) -> bool:

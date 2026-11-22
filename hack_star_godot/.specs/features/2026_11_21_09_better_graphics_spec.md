@@ -20,6 +20,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 10.98 M (93 k in · 10.84 M cached · 41 k out) | CHF 2.89 (345 credits) | Step 3 done (`usage.ps1 -AgentName s09g-steps1-3` from 12:55:30 to 13:11:15) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.56 M (72 k in · 7.45 M cached · 38 k out) | CHF 2.19 (261 credits) | Step 4 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:12:53 to 13:22:37) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.15 M (48 k in · 7.08 M cached · 22 k out) | CHF 1.75 (208 credits) | Step 5 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:22:37 to 13:30:18) |
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 11.32 M (74 k in · 11.20 M cached · 39 k out) | CHF 2.84 (339 credits) | Step 6 done (`usage.ps1 -AgentName s09g-steps4-6` from 13:30:18 to 13:42:24) |
 
 ---
 
@@ -323,7 +324,7 @@ this spec → G17; Q4–Q7 the suggestions → B6, G1, G18, G3 and G5) and added
 | **3** | Toon look of the fighters | reasoning (Claude Opus 5.5) — S1; shaders for cel shading and a screen-space outline, graphics-heavy (D5) | ✅ Done | [→ Step 3](#step-3--toon-look-of-the-fighters) |
 | **4** | Home screen | reasoning (Claude Opus 5.5) — S1; the screen Mattia sees most, layout at five sizes (D6, D7) | ✅ Done | [→ Step 4](#step-4--home-screen) |
 | **5** | Arena look | reasoning (Claude Opus 5.5) — S1; the canyon in the outlined look without losing frames (D5) | ✅ Done | [→ Step 5](#step-5--arena-look) |
-| **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ⬜ Not started | [→ Step 6](#step-6--arena-framing-and-match-hud) |
+| **6** | Arena framing and match HUD | reasoning (Claude Opus 5.5) — S1; camera rule with a test, HUD chips, the FPS switch (D8); mid-way look | ✅ Done | [→ Step 6](#step-6--arena-framing-and-match-hud) |
 | **7** | Fighter cards | reasoning (Claude Opus 5.5) — S1; the list's cards with pictures, icons and the lock | ⬜ Not started | [→ Step 7](#step-7--fighter-cards) |
 | **8** | Fighter screen and skin pictures | reasoning (Claude Opus 5.5) — S1; stage, skin pictures in rarity frames | ⬜ Not started | [→ Step 8](#step-8--fighter-screen-and-skin-pictures) |
 | **9** | Result, info, hack and QR screens | reasoning (Claude Opus 5.5) — S1; the remaining screens in the new look | ⬜ Not started | [→ Step 9](#step-9--result-info-hack-and-qr-screens) |
@@ -525,14 +526,21 @@ fighters left and the controls hint on dark backings with icons, and the FPS lab
 unless switched on (G11, G12, G1 mid-way look).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] Camera framing and/or the camera-side wall height so that the projected nearest wall is ≤ 10 % of the screen height at the start of a match and of Training at the five sizes; new `test_arena_framing.gd` measures it with `Camera3D.unproject_position`.
-- [ ] HUD: timer and fighters left as `IconChip`s, the controls hint on a dark rounded backing with icons; the FPS label hidden by default; the info screen's **Show FPS (play-test)** switch (D8); `test_match_hud.gd` updated.
-- [ ] Mid-way look (G1, D17): copy the current home and match screenshots to `%LOCALAPPDATA%\hack_star\screens\09\midway\` and write in Notes that they are ready for the author and Mattia (not blocking).
-- [ ] Check: screenshots of a match and Training at five sizes; `test.ps1`, `lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] Camera framing and/or the camera-side wall height so that the projected nearest wall is ≤ 10 % of the screen height at the start of a match and of Training at the five sizes; new `test_arena_framing.gd` measures it with `Camera3D.unproject_position`.
+- [x] HUD: timer and fighters left as `IconChip`s, the controls hint on a dark rounded backing with icons; the FPS label hidden by default; the info screen's **Show FPS (play-test)** switch (D8); `test_match_hud.gd` updated.
+- [x] Mid-way look (G1, D17): copy the current home and match screenshots to `%LOCALAPPDATA%\hack_star\screens\09\midway\` and write in Notes that they are ready for the author and Mattia (not blocking).
+- [x] Check: screenshots of a match and Training at five sizes; `test.ps1`, `lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 13:30
+**Framing** (G11): the wall heights stay (W7); the camera does the work. After `_frame_camera` has found the distance (as before), `Arena._near_wall_offset` finds by bisection how far south of the camera target the near wall's top edge (`Canyon.CAMERA_SIDE_WALL_HEIGHT` + `WALL_CAP_HEIGHT` 0.1, at `Arena.near_wall_z()`, the inner face of the southmost border wall) may lie so that it projects at 92 % of the screen height (`NEAR_WALL_SHARE` 0.08), and the camera target is never south of that (`_camera_max_z`). The camera moves with its target, so the limit is computed once per screen size. A tall screen now shows more arena ahead instead of the wall and the ground behind it. Measured as "from the wall's top edge to the bottom of the screen" (the wall and the outside ground behind it — what hid the arena): before 26 % (1280×720, 844×390), 30 % (1180×820), 40 % (820×1180), 43 % (390×844); now ≤ 8 % at all five sizes, Training and a match (`tests/test_arena_framing.gd`: the share ≤ 10 %, and the player in view above the wall; checked that it fails with the old framing). The existing camera tests (`test_screen_sizes.gd` fighter in view at the start and in the far corner) still pass.
+**HUD** (G12, D8): `match.tscn` — `TimerChip` (clock icon, white; `IconChip.text_color` red in the last 10 s) and `FightersLeftChip` (fighters icon in red, the number) replace `TimerLabel` / `FightersLeftLabel` (and the scene's own timer StyleBox); `IconChip` got `text_color`, setters that skip unchanged values (the HUD sets them every physics frame) and children that ignore the mouse. `arena.tscn` — `ControlsHint` is a `PanelContainer` (`ChipPanel`, dark rounded) with `Row/Icon` (info icon) and `Row/Label` (the same text), growing upwards from the bottom; the FPS label moved under the fighters-left chip (top 88 px) and is hidden unless `GameState.show_fps` (new, memory only, reset by `reset()`; no save change). Info screen: a `FpsSwitch` `CheckButton` **Show FPS (play-test)** under the list (80 px tall, 28 px text). Docs: `docs/architecture.md` (arena and match rows, play-test line) and the README's match rules updated for the chips and the switch.
+**Tests**: new `tests/test_arena_framing.gd` (2); `test_match_hud.gd` (chips, red timer via `text_color`, icons, FPS hidden by default and shown with the switch on: +2); `test_controls_hint.gd` (hint on the dark backing with an icon, every part ignores input; text read from `Row/Label`); `test_screen_sizes_match.gd` (chip paths); `test_info.gd` (+1: the switch by click on, by touch off).
+**Screenshots** (`%LOCALAPPDATA%\hack_star\screens\09\step6\`, viewed): a match (1.5 s in, countdown) and Training at 1280×720, 1180×820, 820×1180, 390×844, 844×390; a match with the FPS switch on; the info screen at 1280×720 and 390×844. The near wall is a thin strip at the bottom; the hint covers the lowest ~15 % for its 5 s, then fades; the chips read on sand and on walls.
+**Mid-way look** (G1, D17, not blocking): `%LOCALAPPDATA%\hack_star\screens\09\midway\` has `godot_home_1280x720.png`, `godot_home_820x1180.png`, `godot_match_1280x720.png`, `godot_match_820x1180.png` — ready for the author and Mattia to compare with `…\09\before\svelte_*` (home and match).
+**Done (2026-11-22 · ~12 min · Claude Opus 5.5)** — the camera never shows more than 8 % of near wall at the bottom, the timer and fighters left as icon chips, the controls hint on a dark backing with an icon, the FPS label hidden unless Info's **Show FPS (play-test)** is on; mid-way screenshots ready; `tests/test_arena_framing.gd`. `tools/test.ps1` 428 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 11.32 M tokens · CHF 2.84 (339 credits)
 
 ---
 
