@@ -28,17 +28,17 @@ const BUSHES: Array[Rect2] = [
 	Rect2(-8.5, -10.5, 2.5, 3.0),
 	Rect2(6.0, -10.5, 2.5, 3.0),
 ]
-## Things to look at, without collision: `kind` is crystal, mushroom or stone.
+## Things to look at, without collision: `kind` is crystal (a small crystal cluster) or mushroom.
 const DECORATION: Array[Dictionary] = [
 	{"kind": "mushroom", "at": Vector2(8.0, 11.0)},
 	{"kind": "crystal", "at": Vector2(-8.0, 11.0)},
-	{"kind": "stone", "at": Vector2(-3.0, 8.0)},
+	{"kind": "crystal", "at": Vector2(-3.0, 8.0)},
 	{"kind": "mushroom", "at": Vector2(3.0, 8.0)},
-	{"kind": "stone", "at": Vector2(0.0, 2.0)},
+	{"kind": "mushroom", "at": Vector2(0.0, 2.0)},
 	{"kind": "crystal", "at": Vector2(-8.2, -6.0)},
 	{"kind": "mushroom", "at": Vector2(8.2, -6.0)},
 	{"kind": "crystal", "at": Vector2(0.0, -6.5)},
-	{"kind": "stone", "at": Vector2(-2.0, -11.0)},
+	{"kind": "crystal", "at": Vector2(-2.0, -11.0)},
 	{"kind": "mushroom", "at": Vector2(2.0, -11.0)},
 ]
 const DUMMIES: Array[Vector2] = [Vector2(-4.0, -3.0), Vector2(4.0, -3.0), Vector2(0.0, -9.0)]

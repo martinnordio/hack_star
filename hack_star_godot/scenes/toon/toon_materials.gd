@@ -1,9 +1,11 @@
+@tool
 class_name ToonMaterials
 extends RefCounted
 ## The shared cartoon materials (spec 09, D5): one cel-shaded material per colour, glow and
 ## outline choice, with the one dark outline pass (`outline.gdshader`) as its `next_pass`; and
 ## their see-through copies for a fighter in a bush. Sharing keeps the draw state small on an
-## iPad; fighters, the arena and world props all take their materials from here.
+## iPad; fighters, the arena and world props all take their materials from here (`@tool`, so the
+## Glimmer Isles props also build in the editor's scatter source scene).
 
 const TOON_SHADER: Shader = preload("res://scenes/toon/toon.gdshader")
 const OUTLINE_SHADER: Shader = preload("res://scenes/toon/outline.gdshader")

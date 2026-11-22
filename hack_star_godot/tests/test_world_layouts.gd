@@ -58,7 +58,7 @@ func test_glimmer_isles_walls_cover_and_decoration_fit() -> void:
 		for wall: Rect2 in ArenaLayout.walls():
 			assert_false(bush.intersects(wall), "%s does not touch %s" % [bush, wall])
 	for spot: Dictionary in ArenaLayout.decoration():
-		assert_true(["crystal", "mushroom", "stone"].has(spot["kind"]), str(spot))
+		assert_true(["crystal", "mushroom"].has(spot["kind"]), str(spot))
 		assert_true(ArenaLayout.is_free(spot["at"], 0.5), "%s is free" % spot)
 		assert_false(ArenaLayout.in_bush(spot["at"]), "%s is not in cover" % spot)
 	assert_eq(ArenaLayout.dummies().size(), 3)

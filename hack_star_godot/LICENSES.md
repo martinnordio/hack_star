@@ -10,6 +10,7 @@ and free icons (below). Nothing is imported from other games.
 |-------|--------|---------|
 | Arena, walls, floor, fighter, touch joystick | Built in code from Godot's primitive meshes (box, capsule, sphere) and plain materials; no imported models, textures or sounds | MIT, as the repository ([LICENSE](../LICENSE)) |
 | Icons coin, bolt, clock, world, eye | Drawn in code at start-up (`scenes/ui/icons.gd`); the pack below has no such icon | MIT, as the repository |
+| Glimmer Isles props (crystal cluster, glow fern, small mushroom, giant mushroom, floating island chunk) and their placement | Built in code from Godot's primitive meshes with the shared toon materials (`scenes/worlds/glimmer_isles/props/glimmer_prop.gd` and its five scenes), placed by ProtonScatter in `scenes/worlds/glimmer_isles/scatter_source.tscn`; a made-up fantasy place, not a real one; ProtonScatter's demo assets are not used | MIT, as the repository |
 | Scripts, scenes, tests, tools | Written for this project | MIT, as the repository |
 
 The body text uses Godot's default font, built into the engine (see Godot Engine below); the
