@@ -188,7 +188,7 @@ func test_the_bar_and_the_numbers_show_over_the_picture_anywhere_in_every_view()
 ## (its up is the camera's up) and shrinks around the feet by part of the foreshortening.
 func _picture_top_on_screen(camera: Camera3D, fighter: Fighter) -> float:
 	var up: Vector3 = camera.global_basis.y.normalized()
-	var height: float = CutoutFighters.FIGHTERS[fighter.model.fighter_id]["height"]
+	var height: float = CutoutFighters.FIGHTERS[fighter.model.fighter_id]["figure_height"]
 	var shown: float = height * lerpf(1.0, clampf(up.y, 0.0, 1.0), CutoutFighters.FORESHORTEN)
 	return camera.unproject_position(fighter.model.global_position + up * shown).y
 

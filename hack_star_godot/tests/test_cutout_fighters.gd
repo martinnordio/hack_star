@@ -108,12 +108,12 @@ func test_the_model_is_one_outlined_picture_quad_standing_on_its_feet() -> void:
 		assert_eq(quad.get_parent(), model.get_body(), "moves with the body")
 		var material: ShaderMaterial = _material(model)
 		assert_eq(material.shader, CutoutFighters.SHADER)
-		var hero: Texture2D = CutoutFighters.FIGHTERS[expected[0]]["hero"]
-		assert_eq(material.get_shader_parameter("picture"), hero)
+		var idle: Texture2D = CutoutFighters.frame(expected[0], "idle_down")
+		assert_eq(material.get_shader_parameter("picture"), idle, "the front idle frame")
 		assert_eq(material.get_shader_parameter("width_px"), ToonMaterials.OUTLINE_PIXELS)
 		assert_eq(material.get_shader_parameter("outline_color"), ToonMaterials.OUTLINE_COLOR)
 		var box: AABB = quad.get_aabb()
-		var height: float = CutoutFighters.FIGHTERS[expected[0]]["height"]
+		var height: float = CutoutFighters.picture_size(expected[0]).y
 		var feet_y: float = CutoutFighters.FIGHTERS[expected[0]]["feet"].y
 		var below_feet: float = (1.0 + CutoutFighters.PAD - feet_y) * height
 		assert_almost_eq(box.position.y, -below_feet, 0.001, "%s: the feet at 0" % expected[0])
@@ -213,8 +213,8 @@ func _fighter(fighter_id: String) -> Fighter:
 
 
 func test_the_picture_looks_where_it_runs_and_keeps_it_going_up_or_down() -> void:
-	# Flarekid is drawn looking right, Echo looking left: mirrored only when looking the other way.
-	for row: Array in [["flarekid", false], ["echo", true]]:
+	# The frames look right: mirrored only when looking left.
+	for row: Array in [["flarekid", false], ["echo", false]]:
 		var fighter: Fighter = _fighter(row[0])
 		var material: ShaderMaterial = _material(fighter.model)
 		for step: Array in [[Vector2.LEFT, true], [Vector2.UP, true], [Vector2.RIGHT, false]]:

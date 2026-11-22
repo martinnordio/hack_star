@@ -122,6 +122,19 @@ const LIST: Array[Dictionary] = [
 			{"id": "default", "name": "Default", "rarity": ""},
 		],
 	},
+	{
+		"id": "magmax",
+		"name": "MagMax",
+		"rarity": "Epic",
+		"idea": "The author's hero: a masked brawler with flame hair and lava-rock fists",
+		"unlocked": true,
+		"cutout": true,
+		"plays_like": "rocko",
+		"skins":
+		[
+			{"id": "default", "name": "Default", "rarity": ""},
+		],
+	},
 ]
 
 

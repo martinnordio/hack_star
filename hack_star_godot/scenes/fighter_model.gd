@@ -201,7 +201,7 @@ var attack_left: float = 0.0
 ## True while the whole fighter is see-through.
 var see_through: bool = false
 ## Which way a picture fighter looks on the screen (set by `Fighter` from the input's x); the
-## picture is mirrored when it looks the other way than drawn.
+## picture is mirrored when it looks left (the side frames look right).
 var facing_left: bool = false:
 	set(value):
 		facing_left = value
@@ -380,8 +380,7 @@ func _cutout_material() -> ShaderMaterial:
 
 func _apply_flip() -> void:
 	if _cutout != null:
-		var mirrored: bool = facing_left != CutoutFighters.faces_left(fighter_id)
-		_cutout_material().set_shader_parameter("flip", mirrored)
+		_cutout_material().set_shader_parameter("flip", facing_left)
 
 
 func _step_effects(delta: float) -> void:
@@ -398,8 +397,7 @@ func _step_effects(delta: float) -> void:
 func _place_muzzle_flash() -> void:
 	var camera: Camera3D = get_viewport().get_camera_3d() if is_inside_tree() else null
 	if camera != null:
-		var mirrored: bool = facing_left != CutoutFighters.faces_left(fighter_id)
-		CutoutMotion.place_muzzle_flash(_muzzle_flash, fighter_id, _body, mirrored, camera)
+		CutoutMotion.place_muzzle_flash(_muzzle_flash, fighter_id, _body, facing_left, camera)
 
 
 ## Puts the animation at a moment in time (seconds): idle or run, plus the attack recoil.
