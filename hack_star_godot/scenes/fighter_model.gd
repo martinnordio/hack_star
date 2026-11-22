@@ -1,7 +1,8 @@
 class_name FighterModel
 extends Node3D
 ## A fighter's 3D look, built in code from primitive meshes and the shared cartoon materials of
-## `ToonMaterials` (cel shading and a dark outline; no imported art).
+## `ToonMaterials` (cel shading and a dark outline; no imported art) — or, for the picture
+## fighters, the author's picture on an outlined quad (`CutoutFighters`, spec 09 D21).
 ## `setup(fighter_id, skin_id)` builds the fighter; the front faces +Z (towards the stage camera),
 ## the feet stand on y = 0. The idle animation (breathing, sway, flickering flames and screens)
 ## runs in `_process` while `idle_enabled` is true; switch it off for still pictures.
@@ -202,6 +203,7 @@ var _head: Node3D
 var _flickers: Array[Node3D] = []
 var _flicker_scales: Array[Vector3] = []
 var _spinners: Array[Node3D] = []
+var _cutout: MeshInstance3D = null
 
 
 func _ready() -> void:
@@ -218,21 +220,42 @@ func _process(delta: float) -> void:
 
 ## Builds the fighter in a skin, replacing what was built before. An unknown fighter shows
 ## Blaze; an unknown skin shows the Default look. A drawn fighter's look comes from its own file
-## (`DrawnFighters`, spec 09 D14).
+## (`DrawnFighters`, spec 09 D14), a picture fighter's from its picture (`CutoutFighters`, D21).
 func setup(new_fighter_id: String, new_skin_id: String = Fighters.DEFAULT_SKIN) -> void:
 	var drawn: bool = DrawnFighters.has(new_fighter_id)
-	fighter_id = new_fighter_id if LOOKS.has(new_fighter_id) or drawn else "blaze"
-	var looks: Dictionary = DrawnFighters.looks(fighter_id) if drawn else LOOKS[fighter_id]
+	var picture: bool = CutoutFighters.has(new_fighter_id)
+	fighter_id = new_fighter_id if LOOKS.has(new_fighter_id) or drawn or picture else "blaze"
+	var looks: Dictionary = LOOKS.get(fighter_id, {})
+	if drawn:
+		looks = DrawnFighters.looks(fighter_id)
+	elif picture:
+		looks = CutoutFighters.looks(fighter_id)
 	skin_id = new_skin_id if looks.has(new_skin_id) else Fighters.DEFAULT_SKIN
 	var look: Dictionary = looks[skin_id]
 	main_color = look["main"]
 	_clear()
 	if drawn:
 		DrawnFighters.build(fighter_id, self, look)
+	elif picture:
+		_cutout = CutoutFighters.build(fighter_id, self)
 	else:
 		_build(look)
 	animate(time_seconds)
 	_apply_see_through(_rig)
+
+
+## The picture quad of a picture fighter (`CutoutFighters`), or null for a fighter of shapes.
+func get_cutout() -> MeshInstance3D:
+	return _cutout
+
+
+## How high over the feet (metres, straight up) a point must be to show on screen at the top of
+## the picture, for a camera whose up vector has this y (`CutoutFighters.top_height`); 0 for a
+## fighter of shapes.
+func picture_top(camera_up_y: float) -> float:
+	if _cutout == null:
+		return 0.0
+	return CutoutFighters.top_height(fighter_id, camera_up_y)
 
 
 ## The rig (turns as a whole), the body (breathes, bounces, recoils) and the head (tilts around
@@ -275,10 +298,14 @@ func set_see_through(on: bool) -> void:
 
 
 ## The Compatibility renderer ignores `GeometryInstance3D.transparency`, so the fighter's
-## materials are swapped for see-through copies (`ToonMaterials.see_through`), and back.
+## materials are swapped for see-through copies (`ToonMaterials.see_through`), and back. A
+## picture fighter's quad keeps its material and fades through the shader's `fade`.
 func _apply_see_through(node: Node) -> void:
 	for child: Node in node.get_children():
-		if child is MeshInstance3D:
+		if child == _cutout:
+			var fade: float = SEE_THROUGH_ALPHA if see_through else 1.0
+			(_cutout.material_override as ShaderMaterial).set_shader_parameter("fade", fade)
+		elif child is MeshInstance3D:
 			_swap_material(child)
 		_apply_see_through(child)
 
@@ -326,6 +353,7 @@ func _clear() -> void:
 	_flickers.clear()
 	_flicker_scales.clear()
 	_spinners.clear()
+	_cutout = null
 	_rig = Node3D.new()
 	_rig.name = "Rig"
 	add_child(_rig)

@@ -19,8 +19,11 @@ static func cached(fighter_id: String) -> Texture2D:
 	return cached_skin(fighter_id, GameState.selected_skins[fighter_id])
 
 
-## The cached picture of a fighter in one skin, or null while it is not rendered.
+## The cached picture of a fighter in one skin, or null while it is not rendered. A picture
+## fighter's is its card picture (`CutoutFighters.card`), never rendered.
 static func cached_skin(fighter_id: String, skin_id: String) -> Texture2D:
+	if CutoutFighters.has(fighter_id):
+		return CutoutFighters.card(fighter_id)
 	return GameState.pictures.get(key(fighter_id, skin_id))
 
 
@@ -47,6 +50,8 @@ static func _render(host: Node, pairs: Array[PackedStringArray]) -> void:
 	var stages: Dictionary[String, FighterStage] = {}
 	for pair: PackedStringArray in pairs:
 		var picture_key: String = key(pair[0], pair[1])
+		if CutoutFighters.has(pair[0]):
+			continue
 		if GameState.pictures.has(picture_key) or stages.has(picture_key):
 			continue
 		var stage: FighterStage = STAGE.instantiate()

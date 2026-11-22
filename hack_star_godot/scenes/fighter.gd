@@ -11,6 +11,8 @@ signal knocked_out_now
 
 const BAR_Y: float = 2.3
 const NUMBER_Y: float = 2.6
+## Over a picture fighter the bar sits this much over the top of its picture (metres).
+const PICTURE_BAR_GAP: float = 0.3
 const KNOCK_OUT_SECONDS: float = 0.5
 const KNOCK_OUT_SPINS: float = 2.0
 
@@ -50,7 +52,7 @@ func show_health_bar(color: Color) -> void:
 	if _health_bar == null:
 		_health_bar = HealthBar.new()
 		_health_bar.name = "HealthBar"
-		_health_bar.position = Vector3(0.0, BAR_Y, 0.0)
+		_health_bar.position = Vector3(0.0, _bar_y(), 0.0)
 		add_child(_health_bar)
 	_health_bar.fixed_color = color
 	_health_bar.show_ratio(Combat.health_ratio(health, max_health))
@@ -71,6 +73,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if _health_bar != null and model.get_cutout() != null:
+		_health_bar.position.y = _bar_y()
 	if _knock_out_left <= 0.0:
 		return
 	_knock_out_left = maxf(_knock_out_left - delta, 0.0)
@@ -81,6 +85,16 @@ func _process(delta: float) -> void:
 		visible = false
 
 
+## The height of the health bar: `BAR_Y`, or over the top of a picture fighter's picture as the
+## camera sees it (the picture turns to the camera, D21).
+func _bar_y() -> float:
+	if model.get_cutout() == null:
+		return BAR_Y
+	var camera: Camera3D = get_viewport().get_camera_3d() if is_inside_tree() else null
+	var up_y: float = camera.global_basis.y.y if camera != null else 1.0
+	return maxf(BAR_Y, model.picture_top(up_y) + PICTURE_BAR_GAP)
+
+
 ## Takes `amount` damage; ignored once knocked out or invulnerable. At 0 health the fighter is
 ## knocked out.
 func hit(amount: int) -> void:
@@ -89,7 +103,8 @@ func hit(amount: int) -> void:
 	health = maxf(health - amount, 0.0)
 	last_action_seconds = _now()
 	_show_health()
-	DamageNumber.spawn(self, Vector3(0.0, NUMBER_Y, 0.0), amount, number_color)
+	var number_y: float = _bar_y() + NUMBER_Y - BAR_Y
+	DamageNumber.spawn(self, Vector3(0.0, number_y, 0.0), amount, number_color)
 	hurt.emit(amount)
 	if health <= 0.0:
 		knock_out()

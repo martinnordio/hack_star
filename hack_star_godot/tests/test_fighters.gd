@@ -1,6 +1,7 @@
 extends GutTest
 ## The catalogue of the 6 original fighters; the drawn fighters after them are checked in
-## `test_drawn_fighter.gd`, so adding or removing one changes nothing here (spec 09, A9).
+## `test_drawn_fighter.gd` and the picture fighters in `test_cutout_fighters.gd`, so adding or
+## removing one changes nothing here (spec 09, A9, D30).
 
 const EXPECTED: Array[Array] = [
 	["blaze", "Blaze", "Rare"],
@@ -12,11 +13,11 @@ const EXPECTED: Array[Array] = [
 ]
 
 
-## The fighters that are not drawn by a child, in catalogue order.
+## The fighters that are neither drawn by a child nor pictures, in catalogue order.
 func _originals() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for fighter: Dictionary in Fighters.LIST:
-		if not fighter.get("drawn", false):
+		if not fighter.get("drawn", false) and not fighter.get("cutout", false):
 			result.append(fighter)
 	return result
 
@@ -60,7 +61,8 @@ func test_skin_names_and_rarities_of_the_spec() -> void:
 func test_blaze_rocko_and_turbo_are_unlocked_at_the_start() -> void:
 	var originals: Array[String] = []
 	for fighter_id: String in Fighters.start_unlocked():
-		if not Fighters.get_fighter(fighter_id).get("drawn", false):
+		var fighter: Dictionary = Fighters.get_fighter(fighter_id)
+		if not fighter.get("drawn", false) and not fighter.get("cutout", false):
 			originals.append(fighter_id)
 	assert_eq(originals, ["blaze", "rocko", "turbo"])
 

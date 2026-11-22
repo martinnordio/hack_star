@@ -104,7 +104,8 @@ func test_every_drawn_fighter_has_one_look_file_and_every_look_file_a_drawn_figh
 		assert_eq(
 			DrawnFighters.has(fighter["id"]), drawn, "%s: a look file if drawn" % fighter["id"]
 		)
-		assert_eq(FighterModel.LOOKS.has(fighter["id"]), not drawn, fighter["id"])
+		var shapes: bool = not drawn and not fighter.get("cutout", false)
+		assert_eq(FighterModel.LOOKS.has(fighter["id"]), shapes, fighter["id"])
 	for fighter_id: String in DrawnFighters.MODELS:
 		assert_true(Fighters.get_fighter(fighter_id).get("drawn", false), fighter_id)
 		assert_true(DrawnFighters.looks(fighter_id).has(Fighters.DEFAULT_SKIN), fighter_id)
@@ -152,7 +153,7 @@ func test_a_save_that_chose_a_removed_drawn_fighter_falls_back_to_the_default() 
 func test_drawn_fighters_change_no_other_fighter() -> void:
 	var originals: Array[Dictionary] = []
 	for fighter: Dictionary in Fighters.LIST:
-		if not fighter.get("drawn", false):
+		if not fighter.get("drawn", false) and not fighter.get("cutout", false):
 			originals.append(fighter)
 	assert_eq(originals.size(), ORIGINALS.size())
 	for index: int in ORIGINALS.size():

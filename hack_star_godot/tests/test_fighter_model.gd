@@ -27,13 +27,22 @@ func _meshes(node: Node) -> int:
 	return count
 
 
+## The fighters built from shapes (the picture fighters are checked in `test_cutout_fighters.gd`).
+func _shape_fighters() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for fighter: Dictionary in Fighters.LIST:
+		if not fighter.get("cutout", false):
+			result.append(fighter)
+	return result
+
+
 func _distance(a: Color, b: Color) -> float:
 	return Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()
 
 
 func test_every_fighter_and_skin_builds() -> void:
 	var built: int = 0
-	for fighter: Dictionary in Fighters.LIST:
+	for fighter: Dictionary in _shape_fighters():
 		for skin: Dictionary in fighter["skins"]:
 			var model: FighterModel = _model(fighter["id"])
 			model.setup(fighter["id"], skin["id"])
@@ -42,7 +51,7 @@ func test_every_fighter_and_skin_builds() -> void:
 			assert_gt(_meshes(model), 10, "%s %s is built" % [fighter["name"], skin["name"]])
 			built += 1
 	var expected: int = 14
-	for fighter: Dictionary in Fighters.LIST:
+	for fighter: Dictionary in _shape_fighters():
 		if fighter.get("drawn", false):
 			expected += fighter["skins"].size()
 	assert_eq(built, expected, "the 14 combinations of the six and the drawn fighters' skins")
@@ -83,9 +92,9 @@ func test_only_legendary_skins_glow() -> void:
 func test_every_fighter_builds_with_the_parts_of_its_idea() -> void:
 	var originals: Array[String] = []
 	for fighter_id: String in Fighters.ids():
-		if not DrawnFighters.has(fighter_id):
+		if not DrawnFighters.has(fighter_id) and not CutoutFighters.has(fighter_id):
 			originals.append(fighter_id)
-	assert_eq(IDEA_PARTS.keys(), originals, "every fighter is checked (drawn: test_drawn_fighter)")
+	assert_eq(IDEA_PARTS.keys(), originals, "every fighter is checked (drawn, pictures: own tests)")
 	for fighter_id: String in originals:
 		var model: FighterModel = _model(fighter_id)
 		assert_eq(model.fighter_id, fighter_id)
@@ -207,7 +216,7 @@ func _all_meshes(node: Node) -> Array[MeshInstance3D]:
 
 
 func test_every_fighter_and_skin_is_cel_shaded_with_the_shared_outline() -> void:
-	for fighter: Dictionary in Fighters.LIST:
+	for fighter: Dictionary in _shape_fighters():
 		for skin: Dictionary in fighter["skins"]:
 			var model: FighterModel = _model(fighter["id"])
 			model.setup(fighter["id"], skin["id"])

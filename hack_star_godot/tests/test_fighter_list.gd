@@ -24,7 +24,8 @@ func test_has_a_card_per_fighter_in_catalogue_order() -> void:
 	for card: FighterCard in screen.get_node(GRID_PATH).get_children():
 		ids.append(card.fighter_id)
 	assert_eq(ids, Fighters.ids())
-	assert_eq(ids.size(), 6 + DrawnFighters.MODELS.size(), "the six and the drawn fighters")
+	var extra: int = DrawnFighters.MODELS.size() + CutoutFighters.FIGHTERS.size()
+	assert_eq(ids.size(), 6 + extra, "the six, the drawn and the picture fighters")
 
 
 func test_card_shows_name_rarity_trophies_and_power() -> void:

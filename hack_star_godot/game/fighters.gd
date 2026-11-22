@@ -3,7 +3,9 @@ extends RefCounted
 ## The catalogue: the 6 original fighters of Hack star with their rarity, their skins and who is
 ## unlocked at the start, then the fighters drawn by children (`"drawn": true`, one Default skin,
 ## rarity and numbers copied from the fighter they play like, `"plays_like"`; their look is in
-## `scenes/drawn/`, spec 09 D14). Skins of rarity "" are the Default look.
+## `scenes/drawn/`, spec 09 D14), then the picture fighters (`"cutout": true`, one Default skin,
+## the start numbers of the fighter they play like, their own rarity; shown as the author's
+## pictures through `scenes/cutout/`, spec 09 D20, D21). Skins of rarity "" are the Default look.
 
 const DEFAULT_SKIN: String = "default"
 const LIST: Array[Dictionary] = [
@@ -88,6 +90,32 @@ const LIST: Array[Dictionary] = [
 		"idea": "Mattia's drawing: kid with big headphones and an arm cannon",
 		"unlocked": true,
 		"drawn": true,
+		"plays_like": "luna",
+		"skins":
+		[
+			{"id": "default", "name": "Default", "rarity": ""},
+		],
+	},
+	{
+		"id": "flarekid",
+		"name": "Flarekid",
+		"rarity": "Legendary",
+		"idea": "The hero upgrade of Blaze: a kid whose hood is a flame",
+		"unlocked": true,
+		"cutout": true,
+		"plays_like": "blaze",
+		"skins":
+		[
+			{"id": "default", "name": "Default", "rarity": ""},
+		],
+	},
+	{
+		"id": "echo",
+		"name": "Echo",
+		"rarity": "Mythic",
+		"idea": "Mattia's drawing: a sound-powered hero with a sound blaster",
+		"unlocked": true,
+		"cutout": true,
 		"plays_like": "luna",
 		"skins":
 		[
