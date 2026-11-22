@@ -301,7 +301,10 @@ func fire_from(fighter: Fighter, direction: Vector2, cooldown: float) -> bool:
 	# The first ray starts at the fighter's body, so a wall or dummy it touches is hit.
 	var body: Vector3 = Vector3(fighter.global_position.x, muzzle.y, fighter.global_position.z)
 	var color: Color = fighter.model.main_color
-	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), color, body, fighter)
+	var picture: Texture2D = null
+	if CutoutFighters.has(fighter.model.fighter_id):
+		picture = CutoutFighters.projectile(fighter.model.fighter_id)
+	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), color, body, fighter, picture)
 	_shots.add_child(shot)
 	shot.ended.connect(_on_shot_ended.bind(color))
 	_effects.play(ArenaEffects.FLASH, muzzle, Color(1.0, 0.95, 0.7))

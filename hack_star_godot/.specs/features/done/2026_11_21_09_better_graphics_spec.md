@@ -65,7 +65,7 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.43 M (139 k in · 6.27 M cached · 28 k out) | CHF 2.11 (251 credits) | Step 30 done; frames imported at 448 px (M14) (`usage.ps1 -AgentName s09g-steps30-32` from 20:33:14 to 20:44:30) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 9.88 M (74 k in · 9.77 M cached · 34 k out) | CHF 2.52 (300 credits) | Step 31 done; MagMax's main colour `ff4500` (`usage.ps1 -AgentName s09g-steps30-32` from 20:44:57 to 20:59:38) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 15.11 M (85 k in · 14.97 M cached · 53 k out) | CHF 3.76 (448 credits) | Step 32 done (`usage.ps1 -AgentName s09g-steps30-32` from 21:00:08 to 21:19:53) |
----
+| 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 4.57 M (115 k in · 4.43 M cached · 26 k out) | CHF 1.67 (199 credits) | Step 33 done (`usage.ps1 -AgentName s09g-steps33-35` from 21:21:08 to 21:37:44) |---
 
 ## Cost summary
 
@@ -748,7 +748,7 @@ and closed again the same day after Step 29, its review and the review fixes (se
 | **30** | Delivery into the final folders, imports and export filter | reasoning (Claude Opus 5.5) — S1; the before set, moving the author's files with fixed paths, web-safe imports within the size budget (D35, D42) | ✅ Done | [→ Step 30](#step-30--delivery-into-the-final-folders-imports-and-export-filter) |
 | **31** | MagMax joins and the frame table | reasoning (Claude Opus 5.5) — S1; a new fighter and the frames behind the existing cut-out look, loaded on demand (D34, D36) | ✅ Done | [→ Step 31](#step-31--magmax-joins-and-the-frame-table) |
 | **32** | Facing, walk and shoot pose in play | reasoning (Claude Opus 5.5) — S1; the animator with the camera's orientation in every view, keeping every effect (D37) | ✅ Done | [→ Step 32](#step-32--facing-walk-and-shoot-pose-in-play) |
-| **33** | Own projectiles | reasoning (Claude Opus 5.5) — S1; a picture look for the shot without touching the combat rules (D38) | ⬜ Not started | [→ Step 33](#step-33--own-projectiles) |
+| **33** | Own projectiles | reasoning (Claude Opus 5.5) — S1; a picture look for the shot without touching the combat rules (D38) | ✅ Done | [→ Step 33](#step-33--own-projectiles) |
 | **34** | Showcase on the pedestal, turn and shoot on the fighter screen | reasoning (Claude Opus 5.5) — S1; a timeline on every pedestal and mouse/touch input, graphics-heavy (D39) | ⬜ Not started | [→ Step 34](#step-34--showcase-on-the-pedestal-turn-and-shoot-on-the-fighter-screen) |
 | **35** | Living cards on the fighter list | reasoning (Claude Opus 5.5) — S1; animated cards at five sizes without a cost off screen (D40) | ⬜ Not started | [→ Step 35](#step-35--living-cards-on-the-fighter-list) |
 | **36** | Performance and the after set | reasoning (Claude Opus 5.5) — S1; measuring four animated fighters against the baseline, the after set compared (D42) | ⬜ Not started | [→ Step 36](#step-36--performance-and-the-after-set) |
@@ -1698,14 +1698,19 @@ The shots of MagMax, Echo and Flarekid look like their delivered projectile pict
 their flight, readable in every view and preset, with the combat rules unchanged (M6; D38).
 
 ### Tasks
-- [ ] Record the start time in Notes below.
-- [ ] `Shot.launch` with an optional picture and `scenes/toon/projectile.gdshader` (D38); `Arena.fire_from` passes `CutoutFighters.projectile(id)`; other fighters keep the ball.
-- [ ] `tests/test_projectile_look.gd` (D41); `test_shot.gd` and `test_fighter_health.gd` green unchanged (same speed, range, damage, walls).
-- [ ] Screenshots (D2; 1280×720): each projectile in flight in Classic, Close, Behind and Overview, in Bright day and Neon night, and hitting a dummy; viewed; Notes say the size and what was changed after looking.
-- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+- [x] Record the start time in Notes below.
+- [x] `Shot.launch` with an optional picture and `scenes/toon/projectile.gdshader` (D38); `Arena.fire_from` passes `CutoutFighters.projectile(id)`; other fighters keep the ball.
+- [x] `tests/test_projectile_look.gd` (D41); `test_shot.gd` and `test_fighter_health.gd` green unchanged (same speed, range, damage, walls).
+- [x] Screenshots (D2; 1280×720): each projectile in flight in Classic, Close, Behind and Overview, in Bright day and Neon night, and hitting a dummy; viewed; Notes say the size and what was changed after looking.
+- [x] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
 
 ### Notes
 <!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+Started: 2026-11-22 21:21
+**Look** (D38): `Shot.launch(…, picture)` — with a picture the shot builds one `Picture` quad (`Shot.PICTURE_LENGTH` 1.0 m long, as tall as the picture's aspect: 0.63 m Flarekid, 0.86 m Echo, 0.68 m MagMax) instead of the ball, halo, core and tail; the node's x axis is the flight. `scenes/toon/projectile.gdshader` (unshaded, alpha-blended, no depth write, no shadow, `skip_vertex_transform`) faces it to the camera, turns it on the screen along the flight (the delivered pictures fly to the right) and mirrors it top to bottom when it flies to the left of the screen, so its light stays on top; it is drawn 0.6 m nearer the camera so a steep view's floor never cuts it (`extra_cull_margin` covers the move). One quad and one material per picture, shared by every shot. `Arena.fire_from` passes `CutoutFighters.projectile(id)` for the picture fighters (player and bots); the others pass none and keep the ball. Ray, speed, range, damage and the hit burst are unchanged.
+**Tests**: new `tests/test_projectile_look.gd` (6: the three shoot their own pictures and no ball, Blaze keeps the ball and tail, the picture turned along four directions and 1 m long at its aspect, mesh and material shared, as fast and as far as the ball, stops at a wall's face with `Combat.DAMAGE`); `test_shot.gd`, `test_fighter_health.gd` unchanged and green.
+**Screenshots** (D2; a temporary `-s` script under `%TEMP%\hs09d\`, deleted; Training at 1280×720, the start hint hidden for the capture): per fighter a sheet of shots right, up and down-left 0.15 s after firing and a shot at a dummy 0.1 s in and at the hit, in Classic, Close, Behind and Overview (Bright day) and Classic and Overview (Neon night). The lava fist, the sound wave and the fireball fly head first in every direction (right: as drawn; up: turned upright; down-left: turned, light on top), sit at fist height ahead of the figure, are clearly readable in Classic, Close and Behind (about 70–110 px long) and as a small coloured streak in Overview, like the ball before; unshaded, so as bright in Neon night as in Bright day; at the wall the picture stops at its face; at the dummy the hit shows 480 and the white flash. **Nothing changed after looking** (1.0 m kept: larger pictures would cover the target in Close).
+**Done (2026-11-22 · ~17 min · Claude Opus 5.5)** — the shots of MagMax, Echo and Flarekid show their delivered projectile pictures, turned along the flight and facing the camera, readable in all four views and both checked presets; the other fighters keep the ball; the combat rules are unchanged. `tools/test.ps1` 539 tests passed, `tools/lint.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 4.57 M tokens · CHF 1.67 (199 credits)
 
 ---
 

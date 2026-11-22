@@ -3,7 +3,8 @@ extends Node3D
 ## A shot: a glowing ball that flies straight at `Combat.SHOT_SPEED`. Every physics frame it
 ## casts a ray from where it is to where it will be, so it never misses a thin wall; it stops
 ## at the first wall, rock or target, or after `Combat.SHOT_RANGE`. A target with `hit` takes
-## `Combat.DAMAGE`. Then it emits `ended` and frees itself.
+## `Combat.DAMAGE`. Then it emits `ended` and frees itself. A picture fighter's shot shows its
+## projectile picture instead of the ball (spec 09, D38); only the look changes.
 
 signal ended(end_position: Vector3, hit_something: bool)
 
@@ -13,6 +14,9 @@ const RADIUS: float = 0.22
 const CORE_RADIUS: float = 0.12
 const HALO_RADIUS: float = 0.36
 const TAIL_LENGTH: float = 1.1
+## A projectile picture's length along the flight, in metres (its height from its aspect).
+const PICTURE_LENGTH: float = 1.0
+const PICTURE_SHADER: Shader = preload("res://scenes/toon/projectile.gdshader")
 
 ## Meshes and materials are shared by all shots (per colour), so firing creates no new ones.
 static var _meshes: Dictionary = {}
@@ -31,20 +35,25 @@ var _exclude: Array[RID] = []
 
 ## Sets where the shot starts, where it flies and its colour; call before adding it to a scene.
 ## `cast_from` (default `from`) is where the first ray starts, e.g. the fighter's centre.
-## The `shooter` is never hit by its own shot.
+## The `shooter` is never hit by its own shot. With a `picture` the shot shows it, turned along
+## the flight, instead of the ball.
 func launch(
 	from: Vector3,
 	toward: Vector3,
 	color: Color,
 	cast_from: Vector3 = Vector3.INF,
-	shooter: CollisionObject3D = null
+	shooter: CollisionObject3D = null,
+	picture: Texture2D = null
 ) -> void:
 	position = from
 	_ray_from = from if cast_from == Vector3.INF else cast_from
 	if shooter != null:
 		_exclude = [shooter.get_rid()]
 	direction = Vector3(toward.x, 0.0, toward.z).normalized()
-	_build(color)
+	if picture != null:
+		_build_picture(picture)
+	else:
+		_build(color)
 
 
 func _physics_process(delta: float) -> void:
@@ -89,6 +98,15 @@ func _build(color: Color) -> void:
 	tail.position = -direction * TAIL_LENGTH / 2.0
 
 
+## The projectile picture on a quad whose x axis is the flight (the shader faces it to the
+## camera and turns it along the flight on the screen).
+func _build_picture(picture: Texture2D) -> void:
+	var part: MeshInstance3D = _part("Picture", _picture_quad(picture), _picture_material(picture))
+	part.basis = Basis(Vector3.UP, atan2(-direction.z, direction.x))
+	# The shader moves the quad off its mesh's box (faced to the camera, lifted towards it).
+	part.extra_cull_margin = PICTURE_LENGTH
+
+
 func _part(part_name: String, mesh: Mesh, material: Material) -> MeshInstance3D:
 	var part: MeshInstance3D = MeshInstance3D.new()
 	part.name = part_name
@@ -121,6 +139,26 @@ static func _tail() -> CylinderMesh:
 		cone.rings = 1
 		_meshes["tail"] = cone
 	return _meshes["tail"]
+
+
+static func _picture_quad(picture: Texture2D) -> QuadMesh:
+	var key: String = "picture %d" % picture.get_rid().get_id()
+	if not _meshes.has(key):
+		var quad: QuadMesh = QuadMesh.new()
+		var aspect: float = float(picture.get_height()) / picture.get_width()
+		quad.size = Vector2(PICTURE_LENGTH, PICTURE_LENGTH * aspect)
+		_meshes[key] = quad
+	return _meshes[key]
+
+
+static func _picture_material(picture: Texture2D) -> ShaderMaterial:
+	var key: String = "picture %d" % picture.get_rid().get_id()
+	if not _materials.has(key):
+		var material: ShaderMaterial = ShaderMaterial.new()
+		material.shader = PICTURE_SHADER
+		material.set_shader_parameter("picture", picture)
+		_materials[key] = material
+	return _materials[key]
 
 
 ## Unshaded, so it glows in its own colour in sun and shade.
