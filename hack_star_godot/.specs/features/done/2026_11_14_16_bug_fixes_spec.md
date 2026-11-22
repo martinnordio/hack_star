@@ -1,7 +1,7 @@
 # Bug Fixes Spec
 
 > **Author:** Martin Nordio
-> **Status:** ✅ Complete — closed on feature/godot-mvp
+> **Status:** 🔄 Reopened 2026-11-22 — author's bug reports
 > **Created:** 2026-11-21
 > **Last updated:** 2026-11-22
 > **Branch:** `feature/godot-mvp`
@@ -27,6 +27,8 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Sonnet 5.5 | 328 k (179 k in · 144 k cached · 5 k out) | CHF 0.43 (51 credits) | spec runner (coordination) (`usage.ps1 -AgentName s16-runner` from 2026-11-22 08:20:24) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 526 k (0 k in · 525 k cached · 1 k out) | CHF 0.11 (13 credits) | orchestrator (main chat) (`usage.ps1 -Agent main` from 2026-11-22 08:20:24) |
 | 2026-11-22 | pr | `PR:` | Claude Haiku 5.5 | 1.20 M (88 k in · 1.09 M cached · 21 k out) | CHF 0.03 (3 credits) | pull request opened (one PR for the MVP, #34; `usage.ps1 -AgentName mvp-pr` from 08:20:24) |
+| 2026-11-22 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | included in the plan row | included in the plan row | Part 1 revised: spec reopened in place for the author's bug reports (issue #33 kept); S26–S32 added (scan only where it works — Godot 4.7 has no camera on Windows; how to scan on this computer; Space shoots at the nearest target; only Space and touch shoot; How to play; controls hint at the start; documentation); no open questions |
+| 2026-11-22 | plan | `PLAN:` | Claude Opus 5.5 | 1.60 M (112 k in · 1.47 M cached · 19 k out) | CHF 1.03 (123 credits) | re-planned: author's bug reports — Steps 1–5 kept; Steps 6–10 added (standard, standard, standard, standard, light), D10–D15 (`usage.ps1 -AgentName s16b-lead` from 2026-11-22 10:04:46) |
 ---
 
 ## Cost summary
@@ -92,6 +94,19 @@ added with `REQUIREMENTS: 2026_11_14_16_bug_fixes_spec.md — <bug>` until the p
   chosen although it is locked again, and **Play** plays it; `MatchArena` reads
   `GameState.selected_fighter` again at the end of a match to give the trophies. A hack never
   writes into the progress (`unlock_all` does not add to `unlocked`; spec 08 D4).
+- Checked 2026-11-22 for the author's reports (S26–S32, after the first close): the camera scan
+  exists only in the web export — `QrScanner` (`scenes/ui/qr_scanner.gd`) fails at once with
+  `not_web` elsewhere, and the hack screen then says "Camera not available — type the code"
+  only after **Scan QR code** is pressed; Godot 4.7's own camera (`CameraServer`/`CameraFeed`)
+  is implemented only on Linux, Android, macOS and iOS, so a desktop run on Windows (editor F5,
+  `godot --path .`) has no webcam at all. Shooting with the keyboard does not exist: the arena
+  (`scenes/arena.gd`, inherited by `MatchArena`) fires with a left mouse click (held: keeps
+  firing) at the mouse's ground point and with the touch aim stick (a drag, or a quick tap that
+  fires at the nearest target in range through `Combat.nearest_target`, else straight ahead,
+  `_tap_direction`); the input map (`project.godot`) has only the four move actions. Space is
+  `ui_accept` and presses a focused button. The Info page (`scenes/info.gd`) lists only the
+  words of `Vocabulary`; no screen explains the controls or the goal of a match; the README's
+  *Controls* says the mouse aims and a left click fires.
 
 **What was found while checking bug 1** (2026-11-14, headless browser on the Python + Svelte
 game's dev server):
@@ -113,6 +128,9 @@ game's dev server):
 - Fixes for the bugs that can happen in the Godot game as built (S4, S16–S18, S22), each with a
   test that fails before the fix, and a test for what is correct by design (S19); the bugs of
   created fighters move to spec 15 (S0).
+- Reopened 2026-11-22 for three bugs the author reported after trying the game (S26–S32): no
+  camera when scanning in the desktop run, no way found to shoot with the keyboard, and no
+  instructions on how to play.
 
 | Document | Purpose |
 |----------|---------|
@@ -249,11 +267,60 @@ Added 2026-11-14 together with the CREATOR change.
   08 keeps its progress and its hacks (S16). _(added 2026-11-22: the hacks and the save file
   are shared with specs 05 and 08.)_
 
+### Author's reports after the first close
+
+Reported 2026-11-22 by the author after trying the game on Windows (desktop run and browser).
+
+- **S26 — Scanning where there is no camera:** In a run of the game that cannot scan (the
+  desktop run on a computer: the Godot editor's F5 or `godot --path .`), the hack screen does not
+  offer a scan that can only fail: **Scan QR code** is disabled (or replaced) and a hint says
+  that camera scanning works in the browser version and that the code can be typed here (for
+  example "Camera scanning works in the browser version — type the code here"; English). The web
+  export keeps scanning with the camera as before; the hint fits the five screen sizes of the
+  other screens. _(added 2026-11-22, author's report: Godot 4.7's camera (`CameraServer`,
+  `CameraFeed`) works only on Linux, Android, macOS and iOS — there is no webcam on Windows —
+  and the game's scanner is the browser's camera, so the desktop run cannot scan.)_
+- **S27 — How to scan on this computer:** `hack_star_godot/README.md` explains how to scan a
+  hack QR code on this computer: open the browser version at `http://localhost:8060`
+  (`tools/serve_web.ps1`; the browser allows the camera on `localhost`), or with `-Https` on a
+  phone or an iPad; and that the desktop run cannot scan (S26). _(added 2026-11-22, author's
+  report.)_
+- **S28 — Space shoots:** In a match and in Training, pressing Space fires a shot, and holding
+  Space keeps firing at the normal rate (the same cool-down as before). The shot aims at the
+  nearest target in range — the nearest bot still in the match, the nearest dummy still standing
+  in Training — and straight ahead in the direction the fighter faces when none is in range.
+  Space never presses **Back** or another button of the arena, and nothing fires while the
+  player may not act (the countdown, after the end). _(added 2026-11-22, author's report: the
+  author could not find how to shoot, "before it was Space".)_
+- **S29 — Only Space and touch shoot:** A mouse click in the match or in Training no longer
+  fires (only Space does with the keyboard); **Back** still works with a click. Touch is
+  unchanged: the left joystick moves, the right stick fires where it is dragged, a quick tap
+  fires at the nearest target in range. _(added 2026-11-22, author's report.)_
+- **S30 — How to play in the game:** A "How to play" section is reachable from the home screen
+  and says, in a few short lines (English): the controls (keyboard: WASD or the arrow keys move,
+  Space shoots; touch: the left joystick moves, the right side aims and shoots; **Back** returns
+  home), the goal of a match (be the last fighter standing before the timer ends; a fighter that
+  does not shoot and is not hit heals), Training (practice on dummies), trophies and Prestige,
+  and hack codes. It is readable at the five screen sizes, with mouse and touch. _(added
+  2026-11-22, author's report.)_
+- **S31 — Controls hint at the start:** When a match or Training starts, a short hint of the
+  controls (keyboard: move and Space to shoot; on a touch screen: the two sticks) shows on
+  screen and fades away by itself after a few seconds; it covers neither the countdown nor
+  **Back**, and does not block moving, shooting or the sticks. It fits the five screen sizes.
+  _(added 2026-11-22, author's report.)_
+- **S32 — Documentation (author's reports):** `hack_star_godot/README.md` *Controls* and *How
+  to play a match* describe Space shooting at the nearest target (no mouse click), the touch
+  controls, the "How to play" section and the start hint; *Hack codes* says where scanning works
+  (S27); `hack_star_godot/docs/architecture.md` is updated where these changes affect it (the
+  arena's input, the hack screen, the Info page). Everything of S25 still works. _(added
+  2026-11-22, author's report.)_
+
 ### Open questions
 
 _None. The S0 check 2026-11-22 raised no new question: the statements kept take the spec's own
 wording; the moved statements keep the spec's answers for spec 15 (CREATOR, prices, the
-maximum of 15)._
+maximum of 15). The author's reports (S26–S32) leave the choices to the plan (where "How to
+play" lives, the wording of the hints)._
 
 <!-- spec-nx:plan -->
 
@@ -262,6 +329,9 @@ maximum of 15)._
 # Part 2 · Plan
 
 ## Closing summary
+
+_First close (2026-11-22, Steps 1–5); the spec was reopened the same day for the author's
+reports (S26–S32, Steps 6–10) and gets a new summary when it closes again._
 
 **Built:** INFINITY and OPENSESAME now turn off by themselves 3 days after they are entered (entering one again starts a new 3 days); POWER22 lasts for ever (`Hacks` durations, the server's numbers). The hack screen shows each active code with its time left ("Unlimited credits · 2 days 23 hours left", "Power 22 · Lasts for ever"). What was gained stays when a code turns off; a fighter that only OPENSESAME unlocked is locked again, the Home screen then shows another usable fighter (also after **Turn all hacks off**), and a running match keeps the fighter it started with and gives it its trophies. The save file is version 3 (each hack with its end time and a revision; versions 1 and 2 give their hacks 3 days from the first start) and, on the web, lives in `localStorage` shared by the browser's tabs (`SaveStore`): each save merges a newer save of another tab, and a tab coming to the front shows the others' hacks, trophies and choices. No server call, nothing in `server/` or `ui/` changed.
 
@@ -277,6 +347,11 @@ maximum of 15)._
 | **3** | Time left on the hack screen | standard (Claude Sonnet 5.5) — one text per row of an existing screen, refreshed, checked on screenshots (D5) | ✅ Done | [→ Step 3](#step-3--time-left-on-the-hack-screen) |
 | **4** | Progress across tabs | reasoning (Claude Opus 5.5) — a storage shared by the browser's tabs, a revision, reloading at the front and merging on write (D6, D7) | ✅ Done | [→ Step 4](#step-4--progress-across-tabs) |
 | **5** | Final check, README and architecture | light (Claude Haiku 5.5) — running the checks and updating two documents | ✅ Done | [→ Step 5](#step-5--final-check-readme-and-architecture) |
+| **6** | Scan button only where scanning works | standard (Claude Sonnet 5.5) — one check of the platform, a disabled button and a hint on an existing screen, checked on screenshots (D10) | ⬜ Not started | [→ Step 6](#step-6--scan-button-only-where-scanning-works) |
+| **7** | Space shoots, the mouse no longer | standard (Claude Sonnet 5.5) — an input action, a held key firing through the existing `fire` and tap-aim, the mouse code removed, tests adjusted (D11, D12) | ⬜ Not started | [→ Step 7](#step-7--space-shoots-the-mouse-no-longer) |
+| **8** | How to play on the Info page | standard (Claude Sonnet 5.5) — one text source and a section at the top of an existing page, checked on screenshots (D13, D14) | ⬜ Not started | [→ Step 8](#step-8--how-to-play-on-the-info-page) |
+| **9** | Controls hint at the start | standard (Claude Sonnet 5.5) — one HUD label with a fade in the arena (and so in the match), placed clear of the countdown, Back and the sticks, checked on screenshots (D15) | ⬜ Not started | [→ Step 9](#step-9--controls-hint-at-the-start) |
+| **10** | Final check, README and architecture (author's reports) | light (Claude Haiku 5.5) — running the checks and updating two documents | ⬜ Not started | [→ Step 10](#step-10--final-check-readme-and-architecture-authors-reports) |
 
 > **Step completion protocol (required):** every time a Step is finished, in the same edit:
 > 1. Tick its tasks `[x]` **and** set its row in this table to ✅ Done.
@@ -320,6 +395,12 @@ maximum of 15)._
 | D8 | **Tests:** `test_hacks.gd` or a new `test_hack_times.gd` (durations, `until_for`, `is_expired`, every `time_left_text` form); a new `test_save_data_v3.gd` (round trip with `until` and `revision`; versions 1 and 2 give each hack `now + duration` and keep their progress; a for-ever hack gets 0; an `until` too far ahead is cut; unknown ids, doubles, wrong types dropped; newer, broken → nothing); a new `test_hack_expiry.gd` (a fake clock: INFINITY and OPENSESAME off after 3 days and not before, POWER22 never; entering again starts a new 3 days; the timer and `load_saved` turn an expired hack off; `progress_changed` emitted; trophies, power levels, `unlocked`, credits and skins unchanged (S19); a fighter chosen through OPENSESAME is replaced after it turns off and after **Turn all hacks off**; a match that started with it gives it its trophies); `test_hack_screen.gd` or a new file (the rows with their time left, the refresh after the clock passes the end); `test_screen_sizes.gd` or a new file (the hack screen with three timed rows at the five sizes); a new `test_save_tabs.gd` (two `GameState` objects on one test file: a hack from one tab is kept when the other writes, and shown after the other's `sync_from_store()`; an older store revision changes nothing; the merge rules of D7; the migration of D6 with a fake web store). The two-tab check in a real browser is done in Step 4 when a browser can be driven, else it stays with the author (Deferred Items). | Every kept statement checked by a test that fails before the fix, S19 by a test of the correct behaviour, the looks by screenshots; the device play-test stays with the author (spec 03, D6). |
 
 | D9 | **Known limitation, accepted (code review finding 1):** a hack turned off in one tab (**Turn all hacks off**) can come back when another tab, which has not synced since, saves, because D7 merges hacks as a union. Fixing it needs a per-hack removal marker (a tombstone with a time) in the save; Part 1 does not need it (S4 asks that nothing gained is lost; **Turn all hacks off** in a single tab works, and S22 holds there). Documented in the README (*Known limitation (two tabs)*) and in `docs/architecture.md`; recorded in Deferred Items. | S4 and S22 meet only with two visible windows; the simplest choice that meets Part 1 is to accept it. |
+| D10 | **Scan only where it works (author's report 1):** `QrScanner.can_scan() -> bool` (static; `OS.has_feature("web")`, the only build that has the browser's camera and `web/qr_scanner.js`). The hack screen reads it once in `_ready`: without it, **Scan QR code** stays disabled (also after `_set_busy(false)`) and a new label `ScanHint` under it says "Camera scanning works in the browser version — type the code here" (English, the `MESSAGE_COLOR`, wrapped, centred); with it, nothing changes (the hint is hidden; the camera messages of spec 05 D8 stay, `not_web` included as a fallback). A test seam: the hack screen's `can_scan: bool` set from `QrScanner.can_scan()` before `_ready` reads it, so a test can show both sides. No native camera: Godot 4.7's `CameraServer` has no Windows feed, and a desktop QR decoder would be a new dependency for a run the kids do not use. | S26: the desktop run cannot scan; the web export keeps its scanner (spec 05). |
+| D11 | **Space is the `shoot` action:** a new input action `shoot` in `project.godot` (physical Space). `Arena._process` fires while `Input.is_action_pressed("shoot")` (and `read_player_input`): `fire(_aim_direction())`; the cool-down in `fire_from` (`Combat.COOLDOWN`) keeps the normal rate, `fire` already refuses while `player_can_act()` is false (the match's countdown and end). `_aim_direction()` is today's `_tap_direction()` renamed and shared by the tap and Space: the nearest of `tap_targets()` in `Combat.SHOT_RANGE` (`Combat.nearest_target`; the bots still in the match in `MatchArena`, the dummies still standing in Training), else the fighter's facing (`-global_basis.z`). **Space never presses a button:** the arena's **Back** gets `focus_mode = FOCUS_NONE` (a click and a touch still press it), so `ui_accept` on Space has no focused button in the arena; the home screen's entrance skip on any key stays. Tests drive the action with `Input.action_press("shoot")` / `action_release` (or `Input.parse_input_event` of a Space key) and a test clock where needed. | S28: one way to shoot with the keyboard, the same aim as the tap. |
+| D12 | **The mouse no longer shoots:** the mouse part of `Arena._unhandled_input` (`_mouse_held`, `_mouse_position`, `_fire_at_mouse`) is removed; `Combat.ground_point` (used only by the mouse) is removed with its two tests in `test_combat.gd`. The touch sticks (`TouchJoystick`, `AimJoystick`, `_on_aim_released`, the aim line) do not change. The tests that fired with a mouse click (`test_arena.gd`, `test_match_arena.gd`) become tests that a click fires nothing and that Space fires; `test_an_emulated_mouse_click_does_not_fire` stays meaningful (a click fires nothing at all). | S29; the touch controls stay as they are (S25). |
+| D13 | **One source for the help texts:** a new pure `ControlsHelp` (`game/controls_help.gd`, like `Vocabulary`): `KEYBOARD_HINT` ("Move: WASD or arrow keys · Shoot: Space"), `TOUCH_HINT` ("Move: left stick · Shoot: drag or tap the right stick"), and `HOW_TO_PLAY`, a list of `{"title", "text"}` sections — *Controls* (keyboard; touch; **Back**), *Match* (last fighter standing wins; the timer, a draw when it ends; heal by not shooting and not being hit), *Training* (practise on three dummies; they come back), *Trophies and Prestige* (+10 for a win; a Prestige every 1000), *Hack codes* (**Hack** on home: type a code, or scan it in the browser version). English only (S23); the texts must stay true to `MatchSettings`, `Combat` and `Prestige` (the numbers are read from them where a number is shown). | S30, S31: the Info page and the start hint say the same; testable without a scene. |
+| D14 | **"How to play" at the top of the Info page** (the smallest good option: no new screen, no new home button, the five home layouts unchanged): `info.gd` adds a heading "How to play" and one row per `ControlsHelp.HOW_TO_PLAY` section (title in the `WordLabel` style, text wrapped, as the words) before a heading "Words" and the vocabulary rows; the page title stays "Info", the home button stays **Info**. The README and the start hint (D15) point to it ("More in Info"). | S30: reachable from the home screen in one tap, readable at the five sizes with the existing scroll. |
+| D15 | **Start hint in the arena HUD:** a `Label` `ControlsHint` in `arena.tscn`'s `Hud` (so Training and the match, which inherits the scene, both get it): `ControlsHelp.KEYBOARD_HINT`, plus `TOUCH_HINT` on a second line when `DisplayServer.is_touchscreen_available()` (as the sticks, `TouchJoystick._ready`), plus "More in Info"; anchored bottom-centre above the sticks' height, at most 60 % of the screen width, wrapped, `mouse_filter = IGNORE` (it never takes a click or a touch). Shown at once when the scene starts, fully visible for `HINT_SECONDS` = 5, then a tween fades it out over `HINT_FADE_SECONDS` = 1 and hides it (in a match this covers the countdown and the start of the fight; the countdown label stays in the centre). | S31: seen at every start without a setting; never in the way. |
 
 ---
 
@@ -461,6 +542,144 @@ Started: 2026-11-22 09:03
 
 ---
 
+## Step 6 — Scan button only where scanning works
+
+### Goal
+In the desktop run the hack screen offers no scan that can only fail: **Scan QR code** is
+disabled with a hint to use the browser version or type the code; the web export scans as
+before (S26, S6).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] `QrScanner.can_scan()` after D10.
+- [ ] `hack_screen.tscn`: a `ScanHint` label under **Scan QR code**; `hack_screen.gd`: `can_scan`
+      read in `_ready`, the button disabled and the hint shown without it (also after a code was
+      checked, `_set_busy(false)`), the hint hidden with it.
+- [ ] Tests: `test_hack_screen.gd` (15 tests; or a new file if it would pass 20) — without the
+      scanner the button is disabled after opening and after a code, and the hint shows the text;
+      with it (`can_scan = true`) the button works and the hint is hidden; `test_qr_scanner.gd`:
+      `can_scan()` is false in the headless test run.
+- [ ] Look check on screenshots: the hack screen of the desktop run at 1280×720, 390×844 and
+      844×390 — the disabled button and the hint readable, nothing cut or overlapping.
+- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+
+### Notes
+_Add the `Done` line here when the Step is finished._
+
+---
+
+## Step 7 — Space shoots, the mouse no longer
+
+### Goal
+In a match and in Training, Space (pressed or held) fires at the nearest target in range or
+straight ahead, a mouse click fires nothing, and touch works as before (S28, S29).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] `project.godot`: the input action `shoot` (physical Space) after D11 (through the editor's
+      Input Map or the same `Object(InputEventKey,…)` form as the move actions).
+- [ ] `scenes/arena.gd`: fire while `shoot` is held (`fire(_aim_direction())`), `_tap_direction`
+      renamed `_aim_direction` and used by the tap and Space; the mouse firing removed (D12) and
+      `Combat.ground_point` with its tests; the header comment updated; the arena's **Back**
+      `focus_mode = FOCUS_NONE` (`arena.tscn`).
+- [ ] Tests (`test_arena.gd` has 18, `test_match_arena.gd` 9; a new `test_arena_space.gd` if a
+      file would pass 20): Space fires at the nearest dummy in range in Training, straight ahead
+      when none is in range; holding Space fires again only after `Combat.COOLDOWN`; in a match
+      Space aims at the nearest bot, fires nothing during the countdown and after the end; Space
+      does not press **Back** (the scene stays); a mouse click fires nothing; the touch tap and
+      drag still fire (existing tests kept).
+- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0; a short windowed run of Training
+      (Space held near a dummy) shows the shots going to the dummy.
+
+### Notes
+_Add the `Done` line here when the Step is finished._
+
+---
+
+## Step 8 — How to play on the Info page
+
+### Goal
+The Info page, one tap from home, starts with a short "How to play" section: controls, the
+goal of a match, Training, trophies and Prestige, hack codes (S30, S6, S23).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] `game/controls_help.gd` (`ControlsHelp`) after D13.
+- [ ] `scenes/info.gd` after D14: the heading "How to play", one row per section, then the
+      heading "Words" and the vocabulary as before.
+- [ ] Tests: a new `test_controls_help.gd` (every section has a title and a text; the controls
+      name WASD, the arrow keys and Space, and the two sticks; the numbers shown match
+      `MatchSettings`, `Prestige` and `Combat`); `test_info.gd` (3 tests): the "How to play"
+      rows come first, then all the words.
+- [ ] Look check on screenshots: the Info page at 1280×720, 390×844 and 844×390 (top and
+      scrolled) — every line readable and wrapped, nothing cut.
+- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0 (`test_screen_sizes.gd` keeps passing
+      for the Info page).
+
+### Notes
+_Add the `Done` line here when the Step is finished._
+
+---
+
+## Step 9 — Controls hint at the start
+
+### Goal
+When Training or a match starts, a short controls hint shows and fades away by itself, without
+covering the countdown or **Back** and without blocking input (S31, S6).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] `arena.tscn` / `arena.gd`: the `ControlsHint` label and its fade after D15 (texts from
+      `ControlsHelp`).
+- [ ] Tests (a new `test_controls_hint.gd`): the hint is visible at the start of Training and of
+      a match with the keyboard text; after `HINT_SECONDS` + `HINT_FADE_SECONDS` it is hidden;
+      it ignores the mouse (`mouse_filter`); in the match it does not overlap the countdown label
+      or **Back** at the five sizes (rects); Space fires while it shows.
+- [ ] Look check on screenshots: Training and a match (during the countdown) at 1280×720,
+      390×844 and 844×390, the hint readable and clear of the countdown, the timer, "Fighters
+      left" and **Back**; one shot a few seconds later without the hint.
+- [ ] Check: `tools/test.ps1` and `tools/lint.ps1` exit 0.
+
+### Notes
+_Add the `Done` line here when the Step is finished._
+
+---
+
+## Step 10 — Final check, README and architecture (author's reports)
+
+### Goal
+Everything that worked before still works, all Godot checks pass, and the README and the
+architecture describe scanning, Space shooting, "How to play" and the start hint (S27, S32,
+S25, S6).
+
+### Tasks
+- [ ] Record the start time in Notes below (e.g. `Started: YYYY-MM-DD HH:MM`).
+- [ ] `hack_star_godot/README.md`: *Controls* (Space shoots at the nearest target in range or
+      straight ahead, hold to keep firing; no mouse click; touch as before; the start hint);
+      *How to play a match* (Space; the "How to play" section on the Info page); *Run in the
+      editor* (Info starts with "How to play"); *Hack codes* — **Scan QR code** works only in
+      the browser version: on this computer open `http://localhost:8060` (`tools/serve_web.ps1`;
+      the browser allows the camera on `localhost`), on a phone or iPad use `-Https`; the
+      desktop run (F5, `godot --path .`) shows the hint and the code is typed (Godot 4.7 has
+      no webcam on Windows).
+- [ ] `hack_star_godot/docs/architecture.md`: Screens (the arena's input: Space, no mouse,
+      `_aim_direction`, the start hint; the hack screen's `ScanHint`; the Info page's "How to
+      play"), Game rules (`ControlsHelp`; `Combat` without `ground_point`), UI foundation
+      (camera and QR codes: `can_scan`), Tests (the new files).
+- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1`
+      (all exit 0); PowerShell scripts that changed parse with
+      `[System.Management.Automation.Language.Parser]::ParseFile`; `git diff --stat` of Steps
+      6–10 shows nothing in `server/` or `ui/`.
+- [ ] Re-check the MVP flow (`tests/test_mvp_flow.gd` passes) and write the result into Notes.
+- [ ] Note in Notes what stays with the author (Deferred Items): the play-test of Space and the
+      start hint on the computer, touch and the hint on an iPad and a phone, and scanning in the
+      browser on `localhost`.
+
+### Notes
+_Add the `Done` line here when the Step is finished._
+
+---
+
 ## Deferred Items
 
 | Task | Reason | Target Spec |
@@ -474,6 +693,8 @@ Started: 2026-11-22 09:03
 | Translations of the new text (the time left) | English only (S23) | [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md) |
 | A hack turned off in one tab can return when another tab that has not synced saves (the merge of hacks is a union, D7); needs a per-hack removal marker in the save | Known limitation, accepted (D9, code review finding 1); **Turn all hacks off** in a single tab works; documented in the README | a later spec on the save file (for example [15 Accounts, fighters and languages](../2026_11_13_15_accounts_fighters_and_languages_spec.md), accounts) |
 | Play-test on a real iPad and phone (the hack screen with the time left, touch) and the part of the two-tab browser check Step 4 could not drive (a match won in tab 1, then both the hack and the trophies after a reload) | Needs a person with the devices and a browser (spec 03, D6) | the author, before the MVP pull request |
+| A camera scan in the desktop run (S26) | Godot 4.7's `CameraServer` has no camera feed on Windows, and the scanner is the browser's; the desktop run shows a hint instead (D10) | none planned (a later Godot version with a Windows camera feed) |
+| Play-test of the author's reports: Space and the start hint on the computer, touch and the hint on an iPad and a phone, scanning in the browser on `localhost` | Needs a person with the devices and a camera | the author, before the MVP pull request |
 
 ---
 
@@ -483,6 +704,7 @@ Started: 2026-11-22 09:03
 |------|----------|-------|---------|----------|
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [review page](../../review/2026-11-21_godot-mvp-16-bug-fixes.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff | Approve | 0 Blocking · 3 Should-fix · 2 Nit |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: author's bug reports (S26–S32; Steps 1–5 kept, Steps 6–10 added) |
 
 ### Code review 2026-11-22
 
@@ -517,7 +739,7 @@ seam a test fakes; Step 4 drove two tabs in a real browser; nothing in `server/`
 
 - [x] Requirements · Part 1 agreed (S1..Sn testable, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks
-- [x] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated
-- [x] Review · review page written; no Blocking finding open
-- [x] Spec closed · moved to `hack_star_godot/.specs/features/done/`
+- [ ] Implementation · every Step's tasks checked; `tools/test.ps1`, `tools/lint.ps1`, `tools/check_tools.ps1` and `tools/export_web.ps1` pass; `hack_star_godot/README.md` / `docs/architecture.md` updated _(Steps 1–5 done; reopened for Steps 6–10)_
+- [ ] Review · review page written; no Blocking finding open _(first review done; Steps 6–10 to review)_
+- [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22)_
 - [ ] Pull request · one pull request for the whole MVP branch at the end (not per spec)

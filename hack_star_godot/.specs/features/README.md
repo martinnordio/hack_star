@@ -36,7 +36,7 @@ Update the status of a spec here whenever it changes.
 | 13 | [More Fighters](2026_11_12_13_more_fighters_spec.md) | [2026_11_12_more_fighters_spec.md](../../../.specs/features/done/2026_11_12_more_fighters_spec.md) (#10) | requirements |
 | 14 | [Play with Friends](2026_11_12_14_play_with_friends_spec.md) | [2026_11_12_play_with_friends_spec.md](../../../.specs/features/done/2026_11_12_play_with_friends_spec.md) (#12) | requirements |
 | 15 | [Accounts, Fighters and Languages](2026_11_13_15_accounts_fighters_and_languages_spec.md) | [2026_11_13_accounts_fighters_and_languages_spec.md](../../../.specs/features/done/2026_11_13_accounts_fighters_and_languages_spec.md) (#15) | requirements |
-| 16 | [Bug Fixes](done/2026_11_14_16_bug_fixes_spec.md) | [2026_11_14_bug_fixes_spec.md](../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17) | closed |
+| 16 | [Bug Fixes](done/2026_11_14_16_bug_fixes_spec.md) | [2026_11_14_bug_fixes_spec.md](../../../.specs/features/done/2026_11_14_bug_fixes_spec.md) (#17) | planned (reopened 2026-11-22: the author's bug reports) |
 | 17 | [Fighter Studio, Saves and Music](2026_11_14_17_fighter_studio_saves_and_music_spec.md) | [2026_11_14_1_fighter_studio_saves_and_music_spec.md](../../../.specs/features/done/2026_11_14_1_fighter_studio_saves_and_music_spec.md) (#19) | requirements |
 | 18 | [Worlds and World Coins](2026_11_16_18_worlds_and_world_coins_spec.md) | [2026_11_16_worlds_and_world_coins_spec.md](https://github.com/martinnordio/hack_star/blob/feature/worlds-and-world-coins/.specs/features/done/2026_11_16_worlds_and_world_coins_spec.md) (#24, branch `feature/worlds-and-world-coins`) | requirements |
 
