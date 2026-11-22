@@ -53,6 +53,8 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 11.93 M (177 k in · 11.71 M cached · 46 k out) | CHF 3.47 (414 credits) | Step 27 done; default preset Bright day (`usage.ps1 -AgentName s09g-steps27-29` from 18:52:55 to 19:09:38) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.17 M (275 k in · 2.89 M cached · 8 k out) | CHF 1.76 (210 credits) | Step 28 done; every row within L8, nothing trimmed (`usage.ps1 -AgentName s09g-steps27-29` from 19:11:06 to 19:32:58) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 6.04 M (36 k in · 5.99 M cached · 18 k out) | CHF 1.46 (174 credits) | Step 29 done; web export 41,244,423 bytes (`usage.ps1 -AgentName s09g-steps27-29` from 19:33:53 to 19:41:23) |
+| 2026-11-22 | review | `REVIEW:` | Claude Opus 5.5 | 16.10 M (313 k in · 15.72 M cached · 67 k out) | CHF 5.08 (605 credits) | semantic diff of the reopening written: change record `changes/done/better-graphics-2/` (13 blocks), review page [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html) and index row, PR text `semantic_diff.md`; checks 6 pass · 3 n/a · 0 fail (agent `s09g-review3`, `usage.ps1 -AgentName s09g-review3` from 2026-11-22 16:55:00; `CODE REVIEW:` included) |
+| 2026-11-22 | review | `CODE REVIEW:` | Claude Opus 5.5 | included in the review row | included in the review row | Approve — 0 Blocking · 1 Should-fix · 4 Nit (3 fix now, 2 plan decision); check_tools, lint, test (516 passed), export_web exit 0 |
 ---
 
 ## Cost summary
@@ -1427,6 +1429,8 @@ Started: 2026-11-22 19:34
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff | — | [2026-11-22_better-graphics.html](../../review/2026-11-22_better-graphics.html) |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `91cc8be..060ff79` | Approve | 0 Blocking · 2 Should-fix · 8 Nit |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: spec reopened for the author's request — two new characters, views, lighting (C1–C11, V1–V7, L1–L8; Steps 1–20 kept, Steps 21–29 added, D20–D30) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | semantic diff (reopening) | — | [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html) (change record `changes/done/better-graphics-2/`, 13 blocks; checks 6 pass · 3 n/a · 0 fail) |
+| 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `bccd2ed..f10d71c` | Approve | 0 Blocking · 1 Should-fix · 4 Nit |
 
 ### Code review 2026-11-22
 
@@ -1445,6 +1449,18 @@ Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; pag
 | 9 | The kit's change_record.schema.json accepts only S<n> statement ids, but this spec's statements are G1–G18, W1–W7, A0–A9 and B1–B6; the record lists S2–S6 and names the others in each block's note. A Deferred Items row for the kit (root .specs/kit, not changed by a Godot spec): allow letter-prefixed ids | spec | docs | Nit | deferred — **handled:** row in Deferred Items |
 | 10 | Part 1 G5 asks for lock and price with icons, and the plan's Step 7 task says 'lock icon and price for locked fighters'; the game has no fighter prices yet, so Step 7 shows a 'Locked' chip without a price and says so only in its Notes. Record the deviation as a decision (price on locked cards comes with the shop spec) so Part 1, the plan and the result agree | spec | spec | Nit | plan decision — **handled:** D19 (no price before prices exist) and a Deferred Items row for Unlock and Upgrade (S2) and Skins Shop |
 
+### Code review 2026-11-22 (second review: the reopening)
+
+Range `bccd2ed..f10d71c` (requirements revision, re-plan, Steps 21–29; parts C, V, L; D20–D31), layer by layer; page [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html). Ran: `tools/test.ps1` 516 passed, `tools/lint.ps1` and `tools/check_tools.ps1` exit 0, `tools/export_web.ps1` in clean worktrees of both revisions exit 0 (40,516,330 → 41,244,423 bytes; no excluded name in the `.pck`). First review's findings: 1–7 and 10 resolved, 8 and 9 still deferred. Accepted as deferred, not findings: the iPad check of the reopened parts (L8, G14), the image tool for `LICENSES.md` (C9), more pictures or a 3D model (C8), a touch button for views (V6), the author's newer art (D31).
+
+| # | Finding | Layer | Class | Severity | Target |
+|---|---------|-------|-------|----------|--------|
+| 1 | hack_star_godot/scenes/cutout/cutout_fighters.gd:86-96 and scenes/fighter.gd:104-110 — in the Overview view (pitch 78°) the health bar and damage numbers of a picture fighter in the lower half of the screen show under the fighter, not over the picture: a point straight up comes nearer to the steep camera and so moves down the screen, and the clamp `maxf(…, 0.1)` allows up to ten times the picture's height (820×1180, both worlds: Flarekid's bar about 80 px under his feet; review page, camera-views block). `test_camera_views.gd:118-138` only checks that the bar is on the screen. Find the bar height from the picture's projected top (e.g. bisect like `Arena._near_wall_offset`, or cap it so the bar projects above the top), and test that the bar is above the picture's top on screen in every view | code | test | Should-fix | fix now |
+| 2 | hack_star_godot/scenes/worlds/glimmer_isles/glimmer_decor.gd:154-160 — the crystal pulse writes `emission_energy` on the crystal parts' `material_override`, which is the shared `ToonMaterials` cache entry keyed by colour and glow strength (`scenes/toon/toon_materials.gd:33-43`): every user of that key pulses with it and the cache keeps the last pulsed value (not the key's strength) after the arena closes. Give `GlimmerDecor` its own duplicates of the crystal materials (or a separate pulse uniform) so the cache stays immutable | architecture | architecture | Nit | fix now |
+| 3 | hack_star_godot/.specs/features/README.md:32 — the ordered list says 'planned (reopened 2026-11-22 …)' for spec 09 although Steps 21–29 are done and the review runs (as the first review's finding 4). Set the current stage, *closed* at `CLOSE:` | spec | docs | Nit | fix now |
+| 4 | L8 and Step 28 — L8 says "frame time at most 30 % more and under 33 ms"; Step 28 judges each row by the mean of two runs and by averages, so run 1's first row (canyon, Classic, Bright day: 17.62 ms against the 17.02 ms limit) and every worst frame of 21–489 ms count as within L8. D28 does not say how runs are combined or that load and shader-compile hitches are left out. Record it in D28 (mean of the two runs' average frame time; the first frames of a process excluded) so "every row within L8" can be checked | spec | spec | Nit | plan decision |
+| 5 | hack_star_godot/scenes/arena.gd:446-466 — Overview is fitted with a 2 % bottom margin, so for the first 5 s of every match and Training (the start hint, `HINT_SECONDS`) the hint covers the south border wall at 1280×720 and the fighter starts at the hint's top edge (review page, camera-views block); with the view kept between matches (V6) this repeats on every start. V5 asks that Overview shows all four border walls. Decide: accept (the hint fades after 5 s) or keep Overview's bottom margin above the hint while it shows | spec | spec | Nit | plan decision |
+
 ---
 
 ## Definition of Done
@@ -1452,6 +1468,6 @@ Range `91cc8be..060ff79` (requirements, plan, Steps 1–20), layer by layer; pag
 - [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29)
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items)
-- [x] Review · review page written; no Blocking finding open
+- [x] Review · review page written; no Blocking finding open (second review of the reopening: [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), 0 Blocking)
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again after Step 29)_
 - [ ] Pull request · opened with the spec summary ([#36](https://github.com/martinnordio/hack_star/pull/36), from `feature/better-graphics` to `main`); reviewed; merged; branch deleted — *not ticked:* opened, not merged (the author reviews and merges)

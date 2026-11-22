@@ -1,0 +1,9 @@
+== input actions (project.godot)
+move_left: A, Left
+move_right: D, Right
+move_up: W, Up
+move_down: S, Down
+shoot: Space
+== start hint (keyboard)
+Move: WASD or arrow keys
+Shoot: Space

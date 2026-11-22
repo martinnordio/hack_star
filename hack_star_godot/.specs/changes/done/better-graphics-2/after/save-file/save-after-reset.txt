@@ -1,0 +1,51 @@
+== save file after reset (user://review09b/save.json)
+{
+  "hacks": [],
+  "progress": {
+    "credits": 500,
+    "power_levels": {
+      "beatbolt": 1,
+      "blaze": 7,
+      "echo": 1,
+      "flarekid": 1,
+      "frosty": 1,
+      "luna": 1,
+      "pixel": 1,
+      "rocko": 4,
+      "turbo": 2
+    },
+    "selected_fighter": "blaze",
+    "selected_skins": {
+      "beatbolt": "default",
+      "blaze": "default",
+      "echo": "default",
+      "flarekid": "default",
+      "frosty": "default",
+      "luna": "default",
+      "pixel": "default",
+      "rocko": "default",
+      "turbo": "default"
+    },
+    "trophies": {
+      "beatbolt": 0,
+      "blaze": 1240,
+      "echo": 0,
+      "flarekid": 0,
+      "frosty": 0,
+      "luna": 0,
+      "pixel": 0,
+      "rocko": 420,
+      "turbo": 85
+    },
+    "unlocked": [
+      "blaze",
+      "rocko",
+      "turbo",
+      "beatbolt",
+      "flarekid",
+      "echo"
+    ]
+  },
+  "revision": "<revision>",
+  "version": 3
+}

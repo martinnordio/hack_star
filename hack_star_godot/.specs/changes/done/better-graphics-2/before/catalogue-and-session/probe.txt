@@ -1,0 +1,16 @@
+== fighters
+ids: ["blaze","rocko","turbo","frosty","luna","pixel","beatbolt"]
+start_unlocked: ["blaze","rocko","turbo","beatbolt"]
+  blaze: Rare, 3 skin(s)
+  rocko: Rare, 2 skin(s)
+  turbo: Super Rare, 2 skin(s)
+  frosty: Epic, 2 skin(s)
+  luna: Mythic, 3 skin(s)
+  pixel: Legendary, 2 skin(s)
+  beatbolt: Mythic, 1 skin(s), drawn, plays_like luna
+== session (GameState, not saved)
+world: canyon
+show_fps: false
+camera_view: <no field>
+light_preset: <no field>
+saturation_boost: <no field>
