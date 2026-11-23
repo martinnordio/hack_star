@@ -14,6 +14,7 @@ pictures of three fighters, one free font and free icons (below). Nothing is imp
 | **Beatbolt** (drawn fighter: the character, its name and look) | The character is the child's own drawing and idea, credited as **Mattia (drawing)**; the 3D figure is built in code from Godot's primitive meshes with the shared toon materials after a photo of the drawing (`scenes/drawn/beatbolt_model.gd`). The photo is not in the repository. The drawing is checked against copying: it is not a character of a game, film or brand known to us (spec 09, A8) | MIT, as the repository |
 | Scripts, shaders (toon, outline, menu background, fighter picture, cut-out, projectile, card figure, card sweep, flag, flowing water), theme, scenes, tests, tools | Written for this project | MIT, as the repository |
 | Decoration and effects of spec 09's reopening (cactus blossoms, flags, birds, the stream, fireflies, waterfalls, the reveal's halo and sparks, the muzzle star, the lighting presets) | Built in code from Godot's primitive meshes, particles and gradients, with no imported texture | MIT, as the repository |
+| Glimmer Isles palette pack (`scenes/glimmer_isles/`: palette, environment, lighting, UI theme, 11 materials, palette files) | Made by the author, Martin Nordio, 2026-11-22; its [README](scenes/glimmer_isles/README.md) says how the game uses it | MIT, as the repository |
 
 The body text uses Godot's default font, built into the engine (see Godot Engine below); the
 title, headings, buttons and numbers use Lilita One (below).
