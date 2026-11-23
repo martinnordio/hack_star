@@ -73,6 +73,7 @@
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 430 k (159 k in · 264 k cached · 8 k out) | CHF 0.84 (100 credits) | spec runner (coordination) of the animated-characters reopening (`usage.ps1 -AgentName s09g-runner4` from 2026-11-22 20:22:00) |
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 1.21 M (4 k in · 1.20 M cached · 3 k out) | CHF 0.27 (32 credits) | orchestrator (main chat) of the animated-characters reopening, coordination (`usage.ps1 -Agent main` from 2026-11-22 20:21:13) |
 | 2026-11-23 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 5.72 M (204 k in · 5.48 M cached · 38 k out) | CHF 2.42 (288 credits) | Part 1 revised: spec reopened in place a third time for the author's request (issue #35 kept, comment added); groups P (P1–P8, the Glimmer Isles palette pack and materials), H (H1–H8, four colour variations on `C`), X (X1–X8, four more camera views on `V` and `5`–`8`, controls and facing per view) and E (E1–E8, Beatbolt2: a 3D Echo built from shapes) added; V1, V2, M3 superseded; Q19–Q25 answered with the suggestions; no open questions (agent `s09g-lead5`; `usage.ps1 -AgentName s09g-lead5` from 2026-11-23 07:42:56 to 07:54:18) |
+| 2026-11-23 | plan | `PLAN:` | Claude Opus 5.5 | 3.54 M (36 k in · 3.47 M cached · 32 k out) | CHF 1.27 (151 credits) | re-planned: palette, colour variations, views and Beatbolt2 — Steps 1–37 kept; Steps 38–49 added, all reasoning (Claude Opus 5.5); D44–D57 (D25's fixed yaw and D37's camera paragraph superseded by D50 for the new views) (agent `s09g-lead5`; `usage.ps1 -AgentName s09g-lead5` from 2026-11-23 07:54:32) |
 
 ---
 
@@ -980,6 +981,18 @@ and closed again the same day after Step 29, its review and the review fixes (se
 | **35** | Living cards on the fighter list | reasoning (Claude Opus 5.5) — S1; animated cards at five sizes without a cost off screen (D40) | ✅ Done | [→ Step 35](#step-35--living-cards-on-the-fighter-list) |
 | **36** | Performance and the after set | reasoning (Claude Opus 5.5) — S1; measuring four animated fighters against the baseline, the after set compared (D42) | ✅ Done | [→ Step 36](#step-36--performance-and-the-after-set) |
 | **37** | Final check of the animated characters, README, architecture and licences | reasoning (Claude Opus 5.5) — S1; every Godot check, the size report and the documents | ✅ Done | [→ Step 37](#step-37--final-check-of-the-animated-characters-readme-architecture-and-licences) |
+| **38** | Before set, the palette pack committed with fixed paths, licence and export filter | reasoning (Claude Opus 5.5) — S1; the reference of Original (H2) captured before any colour changes, a new source asset kept small in the export (D44, D56) | ⬜ Not started | [→ Step 38](#step-38--before-set-the-palette-pack-committed-with-fixed-paths-licence-and-export-filter) |
+| **39** | Glimmer Isles in palette colours and materials | reasoning (Claude Opus 5.5) — S1; colour roles behind the baked scatter, pack materials turned into toon materials with the outline, a re-bake with the same transforms (D45, D46) | ⬜ Not started | [→ Step 39](#step-39--glimmer-isles-in-palette-colours-and-materials) |
+| **40** | Glimmer Isles' sky, environment and lights from the pack | reasoning (Claude Opus 5.5) — S1; the pack's environment under the lighting presets in the Compatibility renderer and the web export, fog, glow and the fill light measured against L8 (D47) | ⬜ Not started | [→ Step 40](#step-40--glimmer-isles-sky-environment-and-lights-from-the-pack) |
+| **41** | Colour variations on `C`: Original and Glimmer | reasoning (Claude Opus 5.5) — S1; switching a built world's colours and own light live, with `L` and `K` on top, Original pixel-close to the before set (D48) | ⬜ Not started | [→ Step 41](#step-41--colour-variations-on-c-original-and-glimmer) |
+| **42** | Lagoon and Glow night in both worlds | reasoning (Claude Opus 5.5) — S1; two new looks per world from the palette only, judged on screenshots of every variation × preset, measured (D49) | ⬜ Not started | [→ Step 42](#step-42--lagoon-and-glow-night-in-both-worlds) |
+| **43** | Controls and facing relative to the camera | reasoning (Claude Opus 5.5) — S1; a refactoring of input, aim and the animator's view to the camera's yaw that changes nothing in today's four views (D50) | ⬜ Not started | [→ Step 43](#step-43--controls-and-facing-relative-to-the-camera) |
+| **44** | Four new views: Low, Side, Diagonal, Cinematic | reasoning (Claude Opus 5.5) — S1; four camera rigs (two that turn), keys `5`–`8`, framing at five sizes (D51, D52) | ⬜ Not started | [→ Step 44](#step-44--four-new-views-low-side-diagonal-cinematic) |
+| **45** | Facing checked per view, and the views measured | reasoning (Claude Opus 5.5) — S1; every view × every kind of fighter on screenshots, the player and the bots, L8 per view (D50, D56) | ⬜ Not started | [→ Step 45](#step-45--facing-checked-per-view-and-the-views-measured) |
+| **46** | Beatbolt2 joins: data and the first model from shapes | reasoning (Claude Opus 5.5) — S1; reading Echo's pictures into proportions, parts and sampled colours, a new fighter of shapes (D53) | ⬜ Not started | [→ Step 46](#step-46--beatbolt2-joins-data-and-the-first-model-from-shapes) |
+| **47** | Beatbolt2 compared with Echo from every side, and refined | reasoning (Claude Opus 5.5) — S1; side-by-side sheets per direction and pose, rounds of changes until the views match, graphics-heavy (D54) | ⬜ Not started | [→ Step 47](#step-47--beatbolt2-compared-with-echo-from-every-side-and-refined) |
+| **48** | Beatbolt2 in motion, in every view, measured | reasoning (Claude Opus 5.5) — S1; the attack pose with the cannon, effects, in play in all eight views next to Echo, four of him against L8 (D53, D54, D56) | ⬜ Not started | [→ Step 48](#step-48--beatbolt2-in-motion-in-every-view-measured) |
+| **49** | Final check of the third reopening, README, architecture and licences | reasoning (Claude Opus 5.5) — S1; every Godot check, the size budget, the after set and the documents | ⬜ Not started | [→ Step 49](#step-49--final-check-of-the-third-reopening-readme-architecture-and-licences) |
 
 **Reopened 2026-11-22:** Steps 1–20 were done in the first run and are kept unchanged with their
 Notes. Steps 21–29 cover the added parts C, V and L; every one runs on Claude Opus 5.5 (S1, D1)
@@ -991,6 +1004,15 @@ is done by the agent and checks the look on real screenshots (D2; PNGs under `%T
 the iPad check, the image tool's name and the name MagMax stay with the author (Deferred Items).
 Step 30 moves the author's untracked `*_new` folders and commits them; `characters/magmax/` and
 the zips are never touched.
+
+**Reopened a third time 2026-11-23 (palette, colour variations, views, Beatbolt2):** Steps 1–37
+are kept unchanged with their Notes. Steps 38–49 cover parts P, H, X and E (P1–P8, H1–H8, X1–X8,
+E1–E8; D44–D57) in the author's order — the palette, then the colour variations, then the views,
+then Beatbolt2, then the final check; every one runs on Claude Opus 5.5 (S1, D1), is done by the
+agent and checks the look on real screenshots (D2; PNGs under `%TEMP%\hs09f\`, the reference sets
+under `%LOCALAPPDATA%\hack_star\screens\09d\`, Beatbolt2's comparison sheets committed under
+`docs/screenshots/beatbolt2/`, D54); the iPad check stays with the author (Deferred Items).
+Step 38 commits the author's untracked `scenes/glimmer_isles/` pack.
 
 **Who does what:** Steps 1–13, 15–18 and 20 are done by the agent. **Step 14 is a gate:** it
 stops the run until the author has sent the photo (A0); Steps 15–20 start only after it.
@@ -1072,6 +1094,20 @@ prepares everything and records their answers (D17).
 | D41 | **Tests (reopened again):** new files, at most 20 tests each (D18): `test_animated_fighters.gd` (MagMax's data, unlocked, old save; every frame and projectile loads from its final folder and no resource names `characters/blaze/`, `characters/magmax/` or `_new`; 12 frames of one size per fighter; the card on the card), `test_cutout_animator.gd` (the view per direction, diagonals, mirrored left, the last view kept, the front view at the start, the walk loop's order and pace, the shoot frame for 0.25 s in the shot's view, bots too, W → back view in all four camera views, flash, fade, tip and the bar with frames), `test_projectile_look.gd` (the three with their pictures, others the ball, same speed, range and damage, turned along the direction), `test_showcase.gd` (order and ≤ 8 s, never still, drag turns, tap shoots, resumes after 3 s, home, fighter screen and result, shapes unchanged), `test_living_cards.gd` (the figure changes frames, the sweep, locked grey and still, only visible cards animate, the five sizes). Tests that count fighters or expect C5's flip and hop (`test_cutout_fighters.gd`, `test_fighter_reveal.gd`, `test_fighter_list.gd`, …) are updated in the Step that changes the behaviour. | S2, S3: what a script can check is tested; looks on screenshots (D2). |
 | D42 | **Measurements (M11, M14, M15):** Step 30 takes the **before** set before it moves anything (D2 method; home, the fighter list scrolled to the picture fighters, the fighter screen with Echo and with Flarekid, a 4-fighter match 4 s in with Echo as the player in the canyon; 1280×720 and 820×1180; `%LOCALAPPDATA%\hack_star\screens\09c\before\`), the SHA-256 list of `characters/magmax/` and the web size. Step 36 takes the **after** set (the same names, plus MagMax and short frame sequences) into `…\09c\after\` and the performance run of D28/D32 (warm run) with four animated fighters (a temporary script picks MagMax, Echo and Flarekid for the bots) in both worlds, Classic and Overview, Bright day and Neon night, against Step 21's baseline (the higher of its two runs): within L8; texture memory (`Performance.RENDER_TEXTURE_MEM_USED`) reported. Size budget (M14): the three fighters' imported files ≤ 3.5 MB, the export ≤ 45,361,090 bytes — measured in Steps 30 and 37. | M11, M14, M15: measured the same way before and after, in the author's working tree. |
 | D43 | **D31 superseded (reopened again):** the `*_new` folders are now the author's request and are moved into the game's folders by Step 30 (D35); `characters/magmax/` stays the author's untracked older art, now also ignored by git, and excluded from the export; the zips stay ignored and excluded. | M2, M12. |
+| D44 | **The pack in the repository (P1, P7, P8; reopened a third time):** the pack stays where the author put it, `scenes/glimmer_isles/` (next to the game's `scenes/worlds/glimmer_isles/`; not moved, so its `.import` and `.uid` stay), and is committed by Step 38 with every file as delivered except: `glimmer_isles_lighting.tscn`'s `ext_resource` → `res://scenes/glimmer_isles/glimmer_isles_environment.tres`; the README's "Copy the `glimmer_isles` folder into your project root (`res://glimmer_isles/`)" → where the pack is in this game and what uses it (a short *In Hack star* section; the colour tables and tips kept). `glimmer_palette.gd` keeps its constants and `class_name GlimmerPalette` (it passes `tools/lint.ps1` today; if gdlint or gdformat complain once it is tracked, only the format changes, never a colour). The UI theme is not used (P7). `export_presets.cfg` `exclude_filter` adds `scenes/glimmer_isles/*.png`, `*.gpl`, `*.hex`, `*.json`, `README.md` and `glimmer_isles_ui_theme.tres` (under `scenes/glimmer_isles/`); the palette script, the environment, the lighting scene and the 11 materials are exported (a few kB). `LICENSES.md` *Own work* gets a row: "Glimmer Isles palette pack (`scenes/glimmer_isles/`: palette, environment, lighting, UI theme, 11 materials, palette files) — made by the author, Martin Nordio, 2026-11-22 — MIT, as the repository". | P1: the author's folder, the paths that work; P8: only what is used ships. |
+| D45 | **Colour roles (P2, P5, P6, H2):** Glimmer Isles' colours move from constants in `GlimmerIsles`, `GlimmerProp` and `GlimmerDecor` into one data class `scenes/worlds/glimmer_isles/glimmer_looks.gd` (`GlimmerLooks`, static): per **colour variation** (D48) a table **role → look** (`albedo`, `glow`, `glow_strength`, `alpha`, `outlined`; or a pack material, D46). Roles: the world's surfaces (`ground`, `ground_alt`, `path`, `path_glow`, `rim`, `underside`, `border`, `border_top`, `plinth`, `fern_ground`, `lagoon`), each prop part by its kind and part name (`crystal_cluster/Rock`, `…/Spike`, `glow_fern/Frond`, `giant_mushroom/Cap`, `island_chunk/Grass`, …) and the decor (`firefly`, `waterfall`, `waterfall_light`). **Original** = today's constants, value for value (H2; a test pins them); **Glimmer** = GlimmerPalette colours and pack materials, first mapping (tuned on Step 39's screenshots, within the palette): ground tiles two mid-tones that keep the floor the least saturated surface (candidates dew, pebble, stone_light, sand; the moss material's jade only as a small accent), path sand, path glow glow_cyan, rim grass, underside cliff, border stone with stone_light top, plinth stone_shadow, fern ground fern, crystals glow_cyan and crystal_gold with glow_lilac on the pink spikes, ferns leaf / jade with glow_lime tips, small mushrooms glow_mushroom, giant mushroom mushroom_cap with mushroom_stem and pink_spot gills, island grass grass with stone rock and root_dark roots, fireflies glow_lime, waterfalls waterfall. The **baked props are not re-baked**: `baked.tscn` already keeps each part's `kind` and `part_index`, so `GlimmerIsles.load_baked` finds the role from them and takes the material of the variation in use (the stored `albedo` stays as the bake wrote it); places, colliders and layouts do not change (P6). | P2: one place says which palette colour each surface has, testable; H2: Original is data, not a memory; P6: no re-bake, no risk to the transforms. |
+| D46 | **Pack materials in the toon look (P3, P5):** `ToonMaterials.from_material(material: BaseMaterial3D, outlined: bool = true)` makes the shared cel-shaded material (with D5's outline) from a pack material: `albedo_color` (alpha included — the toon shader's see-through alpha), `emission` and `emission_energy_multiplier` as the glow; roughness, metallic and rim are dropped (the toon shader has its own bands and rim), cached like `toon()`. Water surfaces and waterfalls keep `flowing_water.gdshader` (not toon, as today's waterfalls) with the water's or the waterfall's colour, alpha and emission. **New water surface (P3):** a lagoon — one large plane under the floating island (about 14 m below the floor, beyond the rim), with the water material's colours and the flowing shader's light bands, no collider; the waterfalls fall into it (their foot fade stays). Shading (P2): surfaces that lie in shadow by nature (the underside, the plinths, the roots, the border's foot) take the darkest colour of their ramp, the toon shader's shadow band darkens each colour (never to black), and the outline keeps `ToonMaterials.OUTLINE_COLOR` (a dark navy, close to the pack's `ui_outline` `0E0F1F`). | P3, P5: the author's materials decide the colours, the game's toon look decides the shading and the outline. |
+| D47 | **Sky, environment and lights (P4, P8):** `GlimmerIsles._build_sky` loads `scenes/glimmer_isles/glimmer_isles_lighting.tscn` (for the palette variations): the arena's `WorldEnvironment` gets a **copy** of its environment (the pack's `.tres` is never changed at run time, as D27), the arena's `Sun` its colour, energy, rotation and shadow opacity, and its `MagicFill` (`OmniLight3D`, shadow off) is moved under the world. `WorldLighting.setup` then remembers it as the world's own light, so **Classic** shows the pack's environment as delivered — `WorldLighting.apply` keeps the base's glow, fog and colour balance for Classic (today it always sets the preset's; for Original's and the canyon's bases, which have none, Classic stays as it is, H2). The other presets keep D27 (`WORLD_SHARE` 0.3); if Step 40's screenshots do not show the pack's sky in Bright day (P4), a variation may carry its own `world_share` (at most 0.6), decided on screenshots and written in the Notes. **Fog** and the **fill light** stay only if a windowed Compatibility run and the web export show them and Step 40's measures stay within L8 (else fog off, and the fill light's colour folded into the ambient light); the pack's **glow** shows only in Classic and in the presets that have it (D27). | P4: the author's sky and light, still under `L` and `K`; L8 decides the costly parts. |
+| D48 | **Colour variations (H1–H3, H5, H6):** `game/colour_variations.gd` (`ColourVariations`, static data like `LightPresets`): `LIST` in `C`'s order — `original` "Original", `glimmer` "Glimmer", `lagoon` "Lagoon", `glow_night` "Glow night" (numbers 1–4), `DEFAULT` = `glimmer`, `next()`, `title(id)` → "Colours 2: Glimmer" for the toast. `GameState.colour_variation` (memory only; `reset()` → default). Input action `colour_next` (C) in `project.godot` (no other action uses C — a test). `Arena._unhandled_input` → `set_colour_variation(id)`: the world (`Canyon` and `GlimmerIsles` each get `apply_variation(id)`) re-assigns the materials of its built meshes and baked MultiMeshes by role (D45; the canyon gets the same role table, `scenes/canyon_looks.gd`, `CanyonLooks`: Original = today's constants, Glimmer = Original, H3) and its decor's colours, sets its own light, then `WorldLighting.setup` is called again and the preset and boost are applied again — no scene rebuild, no collider touched, the camera and view kept. `HudToast` names it (H5). Arena and the worlds build with `GameState.colour_variation`. | H1–H6: one data class and one switch path, the same shape as `L` (D27). |
+| D49 | **Lagoon and Glow night (H4, H7):** both only from `GlimmerPalette` colours and the pack's materials and environment. **Lagoon** — Glimmer Isles: ground dew / pale mint tiles, path beach, turquoise and shallow-water crystals, jade ferns, a day sky (day_sky to turquoise, sun_mist sun), the lagoon brighter; canyon (an oasis): sand beach / shell, rock path / earth, cacti jade and leaf, blossoms bubblegum, the stream water. **Glow night** — Glimmer Isles: a twilight / night_sky sky, glow_deep ambient, crystals glow_cyan and glow_lilac and gold with stronger glow, small mushrooms glow_mushroom, fireflies glow_lime and sparkle, path glow_cyan; canyon: rock cliff / stone_shadow, sand pebble, cacti fern with glow_lime tips, blossoms glow_lilac, the stream glow_cyan. Each variation's own environment and sun (sky, ambient, colour balance) are part of its table; glow only where D27/D47 allow it. Step 42 may change a role's colour on screenshots, but only to another palette colour (a test checks every colour of 2–4 is in `GlimmerPalette.ALL` or a pack material). | H4: two clearly different looks per world from the author's palette, testable. |
+| D50 | **Controls and facing relative to the camera (X3, X4; supersedes D25's fixed yaw and D37's camera paragraph for the new views):** `CameraViews` entries get `yaw_degrees` (0 for Classic, Close, Behind, Overview — they look north as before) and, for Cinematic, `swing_degrees` and `swing_seconds`. `Arena.camera_yaw()` reads the camera's yaw from its current transform every frame (so it is right during the 0.3 s blend and Cinematic's swing). The keys and the joystick give a direction **on the screen**; `Arena` turns it by the camera's yaw into the world before `Movement` (and the aim and the touch aim likewise; a tap aims at a target's world position as before). The animator gets the direction **on the screen**: `Fighter.face()` and `FighterModel.play_shoot()` receive the world direction turned back by −yaw (`Arena.to_screen(direction)`), for the player and the bots. Fighters of shapes keep turning to their world facing (`Movement.facing_yaw`), which is right in every view by itself. With yaw 0 every number stays as today, so the existing tests (`test_camera_views.gd`, `test_cutout_animator.gd`, `test_movement.gd`) pass unchanged — Step 43 proves it before any new view exists. | X3, X4: one rule — screen in, screen out — covers turning cameras; M3's rule kept for every view. |
+| D51 | **The four new views (X1, X2, X5, X6):** in `V`'s order after Overview, keys `view_5`–`view_8` (5–8 and the number pad's 5–8) in `project.godot`. **Low** (5): yaw 0, the camera 1.9 m above the floor and 4.5 m behind (south of) the fighter, looking at a point 1.2 m high 6 m ahead (about 7° down) — the hero angle. **Side** (6): yaw 90° (the camera east of the fighter, looking west), pitch 40°, 11 m from the fighter, following him. **Diagonal** (7): yaw 45° (from the south-east, looking north-west), pitch 58°, its distance fitted to the box around the fighter as Classic's (without the near-wall rule). **Cinematic** (8): pitch 35°, 9 m, following the fighter with the follow's smoothing, yaw swinging `25°·sin(2π·t / 14 s)` around north. Numbers are tuned on Step 44's screenshots (written in the Notes) as long as X5 holds; if in Low or Side a wall hides the player for long on the screenshots, the pitch is raised. G11's near-wall rule stays for Classic (and Close's own limit). | X1: four distinct views; two turn the camera (Side, Diagonal) and one moves it (Cinematic), the case D50 handles. |
+| D52 | **Texts (H8, X8):** the start hint's last line becomes "View: V or 1-8, light: L and K, colours: C" (`ControlsHelp.KEYBOARD_HINT`; `test_controls_hint.gd` keeps it clear of the other controls at every size); *How to play*: "V switches the camera view, 1 to 8 choose one (Classic, Close, Behind, Overview, Low, Side, Diagonal, Cinematic)" and "C switches the colours (Original, Glimmer, Lagoon, Glow night)" — names from `CameraViews` and `ColourVariations`; the README's *Controls* in Step 49. | H8, X8, V7. |
+| D53 | **Beatbolt2 (E1–E3, E5, E6):** a row in `Fighters.LIST` after MagMax — id `beatbolt2`, name **Beatbolt2**, rarity **Mythic**, idea "A 3D Echo built from shapes, after Mattia's drawing and Echo's pictures", `"unlocked": true`, `"drawn": true`, `"plays_like": "luna"`, one `default` skin; `SampleProgress` 0 trophies, power 1; old saves get him through `Fighters.start_unlocked()`. Main colour Echo's glowing teal (sampled; at least 0.1 from every other fighter's — `test_fighter_model.gd`). His look is `scenes/drawn/beatbolt2_model.gd` (started as a copy of `beatbolt_model.gd`, Beatbolt's file unchanged), a row in `DrawnFighters.MODELS`; `LOOKS` colours **sampled from Echo's frames** (a temporary script reads the median colour of hand-picked regions of `echo_down_idle.png`, `echo_up_idle.png` and `echo_side_idle.png` — hair dark, mid and light, magenta lock, skin, eyes, headphone band and cups, jacket, shoulder pads, collar, orange marks, trousers, shoes, soles, gloves, cannon stripes and muzzle — written in Notes); proportions measured on the idle frames (head with hair ≈ ⅓ of the height, shoulders, hands, legs, feet) and scaled to the other fighters' height; `IDEA_PARTS` for the tests: `SpikyHair`, `MagentaLock`, `Headphones`, `ShoulderPads`, `ArmCannon`, `NeonSoles`. At most about 60 parts (each part draws twice with the outline; E7 measured). **Attack pose (E5):** `DrawnFighters` gets an optional `animate(id, model, time, state)` that a model script may have; `FighterModel` forwards one call to it (it stays under 1000 lines), so Beatbolt2's attack swings the cannon arm up to point forwards (Echo's shoot frames) and back; idle and run as the fighters of shapes. The card, skin button and result pictures come from `FighterPictures` as for every fighter of shapes (E6). | E1–E3, E5, E6: the existing drawn-fighter path (D14) — one file and one row — and colours measured from the author's pictures, not guessed. |
+| D54 | **Comparison with Echo (E4):** a temporary script (outside the repository, never committed) renders Beatbolt2 alone on a transparent background with a long-lens camera (field of view about 12°, so it looks like Echo's near-orthographic frames) at Echo's frame size (592 × 503), his height in pixels set to Echo's in the same frame and his feet at the frame's bottom centre: **front** (he faces the camera — Echo's `down`), **back** (`up`), **three-quarter right** (Echo's `side` frames are three-quarter views looking right; the yaw that matches best is found and written down) and its mirror, and a true profile for the record; in **idle**, **walk** (the run animation at mid-stride) and **shoot** (the attack pose at its peak). It writes per direction a sheet: Echo's frame | Beatbolt2 | both at 50 % over each other, the three poses in rows, at most 1280 px wide, as PNG. Sheets go to `hack_star_godot/docs/screenshots/beatbolt2/round<N>_<direction>.png` (committed; a `.gdignore` in `docs/screenshots/` keeps Godot from importing and exporting them; at most about 3 MB in total — older rounds kept only as a reduced contact sheet if over). A **round** = render, look, list per direction what matches (silhouette, parts, colours) and what differs, change the model; at least two rounds, and on until the remaining differences are only what shapes cannot draw (soft hair strands, fabric folds, the shine) — each round in the Notes. Then **in play** (Step 48): Training with Echo and Beatbolt2 side by side, walking and shooting, in all eight views at 1280×720 → `views_<view>.png`. | E4: the same framing makes the comparison fair; the sheets in the repository let the author see every round. |
+| D55 | **Tests (third reopening):** new files, at most 20 tests each (D18): `test_glimmer_palette.gd` (no `res://glimmer_isles/` in any file; the lighting scene loads with its environment; in Glimmer every Glimmer Isles surface's colour is a palette or pack-material colour; Original's looks equal the constants before (a pinned table); the baked transforms, colliders, layouts and start points unchanged; water surface and waterfalls with the pack's colours; the export filter names the pack's unused files), `test_colour_variations.gd` (`C`'s order and wrap, the default Glimmer, the toast, the canyon's 1 and 2 equal, 3 and 4 differ from 1 in both worlds, every colour of 2–4 from the palette, `L` and `K` on top and kept across `C`, kept for the next match, reset, `C` bound to no other action), `test_more_views.gd` (eight views in `V`'s order, keys 5–8 and the number pad, no clash; per view: the camera's yaw, W moves the player up the screen and A to its left (projected), the animated player and a bot show the back moving up the screen, the front moving down, the side for left and right with the mirror, the shoot view; Cinematic's swing within ±25°; the player, its bar and name on the screen at the five sizes in both worlds; Classic still G11), `test_beatbolt2.gd` (data, unlocked, old save, `DrawnFighters` row, the idea parts, only shapes (no texture on any part), toon and outline on every part, his card picture rendered, the attack pose raises the cannon and goes back, see-through, playable in Training and a match). Tests that count fighters or list the actions are updated in the Step that changes them. | S2, S3: what a script can check is tested; looks on screenshots (D2). |
+| D56 | **Measurements and budgets (P8, H7, X7, E7):** Step 38 takes the **before set** before any colour changes — both worlds, a 4-fighter match 4 s in (the game's own save), Classic view, every lighting preset at 1280×720 and the default at 820×1180 (`%LOCALAPPDATA%\hack_star\screens\09d\before\`, not committed): the reference of **Original** (H2) — and the web size. Performance as D28/D32/D42 (windowed, vsync off, 10 s, warm run judged; baseline Step 21's higher run): Step 40 — Glimmer Isles in Glimmer, every preset, Classic and Overview; Step 42 — every variation × both worlds × Bright day, Neon night and Classic, Classic view; Step 45 — each new view × both worlds, default variation and preset; Step 48 — four Beatbolt2 in both worlds, Classic and Overview. Whatever is over L8 is trimmed (fog, the fill light, glow, particle counts) and measured again. Size (G15): ≤ 45,361,090 bytes, measured in Steps 38 and 49; the pack's exported share and Beatbolt2's (≤ 0.1 MB, E7) reported. **After set** in Step 49 (`…\09d\after\`): the before set's names plus every variation and the new views. | P8, H7, X7, E7: the same method as the earlier reopenings, so the numbers compare. |
+| D57 | **The fighters of shapes in turned views (X4):** they turn to their world direction of movement (`Fighter.rotation.y`), so with screen-relative controls (D50) W shows their back in every view without a change; Step 45 checks it on screenshots for one shape fighter and Beatbolt2 in each view. | X4. |
 
 ---
 
@@ -2053,6 +2089,243 @@ Started: 2026-11-22 22:32
 **Done (2026-11-23 · ~25 min of work, 22:32–07:19 on the clock with the machine idle overnight during a check run · Claude Opus 5.5)** — the animated characters checked end to end: all Godot checks green, web export 43,544,883 bytes (+2.30 MB vs the last close, 1.8 MB under the budget; the author's `scenes/glimmer_isles/` in it, about 159 kB), the three fighters 2.78 MB (≤ 3.5 MB), nothing unused in the `.pck`, `characters/magmax/` and the zip untouched; README, `docs/architecture.md`, `docs/drawing_to_fighter.md` and `LICENSES.md` describe the animated fighters; every statement M1–M16 covered. `tools/check_tools.ps1` exit 0, `tools/test.ps1` 555 tests passed, `tools/lint.ps1` exit 0, `tools/export_web.ps1` exit 0; suggested: reasoning (Claude Opus 5.5) · ran: Claude Opus 5.5 · 7.99 M tokens · CHF 2.95 (352 credits)
 ---
 
+## Step 38 — Before set, the palette pack committed with fixed paths, licence and export filter
+
+### Goal
+The reference of the look before this reopening is captured, and the author's palette pack is in
+the repository with working paths, its licence row, and only what the game uses in the web export
+(P1, P7, P8; H2's reference; D44, D56).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Before set (D56, D2) into `%LOCALAPPDATA%\hack_star\screens\09d\before\` **before any colour changes**: both worlds, a 4-fighter match 4 s in with the game's own save, Classic view, every lighting preset at 1280×720 (`godot_match_<world>_<preset>_1280x720.png`) and the default preset at 820×1180, plus Behind and Overview in the default at 1280×720; a temporary `-s` script under `%TEMP%\hs09f\`, deleted; viewed. The colours of `GlimmerIsles`, `GlimmerProp`, `GlimmerDecor`, `Canyon`, `CanyonDecor` and the canyon's props written down (they become Original's tables in Steps 39 and 41).
+- [ ] The pack (D44): `glimmer_isles_lighting.tscn`'s path → `res://scenes/glimmer_isles/glimmer_isles_environment.tres`; the README's install line replaced by an *In Hack star* section (where it is, what uses it: the palette, materials, environment and lighting by Glimmer Isles; the UI theme not used); every file else as delivered; `git grep "res://glimmer_isles"` empty; the lighting scene opens in a headless Godot run without errors.
+- [ ] `export_presets.cfg` `exclude_filter` + the pack's unused files (D44); `LICENSES.md` row (D44).
+- [ ] `tools/export_web.ps1` in the working tree: total and `.pck` vs Step 37 (43,544,883 / 3,423,752); the `.pck` searched: no `glimmer_isles_palette.png`, `.gpl`, `.hex`, `.json`, the pack's README or UI theme; the palette script, environment, lighting scene and materials in.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` (with the pack's `.gd` tracked), `tools/export_web.ps1` exit 0; `git status --short` clean after the commit (the pack committed with this Step).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 39 — Glimmer Isles in palette colours and materials
+
+### Goal
+Every surface of Glimmer Isles takes its colour from the palette or a pack material through colour
+roles, in the toon look with the outline, with a lagoon under the island and the waterfalls in the
+waterfall material, while Original keeps today's colours as data and nothing of the world's rules
+or the baked places changes (P2, P3, P5, P6; D45, D46).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `GlimmerLooks` (D45) with the **Original** table (today's constants, value for value) and the **Glimmer** table (palette and pack materials); `GlimmerIsles`, `GlimmerProp` and `GlimmerDecor` read their colours from it for the variation in use (`GameState.colour_variation` comes in Step 41 — until then Glimmer, a constant default); `GlimmerIsles.load_baked` finds each part's role from `kind` and `part_index`; no re-bake (if one is needed after all, `tools/bake_world.ps1` and the transforms diff-checked as in Step 26).
+- [ ] `ToonMaterials.from_material` (D46); the lagoon plane and the waterfalls with the water and waterfall materials' colours through `flowing_water.gdshader`; no collider added.
+- [ ] `tests/test_glimmer_palette.gd` (D55: palette colours, Original pinned, baked places, colliders, layouts and start points unchanged, water and waterfalls); `test_glimmer_isles.gd`, `test_glimmer_props.gd`, `test_world_layouts.gd`, `test_world_decor.gd` green (changed only where they check a colour).
+- [ ] Screenshots (D2): Glimmer Isles in a 4-fighter match at 1280×720 and 820×1180, Classic, Behind and Overview, next to Step 38's before set; the player in a fern patch (see-through) and shooting; viewed; Notes say the final role → colour mapping, that the floor is the least saturated surface (G10) and what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 40 — Glimmer Isles' sky, environment and lights from the pack
+
+### Goal
+Glimmer Isles' own light is the pack's environment and lighting scene, recognisable in the default
+preset and as delivered in Classic, with fog, glow and the fill light kept only where they show and
+the frame rate stays within L8 (P4, P8; D47, D56).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `GlimmerIsles._build_sky` from `glimmer_isles_lighting.tscn` (D47): the environment copied, the sun's colour, energy, rotation and shadow opacity, the `MagicFill` moved under the world; `WorldLighting.apply` keeps the base's glow, fog and colour balance in Classic (Original's and the canyon's Classic unchanged — `test_light_presets.gd` green).
+- [ ] Fog, glow and the fill light tried in a windowed Compatibility run and in the web export (`tools/export_web.ps1`, `tools/serve_web.ps1`, a desktop browser); kept or dropped per D47; `world_share` decided on screenshots (D47); the results in Notes.
+- [ ] Performance (D56): Glimmer Isles in Glimmer, every preset, Classic and Overview, warm run vs Step 21's baseline; a table in Notes; anything over L8 trimmed and measured again; temporary scripts deleted.
+- [ ] `tests/test_glimmer_palette.gd` + the lighting scene's environment used as a copy (the `.tres` unchanged), Classic shows it as delivered, the sun takes the pack's colour.
+- [ ] Screenshots (D2): every preset × Glimmer Isles at 1280×720 and the default at 820×1180, with and without `K`; Behind for the sky; viewed next to the before set; L7 checked (fighters, shots, bars, cover, HUD); Notes say what was changed after looking.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 41 — Colour variations on `C`: Original and Glimmer
+
+### Goal
+`C` switches Training and a match between the four colour variations, the name shows briefly, the
+game starts with Glimmer, Original is exactly the look before this reopening, the canyon's 1 and 2
+are the same, and `L`, `K` and the view keep working on top (H1, H2, H3, H5, H6; D48).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `ColourVariations`, `GameState.colour_variation`, the input action `colour_next` (C) (D48); `Arena.set_colour_variation`, `apply_variation(id)` in `GlimmerIsles` and `Canyon` (`CanyonLooks`: Original = Glimmer = today's constants; Lagoon and Glow night fall back to Original until Step 42), the decor's colours, the world's own light again in `WorldLighting`, the preset and boost applied again; the toast "Colours <n>: <name>".
+- [ ] `tests/test_colour_variations.gd` (D55: order, wrap, default, toast, Original equals the before constants in both worlds, the canyon's 1 = 2, `L`/`K` on top and kept across `C`, the view kept, kept for the next match, reset, no clash); `test_controls_help.gd` and the action tests updated.
+- [ ] Screenshots (D2): both worlds in Original and Glimmer at 1280×720 in the before set's presets, compared with Step 38's before set (Original must match it: Notes say how — side by side and a pixel difference of the two images); the toast; switching during the countdown.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 42 — Lagoon and Glow night in both worlds
+
+### Goal
+Variations 3 and 4 give both worlds two clearly different looks from the palette only, readable in
+every preset and within L8; the texts name `C` (H4, H7, H8; D49, D52, D56).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Lagoon and Glow night tables in `GlimmerLooks` and `CanyonLooks` with their environment and sun (D49); glow per D27/D47.
+- [ ] Texts (D52): the start hint and *How to play* name `C` and the four variations (the views' part of the texts in Step 44).
+- [ ] `tests/test_colour_variations.gd` + 3 and 4 differ from 1 in both worlds and every colour of 2–4 is in the palette or a pack material; `test_controls_hint.gd` green.
+- [ ] Screenshots (D2): every variation × every preset × both worlds at 1280×720 (contact sheets) and the four variations in the default preset at 820×1180, the boost on for two of them; viewed; L7 and G10 checked; Notes say what each variation looks like and what was changed after looking.
+- [ ] Performance (D56): every variation × both worlds × Bright day, Neon night and Classic, Classic view, warm run vs the baseline; a table in Notes; anything over L8 trimmed and measured again.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 43 — Controls and facing relative to the camera
+
+### Goal
+The keys, the joystick, the aim and the animated fighters' views work from the direction on the
+screen through the camera's yaw, so a view that turns the camera stays right — with nothing
+changed in today's four views (X3, X4; D50).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `CameraViews` entries get `yaw_degrees` (0 for the four) (D50); `Arena.camera_yaw()` from the camera's transform, `Arena.to_world()` / `to_screen()`; the player's keys, joystick, aim line and touch aim turned to the world; `Fighter.face()` and `FighterModel.play_shoot()` get the direction on the screen, for the player and the bots (`MatchArena`, `BotBrain`'s fighters).
+- [ ] Tests: the existing `test_camera_views.gd`, `test_cutout_animator.gd`, `test_movement.gd`, `test_touch_joystick.gd` and `test_bot_brain.gd` green **unchanged** (the proof that yaw 0 changes nothing); new cases in `tests/test_more_views.gd` with a test camera turned by 90° and 45°: W moves the player up the screen, A to its left, the animated player and a bot show back / front / side by their direction on the screen, the shot's view likewise.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0; a short windowed run in Classic and Behind (screenshots at 1280×720) looks and moves as before.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 44 — Four new views: Low, Side, Diagonal, Cinematic
+
+### Goal
+`V` goes through eight views and `1`–`8` choose one; the four new views frame the player at the
+five sizes, name themselves in the toast, are kept while the game is open, and the texts name them
+(X1, X2, X5, X6, X8; D51, D52).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `CameraViews` + Low, Side, Diagonal, Cinematic (D51); `view_5`–`view_8` in `project.godot` (5–8 and the number pad); `Arena.view_pose` for each; Cinematic's swing in `_process`; the 0.3 s blend between any two views (the yaw takes the short way round).
+- [ ] Texts (D52): the start hint and *How to play* name `1`–`8` and the eight views.
+- [ ] `tests/test_more_views.gd` (D55: order, keys, no clash, yaw per view, Cinematic within ±25°, the player, bar and name on the screen at the five sizes in both worlds, Classic still G11, kept for the next match); `test_camera_views.gd`'s "always looks north" limited to the four views that do; `test_controls_hint.gd` green.
+- [ ] Screenshots (D2): each new view in each world at 1280×720 and 820×1180 (16), the toast in one; viewed; Notes say the final numbers and what was changed after looking (walls hiding the player in Low or Side, D51).
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 45 — Facing checked per view, and the views measured
+
+### Goal
+In each of the eight views the animated fighters (player and bots) show the right view of
+themselves for the direction on the screen, the fighters of shapes turn right, and every new view
+stays within L8 (X3, X4, X7; D50, D56, D57).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Screenshots (D2; frame sequences, 1280×720): per view, Echo as the player walking up, down, left, right and diagonally, stopping and shooting up, down, left and right, and a bot (MagMax) walking across; one fighter of shapes (Blaze) walking up and right; contact sheets per view; viewed; Notes list per view what was seen (back / front / side and the mirror; the keys' direction on the screen) and any fix.
+- [ ] Performance (D56): each new view × both worlds, default variation and preset, warm run vs the baseline; a table in Notes; anything over L8 trimmed and measured again.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 46 — Beatbolt2 joins: data and the first model from shapes
+
+### Goal
+Beatbolt2 is an unlocked, playable Mythic fighter whose first 3D model, built from shapes starting
+from Beatbolt's, has Echo's proportions, parts and sampled colours, with his card picture (E1,
+E2, E3, E6; D53).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Measure Echo (D53): proportions on the idle frames of the three directions and the colours by a temporary sampling script (regions and medians in Notes); the script deleted.
+- [ ] `Fighters.LIST` row and `SampleProgress` (D53); `scenes/drawn/beatbolt2_model.gd` from a copy of `beatbolt_model.gd` (Beatbolt's file unchanged), rebuilt for Echo: chibi proportions, spiky hair (front fringe, side and back spikes, the magenta lock), headband headphones with glowing teal cups, jacket with shoulder pads, collar and orange marks, cargo trousers, sneakers with glowing soles, fingerless gloves, the striped arm cannon with its glowing muzzle in the right hand; `DrawnFighters` row; `IDEA_PARTS`.
+- [ ] `tests/test_beatbolt2.gd` (D55: data, unlocked, old save, registry, idea parts, shapes only, toon and outline, card picture, playable); the tests that count fighters updated; `test_fighter_model.gd`'s colour rule green.
+- [ ] Screenshots (D2) at 1280×720 and 820×1180: home and the fighter screen with Beatbolt2 (reveal), the fighter list with his card, a match with him next to Echo; a first front / back / three-quarter render next to Echo's idle frames; viewed; Notes say what is already close and what is not.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 47 — Beatbolt2 compared with Echo from every side, and refined
+
+### Goal
+Beatbolt2 is compared with Echo's frames from the front, the back and both sides in idle, walk and
+shoot, round after round, and changed until the two read as the same character from every side;
+every round is written down and its sheets kept (E3, E4; D54).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] The comparison render (D54) as a temporary script (outside the repository, deleted at the end); `docs/screenshots/.gdignore`; the matching three-quarter yaw found and written down.
+- [ ] Round 1: sheets `round1_<front|back|side_right|side_left>.png`; per direction in Notes: silhouette (hair outline, head-to-body size, stance, cannon), parts (each of the idea parts and the clothes), colours (side by side and in the overlay) — what matches and what differs; the model changed.
+- [ ] Round 2 and on, the same, until what differs is only what shapes cannot draw (D54); the last round's sheets kept, earlier rounds as reduced contact sheets if the folder is over about 3 MB.
+- [ ] `tests/test_beatbolt2.gd` still green (parts renamed only with the test); `test_drawn_fighter.gd` green.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0; the sheets viewed; the folder's size in Notes.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 48 — Beatbolt2 in motion, in every view, measured
+
+### Goal
+Beatbolt2 idles, runs and attacks with the cannon raised like Echo's shoot frames, keeps every
+effect of a fighter of shapes, looks like Echo in play in all eight views, and four of him stay
+within L8 (E4, E5, E7, X4; D53, D54, D56).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] `DrawnFighters.animate` and the one forwarding call in `FighterModel` (D53; it stays under 1000 lines); Beatbolt2's attack pose (the cannon arm up to point forwards and back); idle and run checked against Echo's idle and walk frames (the comparison render of Step 47 for the walk and shoot rows again: `round<N>_motion.png`).
+- [ ] `tests/test_beatbolt2.gd` + the attack pose raises the cannon and goes back, see-through, hit flash, knock-out; `test_fighter_model.gd`, `test_fighter_reveal.gd` green.
+- [ ] In play (D54): Training with Echo and Beatbolt2 side by side walking and shooting in all eight views at 1280×720 → `docs/screenshots/beatbolt2/views_<view>.png`; viewed; Notes say per view how close they read and that Beatbolt2 shows his back moving up the screen (X4).
+- [ ] Performance (D56): four Beatbolt2 in a match in both worlds, Classic and Overview, warm run vs the baseline; draw calls per fighter compared with Beatbolt's; a table in Notes; trimmed (fewer parts) if over L8.
+- [ ] Check: `tools/test.ps1`, `tools/lint.ps1` exit 0.
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
+## Step 49 — Final check of the third reopening, README, architecture and licences
+
+### Goal
+Everything that worked before still works, the size budget is met and reported, the after set is
+recorded, and the documents describe the palette, the colour variations, the eight views and
+Beatbolt2 (P1–P8, H1–H8, X1–X8, E1–E8, S2–S6).
+
+### Tasks
+- [ ] Record the start time in Notes below.
+- [ ] Run `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1`, `tools/export_web.ps1` (all exit 0); every `.ps1` changed parses with `[System.Management.Automation.Language.Parser]::ParseFile`; nothing outside `hack_star_godot/` changed (S5); `characters/magmax/` and the zips untouched (Step 30's SHA-256 list); `git status --short` clean.
+- [ ] Web export size report in Notes: total and `.pck` vs Step 37 (43,544,883), Step 38 and Step 1; the pack's exported share and Beatbolt2's (E7 ≤ 0.1 MB); total ≤ 45,361,090 bytes (G15); the `.pck` searched for the pack's unused files (P8).
+- [ ] After set (D56) into `%LOCALAPPDATA%\hack_star\screens\09d\after\` with Step 38's names plus every variation and the new views; viewed next to the before set; Notes say what changed.
+- [ ] `README.md`: *Controls* (`C` and the four variations, `V` and `1`–`8` with the eight views), *How to play* in the Info page checked, *The look* (the palette pack, the variations, the new views, Beatbolt2 with a link to his sheets), the fighters' count; `docs/architecture.md`: `GlimmerLooks`, `CanyonLooks`, `ColourVariations`, `ToonMaterials.from_material`, the pack in `scenes/glimmer_isles/`, the camera's yaw and the screen-relative controls (`CameraViews`, `Arena.to_world/to_screen`), `DrawnFighters.animate`, Beatbolt2, the new tests; `docs/drawing_to_fighter.md` (E8: how Beatbolt2 was made from Echo's pictures — measure, sample, build, compare in rounds — and how to do it for another picture fighter); `LICENSES.md` (the pack's row, Beatbolt2's row, E8); Deferred Items: the iPad check of the third reopening, a touch button for colours.
+- [ ] Check: every statement P1–P8, H1–H8, X1–X8, E1–E8 has a Step that is ✅ Done (the iPad checks in Deferred Items).
+
+### Notes
+<!-- On completion, append: **Done (YYYY-MM-DD · ~Xh Ym · model)** — summary + verifying result. -->
+
+---
+
 ## Deferred Items
 
 | Task | Reason | Target Spec |
@@ -2078,6 +2351,9 @@ Started: 2026-11-22 22:32
 | Which AI image tool made the MagMax, Echo and Flarekid pictures, frames and projectiles, and per character whether it comes from Mattia's drawing or the author's own idea, for `LICENSES.md` | M13: "to be confirmed by the author" (reopened again 2026-11-22) | The author |
 | Whether the name **MagMax** is fine: a 1985 arcade game by Nichibutsu is called "MagMax" (no fighter, skin or brand of the repository uses it) | Q14: the author's name is kept; only the author can decide to rename | The author |
 | The iPad check of the animated fighters: ≥ 30 fps with four of them in a match, the showcase and the living cards (M15, G14) | Needs the author's iPad; Step 36 measures on the desktop only | This spec, Step 37 / author |
+| The iPad check of the third reopening: ≥ 30 fps in Glimmer Isles with the palette (fog, fill light), in every colour variation and the new views, and with four Beatbolt2 (P8, H7, X7, E7, G14) | Needs the author's iPad; Steps 40, 42, 45 and 48 measure on the desktop only | This spec, Step 49 / author |
+| A touch button for the colour variations (`C`) and the new views | H8, X6: touch players keep the defaults (as V6, Q11) | A later Godot UI spec (with the views' and lighting's touch button) |
+| The pack's UI theme (`scenes/glimmer_isles/glimmer_isles_ui_theme.tres`) on the game's screens | P7: the screens keep their look (G13, G18); committed with the pack, not used | A later Godot UI spec / root [Originality review](../../../../.specs/features/2026_11_14_4_originality_review_spec.md) (#22) |
 
 ---
 
@@ -2092,6 +2368,7 @@ Started: 2026-11-22 22:32
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | diff `bccd2ed..f10d71c` | Approve | 0 Blocking · 1 Should-fix · 4 Nit |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | review fixes of the reopening | handled | #1 and #2 fixed with tests (`Fix review findings (#35)`), #3 at `CLOSE:`, #4 → D32, #5 → D33 |
 | 2026-11-22 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: spec reopened again for the author's request — animated characters (M1–M16; Steps 1–29 kept, Steps 30–37 added, D34–D43; D31 superseded by D43) |
+| 2026-11-23 | AI assistant (Claude Opus 5.5) | plan | re-planned | re-planned: spec reopened a third time for the author's request — Glimmer Isles palette, colour variations, four more views, Beatbolt2 (P1–P8, H1–H8, X1–X8, E1–E8; V1, V2, M3 superseded; Steps 1–37 kept, Steps 38–49 added, D44–D57; D25's fixed yaw and D37's camera paragraph superseded by D50 for the new views) |
 
 ### Code review 2026-11-22
 
@@ -2127,7 +2404,7 @@ Range `bccd2ed..f10d71c` (requirements revision, re-plan, Steps 21–29; parts C
 ## Definition of Done
 
 - [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered; reopened again 2026-11-22: M1–M16 added, C2, C5, C8, C9, C11 superseded, open questions answered; reopened a third time 2026-11-23: P1–P8, H1–H8, X1–X8, E1–E8 added, V1, V2, M3 superseded, open questions answered)
-- [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29; re-planned again 2026-11-22: Steps 30–37)
+- [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29; re-planned again 2026-11-22: Steps 30–37; re-planned a third time 2026-11-23: Steps 38–49)
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items); the reopening's Steps 21–29 are all ✅ Done (`tools/test.ps1` 517 passed after the review fixes), its iPad check (L8, G14) waits for the author too
 - [x] Review · review page written; no Blocking finding open (second review of the reopening: [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), 0 Blocking)
 - [ ] Spec closed · moved to `hack_star_godot/.specs/features/done/` _(reopened in place 2026-11-22 for Steps 21–29; closed again 2026-11-22 after the second review's fixes; reopened in place again 2026-11-22 for the animated characters — closed again after the last new Step)_
