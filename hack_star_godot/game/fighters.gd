@@ -135,6 +135,19 @@ const LIST: Array[Dictionary] = [
 			{"id": "default", "name": "Default", "rarity": ""},
 		],
 	},
+	{
+		"id": "beatbolt2",
+		"name": "Beatbolt2",
+		"rarity": "Mythic",
+		"idea": "A 3D Echo built from shapes, after Mattia's drawing and Echo's pictures",
+		"unlocked": true,
+		"drawn": true,
+		"plays_like": "luna",
+		"skins":
+		[
+			{"id": "default", "name": "Default", "rarity": ""},
+		],
+	},
 ]
 
 

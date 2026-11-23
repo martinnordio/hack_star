@@ -15,6 +15,7 @@ const TROPHIES: Dictionary[String, int] = {
 	"flarekid": 0,
 	"echo": 0,
 	"magmax": 0,
+	"beatbolt2": 0,
 }
 const POWER_LEVELS: Dictionary[String, int] = {
 	"blaze": 7,
@@ -27,4 +28,5 @@ const POWER_LEVELS: Dictionary[String, int] = {
 	"flarekid": 1,
 	"echo": 1,
 	"magmax": 1,
+	"beatbolt2": 1,
 }

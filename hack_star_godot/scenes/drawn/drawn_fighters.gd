@@ -9,6 +9,7 @@ extends RefCounted
 
 const MODELS: Dictionary[String, GDScript] = {
 	"beatbolt": preload("res://scenes/drawn/beatbolt_model.gd"),
+	"beatbolt2": preload("res://scenes/drawn/beatbolt2_model.gd"),
 }
 
 

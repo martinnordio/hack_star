@@ -43,7 +43,7 @@ func test_magmax_is_an_unlocked_epic_fighter_playing_like_rocko() -> void:
 	)
 	assert_true(fighter["unlocked"] and fighter["cutout"])
 	assert_eq(fighter["skins"], [{"id": "default", "name": "Default", "rarity": ""}])
-	assert_eq(Fighters.ids().back(), "magmax", "after Echo")
+	assert_eq(Fighters.ids()[Fighters.ids().find("echo") + 1], "magmax", "after Echo")
 	assert_true(GameState.is_unlocked("magmax"))
 	assert_eq(SampleProgress.TROPHIES["magmax"], 0)
 	assert_eq(SampleProgress.POWER_LEVELS["magmax"], 1)
