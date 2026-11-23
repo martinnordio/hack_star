@@ -105,20 +105,20 @@ func test_glimmer_isles_waterfalls_are_outside_and_crystals_and_islands_move() -
 	var crystals: MultiMeshInstance3D = decor.crystals()[0]
 	var crystal: ShaderMaterial = crystals.material_override
 	var glow: float = crystal.get_shader_parameter("emission_energy")
-	var shared: ShaderMaterial = ToonMaterials.toon(
-		crystals.get_meta("albedo"),
-		crystals.get_meta("glow"),
-		crystals.get_meta("glow_strength"),
+	var shared: ShaderMaterial = GlimmerLooks.material(
+		GlimmerLooks.part_role(crystals.get_meta("kind"), crystals.get_meta("part_index")),
+		decor.variation,
 		crystals.get_meta("outlined")
 	)
 	assert_ne(crystal, shared, "the crystals pulse on their own copy of the material")
+	var base_glow: float = shared.get_shader_parameter("emission_energy")
 	var island: MultiMeshInstance3D = decor.islands()[0]
 	var place: Transform3D = decor.island_place(island, 0)
 	await wait_seconds(0.3)
 	assert_ne(crystal.get_shader_parameter("emission_energy"), glow, "the crystals pulse")
 	assert_eq(
 		shared.get_shader_parameter("emission_energy"),
-		float(crystals.get_meta("glow_strength")),
+		base_glow,
 		"the shared material keeps its glow"
 	)
 	var moved: Transform3D = decor.island_place(island, 0)

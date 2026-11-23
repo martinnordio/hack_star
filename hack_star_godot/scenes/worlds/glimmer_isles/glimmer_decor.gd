@@ -12,7 +12,6 @@ const KINDS: Array[String] = ["Fireflies", "CrystalPulse", "Waterfalls", "Turnin
 const WATER_SHADER: Shader = preload("res://scenes/toon/flowing_water.gdshader")
 
 const FIREFLY_COUNT: int = 48
-const FIREFLY: Color = Color("e6ff6a")
 const FIREFLY_LIFETIME: float = 6.0
 ## The crystals' glow swings by this share of its baked strength, this fast (radians/second).
 const PULSE_SHARE: float = 0.6
@@ -20,17 +19,19 @@ const PULSE_SPEED: float = 2.2
 ## The floating islands turn this fast (radians/second) and bob this high (metres).
 const ISLAND_TURN_SPEED: float = 0.12
 const ISLAND_BOB: float = 0.15
-const WATERFALL: Color = Color(0.45, 0.9, 1.0, 0.85)
-const WATERFALL_LIGHT: Color = Color("f0ffff")
 const WATERFALL_LENGTH: float = 7.0
 ## Every this many-th island has a waterfall, on its side towards the camera.
 const WATERFALL_EVERY: int = 2
 
 ## The baked props (`GlimmerIsles.load_baked`), set before `_ready`.
 var baked: Node3D
+## The colour variation of the world (`GlimmerLooks`), set before `_ready`.
+var variation: String = GlimmerLooks.DEFAULT
 
 var _time: float = 0.0
 var _crystals: Array[MultiMeshInstance3D] = []
+# The glow strength of each crystal part's material, which the pulse swings around.
+var _crystal_glow: Array[float] = []
 var _islands: Array[MultiMeshInstance3D] = []
 var _island_centers: Array[Vector3] = []
 # Each waterfall and the island it pours from.
@@ -78,7 +79,8 @@ func _build_fireflies() -> void:
 	flies.scale_amount_max = 1.4
 	var fade: Gradient = Gradient.new()
 	fade.offsets = PackedFloat32Array([0.0, 0.2, 0.8, 1.0])
-	fade.colors = PackedColorArray([Color(FIREFLY, 0.0), FIREFLY, FIREFLY, Color(FIREFLY, 0.0)])
+	var firefly: Color = GlimmerLooks.color("firefly", variation)
+	fade.colors = PackedColorArray([Color(firefly, 0.0), firefly, firefly, Color(firefly, 0.0)])
 	flies.color_ramp = fade
 	var dot: SphereMesh = SphereMesh.new()
 	dot.radius = 0.06
@@ -102,10 +104,14 @@ func _find_baked() -> void:
 	for child: Node in baked.get_children():
 		var instances: MultiMeshInstance3D = child
 		var kind: String = instances.get_meta("kind")
-		if kind == "crystal_cluster" and float(instances.get_meta("glow_strength")) > 0.0:
+		var glow: float = (instances.material_override as ShaderMaterial).get_shader_parameter(
+			"emission_energy"
+		)
+		if kind == "crystal_cluster" and glow > 0.0:
 			# Its own copy: the pulse must not change the shared `ToonMaterials` entry.
 			instances.material_override = instances.material_override.duplicate()
 			_crystals.append(instances)
+			_crystal_glow.append(glow)
 		elif kind == "island_chunk":
 			_islands.append(instances)
 			if int(instances.get_meta("part_index")) == 0:
@@ -126,8 +132,8 @@ func _build_waterfalls() -> void:
 		sheet.size = Vector2(0.7 * size, WATERFALL_LENGTH)
 		var material: ShaderMaterial = ShaderMaterial.new()
 		material.shader = WATER_SHADER
-		material.set_shader_parameter("water", WATERFALL)
-		material.set_shader_parameter("highlight", WATERFALL_LIGHT)
+		material.set_shader_parameter("water", GlimmerLooks.color("waterfall", variation))
+		material.set_shader_parameter("highlight", GlimmerLooks.color("waterfall_light", variation))
 		material.set_shader_parameter("flow", Vector2(0.0, 1.6))
 		material.set_shader_parameter("bands", Vector2(1.5, WATERFALL_LENGTH / 1.2))
 		material.set_shader_parameter("foot_fade", 1.0)
@@ -155,8 +161,9 @@ func _island_scale(index: int) -> float:
 # The crystals' glow and the islands' turn and bob at the current time.
 func _animate() -> void:
 	var pulse: float = 1.0 + PULSE_SHARE * sin(_time * PULSE_SPEED)
-	for instances: MultiMeshInstance3D in _crystals:
-		var strength: float = float(instances.get_meta("glow_strength")) * pulse
+	for index: int in _crystals.size():
+		var instances: MultiMeshInstance3D = _crystals[index]
+		var strength: float = _crystal_glow[index] * pulse
 		(instances.material_override as ShaderMaterial).set_shader_parameter(
 			"emission_energy", strength
 		)

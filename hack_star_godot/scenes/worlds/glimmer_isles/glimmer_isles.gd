@@ -9,7 +9,10 @@ extends Node3D
 ## `tools/bake_world.gd`): no addon code and no thread while the game runs. Collisions and hiding
 ## come from the layout, as in the canyon; the same wall heights as `Canyon`, so the camera frames
 ## both the same way. The newer decoration (fireflies, pulsing crystals, waterfalls, turning
-## islands; spec 09 L2) is `GlimmerDecor`, a child named `Decor`.
+## islands; spec 09 L2) is `GlimmerDecor`, a child named `Decor`. Every colour comes from
+## `GlimmerLooks` for the colour `variation` (spec 09 P2, D45): the author's palette pack by
+## default, with a lagoon under the island; places, colliders and layouts are the same in every
+## variation (P6).
 
 const BAKED: PackedScene = preload("res://scenes/worlds/glimmer_isles/baked.tscn")
 
@@ -24,27 +27,15 @@ const PATH_STEP: float = 1.1
 ## The same island every time.
 const LOOK_SEED: int = 9
 
-## Vivid teal and violet since the reopening (spec 09, L1, D26); the ground stays the least
-## saturated surface (G10).
-const GROUND: Color = Color("74bccb")
-const GROUND_LAVENDER: Color = Color("a294dc")
-const PATH: Color = Color("c8fbff")
-const PATH_GLOW: Color = Color("5fe8ff")
-const RIM: Color = Color("4aa892")
-const UNDERSIDE: Color = Color("6446c4")
-const BORDER: Color = Color("7b56dc")
-const BORDER_TOP: Color = Color("5434b0")
-const PLINTH: Color = Color("5434b0")
-const FERN_GROUND: Color = Color("2c9c78")
-const SKY_TOP: Color = Color("1b1446")
-const SKY_HORIZON: Color = Color("c77ad6")
-const VOID_DEEP: Color = Color("140f38")
-const VOID_HORIZON: Color = Color("6a4fb8")
-const AMBIENT: Color = Color("b8a8ff")
-const SUN: Color = Color("fff0ff")
+## The world's lagoon: this far below the floor, this big (only in the variations that have one).
+const LAGOON_DEPTH: float = 14.0
+const LAGOON_SIZE: float = 160.0
 
 @export var floor_body: StaticBody3D
 @export var walls: Node3D
+
+## The colour variation the world is built in (`GlimmerLooks`; spec 09 H1).
+var variation: String = GlimmerLooks.DEFAULT
 
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
@@ -57,11 +48,12 @@ func _ready() -> void:
 	_build_walls()
 	_build_cover()
 	_build_path()
-	var baked: Node3D = load_baked()
+	var baked: Node3D = load_baked(variation)
 	add_child(baked)
 	var decor: GlimmerDecor = GlimmerDecor.new()
 	decor.name = "Decor"
 	decor.baked = baked
+	decor.variation = variation
 	add_child(decor)
 
 
@@ -75,8 +67,9 @@ static func wall_height(index: int) -> float:
 
 
 ## The baked props (`baked.tscn`) ready to show: every MultiMesh filled from its `transforms`
-## and every part on the shared toon material of its colours.
-static func load_baked() -> Node3D:
+## and every part on the shared toon material of its role in the colour variation (its `kind` and
+## `part_index`, `GlimmerLooks.part_role`); the colours the bake stored are not used.
+static func load_baked(look_variation: String = GlimmerLooks.DEFAULT) -> Node3D:
 	var baked: Node3D = BAKED.instantiate()
 	baked.name = "Baked"
 	for child: Node in baked.get_children():
@@ -87,11 +80,11 @@ static func load_baked() -> Node3D:
 		for index: int in transforms.size():
 			multimesh.set_instance_transform(index, transforms[index])
 		instances.multimesh = multimesh
-		instances.material_override = ToonMaterials.toon(
-			instances.get_meta("albedo"),
-			instances.get_meta("glow"),
-			instances.get_meta("glow_strength"),
-			instances.get_meta("outlined")
+		var role: String = GlimmerLooks.part_role(
+			instances.get_meta("kind"), instances.get_meta("part_index")
+		)
+		instances.material_override = GlimmerLooks.material(
+			role, look_variation, instances.get_meta("outlined")
 		)
 	return baked
 
@@ -103,21 +96,26 @@ func _build_sky() -> void:
 	if holder != null and holder.environment != null:
 		var environment: Environment = holder.environment.duplicate()
 		var gradient: ProceduralSkyMaterial = ProceduralSkyMaterial.new()
-		gradient.sky_top_color = SKY_TOP
-		gradient.sky_horizon_color = SKY_HORIZON
-		gradient.ground_bottom_color = VOID_DEEP
-		gradient.ground_horizon_color = VOID_HORIZON
+		gradient.sky_top_color = _sky_color("sky_top")
+		gradient.sky_horizon_color = _sky_color("sky_horizon")
+		gradient.ground_bottom_color = _sky_color("void_deep")
+		gradient.ground_horizon_color = _sky_color("void_horizon")
 		gradient.sun_angle_max = 0.0
 		var sky: Sky = Sky.new()
 		sky.sky_material = gradient
 		environment.background_mode = Environment.BG_SKY
 		environment.sky = sky
 		environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		environment.ambient_light_color = AMBIENT
+		environment.ambient_light_color = _sky_color("ambient")
 		holder.environment = environment
 	var sun: DirectionalLight3D = get_parent().get_node_or_null("Sun")
 	if sun != null:
-		sun.light_color = SUN
+		sun.light_color = _sky_color("sun")
+
+
+# The sky's colours stay Original's until the pack's lighting is used (spec 09 Step 40).
+static func _sky_color(role: String) -> Color:
+	return GlimmerLooks.color(role, GlimmerLooks.ORIGINAL)
 
 
 func _build_floor() -> void:
@@ -129,7 +127,7 @@ func _build_floor() -> void:
 	box.size = Vector3(size.x, FLOOR_THICKNESS, size.y)
 	shape.shape = box
 	floor_body.add_child(shape)
-	_mesh(floor_body, "Mesh", _box(box.size), GROUND, Vector3.ZERO, false)
+	_mesh(floor_body, "Mesh", _box(box.size), "ground", Vector3.ZERO, false)
 	var tile: PlaneMesh = PlaneMesh.new()
 	tile.size = Vector2.ONE * TILE_SIZE * 0.94
 	var transforms: Array[Transform3D] = []
@@ -139,18 +137,24 @@ func _build_floor() -> void:
 			var x: float = -size.x / 2.0 + (column + 0.5) * TILE_SIZE
 			var z: float = -size.y / 2.0 + (row + 0.5) * TILE_SIZE
 			transforms.append(Transform3D(Basis.IDENTITY, Vector3(x, 0.01, z)))
-			var shade: Color = GROUND if (column + row) % 2 == 0 else GROUND_LAVENDER
-			colors.append(shade.lightened(_rng.randf_range(0.0, 0.05)))
+			var role: String = "ground" if (column + row) % 2 == 0 else "ground_alt"
+			var shade: Dictionary = GlimmerLooks.look(role, variation)
+			# Drawn every time, so the path's random places stay the same in every variation.
+			var lift: float = _rng.randf_range(0.0, 0.05)
+			colors.append(
+				(shade["albedo"] as Color).lightened(lift if shade["jitter"] > 0 else 0.0)
+			)
 	var tiles: MultiMeshInstance3D = _multimesh(
 		"Tiles", tile, ToonMaterials.instanced(false), transforms, colors
 	)
 	tiles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
-# The island around the arena (the rim the giant mushrooms stand on) and its rocky underside.
+# The island around the arena (the rim the giant mushrooms stand on), its rocky underside and,
+# where the variation has one, the lagoon far below that the waterfalls pour into.
 func _build_island() -> void:
 	var rim: MeshInstance3D = _mesh(
-		self, "Rim", _box(Vector3(28.0, 0.6, 31.0)), RIM, Vector3(0.0, -0.34, -2.0), false
+		self, "Rim", _box(Vector3(28.0, 0.6, 31.0)), "rim", Vector3(0.0, -0.34, -2.0), false
 	)
 	rim.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var underside: CylinderMesh = CylinderMesh.new()
@@ -159,7 +163,28 @@ func _build_island() -> void:
 	underside.height = 12.0
 	underside.radial_segments = 9
 	underside.rings = 1
-	_mesh(self, "Underside", underside, UNDERSIDE, Vector3(0.0, -6.64, -2.0))
+	_mesh(self, "Underside", underside, "underside", Vector3(0.0, -6.64, -2.0))
+	if GlimmerLooks.has_role("lagoon", variation):
+		_build_lagoon()
+
+
+# One large plane of flowing water under the island (spec 09 P3, D46): no collider.
+func _build_lagoon() -> void:
+	var plane: PlaneMesh = PlaneMesh.new()
+	plane.size = Vector2.ONE * LAGOON_SIZE
+	var material: ShaderMaterial = ShaderMaterial.new()
+	material.shader = GlimmerDecor.WATER_SHADER
+	material.set_shader_parameter("water", GlimmerLooks.color("lagoon", variation))
+	material.set_shader_parameter("highlight", GlimmerLooks.color("lagoon_light", variation))
+	material.set_shader_parameter("flow", Vector2(0.12, 0.05))
+	material.set_shader_parameter("bands", Vector2(16.0, 16.0))
+	var lagoon: MeshInstance3D = MeshInstance3D.new()
+	lagoon.name = "Lagoon"
+	lagoon.mesh = plane
+	lagoon.material_override = material
+	lagoon.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	lagoon.position = Vector3(0.0, -LAGOON_DEPTH, -2.0)
+	add_child(lagoon)
 
 
 func _build_walls() -> void:
@@ -179,14 +204,14 @@ func _build_walls() -> void:
 		shape.shape = box
 		body.add_child(shape)
 		if border:
-			_mesh(body, "Mesh", _box(box.size), BORDER, Vector3.ZERO)
+			_mesh(body, "Mesh", _box(box.size), "border", Vector3.ZERO)
 			var cap: Vector3 = Vector3(rect.size.x + 0.14, 0.2, rect.size.y + 0.14)
-			_mesh(body, "Top", _box(cap), BORDER_TOP, Vector3(0.0, height / 2.0, 0.0))
+			_mesh(body, "Top", _box(cap), "border_top", Vector3(0.0, height / 2.0, 0.0))
 		else:
 			# The crystal clusters of the bake stand on this plinth and fill the wall.
 			var plinth: Vector3 = Vector3(rect.size.x, PLINTH_HEIGHT, rect.size.y)
 			var at: Vector3 = Vector3(0.0, (PLINTH_HEIGHT - height) / 2.0, 0.0)
-			_mesh(body, "Mesh", _box(plinth), PLINTH, at)
+			_mesh(body, "Mesh", _box(plinth), "plinth", at)
 		walls.add_child(body)
 
 
@@ -196,7 +221,7 @@ func _build_cover() -> void:
 		patch.size = bush.size + Vector2(0.4, 0.4)
 		var at: Vector2 = bush.get_center()
 		var ground: MeshInstance3D = _mesh(
-			self, "FernGround", patch, FERN_GROUND, Vector3(at.x, 0.02, at.y), false
+			self, "FernGround", patch, "fern_ground", Vector3(at.x, 0.02, at.y), false
 		)
 		ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
@@ -229,18 +254,18 @@ func _build_path() -> void:
 	var colors: Array[Color] = []
 	colors.resize(transforms.size())
 	colors.fill(Color.WHITE)
-	var material: Material = ToonMaterials.toon(PATH, PATH_GLOW, 0.6, false)
+	var material: Material = GlimmerLooks.material("path", variation, false)
 	var path: MultiMeshInstance3D = _multimesh("Path", stone, material, transforms, colors)
 	path.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _mesh(
-	parent: Node, node_name: String, mesh: Mesh, color: Color, at: Vector3, outlined: bool = true
+	parent: Node, node_name: String, mesh: Mesh, role: String, at: Vector3, outlined: bool = true
 ) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()
 	instance.name = node_name
 	instance.mesh = mesh
-	instance.material_override = ToonMaterials.toon(color, Color.BLACK, 0.0, outlined)
+	instance.material_override = GlimmerLooks.material(role, variation, outlined)
 	instance.position = at
 	parent.add_child(instance, true)
 	return instance

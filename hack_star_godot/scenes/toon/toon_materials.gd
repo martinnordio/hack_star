@@ -18,6 +18,9 @@ const OUTLINE_GROW: float = 0.012
 const SEE_THROUGH_ALPHA: float = 0.45
 ## The see-through outline's grow in metres (the shader outline needs an opaque pass).
 const SEE_THROUGH_OUTLINE_GROW: float = 0.022
+## The share of a pack material's glow energy the toon shader uses: the pack's energies are made
+## for the standard shader under its own tone mapping; in full they wash a glowing part to white.
+const PACK_GLOW_SHARE: float = 0.25
 
 static var _toons: Dictionary[String, ShaderMaterial] = {}
 static var _outline: ShaderMaterial
@@ -41,6 +44,17 @@ static func toon(
 			material.next_pass = outline()
 		_toons[key] = material
 	return _toons[key]
+
+
+## The cel-shaded material of a pack material (spec 09, P3, D46): its colour and its glow
+## (emission, its energy times `PACK_GLOW_SHARE`) in the toon look with the outline; roughness,
+## metallic and rim are left to the toon shader's own bands and rim, and the toon shader draws it
+## opaque. Shared like `toon`.
+static func from_material(material: BaseMaterial3D, outlined: bool = true) -> ShaderMaterial:
+	if material.emission_enabled:
+		var energy: float = material.emission_energy_multiplier * PACK_GLOW_SHARE
+		return toon(material.albedo_color, material.emission, energy, outlined)
+	return toon(material.albedo_color, Color.BLACK, 0.0, outlined)
 
 
 ## The cel-shaded material of MultiMesh props, coloured per instance (`set_instance_color`).
