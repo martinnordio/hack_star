@@ -1,7 +1,7 @@
 # Better Graphics Spec
 
 > **Author:** Martin Nordio and Mattia Nordio
-> **Status:** 🔄 Reopened 2026-11-22 — animated characters
+> **Status:** 🔄 Reopened 2026-11-23 — Glimmer Isles palette, colour variations, more views and Beatbolt2
 > **Created:** 2026-11-22
 > **Last updated:** 2026-11-23
 > **Branch:** `feature/better-graphics`
@@ -72,6 +72,7 @@
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.99 M (289 k in · 7.68 M cached · 27 k out) | CHF 2.95 (352 credits) | Step 37 done; web export 43,544,883 bytes (`usage.ps1 -AgentName s09g-steps36-37` from 2026-11-22 22:32:37 to 2026-11-23 07:19:37) |
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 430 k (159 k in · 264 k cached · 8 k out) | CHF 0.84 (100 credits) | spec runner (coordination) of the animated-characters reopening (`usage.ps1 -AgentName s09g-runner4` from 2026-11-22 20:22:00) |
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 1.21 M (4 k in · 1.20 M cached · 3 k out) | CHF 0.27 (32 credits) | orchestrator (main chat) of the animated-characters reopening, coordination (`usage.ps1 -Agent main` from 2026-11-22 20:21:13) |
+| 2026-11-23 | requirements | `REQUIREMENTS:` | Claude Opus 5.5 | 5.72 M (204 k in · 5.48 M cached · 38 k out) | CHF 2.42 (288 credits) | Part 1 revised: spec reopened in place a third time for the author's request (issue #35 kept, comment added); groups P (P1–P8, the Glimmer Isles palette pack and materials), H (H1–H8, four colour variations on `C`), X (X1–X8, four more camera views on `V` and `5`–`8`, controls and facing per view) and E (E1–E8, Beatbolt2: a 3D Echo built from shapes) added; V1, V2, M3 superseded; Q19–Q25 answered with the suggestions; no open questions (agent `s09g-lead5`; `usage.ps1 -AgentName s09g-lead5` from 2026-11-23 07:42:56 to 07:54:18) |
 
 ---
 
@@ -252,6 +253,10 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   **MagMax**, and Echo and Flarekid with the author's new delivery — front, back and side views
   that follow the movement, a walk loop, a shoot pose and their own projectiles in play, and a
   showcase on the pedestal, the fighter screen and the fighter list.
+- _(added 2026-11-23, author's request)_ The author's Glimmer Isles palette pack applied to
+  Glimmer Isles (part P), four colour variations switched with `C` (part H), four more camera
+  views on `V` and `5`–`8` (part X), and **Beatbolt2**, a 3D fighter built from shapes that looks
+  like the Echo pictures from every side (part E).
 
 **Reopened 2026-11-22 (author's request) — found in the repository:**
 - `characters/blaze2/` and `characters/echo/` (untracked, made by the author with an AI image
@@ -323,6 +328,58 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   repository is called MagMax.
 - Web export at the last close: 41,244,583 bytes, 4.1 MB under G15's budget (45,361,090); the two
   picture fighters' imported pictures 0.67 MB.
+
+**Reopened a third time 2026-11-23 (author's request: palette, colour variations, views,
+Beatbolt2) — found in the repository:**
+- `scenes/glimmer_isles/` (untracked, made by the author, dropped on 2026-11-22 during Step 32):
+  `glimmer_palette.gd` (`class_name GlimmerPalette`, 66 colour constants in 11 ramps of six —
+  Lagoon Water, Sky & Mist, Leaves & Grass, Ferns & Moss, Mushroom Caps, Glow Mushrooms, Stems &
+  Roots, Cliffs & Stone, Sand & Paths, Glimmer Gold, UI & Gameplay — and a dictionary `ALL`),
+  `glimmer_isles_environment.tres` (a procedural sky from dream violet to blush pink over a lagoon
+  ground, colour ambient light, filmic tone mapping, glow, light fog, colour boost: brightness
+  1.02, contrast 1.05, saturation 1.18), `glimmer_isles_lighting.tscn` (a `WorldEnvironment` with
+  that environment, a warm `DirectionalLight3D` "Sun" with shadows and a violet `OmniLight3D`
+  "MagicFill" of 18 m), `glimmer_isles_ui_theme.tres` (buttons, panels, labels), `materials/` (11
+  `StandardMaterial3D`: water and waterfall transparent, glow_mushroom and crystal_gold emissive,
+  grass, leaf, moss, stone, sand, mushroom_cap, mushroom_stem — PBR materials, **not** the game's
+  cel-shaded toon materials, and without an outline), the same palette as `.gpl`, `.hex`, `.json`
+  and a 196 kB `.png`, and a README. The README says to copy the folder to `res://glimmer_isles/`;
+  `glimmer_isles_lighting.tscn` points to `res://glimmer_isles/glimmer_isles_environment.tres`,
+  which does not exist (the files are in `res://scenes/glimmer_isles/`). No licence is written in
+  the pack; the author says he made it. Godot's runs already imported its PNG, and Step 37 measured
+  that the untracked pack is in today's web export (about 159 kB; it is not in the export filter).
+- Glimmer Isles' colours today are constants in code: `GlimmerIsles` (ground tiles, path, rim,
+  underside, border, plinths, fern ground, sky, ambient, sun), `GlimmerProp` (crystal cluster, glow
+  fern, small and giant mushroom, island chunk), `GlimmerDecor` (fireflies, waterfalls with
+  `flowing_water.gdshader`, crystal pulse, turning islands), and the baked props
+  (`scenes/worlds/glimmer_isles/baked.tscn`, 19 MultiMesh parts) keep each part's colour, glow
+  and outline as metadata from the bake (`tools/bake_world.ps1`); every surface uses
+  `ToonMaterials` (cel shading and the screen-space outline, D5). `WorldLighting` remembers the
+  world's own light and every preset but Classic keeps 30 % of it (`LightPresets.WORLD_SHARE`);
+  glow is on only in Neon night (D27). The arena's `Sun` casts shadows.
+- Keys of Training and a match: `move_*` (WASD, arrows), `shoot` (Space), `view_next` (V),
+  `view_1`–`view_4` (1–4 and the number pad), `light_next` (L), `saturation_boost` (K); no
+  script reads a key directly. **`C` and `5`–`8` are free.**
+- Views: `CameraViews` (Classic, Close, Behind, Overview); in all four the camera looks north with
+  a fixed yaw (D25), `Movement` maps the keys to world directions, and `CutoutAnimator.view_for`
+  takes the direction on the screen as the world direction — right only while the camera never
+  turns (D37 says a view that turns the camera must pass its yaw).
+- **Beatbolt** (`scenes/drawn/beatbolt_model.gd`, registered in `DrawnFighters`; Mythic, plays like
+  Luna): built from shapes with `FighterModel`'s building blocks from Mattia's drawing — front only,
+  the back and sides guessed —, scaled to 0.85; spiky purple and navy hair with a pink streak, big
+  white-and-teal headphones, a white jacket with teal trim, navy trousers, black shoes, a black
+  glove and a long white tube arm cannon; idle, run, attack, the see-through and the card picture
+  (rendered off-screen by `FighterPictures`) come from `FighterModel`.
+- **Echo** (`characters/echo/`, a picture fighter, Mythic, plays like Luna): `echo_hero.png` (not
+  exported), `echo_card.png`, 12 gameplay frames (592 × 503 px; `down` = front, `up` = back,
+  `side` = a three-quarter view looking right; idle, walk 1, walk 2, shoot) and
+  `echo_animation_preview.png`: a chibi boy (the head about a third of his height) with spiky
+  violet-to-blue hair with a magenta lock, a white headband headphone with glowing teal cups, a
+  white jacket with teal shoulder pads, teal collar and orange marks, navy cargo trousers, black
+  sneakers with glowing teal soles, black fingerless gloves, and a white-and-teal striped arm
+  cannon with a glowing teal muzzle in his right hand (on the left of the front picture).
+- `FighterModel` has 989 lines (gdlint's limit is 1000). Web export at Step 37: 43,544,883 bytes
+  (the untracked pack included), 1.8 MB under G15's budget (45,361,090).
 
 | Document | Purpose |
 |----------|---------|
@@ -539,13 +596,15 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
 
 ### V — Views while playing (added 2026-11-22, author's request)
 
-- **V1 — Four views:** In Training and a match the player can switch between four camera views:
+- ~~**V1 — Four views:** In Training and a match the player can switch between four camera views:
   **Classic** (today's angled view from above, the default), **Close** (the same angle, nearer to
   the fighter), **Behind** (low, just behind the fighter, looking ahead up the arena) and
-  **Overview** (high above, the whole arena in sight).
-- **V2 — Keys:** `V` switches to the next view (Classic → Close → Behind → Overview → Classic),
+  **Overview** (high above, the whole arena in sight).~~ (superseded 2026-11-23 by X1: four more
+  views join the four)
+- ~~**V2 — Keys:** `V` switches to the next view (Classic → Close → Behind → Overview → Classic),
   `1`–`4` (also on the number pad) choose a view directly; they work during the countdown and the
-  fight, and clash with no other key of the game.
+  fight, and clash with no other key of the game.~~ (superseded 2026-11-23 by X2: `V` goes
+  through eight views, `1`–`8` choose one)
 - **V3 — Name shown:** After a switch the view's name is shown at the top of the screen on a dark
   backing for about 1.5 s.
 - **V4 — Same controls:** In every view the movement keys move the fighter the same way on the
@@ -601,13 +660,15 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   MagMax). Every delivered scene and resource points to the folder it is in — no path to
   `characters/blaze/`, `characters/magmax/` or a `*_new` folder — and the three `*_new` folders
   are moved, not copied (they no longer exist afterwards). _(added 2026-11-22, author's request)_
-- **M3 — Facing from movement:** In Training and a match (the player and the bots) an animated
+- ~~**M3 — Facing from movement:** In Training and a match (the player and the bots) an animated
   fighter shows its **back** view while it moves up the screen (away from the camera), its
   **front** view while it moves down the screen, and its **side** view while it moves mostly left
   or right (mirrored for left); a diagonal shows the closer of these, and standing still keeps the
   last view. Up on the screen is the same direction in all four camera views (the camera never
   turns, V4), so the facing is the same in Classic, Close, Behind and Overview. At the start of a
-  match and of Training the fighter shows its front view. _(added 2026-11-22, author's request)_
+  match and of Training the fighter shows its front view. _(added 2026-11-22, author's request)_~~
+  (superseded 2026-11-23 by X4: some of the new views turn the camera, so the facing follows the
+  direction on the screen in all eight views; the rest of M3 stays in X4)
 - **M4 — Walk and idle:** While it moves, an animated fighter plays the walk loop of its current
   view (walk 1, idle, walk 2, idle) at a pace that fits its speed, with a small hop; when it stops
   it shows that view's idle frame at once and stays alive (breathing, as C4). It never slides
@@ -669,6 +730,151 @@ copyright at all; the drawing itself is Mattia's own work. Not legal advice.
   showcase) and how the author adds another one from the same kind of delivery (12 frames, a card,
   a hero picture, a projectile). _(added 2026-11-22, author's request)_
 
+### P — Glimmer Isles palette and materials (added 2026-11-23, author's request)
+
+- **P1 — The pack in the game:** The author's palette pack is committed in
+  `scenes/glimmer_isles/` as a source asset, its files as delivered except the paths: no file of
+  the repository names `res://glimmer_isles/` (the lighting scene loads its environment from
+  `res://scenes/glimmer_isles/`, the README says where the pack is and how the game uses it).
+  `LICENSES.md` has a row for it: made by the author, under the repository's licence (MIT).
+  _(added 2026-11-23, author's request)_
+- **P2 — Palette colours:** In the default colour variation (H1) every surface of Glimmer Isles —
+  the ground and its tiles, the path, the cover plants and their ground, the walls and plinths, the
+  crystals, the mushrooms, the floating islands with their grass, rock and roots, the rim and the
+  underside, the fireflies and the waterfalls — has a colour of the pack's 66-colour palette or of
+  one of its materials; shading keeps the darkest colour of a ramp for shadows, never pure black.
+  _(added 2026-11-23, author's request)_
+- **P3 — Materials:** The pack's materials give their colours, transparency and glow to the
+  matching objects: water to at least one water surface outside the playing area, waterfall to the
+  waterfalls, grass, leaf and moss to the plants and the island grass, stone to the walls and rocks,
+  sand to the path, mushroom cap and stem to the giant mushrooms, glow mushroom to the small
+  mushrooms, crystal gold to at least one kind of crystal; only glowing objects glow (the Glow
+  Mushrooms and Glimmer Gold colours). _(added 2026-11-23, author's request)_
+- **P4 — Sky and light:** Glimmer Isles' own light is the pack's environment and lighting scene:
+  its sky (violet to blush pink over the lagoon), ambient light, fog and colour boost, the warm sun
+  and the violet fill light; the pack's sky colours are recognisable in the default lighting
+  preset (L6) on screenshots, and the **Classic** preset (L3) shows the pack's environment as
+  delivered. _(added 2026-11-23, author's request)_
+- **P5 — Toon look kept:** Every object of Glimmer Isles keeps the cel shading and the dark
+  outline of G9, G10 and W3 with the new colours; the floor stays the least saturated surface, so
+  fighters, shots and health bars stand out (G10, L1, L7). _(added 2026-11-23, author's request)_
+- **P6 — Same world, same rules:** Walls, cover, colliders, start points, the see-through in a
+  bush and the places of the baked props stay as they are (W4); the props stay baked (no thread and
+  no addon code while the game runs, W5). _(added 2026-11-23, author's request)_
+- **P7 — UI unchanged:** The pack's UI theme is committed with the pack but the game's screens keep
+  their look (G13, G18). _(added 2026-11-23, author's request)_
+- **P8 — Smooth and small:** With four fighters in Glimmer Isles in the default variation and
+  every lighting preset the desktop frame time and draw calls stay within L8 of the reopening's
+  baseline (Step 21); the iPad check (≥ 30 frames per second, G14) stays with the author. Of the
+  pack only what the game uses is in the web export (not the palette picture, the `.gpl`, `.hex`
+  and `.json` files, the README or the UI theme), and the export stays within G15's budget
+  (45,361,090 bytes). _(added 2026-11-23, author's request)_
+
+### H — Colour variations (added 2026-11-23, author's request)
+
+- **H1 — Four variations on `C`:** In Training and a match `C` switches to the next of four colour
+  variations — **1 Original**, **2 Glimmer**, **3 Lagoon**, **4 Glow night** — and back to the first
+  after the last; it works during the countdown and the fight and clashes with no other key. A game
+  starts with **2 Glimmer**. _(added 2026-11-23, author's request)_
+- **H2 — Original:** Variation 1 is exactly the look before this reopening, in both worlds and
+  every lighting preset (the same colours, materials, sky and light as the before set).
+  _(added 2026-11-23, author's request)_
+- **H3 — Glimmer:** Variation 2 is Glimmer Isles with the pack (P2–P5); the canyon looks in
+  variation 2 exactly as in variation 1 (the palette is Glimmer Isles'; W7).
+  _(added 2026-11-23, author's request)_
+- **H4 — Lagoon and Glow night:** Variations 3 and 4 change both worlds, using only the pack's
+  colours, materials and environment: **Lagoon** a bright day of lagoon water, turquoise, jade and
+  beach sand (the canyon an oasis); **Glow night** a night of twilight sky with glowing mushrooms,
+  crystals and gold sparkles (the canyon too). On screenshots every variation is clearly different
+  from the others in both worlds, apart from the canyon's 1 and 2 (H3).
+  _(added 2026-11-23, author's request)_
+- **H5 — Name shown:** After `C` the variation's number and name are shown as in V3 and L5.
+  _(added 2026-11-23, author's request)_
+- **H6 — With the other keys:** `L` (lighting presets) and `K` (saturation boost) work in every
+  variation and apply on top of it, and `C` keeps the preset, the boost and the view; the variation
+  is kept for the next match and Training while the game is open (not saved, as V6 and L6).
+  _(added 2026-11-23, author's request)_
+- **H7 — Readable and smooth:** In every variation, with every lighting preset and with the boost,
+  the fighters, shots, health bars, cover and see-through and the HUD stay readable and the floor
+  is the least saturated surface (L7, G10; screenshots); the desktop frame time and draw calls stay
+  within L8 in both worlds. _(added 2026-11-23, author's request)_
+- **H8 — Documented:** The README's controls, the Info page's *How to play* and the start hint
+  name `C` and the four variations. Touch players keep the default variation (no touch button, as
+  V6). _(added 2026-11-23, author's request)_
+
+### X — Four more camera views (added 2026-11-23, author's request)
+
+- **X1 — Eight views:** Besides Classic, Close, Behind and Overview the player can switch to four
+  more views: **Low** (low behind the fighter, about at his head's height, looking past him up the
+  arena — a dramatic hero angle), **Side** (from the side of the arena, looking across it,
+  following the fighter), **Diagonal** (high and from a corner, at 45° to the arena) and
+  **Cinematic** (following the fighter while the camera swings slowly to and fro around it).
+  _(added 2026-11-23, author's request)_
+- **X2 — Keys:** `V` switches to the next view (Classic → Close → Behind → Overview → Low → Side →
+  Diagonal → Cinematic → Classic), `1`–`8` (also on the number pad) choose a view directly; they
+  work during the countdown and the fight and clash with no other key. _(added 2026-11-23,
+  author's request)_
+- **X3 — Controls on the screen:** In every view, also while a camera turns, the movement keys and
+  the touch joystick move the fighter the same way on the screen as in Classic: up (W, up arrow)
+  away from the camera, up the screen; down towards it; left and right to the screen's left and
+  right; shots fly in the direction on the screen as before (V4). _(added 2026-11-23, author's
+  request)_
+- **X4 — Facing in every view:** In Training and a match (the player and the bots) an animated
+  fighter shows its **back** view while it moves up the screen, its **front** view while it moves
+  down the screen, and its **side** view while it moves mostly left or right on the screen
+  (mirrored for left); a diagonal shows the closer of these, standing still keeps the last view,
+  the shoot pose shows the view of the shot's direction on the screen, and at the start the fighter
+  shows its front. This holds in all eight views, checked per view; fighters of shapes (Beatbolt2
+  included) turn to their movement and show their back moving up the screen. _(added 2026-11-23,
+  author's request; M3's rule for every view)_
+- **X5 — Framing:** In every view the player's fighter, its health bar and its name stay within the
+  screen at the five screen sizes; Classic keeps G11; Overview shows the four border walls (V5).
+  _(added 2026-11-23, author's request)_
+- **X6 — Name, kept, touch:** After a switch the view's name is shown as in V3; the chosen view is
+  kept for the next match and Training while the game is open; touch players keep the default view
+  (V6). _(added 2026-11-23, author's request)_
+- **X7 — Smooth:** In each new view, in both worlds, the desktop frame time and draw calls stay
+  within L8. _(added 2026-11-23, author's request)_
+- **X8 — Documented:** The README's controls, the Info page's *How to play* and the start hint name
+  `V`, `1`–`8` and the eight views. _(added 2026-11-23, author's request)_
+
+### E — Beatbolt2, a 3D Echo built from shapes (added 2026-11-23, author's request)
+
+- **E1 — A new fighter:** **Beatbolt2** joins the fighters: unlocked for every account from the
+  start (old saves included), one Default skin, rarity **Mythic**, playing like **Luna** (as Echo
+  and Beatbolt, no new attack, A6); shown in the fighter list, the fighter screen and on home, can
+  be chosen and is playable in Training and a match. Beatbolt, Echo and the other fighters stay as
+  they are. _(added 2026-11-23, author's request)_
+- **E2 — 3D from shapes:** Beatbolt2 is a 3D figure built from shapes in code, starting from
+  Beatbolt's model (no picture of Echo on him, no imported model), in the cel-shaded, outlined look
+  of G9 (readable eyes on a card). _(added 2026-11-23, author's request)_
+- **E3 — Looks like Echo:** Beatbolt2 has Echo's proportions (the big chibi head about a third of
+  his height), the spiky violet-to-blue hair with its magenta lock and the spikes at the back, the
+  white headband headphones with glowing teal cups, the white jacket with teal shoulder pads,
+  collar and orange marks, the navy cargo trousers, the black sneakers with glowing teal soles, the
+  black fingerless gloves, the white-and-teal striped arm cannon with a glowing muzzle in his right
+  hand, and Echo's colours (sampled from the frames). _(added 2026-11-23, author's request)_
+- **E4 — Compared from every side:** Screenshots of Beatbolt2 from the front, the back and both
+  sides, in idle, walk and shoot poses, at the size and framing of Echo's 12 frames, are put side by
+  side with the frames of the same direction and pose, and in a match in all eight views next to
+  Echo; the model is changed and compared again until the two read as the same character (the
+  silhouette, the parts and the colours of each view match); each round's sheets are kept in the
+  repository, and what matches and what still differs is written in the Step's Notes.
+  _(added 2026-11-23, author's request)_
+- **E5 — Moves:** Beatbolt2 has the idle, run and attack animations of the fighters of shapes, and
+  his attack raises the arm cannon forwards as in Echo's shoot frames; the hit, the knock-out, the
+  see-through in cover (C7), the reveal on the pedestal (C3), the outline and the soft shadow work as
+  for every fighter of shapes. _(added 2026-11-23, author's request)_
+- **E6 — Card and pictures:** Beatbolt2's card, skin button and the result screen show his picture
+  rendered like the other fighters of shapes. _(added 2026-11-23, author's request)_
+- **E7 — Smooth and small:** A match of four Beatbolt2 stays within L8 in both worlds (desktop),
+  and Beatbolt2 adds at most 0.1 MB to the web export (code, no pictures); the iPad check stays
+  with the author. _(added 2026-11-23, author's request)_
+- **E8 — Licence and documents:** `LICENSES.md` credits Beatbolt2 as own work in code after
+  Echo's pictures (whose rows stay) and Mattia's drawing; the README and `docs/drawing_to_fighter.md`
+  say how he was made from the pictures and how another 3D fighter can be made from a picture
+  fighter the same way. _(added 2026-11-23, author's request)_
+
 ### Open questions
 
 None. The author answered Q1–Q7 on 2026-11-22 (Q1 3D built from shapes, cut-out as the
@@ -698,6 +904,19 @@ fighter screen, the result), as the reveal (M8, C3). **Open with the author (not
 Deferred Items):** the AI image tool's name and, per character, Mattia's drawing or the author's
 idea (M13); and whether the name **MagMax** is fine — a 1985 arcade game by Nichibutsu is called
 "MagMax" (no fighter, skin or brand of the repository uses it).
+
+Reopened a third time 2026-11-23 (palette, colour variations, views, Beatbolt2): the questions of
+parts P, H, X and E were answered with the suggestions (the author's rule for this run): Q19 which
+look is "variation 1" and which one a game starts with → **1 Original** is the look before this
+reopening (for comparison, as the Classic preset), the game starts with **2 Glimmer**, the
+author's palette (H1–H3); Q20 the canyon in the variations → only in 3 and 4 (the palette is
+Glimmer Isles'; the canyon's default stays, W7) (H3, H4); Q21 the names → variations Original,
+Glimmer, Lagoon, Glow night; views Low, Side, Diagonal, Cinematic (H1, X1); Q22 the controls when
+a view turns the camera → relative to the screen, so W is always up the screen (X3, V4); Q23
+Beatbolt2's data → the name **Beatbolt2** as written, Mythic, plays like Luna (as Echo and
+Beatbolt), unlocked, one Default skin; Beatbolt stays (E1); Q24 the pack's UI theme → committed,
+not applied to the screens (P7); Q25 the pack's licence → the author's own work under the
+repository's licence (P1). No open questions.
 
 <!-- spec-nx:plan -->
 
@@ -1907,7 +2126,7 @@ Range `bccd2ed..f10d71c` (requirements revision, re-plan, Steps 21–29; parts C
 
 ## Definition of Done
 
-- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered; reopened again 2026-11-22: M1–M16 added, C2, C5, C8, C9, C11 superseded, open questions answered)
+- [x] Requirements · Part 1 agreed (G1–G18, W1–W7, A0–A9, B1–B6, S1–S6 testable, open questions answered; reopened 2026-11-22: C1–C11, V1–V7, L1–L8 added, open questions answered; reopened again 2026-11-22: M1–M16 added, C2, C5, C8, C9, C11 superseded, open questions answered; reopened a third time 2026-11-23: P1–P8, H1–H8, X1–X8, E1–E8 added, V1, V2, M3 superseded, open questions answered)
 - [x] Plan · Part 2 written; every Step has a goal and tasks (re-planned 2026-11-22: Steps 21–29; re-planned again 2026-11-22: Steps 30–37)
 - [ ] Implementation · every Step's tasks checked; `tools/check_tools.ps1`, `tools/test.ps1`, `tools/lint.ps1` and `tools/export_web.ps1` pass; README / `docs/architecture.md` updated where affected; the author's parts (A0 photo, B6 trial, G1 verdict, G14/W5 play-test) recorded — *not ticked:* the checks pass and the documents are updated, the A0 photo is recorded, but Step 19 (B6 trial) is 🔜 Deferred and the G1 verdict, A3 and the G14/W5 play-test wait for the author (Deferred Items); the reopening's Steps 21–29 are all ✅ Done (`tools/test.ps1` 517 passed after the review fixes), its iPad check (L8, G14) waits for the author too
 - [x] Review · review page written; no Blocking finding open (second review of the reopening: [2026-11-22_better-graphics-2.html](../../review/2026-11-22_better-graphics-2.html), 0 Blocking)

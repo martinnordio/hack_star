@@ -29,7 +29,7 @@ Update the status of a spec here whenever it changes.
 | 06 | [Graphics Demo](done/2026_11_21_06_graphics_demo_spec.md) | [2026_11_12_graphics_demo_spec.md](../../../.specs/features/done/2026_11_12_graphics_demo_spec.md) (#4) | closed |
 | 07 | [First Match](done/2026_11_21_07_first_match_spec.md) | [2026_11_12_first_match_spec.md](../../../.specs/features/done/2026_11_12_first_match_spec.md) (#5) | closed |
 | 08 | [Trophies](done/2026_11_21_08_trophies_spec.md) | [2026_11_12_trophies_spec.md](../../../.specs/features/done/2026_11_12_trophies_spec.md) (#6) | closed |
-| 09 | [Better Graphics](done/2026_11_21_09_better_graphics_spec.md) | — (Godot spec) (#35) | planned (reopened again 2026-11-22: animated characters — Steps 30–37) |
+| 09 | [Better Graphics](done/2026_11_21_09_better_graphics_spec.md) | — (Godot spec) (#35) | requirements (reopened 2026-11-23: palette, colour variations, views, Beatbolt2) |
 | 09 | [Unlock and Upgrade](2026_11_22_09_unlock_and_upgrade_spec.md) | [2026_11_12_unlock_and_upgrade_spec.md](../../../.specs/features/done/2026_11_12_unlock_and_upgrade_spec.md) (#7) | requirements |
 | 10 | [Skins Shop](2026_11_22_10_skins_shop_spec.md) | [2026_11_12_skins_shop_spec.md](../../../.specs/features/done/2026_11_12_skins_shop_spec.md) (#8) | requirements |
 | 11 | [Overtime and Match Options](2026_11_22_11_overtime_and_match_options_spec.md) | [2026_11_12_overtime_and_match_options_spec.md](../../../.specs/features/done/2026_11_12_overtime_and_match_options_spec.md) (#9) | requirements |
