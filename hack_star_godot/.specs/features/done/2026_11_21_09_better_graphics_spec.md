@@ -70,6 +70,8 @@
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.81 M (59 k in · 7.72 M cached · 31 k out) | CHF 2.06 (246 credits) | Step 35 done (`usage.ps1 -AgentName s09g-steps33-35` from 22:01:54 to 22:16:19) |
 | 2026-11-22 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 3.82 M (122 k in · 3.68 M cached · 18 k out) | CHF 1.43 (171 credits) | Step 36 done; every warm row within L8, nothing trimmed (`usage.ps1 -AgentName s09g-steps36-37` from 22:17:54 to 22:30:21) |
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 7.99 M (289 k in · 7.68 M cached · 27 k out) | CHF 2.95 (352 credits) | Step 37 done; web export 43,544,883 bytes (`usage.ps1 -AgentName s09g-steps36-37` from 2026-11-22 22:32:37 to 2026-11-23 07:19:37) |
+| 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 430 k (159 k in · 264 k cached · 8 k out) | CHF 0.84 (100 credits) | spec runner (coordination) of the animated-characters reopening (`usage.ps1 -AgentName s09g-runner4` from 2026-11-22 20:22:00) |
+| 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 1.21 M (4 k in · 1.20 M cached · 3 k out) | CHF 0.27 (32 credits) | orchestrator (main chat) of the animated-characters reopening, coordination (`usage.ps1 -Agent main` from 2026-11-22 20:21:13) |
 
 ---
 
