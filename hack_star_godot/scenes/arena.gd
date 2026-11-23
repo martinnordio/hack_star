@@ -8,7 +8,7 @@ extends Node3D
 ## screen to the ground by the camera's yaw (`to_world`, D50); Space (the
 ## `shoot` action, held to keep firing) and the right stick (`AimJoystick`, drag and release or a
 ## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
-## `V` and `1`–`4` switch the camera view (`CameraViews`, spec 09 V1–V6), kept in
+## `V` and `1`–`8` switch the camera view (`CameraViews`, spec 09 V1–V6, X1–X6), kept in
 ## `GameState.camera_view`; `L` switches the lighting preset and `K` the saturation boost
 ## (`LightPresets`, `WorldLighting`, L3–L6), `C` the colour variation (`ColourVariations`,
 ## H1–H6), all kept in `GameState`; `HudToast` names them.
@@ -25,6 +25,12 @@ const CAMERA_FOLLOW_RATE: float = 6.0
 ## and the fighter's height.
 const VIEW_HALF_SIZE: Vector2 = Vector2(7.0, 5.0)
 const FIGHTER_HEIGHT: float = 1.9
+## The box around the fighter that Diagonal fits: square, so it reads the same turned by 45°.
+const DIAGONAL_HALF_SIZE: Vector2 = Vector2(5.0, 5.0)
+## Low's camera stands at most this far south of the camera-side wall's inner face (metres).
+const LOW_WALL_CLEARANCE: float = 2.0
+## Low's camera looks down at the fighter's feet at most this steeply (degrees).
+const LOW_FEET_DEGREES: float = 20.0
 ## Free border around that box as a share of the screen; more at the top for the Back button.
 const FRAME_MARGIN: float = 0.03
 const FRAME_TOP_MARGIN: float = 0.12
@@ -70,6 +76,9 @@ var _close_max_z: float = INF
 # The fighter's position, followed like `_camera_target` (Close and Behind).
 var _follow_point: Vector3 = Vector3.ZERO
 var _overview_distance: float = CAMERA_MIN_DISTANCE
+var _diagonal_distance: float = CAMERA_MIN_DISTANCE
+# Seconds the arena has run, for Cinematic's swing.
+var _swing_time: float = 0.0
 var _view: String = CameraViews.CLASSIC
 var _blend_from: Transform3D = Transform3D.IDENTITY
 var _blend_left: float = 0.0
@@ -172,6 +181,7 @@ func _process(delta: float) -> void:
 		_camera_target, _wanted_camera_target(), delta, CAMERA_FOLLOW_RATE
 	)
 	_follow_point = Movement.follow(_follow_point, _fighter.position, delta, CAMERA_FOLLOW_RATE)
+	_swing_time += delta
 	_blend_left = maxf(_blend_left - delta, 0.0)
 	_place_camera()
 	if read_player_input and Input.is_action_pressed("shoot"):
@@ -423,10 +433,12 @@ func _place_camera() -> void:
 	_camera.global_transform = pose
 
 
-## Where the camera stands and looks in the view `view_id` (D25); it always looks north.
+## Where the camera stands and looks in the view `view_id` (D25, D51): Classic, Close, Behind,
+## Overview and Low look north; Side and Diagonal are turned by their yaw, Cinematic swings.
 func view_pose(view_id: String) -> Transform3D:
 	var view_data: Dictionary = CameraViews.get_view(view_id)
 	var pitch: float = view_data["pitch_degrees"]
+	var yaw: float = CameraViews.view_yaw_degrees(view_id, _swing_time)
 	match view_id:
 		CameraViews.CLOSE:
 			var target: Vector3 = _follow_point + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
@@ -438,19 +450,45 @@ func view_pose(view_id: String) -> Transform3D:
 			var ahead: float = view_data["look_ahead"]
 			var behind: float = view_data["distance"]
 			var height: float = (ahead + behind) * tan(deg_to_rad(pitch))
-			var eye: Vector3 = _follow_point + Vector3(0.0, height, behind)
-			var ahead_point: Vector3 = _follow_point + Vector3(0.0, 0.0, -ahead)
-			return Transform3D(Basis.looking_at(ahead_point - eye, Vector3.UP), eye)
+			return _looking_pose(Vector3(0.0, height, behind), Vector3(0.0, 0.0, -ahead))
 		CameraViews.OVERVIEW:
 			var center: Vector2 = ArenaLayout.bounds().get_center()
 			return _orbit_pose(Vector3(center.x, 0.0, center.y), pitch, _overview_distance)
+		CameraViews.LOW:
+			# Not farther south than just over the camera-side wall, so it does not fill the
+			# bottom of the screen when the fighter stands near it.
+			var low_back: float = minf(
+				view_data["distance"], near_wall_z() + LOW_WALL_CLEARANCE - _follow_point.z
+			)
+			# Nearer, it goes lower, so the fighter's feet stay on the screen.
+			var low_height: float = minf(
+				view_data["height"], low_back * tan(deg_to_rad(LOW_FEET_DEGREES))
+			)
+			return _looking_pose(
+				Vector3(0.0, low_height, low_back),
+				Vector3(0.0, view_data["look_height"], -view_data["look_ahead"])
+			)
+		CameraViews.SIDE, CameraViews.CINEMATIC, CameraViews.DIAGONAL:
+			var distance: float = view_data.get("distance", _diagonal_distance)
+			return _orbit_pose(_follow_point, pitch, distance, yaw)
 	return _orbit_pose(_camera_target, CAMERA_PITCH_DEGREES, _camera_distance)
 
 
-# The camera `distance` metres from `target`, south of it, looking `pitch_degrees` down at it.
-static func _orbit_pose(target: Vector3, pitch_degrees: float, distance: float) -> Transform3D:
+# The camera at `eye_offset` from the followed fighter, looking at `look_offset` from it.
+func _looking_pose(eye_offset: Vector3, look_offset: Vector3) -> Transform3D:
+	var eye: Vector3 = _follow_point + eye_offset
+	var look: Vector3 = _follow_point + look_offset
+	return Transform3D(Basis.looking_at(look - eye, Vector3.UP), eye)
+
+
+# The camera `distance` metres from `target`, south of it turned by `yaw_degrees` (as
+# `rotation.y`), looking `pitch_degrees` down at it.
+static func _orbit_pose(
+	target: Vector3, pitch_degrees: float, distance: float, yaw_degrees: float = 0.0
+) -> Transform3D:
 	var pitch: float = deg_to_rad(pitch_degrees)
-	var eye: Vector3 = target + Vector3(0.0, sin(pitch), cos(pitch)) * distance
+	var turn: Basis = Basis(Vector3.UP, deg_to_rad(yaw_degrees))
+	var eye: Vector3 = target + turn * Vector3(0.0, sin(pitch), cos(pitch)) * distance
 	return Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
 
 
@@ -479,9 +517,16 @@ func _frame_camera() -> void:
 	_camera_distance = CAMERA_MIN_DISTANCE
 	while _camera_distance < CAMERA_MAX_DISTANCE:
 		_camera.global_transform = view_pose(CameraViews.CLASSIC)
-		if _box_inside(allowed):
+		if _box_inside(allowed, _camera_target):
 			break
 		_camera_distance += CAMERA_DISTANCE_STEP
+	# Diagonal fits a square box around the fighter, without the near-wall rule (D51).
+	_diagonal_distance = CAMERA_MIN_DISTANCE
+	while _diagonal_distance < CAMERA_MAX_DISTANCE:
+		_camera.global_transform = view_pose(CameraViews.DIAGONAL)
+		if _box_inside(allowed, _follow_point, DIAGONAL_HALF_SIZE):
+			break
+		_diagonal_distance += CAMERA_DISTANCE_STEP
 	_camera_max_z = (
 		near_wall_z() - _near_wall_offset(view_size.y, CAMERA_PITCH_DEGREES, _camera_distance)
 	)
@@ -538,14 +583,13 @@ func _near_wall_offset(view_height: float, pitch_degrees: float, distance: float
 	return near
 
 
-func _box_inside(allowed: Rect2) -> bool:
+func _box_inside(allowed: Rect2, center: Vector3, half_size: Vector2 = VIEW_HALF_SIZE) -> bool:
 	var heights: Array[float] = [0.0, FIGHTER_HEIGHT]
 	for sign_x: float in [-1.0, 1.0]:
 		for sign_z: float in [-1.0, 1.0]:
 			for height: float in heights:
 				var corner: Vector3 = (
-					_camera_target
-					+ Vector3(sign_x * VIEW_HALF_SIZE.x, height, sign_z * VIEW_HALF_SIZE.y)
+					center + Vector3(sign_x * half_size.x, height, sign_z * half_size.y)
 				)
 				if not allowed.has_point(_camera.unproject_position(corner)):
 					return false

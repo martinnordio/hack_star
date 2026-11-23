@@ -58,20 +58,18 @@ func _switch(arena: Arena, view_id: String) -> void:
 	await wait_seconds(Arena.VIEW_BLEND_SECONDS + 0.1)
 
 
-func test_v_goes_through_the_four_views_in_order() -> void:
+func test_v_goes_through_the_first_four_views_in_order() -> void:
 	assert_eq(
-		CameraViews.ids(),
+		CameraViews.ids().slice(0, 4),
 		[CameraViews.CLASSIC, CameraViews.CLOSE, CameraViews.BEHIND, CameraViews.OVERVIEW]
 	)
 	var arena: Arena = await _show_in_viewport(ARENA_SCENE)
 	assert_eq(arena.view(), CameraViews.CLASSIC, "Classic is the default")
 	var seen: Array[String] = []
-	for _press_count: int in 4:
+	for _press_count: int in 3:
 		_press(arena, KEY_V)
 		seen.append(arena.view())
-	assert_eq(
-		seen, [CameraViews.CLOSE, CameraViews.BEHIND, CameraViews.OVERVIEW, CameraViews.CLASSIC]
-	)
+	assert_eq(seen, [CameraViews.CLOSE, CameraViews.BEHIND, CameraViews.OVERVIEW])
 
 
 func test_the_keys_1_to_4_and_the_number_pad_choose_a_view() -> void:
@@ -219,10 +217,13 @@ func test_overview_shows_the_four_border_walls() -> void:
 		arena.get_parent().queue_free()
 
 
-func test_the_camera_always_looks_north() -> void:
+func test_the_views_without_a_yaw_always_look_north() -> void:
 	var arena: Arena = await _show_in_viewport(ARENA_SCENE)
 	var camera: Camera3D = arena.get_node("Camera")
 	for view_id: String in CameraViews.ids():
+		var view_data: Dictionary = CameraViews.get_view(view_id)
+		if view_data["yaw_degrees"] != 0.0 or view_data.has("swing_degrees"):
+			continue
 		await _switch(arena, view_id)
 		var forward: Vector3 = -camera.global_basis.z
 		assert_almost_eq(forward.x, 0.0, 0.001, "%s: no yaw" % view_id)

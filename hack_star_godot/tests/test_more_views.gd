@@ -6,6 +6,7 @@ extends GutTest
 
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const FIGHTER_SCENE: PackedScene = preload("res://scenes/fighter.tscn")
+const MATCH_SCENE: PackedScene = preload("res://scenes/match.tscn")
 const TURNS: Array[float] = [90.0, 45.0]
 const KEYS: Dictionary = {
 	"move_up": [Vector2.UP, "up", false],
@@ -146,3 +147,134 @@ func test_the_aim_stick_fires_along_the_screen_in_a_turned_camera() -> void:
 		var to: Vector2 = _on_screen(arena, shot.global_position + shot.direction)
 		assert_gt((to - from).normalized().dot(Vector2.RIGHT), 0.9, "flies right: " + where)
 		arena.get_parent().queue_free()
+
+
+func _show_in_viewport(scene: PackedScene, fighter_id: String = "echo") -> Arena:
+	GameState.select(fighter_id, Fighters.DEFAULT_SKIN)
+	var viewport: SubViewport = SubViewport.new()
+	viewport.size = Vector2i(1280, 720)
+	add_child_autofree(viewport)
+	var arena: Arena = scene.instantiate()
+	arena.read_player_input = false
+	viewport.add_child(arena)
+	await wait_process_frames(2)
+	return arena
+
+
+func _press(arena: Arena, key: Key) -> void:
+	for pressed: bool in [true, false]:
+		var event: InputEventKey = InputEventKey.new()
+		event.physical_keycode = key
+		event.pressed = pressed
+		arena.get_viewport().push_input(event)
+
+
+func test_v_goes_through_the_eight_views_in_order() -> void:
+	assert_eq(
+		CameraViews.ids(),
+		[
+			CameraViews.CLASSIC,
+			CameraViews.CLOSE,
+			CameraViews.BEHIND,
+			CameraViews.OVERVIEW,
+			CameraViews.LOW,
+			CameraViews.SIDE,
+			CameraViews.DIAGONAL,
+			CameraViews.CINEMATIC,
+		]
+	)
+	var arena: Arena = await _show_in_viewport(ARENA_SCENE)
+	var seen: Array[String] = []
+	for _press_count: int in 8:
+		_press(arena, KEY_V)
+		seen.append(arena.view())
+	assert_eq(seen, CameraViews.ids().slice(1) + [CameraViews.CLASSIC], "and back to Classic")
+	_press(arena, KEY_V)
+	await wait_process_frames(1)
+	assert_eq(arena.toast().text(), "Close", "the toast names each view")
+
+
+func test_the_keys_5_to_8_and_the_number_pad_choose_the_new_views() -> void:
+	var arena: Arena = await _show_in_viewport(MATCH_SCENE)
+	var keys: Array[Key] = [KEY_5, KEY_6, KEY_7, KEY_8]
+	var pad: Array[Key] = [KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8]
+	var names: Array[String] = ["Low", "Side", "Diagonal", "Cinematic"]
+	for index: int in 4:
+		_press(arena, keys[index])
+		assert_eq(arena.view(), CameraViews.ids()[index + 4], "key %d" % (index + 5))
+		assert_eq(arena.toast().text(), names[index])
+		_press(arena, KEY_1)
+		_press(arena, pad[index])
+		assert_eq(arena.view(), CameraViews.ids()[index + 4], "number pad %d" % (index + 5))
+	assert_true(arena.get_node("Hud/MatchHud/CountdownLabel").visible, "during the countdown")
+
+
+func test_the_view_keys_5_to_8_are_bound_to_nothing_else() -> void:
+	var view_keys: Array[int] = [KEY_5, KEY_6, KEY_7, KEY_8, KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8]
+	for action: StringName in InputMap.get_actions():
+		if String(action).begins_with("view_") or String(action).begins_with("ui_"):
+			continue
+		for event: InputEvent in InputMap.action_get_events(action):
+			if event is InputEventKey:
+				var key: int = (event as InputEventKey).physical_keycode
+				assert_false(view_keys.has(key), "%s does not use a view key" % action)
+
+
+func test_each_view_has_its_yaw_and_cinematic_swings_within_25_degrees() -> void:
+	var wanted: Dictionary = {
+		CameraViews.LOW: 0.0, CameraViews.SIDE: 90.0, CameraViews.DIAGONAL: 45.0
+	}
+	var arena: Arena = await _show_in_viewport(ARENA_SCENE)
+	for view_id: String in wanted:
+		arena.set_view(view_id)
+		await wait_seconds(Arena.VIEW_BLEND_SECONDS + 0.1)
+		assert_almost_eq(rad_to_deg(arena.camera_yaw()), wanted[view_id], 0.5, view_id)
+	var swing: Array[float] = []
+	for step: int in 57:
+		swing.append(CameraViews.view_yaw_degrees(CameraViews.CINEMATIC, step * 0.25))
+	assert_almost_eq(swing.max(), 25.0, 0.5, "swings 25° one way")
+	assert_almost_eq(swing.min(), -25.0, 0.5, "and 25° the other, every 14 s")
+	arena.set_view(CameraViews.CINEMATIC)
+	var seen: Array[float] = []
+	for _sample: int in 6:
+		await wait_seconds(0.4)
+		seen.append(rad_to_deg(arena.camera_yaw()))
+	for yaw: float in seen:
+		assert_lt(absf(yaw), 25.01, "within ±25° of north")
+	assert_gt(absf(seen[-1] - seen[1]), 1.0, "the camera swings while the game runs")
+
+
+func test_in_every_view_the_keys_move_and_turn_the_fighter_on_the_screen() -> void:
+	var arena: Arena = await _show_in_viewport(ARENA_SCENE, "magmax")
+	arena.read_player_input = true
+	var fighter: Fighter = arena.get_node("Fighter")
+	var camera: Camera3D = arena.get_node("Camera")
+	var animator: CutoutAnimator = fighter.model.cutout_animator()
+	var start: Vector3 = fighter.global_position
+	for view_id: String in CameraViews.ids():
+		arena.set_view(view_id)
+		await wait_seconds(Arena.VIEW_BLEND_SECONDS + 0.1)
+		for action: String in KEYS:
+			fighter.global_position = start
+			await wait_physics_frames(1)
+			var before: Vector3 = fighter.global_position
+			Input.action_press(action)
+			await wait_physics_frames(6)
+			Input.action_release(action)
+			var moved: Vector2 = (
+				camera.unproject_position(fighter.global_position)
+				- camera.unproject_position(before)
+			)
+			var where: String = "%s %s" % [view_id, action]
+			assert_gt(moved.normalized().dot(KEYS[action][0]), 0.9, "on the screen: " + where)
+			assert_eq([animator.view, animator.mirrored], KEYS[action].slice(1), where)
+
+
+func test_a_new_view_is_kept_for_the_next_match() -> void:
+	var arena: Arena = await _show_in_viewport(ARENA_SCENE)
+	_press(arena, KEY_7)
+	assert_eq(GameState.camera_view, CameraViews.DIAGONAL)
+	arena.get_parent().queue_free()
+	var next_match: Arena = await _show_in_viewport(MATCH_SCENE)
+	assert_eq(next_match.view(), CameraViews.DIAGONAL, "the next match starts in it")
+	assert_almost_eq(rad_to_deg(next_match.camera_yaw()), 45.0, 0.5, "turned from the start")

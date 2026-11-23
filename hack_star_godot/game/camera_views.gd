@@ -11,10 +11,19 @@ const CLASSIC: String = "classic"
 const CLOSE: String = "close"
 const BEHIND: String = "behind"
 const OVERVIEW: String = "overview"
+const LOW: String = "low"
+const SIDE: String = "side"
+const DIAGONAL: String = "diagonal"
+const CINEMATIC: String = "cinematic"
 ## `pitch_degrees`: how far the camera looks down. Classic fits its distance to the box around
 ## the fighter (G11); Close is `distance_share` of that, at least `min_distance` metres; Behind
 ## stands `distance` metres behind the fighter and looks at a point `look_ahead` metres ahead of
-## it; Overview fits its distance to the whole arena.
+## it; Overview fits its distance to the whole arena. The views of X1 (D51): Low stands `height`
+## metres high and `distance` behind the fighter and looks at a point `look_height` high and
+## `look_ahead` ahead (its pitch is that line's); Side stands `distance` metres from the fighter,
+## turned by its yaw; Diagonal is turned by its yaw and fits its distance as Classic; Cinematic
+## stands `distance` metres from the fighter, its yaw swinging `swing_degrees` to and fro around
+## north every `swing_seconds`.
 const LIST: Array[Dictionary] = [
 	{"id": CLASSIC, "name": "Classic", "pitch_degrees": 55.0, "yaw_degrees": 0.0},
 	{
@@ -34,10 +43,31 @@ const LIST: Array[Dictionary] = [
 		"look_ahead": 4.0,
 	},
 	{"id": OVERVIEW, "name": "Overview", "pitch_degrees": 78.0, "yaw_degrees": 0.0},
+	{
+		"id": LOW,
+		"name": "Low",
+		"pitch_degrees": 5.0,
+		"yaw_degrees": 0.0,
+		"height": 2.2,
+		"distance": 6.5,
+		"look_height": 1.0,
+		"look_ahead": 8.0,
+	},
+	{"id": SIDE, "name": "Side", "pitch_degrees": 40.0, "yaw_degrees": 90.0, "distance": 11.0},
+	{"id": DIAGONAL, "name": "Diagonal", "pitch_degrees": 58.0, "yaw_degrees": 45.0},
+	{
+		"id": CINEMATIC,
+		"name": "Cinematic",
+		"pitch_degrees": 35.0,
+		"yaw_degrees": 0.0,
+		"distance": 9.0,
+		"swing_degrees": 25.0,
+		"swing_seconds": 14.0,
+	},
 ]
 
 
-## The ids of every view, in the order of `LIST` (the keys 1–4 choose them in this order).
+## The ids of every view, in the order of `LIST` (the keys 1–8 choose them in this order).
 static func ids() -> Array[String]:
 	var result: Array[String] = []
 	for view: Dictionary in LIST:
@@ -62,6 +92,16 @@ static func next(view_id: String) -> String:
 ## The view's name as the player sees it.
 static func view_name(view_id: String) -> String:
 	return get_view(view_id)["name"]
+
+
+## The yaw of the view (degrees) `seconds` after the game started: its `yaw_degrees`, swinging by
+## `swing_degrees` to and fro (a sine) every `swing_seconds` in Cinematic.
+static func view_yaw_degrees(view_id: String, seconds: float) -> float:
+	var view: Dictionary = get_view(view_id)
+	var yaw: float = view["yaw_degrees"]
+	if view.has("swing_degrees"):
+		yaw += float(view["swing_degrees"]) * sin(TAU * seconds / float(view["swing_seconds"]))
+	return yaw
 
 
 ## The yaw of a camera at `camera` (radians, as `rotation.y`: 0 looking north), read from its right

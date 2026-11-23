@@ -204,13 +204,14 @@ func test_bots_turn_walk_and_shoot_too() -> void:
 	assert_eq(bot.model.cutout_animator().animation(), "idle_side", "then idles in that view")
 
 
-func test_up_on_the_screen_shows_the_back_in_all_four_camera_views() -> void:
+func test_up_on_the_screen_shows_the_back_in_the_four_views_that_look_north() -> void:
+	# The views that turn the camera are checked in `test_more_views.gd` (X4).
 	GameState.select("magmax", Fighters.DEFAULT_SKIN)
 	var arena: Arena = ARENA_SCENE.instantiate()
 	add_child_autofree(arena)
 	arena.read_player_input = false
 	var fighter: Fighter = arena.get_node("Fighter")
-	for view_id: String in CameraViews.ids():
+	for view_id: String in CameraViews.ids().slice(0, 4):
 		arena.set_view(view_id)
 		await wait_seconds(Arena.VIEW_BLEND_SECONDS + 0.1)
 		var camera: Camera3D = fighter.get_viewport().get_camera_3d()

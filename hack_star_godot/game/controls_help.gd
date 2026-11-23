@@ -5,7 +5,7 @@ extends RefCounted
 ## stay true when a rule changes. English only (spec 16, S23).
 
 const KEYBOARD_HINT: String = (
-	"Move: WASD or arrow keys\nShoot: Space\n" + "View: V or 1-4, light: L and K, colours: C"
+	"Move: WASD or arrow keys\nShoot: Space\n" + "View: V or 1-8, light: L and K, colours: C"
 )
 const TOUCH_HINT: String = "Move: left stick\nShoot: drag or tap the right stick"
 const MORE_IN_INFO: String = "More in Info"
@@ -23,7 +23,7 @@ static func how_to_play() -> Array[Dictionary]:
 					+ "firing). Touch: move with the left stick; drag the right stick and let go to "
 					+ "shoot that way, or tap it to shoot at the nearest target. Space and a tap fire "
 					+ "at the nearest target in range (%d metres), or straight ahead. "
-					+ "V switches the camera view, 1 to 4 choose one (%s). "
+					+ "V switches the camera view, 1 to 8 choose one (%s). "
 					+ "L switches the lighting (%s), K a saturation boost. "
 					+ "C switches the colours (%s). "
 					+ "Back goes home."
@@ -82,7 +82,7 @@ static func how_to_play() -> Array[Dictionary]:
 	]
 
 
-# The camera views' names in the order of the keys 1 to 4.
+# The camera views' names in the order of the keys 1 to 8.
 static func _view_names() -> PackedStringArray:
 	var names: PackedStringArray = []
 	for view_id: String in CameraViews.ids():
