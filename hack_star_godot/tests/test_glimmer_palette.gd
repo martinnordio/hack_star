@@ -263,3 +263,98 @@ func test_places_colliders_and_layout_are_the_same_in_both_variations() -> void:
 		for place: int in before.instance_count:
 			assert_eq(after.get_instance_transform(place), before.get_instance_transform(place))
 	assert_eq(ArenaLayout.starts(), GlimmerIslesLayout.STARTS, "start points")
+
+
+func test_the_pack_lights_the_world_through_copies_and_classic_shows_it_as_delivered() -> void:
+	var pack: Environment = load(PACK_DIR + "glimmer_isles_environment.tres")
+	var lighting: Node = autofree((load(LIGHTING_SCENE) as PackedScene).instantiate())
+	var pack_sun: DirectionalLight3D = lighting.get_node("Sun")
+	GameState.light_preset = LightPresets.CLASSIC
+	var arena: Arena = await _glimmer_arena()
+	var environment: Environment = (
+		(arena.get_node("WorldEnvironment") as WorldEnvironment).environment
+	)
+	assert_ne(environment, pack, "a copy of the pack's environment")
+	for property: String in [
+		"background_mode",
+		"ambient_light_energy",
+		"tonemap_mode",
+		"tonemap_white",
+		"glow_enabled",
+		"glow_intensity",
+		"glow_hdr_threshold",
+		"fog_enabled",
+		"fog_light_color",
+		"fog_density",
+		"adjustment_enabled",
+		"adjustment_saturation",
+	]:
+		assert_eq(environment.get(property), pack.get(property), "Classic keeps %s" % property)
+	# The fill light's violet is folded into the ambient light, by the two energies (D47).
+	var fill: OmniLight3D = lighting.get_node("MagicFill")
+	var share: float = fill.light_energy / (fill.light_energy + pack.ambient_light_energy)
+	var ambient: Color = pack.ambient_light_color.lerp(GlimmerPalette.GLOW_LILAC, share)
+	assert_true(environment.ambient_light_color.is_equal_approx(ambient), "ambient with the fill")
+	assert_null(arena.get_node("GlimmerIsles").get_node_or_null("MagicFill"), "no omni light")
+	var sky: ProceduralSkyMaterial = environment.sky.sky_material
+	var pack_sky: ProceduralSkyMaterial = pack.sky.sky_material
+	assert_eq(sky.sky_top_color, pack_sky.sky_top_color, "the pack's violet sky")
+	assert_eq(sky.sky_horizon_color, pack_sky.sky_horizon_color, "blush pink at the horizon")
+	var sun: DirectionalLight3D = arena.get_node("Sun")
+	assert_eq(sun.light_color, pack_sun.light_color, "the pack's warm sun")
+	assert_eq(sun.light_energy, pack_sun.light_energy)
+	assert_eq(sun.shadow_opacity, pack_sun.shadow_opacity)
+	assert_true(sun.rotation.is_equal_approx(pack_sun.rotation), "the pack's sun angle")
+	for preset_id: String in LightPresets.ids():
+		arena.set_light_preset(preset_id)
+	arena.set_saturation_boost(true)
+	assert_true(pack.glow_enabled and pack.fog_enabled, "the pack's environment is unchanged")
+	assert_almost_eq(pack.adjustment_saturation, 1.18, 0.001)
+	assert_eq(pack_sky.sky_top_color, GlimmerPalette.DREAM_VIOLET)
+
+
+func test_the_presets_keep_their_own_look_over_the_packs_light() -> void:
+	var arena: Arena = await _glimmer_arena()
+	for preset_id: String in LightPresets.ids():
+		if preset_id == LightPresets.CLASSIC:
+			continue
+		arena.set_light_preset(preset_id)
+		var environment: Environment = (
+			(arena.get_node("WorldEnvironment") as WorldEnvironment).environment
+		)
+		assert_false(environment.fog_enabled, "%s: no fog" % preset_id)
+		assert_eq(environment.tonemap_mode, Environment.TONE_MAPPER_LINEAR, preset_id)
+		assert_almost_eq(
+			environment.adjustment_saturation,
+			LightPresets.saturation(preset_id, false),
+			0.001,
+			"%s keeps its colour balance" % preset_id
+		)
+
+
+func test_original_keeps_its_own_sky_and_sun() -> void:
+	ArenaLayout.use(Worlds.GLIMMER_ISLES)
+	var holder: Node3D = Node3D.new()
+	var world_environment: WorldEnvironment = WorldEnvironment.new()
+	world_environment.name = "WorldEnvironment"
+	world_environment.environment = Environment.new()
+	var sun: DirectionalLight3D = DirectionalLight3D.new()
+	sun.name = "Sun"
+	holder.add_child(world_environment)
+	holder.add_child(sun)
+	var floor_body: StaticBody3D = StaticBody3D.new()
+	var walls: Node3D = Node3D.new()
+	holder.add_child(floor_body)
+	holder.add_child(walls)
+	var isles: GlimmerIsles = GlimmerIsles.new()
+	isles.floor_body = floor_body
+	isles.walls = walls
+	isles.variation = GlimmerLooks.ORIGINAL
+	holder.add_child(isles)
+	add_child_autofree(holder)
+	var sky: ProceduralSkyMaterial = world_environment.environment.sky.sky_material
+	assert_eq(sky.sky_top_color, Color("1b1446"))
+	assert_eq(world_environment.environment.ambient_light_color, Color("b8a8ff"))
+	assert_false(world_environment.environment.glow_enabled)
+	assert_eq(sun.light_color, Color("fff0ff"))
+	assert_null(isles.get_node_or_null("MagicFill"), "no fill light in Original")

@@ -14,6 +14,8 @@ const GLIMMER: String = "glimmer"
 ## The variation in use until the colour switch exists (spec 09 H1: a game starts in Glimmer).
 const DEFAULT: String = GLIMMER
 const MATERIALS_DIR: String = "res://scenes/glimmer_isles/materials/"
+## The variations lit by the pack's lighting scene (its sky, environment and sun).
+const PACK_LIGHTING: Array[String] = [GLIMMER]
 
 ## The parts of each prop kind in the order `GlimmerProp` builds them (the bake's `part_index`).
 const PARTS: Dictionary[String, Array] = {
@@ -74,7 +76,7 @@ const ORIGINAL_LOOKS: Dictionary[String, Dictionary] = {
 ## The author's palette pack: the floor in calm mid-tones (the least saturated surface, G10),
 ## stone walls, glowing crystals and mushrooms, the pack's materials where one matches; only the
 ## glowing parts glow, in Glow Mushrooms and Glimmer Gold colours. Its sky and light are the
-## pack's lighting scene (`GlimmerIsles`), so it has no sky roles.
+## pack's lighting scene (`PACK_LIGHTING`), so it has no sky roles.
 const GLIMMER_LOOKS: Dictionary[String, Dictionary] = {
 	"ground": {"albedo": GlimmerPalette.PEBBLE},
 	"ground_alt": {"albedo": GlimmerPalette.STONE_LIGHT},
@@ -172,6 +174,11 @@ static func material(
 		return ToonMaterials.from_material(pack_material(entry["material"]), outlined)
 	var result: Dictionary = look(role, variation)
 	return ToonMaterials.toon(result["albedo"], result["glow"], result["glow_strength"], outlined)
+
+
+## Whether a variation is lit by the pack's lighting scene (`GlimmerIsles`).
+static func uses_pack_lighting(variation: String = DEFAULT) -> bool:
+	return variation in PACK_LIGHTING
 
 
 ## One of the pack's materials by name (`water`, `stone`, …).

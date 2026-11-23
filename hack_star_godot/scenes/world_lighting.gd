@@ -71,10 +71,25 @@ func apply(preset_id: String, boost: bool) -> void:
 	var balance: Vector3 = Vector3(
 		preset["brightness"], preset["contrast"], LightPresets.saturation(_preset, boost)
 	)
+	var world_own: bool = LightPresets.is_world_own(_preset)
+	if world_own and _base.adjustment_enabled:
+		# A world with its own colour balance (the pack's) keeps it in Classic; `K` on top.
+		balance = Vector3(
+			_base.adjustment_brightness,
+			_base.adjustment_contrast,
+			_base.adjustment_saturation * LightPresets.saturation(_preset, boost)
+		)
 	environment.adjustment_enabled = not balance.is_equal_approx(Vector3.ONE)
 	environment.adjustment_brightness = balance.x
 	environment.adjustment_contrast = balance.y
 	environment.adjustment_saturation = balance.z
+	if world_own:
+		# Classic shows the world's own environment as it was built: its glow, fog and tone map.
+		_holder.environment = environment
+		return
+	environment.fog_enabled = false
+	environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	environment.tonemap_white = 1.0
 	environment.glow_enabled = preset["glow"]
 	environment.glow_intensity = GLOW_INTENSITY
 	environment.glow_strength = GLOW_STRENGTH

@@ -15,6 +15,7 @@ extends Node3D
 ## variation (P6).
 
 const BAKED: PackedScene = preload("res://scenes/worlds/glimmer_isles/baked.tscn")
+const PACK_LIGHTING: PackedScene = preload("res://scenes/glimmer_isles/glimmer_isles_lighting.tscn")
 
 const WALL_HEIGHT: float = Canyon.WALL_HEIGHT
 const CAMERA_SIDE_WALL_HEIGHT: float = Canyon.CAMERA_SIDE_WALL_HEIGHT
@@ -89,9 +90,13 @@ static func load_baked(look_variation: String = GlimmerLooks.DEFAULT) -> Node3D:
 	return baked
 
 
-# A starry-violet gradient below and around the floating island (the camera looks down, so the
-# lower half of the sky is what shows), a lavender ambient light and a soft pink-white sun.
+# In the variations of the pack's lighting: its environment and sun (`_use_pack_light`).
+# Otherwise a starry-violet gradient below and around the floating island (the camera looks down,
+# so the lower half of the sky is what shows), a lavender ambient light and a pink-white sun.
 func _build_sky() -> void:
+	if GlimmerLooks.uses_pack_lighting(variation):
+		_use_pack_light()
+		return
 	var holder: WorldEnvironment = get_parent().get_node_or_null("WorldEnvironment")
 	if holder != null and holder.environment != null:
 		var environment: Environment = holder.environment.duplicate()
@@ -113,9 +118,38 @@ func _build_sky() -> void:
 		sun.light_color = _sky_color("sun")
 
 
-# The sky's colours stay Original's until the pack's lighting is used (spec 09 Step 40).
+# The sky's colours of the variations without the pack's lighting (Original's).
 static func _sky_color(role: String) -> Color:
 	return GlimmerLooks.color(role, GlimmerLooks.ORIGINAL)
+
+
+# The pack's lighting scene (spec 09 P4, D47): the arena's environment becomes a copy of the
+# pack's (the `.tres` itself never changes), its sun takes the pack sun's colour, energy, angle
+# and shadow. The violet fill light hardly reaches the toon shader's bands (it counts only where
+# its fall-off is weak, a pixel difference of 0.2 of 255 on Step 40's screenshots), so its colour
+# is folded into the ambient light, weighted by the two energies.
+func _use_pack_light() -> void:
+	var lighting: Node = PACK_LIGHTING.instantiate()
+	var holder: WorldEnvironment = get_parent().get_node_or_null("WorldEnvironment")
+	if holder != null:
+		var pack: WorldEnvironment = lighting.get_node("WorldEnvironment")
+		var environment: Environment = pack.environment.duplicate()
+		var fill: OmniLight3D = lighting.get_node("MagicFill")
+		var share: float = (
+			fill.light_energy / (fill.light_energy + environment.ambient_light_energy)
+		)
+		environment.ambient_light_color = environment.ambient_light_color.lerp(
+			fill.light_color, share
+		)
+		holder.environment = environment
+	var sun: DirectionalLight3D = get_parent().get_node_or_null("Sun")
+	if sun != null:
+		var pack_sun: DirectionalLight3D = lighting.get_node("Sun")
+		sun.light_color = pack_sun.light_color
+		sun.light_energy = pack_sun.light_energy
+		sun.rotation = pack_sun.rotation
+		sun.shadow_opacity = pack_sun.shadow_opacity
+	lighting.free()
 
 
 func _build_floor() -> void:

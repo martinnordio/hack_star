@@ -153,7 +153,12 @@ func test_classic_brings_back_the_worlds_own_light() -> void:
 		GameState.light_preset = LightPresets.CLASSIC
 		var arena: Arena = await _show(ARENA_SCENE, world)
 		var own: Dictionary = _look(arena)
-		assert_false(_environment(arena).adjustment_enabled, "no colour balance pass in Classic")
+		# Only a world with its own colour balance (Glimmer Isles in the pack's light) keeps one.
+		assert_eq(
+			_environment(arena).adjustment_enabled,
+			world == Worlds.GLIMMER_ISLES,
+			"a colour balance pass in Classic only from the world's own light"
+		)
 		arena.set_light_preset(LightPresets.NEON_NIGHT)
 		arena.set_light_preset(LightPresets.CLASSIC)
 		assert_eq(_look(arena), own, world)
@@ -161,11 +166,13 @@ func test_classic_brings_back_the_worlds_own_light() -> void:
 		await wait_process_frames(1)
 
 
-func test_only_neon_night_glows() -> void:
+func test_only_neon_night_glows_and_classic_with_the_worlds_own_glow() -> void:
 	var arena: Arena = await _show(ARENA_SCENE, Worlds.GLIMMER_ISLES)
 	for preset_id: String in LightPresets.ids():
 		arena.set_light_preset(preset_id)
-		assert_eq(_environment(arena).glow_enabled, preset_id == LightPresets.NEON_NIGHT, preset_id)
+		# Glimmer Isles' own light (the pack's environment) glows, so its Classic does too.
+		var glows: bool = preset_id in [LightPresets.NEON_NIGHT, LightPresets.CLASSIC]
+		assert_eq(_environment(arena).glow_enabled, glows, preset_id)
 
 
 func test_the_light_keys_are_bound_to_nothing_else() -> void:
