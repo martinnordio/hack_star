@@ -74,14 +74,23 @@ func _physics_process(_delta: float) -> void:
 		model.cutout_animator().walk_speed = velocity.length()
 	if not input_direction.is_zero_approx():
 		rotation.y = Movement.facing_yaw(input_direction)
-		face(input_direction)
+		face(screen_direction(input_direction))
 
 
-## Turns a picture fighter to the view of `direction` (input or aim; x is the screen's right, y its
-## down): its back going up the screen, its front going down, its side going left or right
-## (`CutoutAnimator`).
+## Turns a picture fighter to the view of `direction` (input or aim on the screen: x is the
+## screen's right, y its down): its back going up the screen, its front going down, its side going
+## left or right (`CutoutAnimator`).
 func face(direction: Vector2) -> void:
 	model.face(direction)
+
+
+## A direction on the ground (x, z) as the camera in use shows it on the screen (D50); as it is
+## without a camera.
+func screen_direction(world_direction: Vector2) -> Vector2:
+	var camera: Camera3D = get_viewport().get_camera_3d() if is_inside_tree() else null
+	if camera == null:
+		return world_direction
+	return CameraViews.to_screen(world_direction, CameraViews.yaw_of(camera.global_transform))
 
 
 func _process(delta: float) -> void:

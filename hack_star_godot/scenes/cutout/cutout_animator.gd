@@ -7,9 +7,9 @@ extends RefCounted
 ## the screen, else `down`, its front), the last view kept while it stands, the front at the start;
 ## while running the walk loop of that view (walk 1, idle, walk 2, idle) at a pace that fits its
 ## speed with a small hop on each step; standing the view's idle frame; a shot shows the shoot
-## frame of the shot's view for `SHOOT_SECONDS`. The screen direction is the ground's (x right,
-## y = +z down the screen): every camera view looks north with a fixed yaw (`CameraViews`), so up
-## on the screen is −z in all four views.
+## frame of the shot's view for `SHOOT_SECONDS`. The direction is the one on the screen (x right,
+## y down): the arena turns a move or a shot on the ground back by the camera's yaw
+## (`CameraViews.to_screen`, D50), so up on the screen shows the back in every camera view.
 
 const START_VIEW: String = "down"
 const SHOOT_SECONDS: float = 0.25

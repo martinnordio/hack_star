@@ -4,7 +4,8 @@ extends Node3D
 ## `GlimmerIsles`, each built from its `ArenaLayout`), one fighter, a camera above
 ## and behind it, and the HUD. With `training` (the Training arena) the three target dummies
 ## stand in it; `MatchArena` (`match.tscn`) inherits the scene for a match.
-## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); Space (the
+## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`), turned from the
+## screen to the ground by the camera's yaw (`to_world`, D50); Space (the
 ## `shoot` action, held to keep firing) and the right stick (`AimJoystick`, drag and release or a
 ## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
 ## `V` and `1`–`4` switch the camera view (`CameraViews`, spec 09 V1–V6), kept in
@@ -280,7 +281,23 @@ func _physics_process(_delta: float) -> void:
 	if not read_player_input:
 		return
 	var keys: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	_fighter.input_direction = Movement.clamp_direction(keys + _joystick.direction)
+	_fighter.input_direction = to_world(Movement.clamp_direction(keys + _joystick.direction))
+
+
+## The yaw of the camera as it stands now (radians, `CameraViews.yaw_of`): right during a blend
+## and while a view swings.
+func camera_yaw() -> float:
+	return CameraViews.yaw_of(_camera.global_transform)
+
+
+## A direction on the screen (keys, sticks) as a direction on the ground for the camera now (D50).
+func to_world(screen_direction: Vector2) -> Vector2:
+	return CameraViews.to_world(screen_direction, camera_yaw())
+
+
+## A direction on the ground (a move or a shot) as a direction on the screen for the camera now.
+func to_screen(world_direction: Vector2) -> Vector2:
+	return CameraViews.to_screen(world_direction, camera_yaw())
 
 
 ## Fires a shot along `direction` (ground plane, x and z) when the cool-down is over: the
@@ -320,8 +337,9 @@ func fire_from(fighter: Fighter, direction: Vector2, cooldown: float) -> bool:
 	fighter.last_fire_seconds = now
 	fighter.note_action()
 	fighter.rotation.y = Movement.facing_yaw(direction)
-	fighter.face(direction)
-	fighter.model.play_shoot(direction)
+	var on_screen: Vector2 = to_screen(direction)
+	fighter.face(on_screen)
+	fighter.model.play_shoot(on_screen)
 	fighter.model.play_attack()
 	fighter.model.muzzle_flash()
 	var shot: Shot = Shot.new()
@@ -361,6 +379,8 @@ func _on_aim_released(direction: Vector2, held_seconds: float) -> void:
 		return
 	if aim == Vector2.ZERO:
 		aim = _aim_direction()
+	else:
+		aim = to_world(aim)
 	fire(aim)
 
 
@@ -382,7 +402,7 @@ func _update_aim_line() -> void:
 	_aim_line.visible = aiming
 	if not aiming:
 		return
-	var unit: Vector2 = aim.normalized()
+	var unit: Vector2 = to_world(aim).normalized()
 	var middle: Vector2 = unit * Combat.SHOT_RANGE / 2.0
 	_aim_line.position = _fighter.position + Vector3(middle.x, 0.04, middle.y)
 	_aim_line.rotation = Vector3(0.0, Movement.facing_yaw(unit), 0.0)

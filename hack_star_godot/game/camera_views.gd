@@ -1,8 +1,11 @@
 class_name CameraViews
 extends RefCounted
 ## The camera views of Training and a match (spec 09, V1, D25), in the order `V` goes through
-## them. The camera always looks north (its yaw never changes), so the movement keys keep their
-## direction on the screen in every view (V4). The `Arena` places the camera from these numbers.
+## them. `yaw_degrees` is the camera's turn around the vertical axis (0: it looks north, −z; 90:
+## west), as Godot's `rotation.y`. The keys, the joystick and the aim give a direction on the
+## screen that `to_world` turns by the camera's yaw, and the animated fighters get their direction
+## back on the screen through `to_screen`, so the controls and the facing stay right in a view that
+## turns the camera (X3, X4, D50). The `Arena` places the camera from these numbers.
 
 const CLASSIC: String = "classic"
 const CLOSE: String = "close"
@@ -13,16 +16,24 @@ const OVERVIEW: String = "overview"
 ## stands `distance` metres behind the fighter and looks at a point `look_ahead` metres ahead of
 ## it; Overview fits its distance to the whole arena.
 const LIST: Array[Dictionary] = [
-	{"id": CLASSIC, "name": "Classic", "pitch_degrees": 55.0},
+	{"id": CLASSIC, "name": "Classic", "pitch_degrees": 55.0, "yaw_degrees": 0.0},
 	{
 		"id": CLOSE,
 		"name": "Close",
 		"pitch_degrees": 55.0,
+		"yaw_degrees": 0.0,
 		"distance_share": 0.6,
 		"min_distance": 6.0,
 	},
-	{"id": BEHIND, "name": "Behind", "pitch_degrees": 28.0, "distance": 6.0, "look_ahead": 4.0},
-	{"id": OVERVIEW, "name": "Overview", "pitch_degrees": 78.0},
+	{
+		"id": BEHIND,
+		"name": "Behind",
+		"pitch_degrees": 28.0,
+		"yaw_degrees": 0.0,
+		"distance": 6.0,
+		"look_ahead": 4.0,
+	},
+	{"id": OVERVIEW, "name": "Overview", "pitch_degrees": 78.0, "yaw_degrees": 0.0},
 ]
 
 
@@ -51,3 +62,24 @@ static func next(view_id: String) -> String:
 ## The view's name as the player sees it.
 static func view_name(view_id: String) -> String:
 	return get_view(view_id)["name"]
+
+
+## The yaw of a camera at `camera` (radians, as `rotation.y`: 0 looking north), read from its right
+## axis, which stays level however far the camera looks down.
+static func yaw_of(camera: Transform3D) -> float:
+	var right: Vector3 = camera.basis.x
+	if Vector2(right.x, right.z).is_zero_approx():
+		return 0.0
+	return atan2(-right.z, right.x)
+
+
+## A direction on the screen (x right, y down) as a direction on the ground (x, z) for a camera
+## turned by `yaw` (radians): up the screen is away from the camera.
+static func to_world(screen_direction: Vector2, yaw: float) -> Vector2:
+	return screen_direction.rotated(-yaw)
+
+
+## A direction on the ground (x, z) as a direction on the screen (x right, y down) for a camera
+## turned by `yaw` (radians); the inverse of `to_world`.
+static func to_screen(world_direction: Vector2, yaw: float) -> Vector2:
+	return world_direction.rotated(yaw)
