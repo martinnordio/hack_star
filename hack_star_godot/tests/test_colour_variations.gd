@@ -321,3 +321,96 @@ func test_c_is_bound_to_nothing_else() -> void:
 		for event: InputEvent in InputMap.action_get_events(action):
 			if event is InputEventKey:
 				assert_ne((event as InputEventKey).physical_keycode, KEY_C, String(action))
+
+
+func test_lagoon_and_glow_night_differ_from_the_others_in_both_worlds() -> void:
+	for world: String in Worlds.ids():
+		var looks: Dictionary = {}
+		for variation: String in ColourVariations.ids():
+			GameState.colour_variation = variation
+			var arena: Arena = await _show(ARENA_SCENE, world)
+			looks[variation] = _look(arena)
+			await _close(arena)
+		for variation: String in [ColourVariations.LAGOON, ColourVariations.GLOW_NIGHT]:
+			for other: String in ColourVariations.ids():
+				if other != variation:
+					assert_ne(
+						looks[variation], looks[other], "%s: %s, %s" % [world, variation, other]
+					)
+	# The main surfaces too, not only a detail.
+	for variation: String in [ColourVariations.LAGOON, ColourVariations.GLOW_NIGHT]:
+		for role: String in ["ground", "border", "crystal_cluster/Spike", "glow_fern/Frond"]:
+			assert_ne(
+				GlimmerLooks.color(role, variation),
+				GlimmerLooks.color(role, ColourVariations.ORIGINAL),
+				"%s %s" % [variation, role]
+			)
+		for role: String in ["sand", "rock", "cactus", "outside"]:
+			assert_ne(
+				CanyonLooks.color(role, variation),
+				CanyonLooks.color(role, ColourVariations.ORIGINAL),
+				"%s %s" % [variation, role]
+			)
+
+
+func test_every_colour_of_the_new_variations_is_from_the_pack() -> void:
+	var allowed: Array[Color] = []
+	allowed.assign(GlimmerPalette.ALL.values())
+	for file: String in DirAccess.get_files_at(GlimmerLooks.MATERIALS_DIR):
+		if file.ends_with(".tres"):
+			var material: BaseMaterial3D = load(GlimmerLooks.MATERIALS_DIR + file)
+			allowed.append(material.albedo_color)
+			if material.emission_enabled:
+				allowed.append(material.emission)
+	var in_pack: Callable = func(color: Color) -> bool:
+		for pack_color: Color in allowed:
+			if Color(color, 1.0).is_equal_approx(Color(pack_color, 1.0)):
+				return true
+		return false
+	for variation: String in [ColourVariations.LAGOON, ColourVariations.GLOW_NIGHT]:
+		for role: String in GlimmerLooks.roles(variation):
+			var look: Dictionary = GlimmerLooks.look(role, variation)
+			assert_true(in_pack.call(look["albedo"]), "Glimmer Isles %s %s" % [variation, role])
+			if look["glow_strength"] > 0.0:
+				assert_true(
+					in_pack.call(look["glow"]), "Glimmer Isles %s %s glow" % [variation, role]
+				)
+		for role: String in CanyonLooks.roles(variation):
+			var look: Dictionary = CanyonLooks.look(role, variation)
+			assert_true(in_pack.call(look["albedo"]), "canyon %s %s" % [variation, role])
+			if look["glow_strength"] > 0.0:
+				assert_true(in_pack.call(look["glow"]), "canyon %s %s glow" % [variation, role])
+		for light: Dictionary in [GlimmerLooks.light(variation), CanyonLooks.light(variation)]:
+			assert_false(light.is_empty(), "%s has its own light" % variation)
+			var colors: Array = light["sky"] + [light["ambient"], light["sun"]]
+			for color: Color in colors:
+				assert_true(in_pack.call(color), "%s light %s" % [variation, color])
+	assert_eq(
+		CanyonLooks.roles(ColourVariations.LAGOON), CanyonLooks.roles(ColourVariations.ORIGINAL)
+	)
+	assert_eq(
+		GlimmerLooks.roles(ColourVariations.GLOW_NIGHT),
+		GlimmerLooks.roles(ColourVariations.GLIMMER)
+	)
+
+
+func test_lagoon_and_glow_night_have_their_own_sky_and_glow_night_glows() -> void:
+	GameState.light_preset = LightPresets.CLASSIC
+	for world: String in Worlds.ids():
+		for variation: String in [ColourVariations.LAGOON, ColourVariations.GLOW_NIGHT]:
+			GameState.colour_variation = variation
+			var arena: Arena = await _show(ARENA_SCENE, world)
+			var environment: Environment = _environment(arena)
+			var gradient: ProceduralSkyMaterial = environment.sky.sky_material
+			assert_eq(gradient.sky_top_color, GlimmerLooks.light(variation)["sky"][0], world)
+			assert_false(environment.fog_enabled, "no fog in %s" % variation)
+			assert_eq(
+				environment.glow_enabled,
+				variation == ColourVariations.GLOW_NIGHT,
+				"%s %s" % [world, variation]
+			)
+			assert_eq(
+				(arena.get_node("Sun") as DirectionalLight3D).light_color,
+				GlimmerLooks.light(variation)["sun"]
+			)
+			await _close(arena)

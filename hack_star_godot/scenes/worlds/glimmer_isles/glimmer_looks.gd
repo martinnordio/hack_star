@@ -14,8 +14,9 @@ const GLIMMER: String = ColourVariations.GLIMMER
 ## The variation a game starts with (spec 09 H1).
 const DEFAULT: String = ColourVariations.DEFAULT
 const MATERIALS_DIR: String = "res://scenes/glimmer_isles/materials/"
-## The variations lit by the pack's lighting scene (its sky, environment and sun).
-const PACK_LIGHTING: Array[String] = [GLIMMER]
+## The variations lit by the pack's lighting scene (its environment and sun; with the variation's
+## own sky and light colours from `LIGHTS` where it has them).
+const PACK_LIGHTING: Array[String] = [GLIMMER, ColourVariations.LAGOON, ColourVariations.GLOW_NIGHT]
 
 ## The parts of each prop kind in the order `GlimmerProp` builds them (the bake's `part_index`).
 const PARTS: Dictionary[String, Array] = {
@@ -117,10 +118,143 @@ const GLIMMER_LOOKS: Dictionary[String, Dictionary] = {
 	"waterfall_light": {"albedo": GlimmerPalette.FOAM},
 }
 
+## **Lagoon** (spec 09 H4, D49): a bright day over lagoon water — mint and pale stone tiles, a
+## sand path and sandy walls, turquoise and shallow-water crystals, jade ferns, bubblegum
+## mushrooms on shell stems, the lagoon in shallow water; nothing glows much. (Dew and pale mint
+## tiles, D49's first choice, washed to white under the bright presets on Step 42's screenshots.)
+const LAGOON_LOOKS: Dictionary[String, Dictionary] = {
+	"ground": {"albedo": GlimmerPalette.MINT},
+	"ground_alt": {"albedo": GlimmerPalette.STONE_LIGHT},
+	"path": {"material": "sand"},
+	"rim": {"albedo": GlimmerPalette.JADE},
+	"underside": {"albedo": GlimmerPalette.STONE},
+	"border": {"material": "sand"},
+	"border_top": {"albedo": GlimmerPalette.SHELL},
+	"plinth": {"albedo": GlimmerPalette.PATH},
+	"fern_ground": {"albedo": GlimmerPalette.FERN},
+	"lagoon": {"albedo": Color(GlimmerPalette.SHALLOW_WATER, 0.85)},
+	"lagoon_light": {"albedo": GlimmerPalette.FOAM},
+	"crystal_cluster/Rock": {"albedo": GlimmerPalette.STONE_LIGHT},
+	"crystal_cluster/Spike":
+	{"albedo": GlimmerPalette.TURQUOISE, "glow": GlimmerPalette.GLOW_CYAN, "glow_strength": 0.3},
+	"crystal_cluster/SpikeLeft":
+	{
+		"albedo": GlimmerPalette.SHALLOW_WATER,
+		"glow": GlimmerPalette.GLOW_CYAN,
+		"glow_strength": 0.3,
+	},
+	"crystal_cluster/SpikeRight":
+	{"albedo": GlimmerPalette.FOAM, "glow": GlimmerPalette.GLOW_CORE, "glow_strength": 0.2},
+	"glow_fern/Frond": {"albedo": GlimmerPalette.JADE},
+	"glow_fern/FrondLeft": {"albedo": GlimmerPalette.MINT},
+	"glow_fern/FrondRight": {"albedo": GlimmerPalette.JADE},
+	"glow_fern/FrondBack": {"albedo": GlimmerPalette.MINT},
+	"glow_fern/TipLeft": {"albedo": GlimmerPalette.SPRING},
+	"glow_fern/TipBack": {"albedo": GlimmerPalette.SPRING},
+	"small_mushroom/Stem": {"albedo": GlimmerPalette.SHELL},
+	"small_mushroom/Cap": {"albedo": GlimmerPalette.BUBBLEGUM},
+	"giant_mushroom/Stem": {"albedo": GlimmerPalette.SHELL},
+	"giant_mushroom/Gills": {"albedo": GlimmerPalette.PINK_SPOT},
+	"giant_mushroom/Cap": {"albedo": GlimmerPalette.MAGENTA_CAP},
+	"island_chunk/Grass": {"albedo": GlimmerPalette.SPRING},
+	"island_chunk/Rock": {"material": "sand"},
+	"island_chunk/RootLeft": {"albedo": GlimmerPalette.BARK},
+	"island_chunk/RootRight": {"albedo": GlimmerPalette.BARK},
+	"firefly": {"albedo": GlimmerPalette.SUNLIT_LEAF},
+	"waterfall": {"material": "waterfall"},
+	"waterfall_light": {"albedo": GlimmerPalette.FOAM},
+}
+
+## **Glow night** (spec 09 H4, D49): a night of twilight sky over a dark stone floor — glowing
+## cyan, lilac and gold crystals, glowing mushrooms and fern tips, a glowing cyan path, gold
+## sparkles for fireflies and a deep lagoon.
+const GLOW_NIGHT_LOOKS: Dictionary[String, Dictionary] = {
+	"ground": {"albedo": GlimmerPalette.CLIFF},
+	"ground_alt": {"albedo": GlimmerPalette.STONE},
+	"path":
+	{"albedo": GlimmerPalette.GLOW_CYAN, "glow": GlimmerPalette.GLOW_CYAN, "glow_strength": 0.8},
+	"rim": {"albedo": GlimmerPalette.MOSS_SHADOW},
+	"underside": {"albedo": GlimmerPalette.STONE_SHADOW},
+	"border": {"albedo": GlimmerPalette.TWILIGHT},
+	"border_top": {"albedo": GlimmerPalette.GLOW_VIOLET},
+	"plinth": {"albedo": GlimmerPalette.GLOW_DEEP},
+	"fern_ground": {"albedo": GlimmerPalette.MOSS_SHADOW},
+	"lagoon": {"albedo": Color(GlimmerPalette.DEEP_LAGOON, 0.9)},
+	"lagoon_light": {"albedo": GlimmerPalette.GLOW_CYAN},
+	"crystal_cluster/Rock": {"albedo": GlimmerPalette.GLOW_DEEP},
+	"crystal_cluster/Spike":
+	{"albedo": GlimmerPalette.GLOW_CYAN, "glow": GlimmerPalette.GLOW_CYAN, "glow_strength": 0.8},
+	"crystal_cluster/SpikeLeft":
+	{"albedo": GlimmerPalette.GLOW_LILAC, "glow": GlimmerPalette.GLOW_LILAC, "glow_strength": 0.8},
+	"crystal_cluster/SpikeRight":
+	{"albedo": GlimmerPalette.GOLD, "glow": GlimmerPalette.SUNBEAM, "glow_strength": 0.6},
+	"glow_fern/Frond": {"albedo": GlimmerPalette.FERN},
+	"glow_fern/FrondLeft": {"albedo": GlimmerPalette.MOSS_SHADOW},
+	"glow_fern/FrondRight": {"albedo": GlimmerPalette.FERN},
+	"glow_fern/FrondBack": {"albedo": GlimmerPalette.MOSS_SHADOW},
+	"glow_fern/TipLeft":
+	{"albedo": GlimmerPalette.GLOW_LIME, "glow": GlimmerPalette.GLOW_LIME, "glow_strength": 1.0},
+	"glow_fern/TipBack":
+	{"albedo": GlimmerPalette.GLOW_LIME, "glow": GlimmerPalette.GLOW_LIME, "glow_strength": 1.0},
+	"small_mushroom/Stem": {"albedo": GlimmerPalette.GLOW_VIOLET},
+	"small_mushroom/Cap":
+	{"albedo": GlimmerPalette.GLOW_CYAN, "glow": GlimmerPalette.GLOW_CYAN, "glow_strength": 0.9},
+	"giant_mushroom/Stem": {"albedo": GlimmerPalette.TWILIGHT},
+	"giant_mushroom/Gills":
+	{"albedo": GlimmerPalette.GLOW_LILAC, "glow": GlimmerPalette.GLOW_LILAC, "glow_strength": 0.4},
+	"giant_mushroom/Cap":
+	{"albedo": GlimmerPalette.PLUM_CAP, "glow": GlimmerPalette.GLOW_VIOLET, "glow_strength": 0.5},
+	"island_chunk/Grass": {"albedo": GlimmerPalette.FERN},
+	"island_chunk/Rock": {"albedo": GlimmerPalette.CLIFF},
+	"island_chunk/RootLeft": {"albedo": GlimmerPalette.ROOT_DARK},
+	"island_chunk/RootRight": {"albedo": GlimmerPalette.ROOT_DARK},
+	"firefly": {"albedo": GlimmerPalette.SPARKLE},
+	"waterfall": {"albedo": Color(GlimmerPalette.GLOW_CYAN, 0.6)},
+	"waterfall_light": {"albedo": GlimmerPalette.GLOW_CORE},
+}
+
+## The own light of the variations other than Glimmer's pack light as delivered: the pack's
+## environment and sun with these sky and light colours (`WorldLighting.use_pack_light`); no fog
+## (it whitened the arena in Step 40), glow only at night.
+const LIGHTS: Dictionary[String, Dictionary] = {
+	ColourVariations.LAGOON:
+	{
+		"sky":
+		[
+			GlimmerPalette.DAY_SKY,
+			GlimmerPalette.SUN_MIST,
+			GlimmerPalette.SHALLOW_WATER,
+			GlimmerPalette.TURQUOISE,
+		],
+		"ambient": GlimmerPalette.DAY_SKY,
+		"ambient_energy": 0.5,
+		"sun": GlimmerPalette.SUN_MIST,
+		"sun_energy": 0.95,
+		"fog": false,
+		"glow": false,
+	},
+	ColourVariations.GLOW_NIGHT:
+	{
+		"sky":
+		[
+			GlimmerPalette.NIGHT_SKY,
+			GlimmerPalette.TWILIGHT,
+			GlimmerPalette.STONE_SHADOW,
+			GlimmerPalette.GLOW_DEEP,
+		],
+		"ambient": GlimmerPalette.DREAM_VIOLET,
+		"ambient_energy": 0.45,
+		"sun": GlimmerPalette.DREAM_VIOLET,
+		"sun_energy": 0.7,
+		"fog": false,
+		"glow": true,
+	},
+}
+
 
 ## The variations that have a table here.
 static func variations() -> Array[String]:
-	return [ORIGINAL, GLIMMER]
+	return [ORIGINAL, GLIMMER, ColourVariations.LAGOON, ColourVariations.GLOW_NIGHT]
 
 
 ## The roles of a variation's table.
@@ -189,6 +323,11 @@ static func uses_pack_lighting(variation: String = DEFAULT) -> bool:
 	return variation in PACK_LIGHTING
 
 
+## The variation's own sky and light colours over the pack's light (`LIGHTS`), or none.
+static func light(variation: String = DEFAULT) -> Dictionary:
+	return LIGHTS.get(variation, {})
+
+
 ## One of the pack's materials by name (`water`, `stone`, …).
 static func pack_material(material_name: String) -> BaseMaterial3D:
 	return load(MATERIALS_DIR + material_name + ".tres")
@@ -196,6 +335,11 @@ static func pack_material(material_name: String) -> BaseMaterial3D:
 
 # The table of a variation; one without a table of its own looks like Original.
 static func _table(variation: String) -> Dictionary[String, Dictionary]:
-	if variation == GLIMMER:
-		return GLIMMER_LOOKS
+	match variation:
+		GLIMMER:
+			return GLIMMER_LOOKS
+		ColourVariations.LAGOON:
+			return LAGOON_LOOKS
+		ColourVariations.GLOW_NIGHT:
+			return GLOW_NIGHT_LOOKS
 	return ORIGINAL_LOOKS

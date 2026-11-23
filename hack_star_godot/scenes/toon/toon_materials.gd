@@ -57,12 +57,18 @@ static func from_material(material: BaseMaterial3D, outlined: bool = true) -> Sh
 	return toon(material.albedo_color, Color.BLACK, 0.0, outlined)
 
 
-## The cel-shaded material of MultiMesh props, coloured per instance (`set_instance_color`).
-static func instanced(outlined: bool = true) -> ShaderMaterial:
+## The cel-shaded material of MultiMesh props, coloured per instance (`set_instance_color`); with
+## `glow_strength` each instance also glows in its own colour.
+static func instanced(outlined: bool = true, glow_strength: float = 0.0) -> ShaderMaterial:
 	var key: String = "instanced/%s" % outlined
+	if glow_strength > 0.0:
+		key += "/glow/%s" % glow_strength
 	if not _toons.has(key):
 		var material: ShaderMaterial = toon(Color.WHITE, Color.BLACK, 0.0, outlined).duplicate()
 		material.set_shader_parameter("use_instance_color", true)
+		if glow_strength > 0.0:
+			material.set_shader_parameter("glow_from_instance", true)
+			material.set_shader_parameter("emission_energy", glow_strength)
 		_toons[key] = material
 	return _toons[key]
 

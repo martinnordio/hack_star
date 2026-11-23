@@ -38,6 +38,10 @@ func test_the_controls_name_the_keys_and_the_sticks() -> void:
 	assert_true(controls.contains("K a saturation boost"), "the boost key (L4)")
 	for preset_id: String in LightPresets.ids():
 		assert_true(controls.contains(LightPresets.preset_name(preset_id)), preset_id)
+	assert_true(ControlsHelp.KEYBOARD_HINT.contains("colours: C"), "the colour key (H8)")
+	assert_true(controls.contains("C switches the colours"), "the colour key (H8)")
+	for variation_id: String in ColourVariations.ids():
+		assert_true(controls.contains(ColourVariations.variation_name(variation_id)), variation_id)
 	assert_true(ControlsHelp.TOUCH_HINT.contains("stick"))
 
 

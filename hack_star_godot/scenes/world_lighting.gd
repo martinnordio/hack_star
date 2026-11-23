@@ -13,6 +13,9 @@ const GLOW_BLOOM: float = 0.0
 const GLOW_HDR_THRESHOLD: float = 0.5
 ## What a world may change on the arena's sun (`remember`, `restore`).
 const SUN_PROPERTIES: Array[String] = ["light_color", "light_energy", "rotation", "shadow_opacity"]
+## The author's lighting scene (spec 09 P4, D47): its environment and sun light Glimmer Isles in
+## Glimmer, and with other sky and light colours both worlds in Lagoon and Glow night (D49).
+const PACK_LIGHTING: PackedScene = preload("res://scenes/glimmer_isles/glimmer_isles_lighting.tscn")
 
 var _holder: WorldEnvironment
 var _sun: DirectionalLight3D
@@ -125,6 +128,51 @@ static func restore(holder: WorldEnvironment, sun: DirectionalLight3D, saved: Di
 		for property: String in SUN_PROPERTIES:
 			if saved.has(property):
 				sun.set(property, saved[property])
+
+
+## Lights the arena with the pack's lighting scene (spec 09 P4, D47, D49): the environment
+## becomes a **copy** of the pack's (the `.tres` never changes), with the fill light's colour
+## folded into the ambient light, weighted by the two energies (the fill light hardly reaches the
+## toon shader's bands — a pixel difference of 0.2 of 255 on Step 40's screenshots); the sun
+## takes the pack sun's colour, energy, angle and shadow. `light` changes that for a colour
+## variation (`GlimmerLooks.LIGHTS`, `CanyonLooks.LIGHTS`): `sky` (top, horizon, ground below,
+## ground at the horizon), `ambient`, `ambient_energy`, `sun`, `sun_energy`, `fog`, `glow`.
+static func use_pack_light(
+	holder: WorldEnvironment, sun: DirectionalLight3D, light: Dictionary = {}
+) -> void:
+	var lighting: Node = PACK_LIGHTING.instantiate()
+	if holder != null:
+		var pack: WorldEnvironment = lighting.get_node("WorldEnvironment")
+		var environment: Environment = pack.environment.duplicate()
+		var fill: OmniLight3D = lighting.get_node("MagicFill")
+		var share: float = (
+			fill.light_energy / (fill.light_energy + environment.ambient_light_energy)
+		)
+		environment.ambient_light_color = environment.ambient_light_color.lerp(
+			fill.light_color, share
+		)
+		if light.has("sky"):
+			var gradient: ProceduralSkyMaterial = environment.sky.sky_material.duplicate()
+			gradient.sky_top_color = light["sky"][0]
+			gradient.sky_horizon_color = light["sky"][1]
+			gradient.ground_bottom_color = light["sky"][2]
+			gradient.ground_horizon_color = light["sky"][3]
+			environment.sky = Sky.new()
+			environment.sky.sky_material = gradient
+		environment.ambient_light_color = light.get("ambient", environment.ambient_light_color)
+		environment.ambient_light_energy = light.get(
+			"ambient_energy", environment.ambient_light_energy
+		)
+		environment.fog_enabled = light.get("fog", environment.fog_enabled)
+		environment.glow_enabled = light.get("glow", environment.glow_enabled)
+		holder.environment = environment
+	if sun != null:
+		var pack_sun: DirectionalLight3D = lighting.get_node("Sun")
+		sun.light_color = light.get("sun", pack_sun.light_color)
+		sun.light_energy = light.get("sun_energy", pack_sun.light_energy)
+		sun.rotation = pack_sun.rotation
+		sun.shadow_opacity = pack_sun.shadow_opacity
+	lighting.free()
 
 
 ## Whether the saturation boost is on.

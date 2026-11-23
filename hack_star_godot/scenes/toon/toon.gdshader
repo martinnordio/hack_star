@@ -11,14 +11,16 @@ uniform float lit_band = 0.85;
 uniform float mid_band = 0.5;
 uniform float shadow_band = 0.0;
 uniform float rim_strength = 0.25;
-// MultiMesh props: each instance's colour (set_instance_color) tints the albedo.
+// MultiMesh props: each instance's colour (set_instance_color) tints the albedo, and with
+// `glow_from_instance` it is also the glow's colour (each instance glows in its own colour).
 uniform bool use_instance_color = false;
+uniform bool glow_from_instance = false;
 
 void fragment() {
 	ALBEDO = use_instance_color ? albedo.rgb * COLOR.rgb : albedo.rgb;
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
-	EMISSION = emission.rgb * emission_energy;
+	EMISSION = (glow_from_instance ? COLOR.rgb : emission.rgb) * emission_energy;
 }
 
 void light() {

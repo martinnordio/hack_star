@@ -5,7 +5,7 @@ extends RefCounted
 ## stay true when a rule changes. English only (spec 16, S23).
 
 const KEYBOARD_HINT: String = (
-	"Move: WASD or arrow keys\nShoot: Space\n" + "View: V or 1-4, light: L and K"
+	"Move: WASD or arrow keys\nShoot: Space\n" + "View: V or 1-4, light: L and K, colours: C"
 )
 const TOUCH_HINT: String = "Move: left stick\nShoot: drag or tap the right stick"
 const MORE_IN_INFO: String = "More in Info"
@@ -25,12 +25,14 @@ static func how_to_play() -> Array[Dictionary]:
 					+ "at the nearest target in range (%d metres), or straight ahead. "
 					+ "V switches the camera view, 1 to 4 choose one (%s). "
 					+ "L switches the lighting (%s), K a saturation boost. "
+					+ "C switches the colours (%s). "
 					+ "Back goes home."
 				)
 				% [
 					int(Combat.SHOT_RANGE),
 					", ".join(_view_names()),
 					", ".join(_light_names()),
+					", ".join(_colour_names()),
 				]
 			),
 		},
@@ -93,4 +95,12 @@ static func _light_names() -> PackedStringArray:
 	var names: PackedStringArray = []
 	for preset_id: String in LightPresets.ids():
 		names.append(LightPresets.preset_name(preset_id))
+	return names
+
+
+# The colour variations' names in the order of `C`.
+static func _colour_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for variation_id: String in ColourVariations.ids():
+		names.append(ColourVariations.variation_name(variation_id))
 	return names

@@ -49,6 +49,7 @@ func _ready() -> void:
 	_arena_light = WorldLighting.remember(
 		get_parent().get_node_or_null("WorldEnvironment"), get_parent().get_node_or_null("Sun")
 	)
+	_build_light()
 	_build_floor()
 	_build_walls()
 	_build_outside_boulders()
@@ -64,9 +65,9 @@ func _ready() -> void:
 
 
 ## Gives the built canyon the colours of the colour variation `variation_id` (spec 09 H1, D48):
-## every surface, prop and decoration repainted by its role, the arena's own light put back;
-## nothing moves, no collider is touched. The arena then applies the lighting preset again
-## (`WorldLighting`).
+## every surface, prop and decoration repainted by its role, the arena's own light put back and
+## lit for the variation; nothing moves, no collider is touched. The arena then applies the
+## lighting preset again (`WorldLighting`).
 func apply_variation(variation_id: String) -> void:
 	variation = variation_id
 	WorldLighting.restore(
@@ -74,13 +75,33 @@ func apply_variation(variation_id: String) -> void:
 		get_parent().get_node_or_null("Sun"),
 		_arena_light
 	)
+	_build_light()
 	for instance: MeshInstance3D in _painted:
 		instance.material_override = CanyonLooks.material(
 			instance.get_meta("role"), variation, instance.get_meta("outlined")
 		)
 	for instances: MultiMeshInstance3D in _recipes:
+		if instances.has_meta("glow_role"):
+			instances.material_override = _glowing(instances.get_meta("glow_role"))
 		_paint_instances(instances)
 	_decor.apply_variation(variation)
+
+
+# The variation's own light (`CanyonLooks.LIGHTS`: the pack's light with its colours); Original
+# and Glimmer keep the arena's own warm light.
+func _build_light() -> void:
+	var light: Dictionary = CanyonLooks.light(variation)
+	if not light.is_empty():
+		WorldLighting.use_pack_light(
+			get_parent().get_node_or_null("WorldEnvironment"),
+			get_parent().get_node_or_null("Sun"),
+			light
+		)
+
+
+# The per-instance material of MultiMesh props whose instances glow where `role` glows.
+func _glowing(role: String) -> ShaderMaterial:
+	return ToonMaterials.instanced(true, CanyonLooks.look(role, variation)["glow_strength"])
 
 
 ## Height of a wall of `ArenaLayout.WALLS` (by index).
@@ -255,7 +276,10 @@ func _build_cacti() -> void:
 	flower.height = 0.2
 	flower.radial_segments = 8
 	flower.rings = 4
-	_add_multimesh("CactusFlowers", flower, ToonMaterials.instanced(), flowers, flower_colors)
+	var flowers_node: MultiMeshInstance3D = _add_multimesh(
+		"CactusFlowers", flower, _glowing("flower"), flowers, flower_colors
+	)
+	flowers_node.set_meta("glow_role", "flower")
 	# A five-petal blossom: a flat pentagon with a round middle.
 	var petals: CylinderMesh = CylinderMesh.new()
 	petals.top_radius = 0.2
@@ -263,7 +287,11 @@ func _build_cacti() -> void:
 	petals.height = 0.07
 	petals.radial_segments = 5
 	petals.rings = 1
-	_add_multimesh("CactusBlossoms", petals, ToonMaterials.instanced(), blossoms, blossom_colors)
+	var blossoms_node: MultiMeshInstance3D = _add_multimesh(
+		"CactusBlossoms", petals, _glowing("blossom_0"), blossoms, blossom_colors
+	)
+	# The blossoms glow as strongly as the first blossom colour does.
+	blossoms_node.set_meta("glow_role", "blossom_0")
 
 
 func _build_decoration() -> void:
