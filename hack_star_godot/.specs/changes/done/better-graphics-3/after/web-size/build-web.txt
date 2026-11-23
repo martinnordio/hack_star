@@ -1,0 +1,4 @@
+tools/export_web.ps1 in a clean worktree at 46b29e0 (exit 0)
+build/web total: 43,477,611 bytes
+index.pck: 3,356,480 bytes
+.pck searched: 0 x _hero.png, glimmer_isles_palette, ui_theme, .gpl, palette.json, docs/screenshots, animation_preview, _gameplay.tscn, characters/magmax/, _new/

@@ -1,0 +1,26 @@
+export_presets.cfg exclude_filter (one entry per line):
+addons/gut/*
+addons/proton_scatter/*
+scenes/worlds/glimmer_isles/scatter_source.tscn
+tests/*
+.specs/*
+tools/*
+build/*
+characters/*/character_preview.gd
+characters/*/*_hero.tscn
+characters/*/*_hero_ui.tscn
+characters/*/README.md
+scenes/blaze_godot/*
+scenes/blaze_godot.zip
+characters/*_new/*
+characters/magmax*/*
+characters/*.zip
+
+.gitignore:
+/.godot/
+/build/
+/assets/music/
+*.tmp
+/scenes/blaze_godot.zip
+/scenes/blaze_godot/
+/characters/*.zip

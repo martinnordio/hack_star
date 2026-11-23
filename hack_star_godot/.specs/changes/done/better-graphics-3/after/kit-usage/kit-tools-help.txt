@@ -1,0 +1,92 @@
+== .specs/kit/tools/usage.ps1
+<#
+.SYNOPSIS
+  Tokens and cost of a time range of the AI chat, by the method of COSTS.md.
+  Without -Transcript it checks every chat log of this project written since -Since
+  (Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions) and
+  uses the one of this chat: with -Run <id>, the log that contains the marker "spec-nx run <id>"
+  the stage wrote at its start; without it, the only log with requests in the range. It stops
+  with an error when it finds none, or several without -Run.
+.EXAMPLE
+  ./usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5"
+  ./usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5" -Run 20261116-0855-kqzt
+  ./usage.ps1 -Since 2026-11-16T07:55:00Z -Until 2026-11-16T08:10:00Z -Model "Claude Opus 5.5" -Json
+#>
+param(
+    [Parameter(Mandatory)] [string] $Since,
+    [Parameter(Mandatory)] [string] $Model,
+    [string] $Until,
+    [string] $Transcript,
+    [string] $Root = '.',
+    [int] $ContextCap = 200000,
+    [ValidateSet('all', 'main', 'subagents')] [string] $Agent = 'all',
+    [string[]] $AgentName,
+    [string] $Run,
+    [switch] $Json
+)
+
+== .specs/kit/tools/settings.ps1
+<#
+.SYNOPSIS
+  The settings of spec-nx in three layers: the kit's (<kit>/.specs/spec-nx.json, when the kit
+  is a repository of its own, e.g. a submodule), the project's (.specs/spec-nx.json) and the
+  developer's (.specs/spec-nx.local.json). A later layer wins: a key replaces the same key,
+  objects are merged key by key, lists are replaced as a whole, null removes the key. Keys that
+  describe the generated kit are taken from the project's file only.
+  Dot-source it for Get-SpecNxSettings, or run it to show the result.
+.EXAMPLE
+  ./settings.ps1                  # every setting with the file it comes from
+  ./settings.ps1 -Get work_items.area
+  ./settings.ps1 -Source work_items.assigned_to   # the file it comes from
+  ./settings.ps1 -Json
+#>
+# No param block: dot-sourcing must not change the caller's variables. Arguments: see below.
+
+$script:SpecNxProjectOnly = @('version', 'spec_nx_version', 'generated', 'kit', 'kit_dir', 'kit_ref', 'kit_files', 'shells')
+
+function ConvertTo-SpecNxHash($value) {
+    if ($value -is [System.Management.Automation.PSCustomObject]) {
+        $h = [ordered]@{}
+        foreach ($p in $value.PSObject.Properties) { $h[$p.Name] = ConvertTo-SpecNxHash $p.Value }
+        return $h
+    }
+    if ($value -is [System.Collections.IList] -and $value -isnot [string]) {
+        return , @($value | ForEach-Object { ConvertTo-SpecNxHash $_ })
+
+== .specs/kit/tools/costs_ledger.ps1
+<#
+.SYNOPSIS
+  Rebuild .specs/costs.md (tokens and cost of every spec) from the Stage logs of the specs.
+.EXAMPLE
+  ./costs_ledger.ps1
+  ./costs_ledger.ps1 -CostsLink ../stages/COSTS.md -DryRun
+#>
+param(
+    [string] $Root = '.',
+    [string] $CostsLink,
+    [switch] $DryRun
+)
+
+== .specs/kit/tools/github/create_issue.ps1
+<#
+.SYNOPSIS
+  Create a GitHub issue whose description is a spec summary (in the spec-summary block), and
+  optionally make it a sub-issue of a parent issue. Its type and the person it is assigned to
+  come from the parameters or the settings (work_items.type, .assigned_to); by default it is
+  assigned to you (@me), and work_items.assigned_to = null leaves it unassigned. Every field is
+  checked before the issue is created; the dry run lists them with where they come from.
+  Prints the new issue number.
+.EXAMPLE
+  ./create_issue.ps1 -Title "Login page" -SummaryFile summary.md -Parent 12 -DryRun
+  ./create_issue.ps1 -Title "Login page" -SummaryFile summary.md -Type Feature -AssignedTo octocat -DryRun
+#>
+param(
+    [Parameter(Mandatory)] [string] $Title,
+    [Parameter(Mandatory)] [string] $SummaryFile,
+    [int] $Parent,
+    [string] $Type,
+    [string] $AssignedTo,
+    [switch] $Unassigned,
+    [switch] $DryRun
+)
+

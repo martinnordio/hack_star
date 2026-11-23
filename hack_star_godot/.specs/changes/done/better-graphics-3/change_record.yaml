@@ -1,0 +1,266 @@
+# yaml-language-server: $schema=../../../../../.specs/kit/review/change_record.schema.json
+# Change record of the second and third reopenings of spec 09 Better Graphics (#35) on
+# feature/better-graphics (written by REVIEW:, 2026-11-23, third review). Range: ef31576..46b29e0
+# (part M, Steps 30-37: animated characters; the kit regeneration 325b5a1 and a268200; parts P, H,
+# X and E, Steps 38-49: the palette pack, colour variations, four more views and Beatbolt2).
+# The earlier records are changes/done/better-graphics/ (Steps 1-20) and
+# changes/done/better-graphics-2/ (Steps 21-29).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/". The schema only accepts statement ids S<n>; this
+# spec's new statements are M1-M16, P1-P8, H1-H8, X1-X8 and E1-E8, so each block lists its S<n>
+# under `statements` and names the others in its `note` (first review, finding 9, deferred).
+# Screens: a windowed Godot 4.7.2 run (Compatibility, 1280x720) with a temporary capture script
+# (-s, under %TEMP%, removed), the same script on both sides: GameState.save_path pointed to
+# user://review09r4/ (the author's save backed up and restored, unchanged), entrance skipped,
+# Training (arena.tscn) with Echo as the player unless named, Bright day, 6.4 s in (after the
+# start hint), "hold" = the action pressed for the last 0.7 s; the fighter screen 2.2 s in, the
+# fighter list 2.0 s in scrolled to its end. Before from a temporary worktree at ef31576, after
+# from the working tree at 46b29e0 (default colour variation Glimmer). Pictures stored as 960x540
+# JPEG. Outputs: a temporary headless probe, the same source on both sides; the web size from
+# tools/export_web.ps1 in clean temporary worktrees of both revisions (removed).
+version: 1
+branch: feature/better-graphics
+base: ef31576
+why: |
+  The author reopened spec 09 twice more. First for animated characters: his delivery of 12
+  gameplay frames and a projectile per fighter makes Echo, Flarekid and the new MagMax turn,
+  walk and shoot in play, show off on the pedestal and live on their cards. Then for his
+  Glimmer Isles palette pack (colours, materials, sky and light), four colour variations on C,
+  four more camera views with controls that follow the screen, and Beatbolt2, Echo rebuilt in 3D
+  from shapes.
+spec:
+  path: .specs/features/done/2026_11_21_09_better_graphics_spec.md
+  statements: [S2, S3, S4, S5, S6]
+changes:
+- id: glimmer-isles-default
+  kind: ui
+  change: modified
+  object: Glimmer Isles in Training, default colour variation (Glimmer) and preset (Bright day)
+  note: P2, P3, P5, H1 the author's palette and materials replace the cyan-and-lilac look; places, walls and cover unchanged (P6). Look at the floor and the border tops, which render as pure white (#ffffff) in this default, and the lagoon in Overview.
+  statements: [S2, S4]
+  examples:
+  - name: glimmer-classic-bright-day
+    input: |
+      godot --path hack_star_godot --resolution 1280x720 -s <capture script> -- <out> <side>
+      shot: arena.tscn, world=glimmer_isles, view=classic, light=bright_day, fighter=echo, 6.4 s
+    views: [desktop]
+  - name: glimmer-overview-bright-day
+    input: |
+      same capture script; view=overview
+    views: [desktop]
+  - name: glimmer-behind-bright-day
+    input: |
+      same capture script; view=behind
+    views: [desktop]
+- id: glimmer-isles-classic-preset
+  kind: ui
+  change: modified
+  object: Glimmer Isles with the Classic lighting preset
+  note: P4 Classic now shows the pack's environment as delivered (its fog, glow, filmic tone map and colour boost), so the arena turns milky and the outlines soften in the distance; before it was the old vivid look.
+  statements: [S2]
+  examples:
+  - name: glimmer-classic-classicpreset
+    input: |
+      same capture script; world=glimmer_isles, view=classic, light=classic
+    views: [desktop]
+- id: canyon-default
+  kind: ui
+  change: modified
+  object: The canyon in Training, default variation and preset
+  note: H3 the canyon in Glimmer is the canyon before (same colours and light); only Echo differs (his front idle frame instead of the hero picture, M1).
+  statements: [S2]
+  examples:
+  - name: canyon-classic-bright-day
+    input: |
+      same capture script; world=canyon, view=classic, light=bright_day
+    views: [desktop]
+- id: colour-variations
+  kind: ui
+  change: added
+  object: Colour variations on C (Original, Glimmer, Lagoon, Glow night)
+  note: H1-H4 Original is the look before (compare with the before side of glimmer-isles-default); Lagoon and Glow night change both worlds from the palette only. Lagoon's light tiles in Glimmer Isles clip to white like Glimmer's.
+  statements: [S2]
+  examples:
+  - name: glimmer-colours-original
+    input: |
+      same capture script; world=glimmer_isles, colour_variation=original
+    views: [desktop]
+  - name: glimmer-colours-lagoon
+    input: |
+      same capture script; world=glimmer_isles, colour_variation=lagoon
+    views: [desktop]
+  - name: glimmer-colours-glow-night
+    input: |
+      same capture script; world=glimmer_isles, colour_variation=glow_night
+    views: [desktop]
+  - name: canyon-colours-lagoon
+    input: |
+      same capture script; world=canyon, colour_variation=lagoon
+    views: [desktop]
+  - name: canyon-colours-glow-night
+    input: |
+      same capture script; world=canyon, colour_variation=glow_night
+    views: [desktop]
+- id: camera-views
+  kind: ui
+  change: added
+  object: Camera views Low, Side, Diagonal and Cinematic (keys 5-8)
+  note: X1, X3-X5 two views turn the camera (Side 90 degrees, Diagonal 45) and one swings (Cinematic); W still walks up the screen and shows Echo's back (side-echo-walk-up). Low is the only view that sees the sky, and in Bright day it is the preset's blue, not the pack's violet-to-pink (P4). In Cinematic the near border's white top fills the bottom third at the start.
+  statements: [S2]
+  examples:
+  - name: glimmer-view-low
+    input: |
+      same capture script; world=glimmer_isles, view=low
+    views: [desktop]
+  - name: glimmer-view-side
+    input: |
+      same capture script; world=glimmer_isles, view=side
+    views: [desktop]
+  - name: glimmer-view-diagonal
+    input: |
+      same capture script; world=glimmer_isles, view=diagonal
+    views: [desktop]
+  - name: glimmer-view-cinematic
+    input: |
+      same capture script; world=glimmer_isles, view=cinematic
+    views: [desktop]
+  - name: side-echo-walk-up
+    input: |
+      same capture script; world=canyon, view=side, hold=move_up (W) for the last 0.7 s
+    views: [desktop]
+- id: animated-fighters-in-play
+  kind: ui
+  change: modified
+  object: Echo walking right in Training (Close view)
+  note: M3-M5, M7 before the one hero picture hopped and flipped; now the side frame of the walk loop, feet on the shadow, outline kept.
+  statements: [S2, S4]
+  examples:
+  - name: canyon-echo-walk-right
+    input: |
+      same capture script; world=canyon, view=close, hold=move_right (D) for the last 0.7 s
+    views: [desktop]
+- id: fighter-screen-showcase
+  kind: ui
+  change: modified
+  object: Fighter screen with Echo, 2.2 s in
+  note: M8, M9 after the reveal the showcase loop turns him through his views (here in the turn); the hero picture is no longer used (D39).
+  statements: [S4]
+  examples:
+  - name: fighter-screen-echo
+    input: |
+      same capture script; scene=fighter_screen.tscn, viewed_fighter=echo, 2.2 s
+    views: [desktop]
+- id: fighter-list
+  kind: ui
+  change: modified
+  object: Fighter list scrolled to its end
+  note: M1, M10, E1, E6 MagMax and Beatbolt2 join; the picture fighters' cards carry a small outlined living figure and a light sweep; Beatbolt2's card shows his rendered figure.
+  statements: [S2, S4]
+  examples:
+  - name: fighter-list-end
+    input: |
+      same capture script; scene=fighter_list.tscn, scrolled to the end, 2.0 s
+    views: [desktop]
+- id: beatbolt2
+  kind: ui
+  change: added
+  object: Beatbolt2, Echo rebuilt in 3D from shapes
+  note: E1-E3, E5, E6 on the fighter screen, in Training in Low (closest to Echo's frames) and in Close while shooting (the cannon raised).
+  statements: [S2, S4]
+  examples:
+  - name: fighter-screen-beatbolt2
+    input: |
+      same capture script; scene=fighter_screen.tscn, viewed_fighter=beatbolt2, 2.2 s
+    views: [desktop]
+  - name: canyon-low-beatbolt2
+    input: |
+      same capture script; world=canyon, view=low, fighter=beatbolt2
+    views: [desktop]
+  - name: canyon-close-beatbolt2-shoot
+    input: |
+      same capture script; world=canyon, view=close, fighter=beatbolt2, hold=shoot (Space)
+    views: [desktop]
+- id: catalogue
+  kind: output
+  change: modified
+  object: Fighters, camera views, lighting presets and colour variations
+  note: M1, E1 eleven fighters (MagMax Epic picture, Beatbolt2 Mythic drawn, both unlocked); X1 eight views; H1 four colour variations, default Glimmer; the presets unchanged.
+  statements: [S2]
+  examples:
+  - name: probe
+    input: |
+      godot --headless --path hack_star_godot -s <probe script>
+      (Fighters.LIST, CameraViews.ids(), LightPresets.ids(), ColourVariations.ids())
+- id: input-actions
+  kind: config
+  change: modified
+  object: Input actions of the views and colours (project.godot)
+  note: X2, H1 view_5-view_8 (5-8 and the number pad) and colour_next (C); no clash with the other actions.
+  statements: [S2]
+  examples:
+  - name: actions
+    input: |
+      same probe; InputMap actions view_*, light_*, saturation_boost, colour_*
+- id: save-file
+  kind: data-format
+  change: modified
+  object: Save file after GameState.reset() (version 3)
+  note: M1, E1 entries for magmax and beatbolt2 (unlocked, power 1, 0 trophies); the format and the version stay 3, so old saves load and get the new fighters.
+  statements: [S2]
+  examples:
+  - name: save-after-reset
+    input: |
+      same probe; GameState.save_path = user://review09r4/probe.json; reset(); save()
+- id: export-filter
+  kind: config
+  change: modified
+  object: Web export exclude_filter and .gitignore
+  note: M12, P8, D35, D39, D44 the hero pictures, the delivery's helper scripts and scenes, the pack's palette picture, .gpl, .hex, .json, README and UI theme stay out of the export; the author's older characters/magmax/ is ignored by git.
+  statements: [S3, S4]
+  examples:
+  - name: filters
+    input: |
+      git show <rev>:hack_star_godot/export_presets.cfg (exclude_filter) and .gitignore
+- id: web-size
+  kind: performance
+  change: modified
+  object: Web export size (build/web total and index.pck)
+  note: M14, P8, E7 +2,233,028 bytes in total (frames, projectiles, MagMax's card, the pack's used files 44 kB, Beatbolt2's code 19 kB); 1.88 MB under G15's budget of 45,361,090 bytes. The size is deterministic, so one run per side.
+  statements: [S3]
+  examples:
+  - name: build-web
+    input: |
+      powershell -File tools/export_web.ps1 (clean worktree of each revision)
+- id: kit-usage
+  kind: command
+  change: modified
+  object: The kit's tools after the regeneration (usage.ps1, the new settings.ps1, costs_ledger.ps1, github/create_issue.ps1)
+  note: Not spec 09 (root kit, commits 325b5a1 and a268200, outside hack_star_godot/, S5). usage.ps1 gets -Run and keeps -AgentName with the same code; without -Run it now stops when several chats have requests in the range instead of taking the busiest; settings.ps1 reads the settings in three layers for every tool; create_issue.ps1 gets -Type, -AssignedTo, -Unassigned; costs_ledger.ps1 keeps -Root, -CostsLink, -DryRun (checked with -Root hack_star_godot).
+  statements: [S5]
+  examples:
+  - name: kit-tools-help
+    input: |
+      git show <rev>:<tool> for each tool (help block and param block)
+breaking: |
+  none for players: old saves load (version 3) and get MagMax and Beatbolt2; the game starts in
+  the Glimmer colour variation, so Glimmer Isles looks different by default (Original keeps the
+  look before on C). For the kit's users: usage.ps1 without -Run stops when several chats of the
+  project have requests in the range.
+review:
+- question: Why does Glimmer Isles' Classic preset look milky now?
+  answer: |
+    P4 asks Classic to show the pack's environment as delivered; the pack's fog whitens the
+    arena. Step 40 kept it on purpose (fog and glow seen on the desktop and the web). Finding 3
+    asks for a decision.
+- question: Why are the pack's sky colours not seen in Bright day?
+  answer: |
+    Step 40 found no view that sees the sky and kept the presets' 30 % world share. Low (Step 44)
+    does see it, and it shows Bright day's blue. Finding 2 asks for a decision.
+- question: Why is docs/screenshots/beatbolt2/ 6.92 MB?
+  answer: |
+    D54's "about 3 MB" covered the rounds (3.45 MB); Step 48 added the motion sheet and the
+    eight in-game view sheets as PNG. Not exported (.gdignore). Finding 5.
+- question: Are the kit commits part of spec 09?
+  answer: |
+    No. 325b5a1 and a268200 regenerate the shared kit (root .specs/, a root spec in
+    .specs/features/done/); they sit on this branch, so PR #36 carries them. Finding 8.

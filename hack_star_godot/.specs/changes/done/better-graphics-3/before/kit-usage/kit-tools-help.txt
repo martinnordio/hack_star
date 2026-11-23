@@ -1,0 +1,53 @@
+== .specs/kit/tools/usage.ps1
+<#
+.SYNOPSIS
+  Tokens and cost of a time range of the AI chat, by the method of COSTS.md.
+  Without -Transcript it checks every chat log of this project written since -Since
+  (Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions) and
+  uses the one with the most requests in the range. It stops with an error when it finds none.
+.EXAMPLE
+  ./usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5"
+  ./usage.ps1 -Since 2026-11-16T07:55:00Z -Until 2026-11-16T08:10:00Z -Model "Claude Opus 5.5" -Json
+#>
+param(
+    [Parameter(Mandatory)] [string] $Since,
+    [Parameter(Mandatory)] [string] $Model,
+    [string] $Until,
+    [string] $Transcript,
+    [string] $Root = '.',
+    [int] $ContextCap = 200000,
+    [ValidateSet('all', 'main', 'subagents')] [string] $Agent = 'all',
+    [string[]] $AgentName,
+    [switch] $Json
+)
+
+(.specs/kit/tools/settings.ps1 absent at ef31576)
+== .specs/kit/tools/costs_ledger.ps1
+<#
+.SYNOPSIS
+  Rebuild .specs/costs.md (tokens and cost of every spec) from the Stage logs of the specs.
+.EXAMPLE
+  ./costs_ledger.ps1
+  ./costs_ledger.ps1 -CostsLink ../stages/COSTS.md -DryRun
+#>
+param(
+    [string] $Root = '.',
+    [string] $CostsLink,
+    [switch] $DryRun
+)
+
+== .specs/kit/tools/github/create_issue.ps1
+<#
+.SYNOPSIS
+  Create a GitHub issue whose description is a spec summary (in the spec-summary block), and
+  optionally make it a sub-issue of a parent issue. Prints the new issue number.
+.EXAMPLE
+  ./create_issue.ps1 -Title "Login page" -SummaryFile summary.md -Parent 12 -DryRun
+#>
+param(
+    [Parameter(Mandatory)] [string] $Title,
+    [Parameter(Mandatory)] [string] $SummaryFile,
+    [int] $Parent,
+    [switch] $DryRun
+)
+

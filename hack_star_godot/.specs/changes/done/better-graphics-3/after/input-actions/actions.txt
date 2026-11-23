@@ -1,0 +1,12 @@
+action view_next: V - Physical
+action view_1: 1 - Physical, Kp 1
+action view_2: 2 - Physical, Kp 2
+action view_3: 3 - Physical, Kp 3
+action view_4: 4 - Physical, Kp 4
+action view_5: 5 - Physical, Kp 5
+action view_6: 6 - Physical, Kp 6
+action view_7: 7 - Physical, Kp 7
+action view_8: 8 - Physical, Kp 8
+action light_next: L - Physical
+action saturation_boost: K - Physical
+action colour_next: C - Physical
