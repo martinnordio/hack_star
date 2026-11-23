@@ -278,3 +278,30 @@ func test_a_new_view_is_kept_for_the_next_match() -> void:
 	var next_match: Arena = await _show_in_viewport(MATCH_SCENE)
 	assert_eq(next_match.view(), CameraViews.DIAGONAL, "the next match starts in it")
 	assert_almost_eq(rad_to_deg(next_match.camera_yaw()), 45.0, 0.5, "turned from the start")
+
+
+func test_the_move_stick_moves_the_player_along_the_screen_in_every_view() -> void:
+	var arena: Arena = await _show_in_viewport(ARENA_SCENE, "flarekid")
+	arena.read_player_input = true
+	var fighter: Fighter = arena.get_node("Fighter")
+	var camera: Camera3D = arena.get_node("Camera")
+	var stick: TouchJoystick = arena.get_node("Hud/TouchJoystick")
+	var animator: CutoutAnimator = fighter.model.cutout_animator()
+	var start: Vector3 = fighter.global_position
+	for view_id: String in CameraViews.ids():
+		arena.set_view(view_id)
+		await wait_seconds(Arena.VIEW_BLEND_SECONDS + 0.1)
+		for row: Array in [[Vector2.UP, "up"], [Vector2.LEFT, "side"]]:
+			fighter.global_position = start
+			await wait_physics_frames(1)
+			var before: Vector3 = fighter.global_position
+			stick.direction = row[0]
+			await wait_physics_frames(6)
+			stick.direction = Vector2.ZERO
+			var moved: Vector2 = (
+				camera.unproject_position(fighter.global_position)
+				- camera.unproject_position(before)
+			)
+			var where: String = "%s stick %s" % [view_id, row[0]]
+			assert_gt(moved.normalized().dot(row[0]), 0.9, "on the screen: " + where)
+			assert_eq(animator.view, row[1], where)
