@@ -151,8 +151,10 @@ from one delivery of **12 gameplay frames, a card, a hero picture and a projecti
   last view (the front at the start). Walking plays the view's walk loop (walk 1, idle, walk 2,
   idle) at a pace from the speed with a small hop; standing shows the view's idle frame and
   breathes. Every shot (the player's and the bots') turns the fighter to the shot's view and shows
-  its shoot frame for 0.25 s with a star at the fist, blaster or fireball. The camera never turns,
-  so this is the same in all four camera views. The white hit flash, the see-through in a bush,
+  its shoot frame for 0.25 s with a star at the fist, blaster or fireball. The view is chosen by
+  the direction on the screen (through the camera's yaw), so this is the same in all eight camera
+  views, also in the turned ones (Side, Diagonal, Cinematic). The white hit flash, the
+  see-through in a bush,
   the knock-out (tip over and fade) and the bar over the head work in every frame.
 - **Projectiles** (`Shot`, `scenes/toon/projectile.gdshader`): their shots fly as their own
   picture (lava fist, sound wave, fireball), 1 m long, turned along the flight and facing the
@@ -214,3 +216,45 @@ tool for the full set of 12 frames of the same character in the same style.
 Delete its row in `CutoutFighters.FIGHTERS`, its entry in `Fighters.LIST`, its two lines in
 `game/sample_progress.gd` and its rows in `LICENSES.md`; the folder can stay or go. A save that
 chose it falls back to the default fighter, as for a drawn fighter above.
+
+## Beatbolt2: a picture fighter rebuilt from shapes
+
+**Beatbolt2** (spec 09, part E) is Echo — the picture fighter of `characters/echo/` — rebuilt as a
+3D fighter of shapes in `scenes/drawn/beatbolt2_model.gd` (started from Beatbolt's file), with no
+picture on him: he turns, lights and outlines like every fighter of shapes, and his card picture is
+rendered like theirs. He was made from Echo's 12 frames in five stages; the same stages turn any
+picture fighter into a 3D one.
+
+1. **Measure** the idle frames (front, back, three-quarter): where the hair's tip, the eyes, the
+   chin, the shoulders, the hem, the knees and the feet are, in pixels of the front frame. A
+   constant turns pixels into metres (`PX`: Echo's 480 px became 2.2 m, as tall as the other
+   fighters), and `_px(x, y, z)` puts a part where the picture has it; the depths come from the
+   back and three-quarter frames.
+2. **Sample the colours:** a temporary script reads the median colour of a small region of the
+   frames for each part (hair dark to light, skin, eyes, clothes, glows) — the `LOOKS` table; the
+   main colour must be at least 0.1 from every other fighter's.
+3. **Build from shapes** with `FighterModel`'s blocks (`part`, `group`, spheres, capsules, cones,
+   tori, boxes; `ToonMaterials` for the cel shading and the outline), one named group for each
+   part that makes the character recognisable (`IDEA_PARTS`: hair, lock, headphones, pads,
+   cannon, soles). The rows of `Fighters.LIST`, `SampleProgress` and `DrawnFighters.MODELS` are
+   those of a drawn fighter (see [Add another drawing](#add-another-drawing)).
+4. **Compare in rounds:** a temporary script renders the model alone at the frames' size (592 ×
+   503, a 12° lens, a level camera, his height and feet fitted to the frame) from the front, the
+   back and both three-quarter sides (the yaw that matches the frames best: 40°), in idle, walk
+   and shoot, and writes sheets — the frame | the model | both at 50 % — with the silhouette
+   overlap; look, write down what matches and what differs, change the model, render again,
+   until only what shapes cannot draw is left (soft hair strands, folds, the glow halos, a
+   mirrored picture's other hand). Then compare in the game: Training with the picture fighter
+   beside the new one in all eight views. The sheets of every round are in
+   [docs/screenshots/beatbolt2/](screenshots/beatbolt2/) (a `.gdignore` keeps them out of the
+   game).
+5. **Move and measure:** a static `animate(model, time, state)` in the look file plays the
+   character's own moves on top of the shapes' idle, run and recoil (`DrawnFighters.animate`;
+   Beatbolt2 strides upright and raises his arm cannon, as Echo's walk and shoot frames). Then
+   join the parts of one material in each moving group into one mesh (`_merge`) and let only the
+   outlined parts cast a shadow, and measure four of him in a match against the frame-time and
+   draw-call budget (spec 09 L8): 99 parts drew 423 calls per fighter, 42 joined meshes 115.
+
+For another picture fighter: copy `beatbolt2_model.gd` to `scenes/drawn/<id>_model.gd`, keep
+`build`, `_merge`, `animate` and the helpers, and redo stages 1–5 with its frames; credit it in
+`LICENSES.md` as own work in code after the pictures (the pictures' rows stay).

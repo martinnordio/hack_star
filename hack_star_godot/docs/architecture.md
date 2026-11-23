@@ -15,7 +15,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | Path | What |
 |------|------|
 | `project.godot` | The project: main scene `scenes/home.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
-| `scenes/` | Screens and objects: each `.tscn` with the script of the same name; `scenes/toon/` the shaders (toon, outline, cut-out, projectile, flag, flowing water) and `ToonMaterials`; `scenes/cutout/` the picture fighters (`CutoutFighters`, `CutoutAnimator`, `CutoutMotion`, `CutoutShowcase`); `scenes/drawn/` the drawn fighters; `scenes/worlds/glimmer_isles/` Glimmer Isles |
+| `scenes/` | Screens and objects: each `.tscn` with the script of the same name; `scenes/toon/` the shaders (toon, outline, cut-out, projectile, flag, flowing water) and `ToonMaterials`; `scenes/cutout/` the picture fighters (`CutoutFighters`, `CutoutAnimator`, `CutoutMotion`, `CutoutShowcase`); `scenes/drawn/` the drawn fighters (Beatbolt and Beatbolt2); `scenes/worlds/glimmer_isles/` Glimmer Isles with its colour roles (`GlimmerLooks`); `scenes/canyon_looks.gd` the canyon's colour roles (`CanyonLooks`); `scenes/glimmer_isles/` the author's Glimmer Isles palette pack (spec 09 P1, D44: `glimmer_palette.gd` — `GlimmerPalette`, 66 colours —, `glimmer_isles_environment.tres`, `glimmer_isles_lighting.tscn`, 11 materials in `materials/`, its README; the palette picture, `.gpl`, `.hex`, `.json`, the README and the UI theme `glimmer_isles_ui_theme.tres` are kept but not exported, and the theme is not used) |
 | `characters/` | The author's deliveries of the picture fighters (spec 09, C2, M2): `blaze2/` (Flarekid), `echo/` (Echo) and `magmax2/` (MagMax), each a card picture and `gameplay/` with 12 frames (`frames/`), their `SpriteFrames` (`*_frames.tres`) and a projectile picture (exported); the hero picture, the README, the preview sheet and the delivered example scripts and scenes stay in the folder but are not used and not exported. `magmax/` (the author's older MagMax) is untracked, ignored by git and kept out of the export (D43) |
 | `scenes/ui/` | Shared UI parts: the theme (`hack_star_theme.tres`), the Back button, the fighter stage and pictures, the fighter card and skin button, the Prestige badge |
 | `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen), `GameState` (what the player has and has chosen, with the progress and the active hacks saved), `HackServer` (the calls to the server, see *Server, hack codes and rooms*) and `UiScaler` (the content scale factor of the window, see *Minimum sizes* below) |
@@ -25,7 +25,7 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | `web/` | Browser scripts that `export_web.ps1` copies into `build/web/`: `qr_scanner.js` (the camera and the scan, own work), `jsQR.js` (the QR decoder, unmodified) and its `jsQR-LICENSE.txt` |
 | `addons/gut/` | GUT 9.7.1, the test tool (excluded from the export) |
 | `addons/proton_scatter/` | ProtonScatter 4.2.0 without its `demos/` and `tests/`, the editor tool that places the Glimmer Isles props (excluded from the export; the game uses only its baked result) |
-| `docs/` | This document; [drawing_to_fighter.md](drawing_to_fighter.md) (a drawing → a fighter, Claude alone) and [drawing_tools.md](drawing_tools.md) (the recommended tools workflow) |
+| `docs/` | This document; [drawing_to_fighter.md](drawing_to_fighter.md) (a drawing → a fighter, Claude alone; a picture fighter → a fighter of shapes, as Beatbolt2) and [drawing_tools.md](drawing_tools.md) (the recommended tools workflow); `screenshots/beatbolt2/` Beatbolt2's comparison sheets with Echo (spec 09 E4, D54; `screenshots/.gdignore` keeps them out of the import and the export) |
 | `export_presets.cfg` | The web export (single-threaded) |
 | `LICENSES.md` | The licence of every asset and third-party part |
 | `build/` | The web export, created by the tools, git-ignored |
@@ -41,7 +41,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | Scene | Script | What |
 |-------|--------|------|
 | `home.tscn` | `home.gd` | The home screen (main scene): total trophies and credits, the title "Hack star", the chosen fighter and skin in a `FighterStage`, its name and Prestige badge (`ui/prestige_badge.tscn`, only from 1000 trophies), **Play** (opens the match, `match.tscn`), **Training** (opens the arena, `arena.tscn`), **Fighters** (opens `fighter_list.tscn`), **Info** (opens `info.tscn`) and **Hack** (opens `hack_screen.tscn`), and in the top bar the world button (`WorldButton`, world icon and the current world's name) that opens `ui/world_choice.tscn` (`WorldChoice`: one button per world of `Worlds`, the current one green with a tick; a choice sets `GameState.world`, kept while the game is open and used by **Play** and **Training**; a tap beside it closes it; spec 09 D10). Wide screens put the fighter left and the buttons right; tall screens use one column. At each game start (`GameState.entrance_played`) it first plays the entrance (`ENTRANCE_SECONDS` = 2.4: the fighter drops in with a bounce, a light burst and `CPUParticles3D` sparkles, the title pops in); a click, a touch or a key skips it |
-| `arena.tscn` | `arena.gd` (`Arena`) | The 3D arena (**Training**): the chosen world (`GameState.world`; when the scene is instantiated, `Arena` calls `ArenaLayout.use` and, for Glimmer Isles, puts `GlimmerIsles` — `worlds/glimmer_isles/glimmer_isles.gd`, built from the active layout — in place of `Canyon` on the same `Floor` and `Walls`; spec 09 D9) or the canyon (`canyon.gd`, `Canyon`, built in code from `ArenaLayout`), one fighter (`Fighter`, with its `FighterModel`), three target dummies (`@export var training`, true here), the shots, the effects, a following camera (it never looks so far south that the camera-side wall and the ground behind it take more than `NEAR_WALL_SHARE`, 8 %, of the screen height; spec 09 G11) and the HUD: **Back** (top-left, returns to the home screen), the touch joystick (left), the aim stick `AimJoystick` (right, drag or tap to fire), the FPS label (top-right, hidden unless the info screen's **Show FPS (play-test)** switch sets `GameState.show_fps`, kept while the game is open) and `ControlsHint` (the start hint from `ControlsHelp` on a dark rounded backing with an info icon, shown at once and faded out after `HINT_SECONDS` + `HINT_FADE_SECONDS`, `mouse_filter` ignore; above the sticks on a touch screen, where it names only the sticks and `Arena.touch_controls` says so; two lines per control, not one line with a separator). Space (`shoot`, held) fires too (see *Input*). **Views and light** (spec 09, D25, D27): `V` and `1`–`4` switch the camera between the rigs of `CameraViews` (`Arena.set_view`, `view_pose`: Classic as described below, Close nearer with its own near-wall limit, Behind low behind the fighter, Overview fitted to the whole arena; a 0.3 s blend; the yaw never changes), kept in `GameState.camera_view`; `L` and `K` switch the lighting preset and the saturation boost (`set_light_preset`, `set_saturation_boost`) through the arena's `WorldLighting` child, kept in `GameState.light_preset` and `GameState.saturation_boost`; a `HudToast` (top centre) names the view, the preset or the boost |
+| `arena.tscn` | `arena.gd` (`Arena`) | The 3D arena (**Training**): the chosen world (`GameState.world`; when the scene is instantiated, `Arena` calls `ArenaLayout.use` and, for Glimmer Isles, puts `GlimmerIsles` — `worlds/glimmer_isles/glimmer_isles.gd`, built from the active layout — in place of `Canyon` on the same `Floor` and `Walls`; spec 09 D9) or the canyon (`canyon.gd`, `Canyon`, built in code from `ArenaLayout`), one fighter (`Fighter`, with its `FighterModel`), three target dummies (`@export var training`, true here), the shots, the effects, a following camera (it never looks so far south that the camera-side wall and the ground behind it take more than `NEAR_WALL_SHARE`, 8 %, of the screen height; spec 09 G11) and the HUD: **Back** (top-left, returns to the home screen), the touch joystick (left), the aim stick `AimJoystick` (right, drag or tap to fire), the FPS label (top-right, hidden unless the info screen's **Show FPS (play-test)** switch sets `GameState.show_fps`, kept while the game is open) and `ControlsHint` (the start hint from `ControlsHelp` on a dark rounded backing with an info icon, shown at once and faded out after `HINT_SECONDS` + `HINT_FADE_SECONDS`, `mouse_filter` ignore; above the sticks on a touch screen, where it names only the sticks and `Arena.touch_controls` says so; two lines per control, not one line with a separator). Space (`shoot`, held) fires too (see *Input*). **Views, light and colours** (spec 09, D25, D27, D48, D50, D51): `V` and `1`–`8` switch the camera between the eight rigs of `CameraViews` (`Arena.set_view`, `view_pose`: Classic as described below, Close nearer with its own near-wall limit, Behind low behind the fighter, Overview fitted to the whole arena, Low at head height behind the fighter, Side from the east (yaw 90°), Diagonal from the south-east corner (yaw 45°, fitted to a 10 × 10 m box), Cinematic behind and above swinging ±25° over 14 s; a 0.3 s blend that turns the short way round), kept in `GameState.camera_view`; `Arena.camera_yaw()` reads the camera's yaw from its transform every frame and `Arena.to_world()` / `to_screen()` turn a direction between the screen and the ground (see *Input*); `L` and `K` switch the lighting preset and the saturation boost (`set_light_preset`, `set_saturation_boost`) through the arena's `WorldLighting` child, kept in `GameState.light_preset` and `GameState.saturation_boost`; `C` switches the colour variation (`set_colour_variation`: the world's `apply_variation(id)` repaints its built meshes and MultiMeshes by role and re-lights itself, then the preset and boost are applied again — no rebuild, no collider moved), kept in `GameState.colour_variation`; a `HudToast` (top centre) names the view, the preset, the boost or the variation ("Colours 2: Glimmer") |
 | `match.tscn` | `match_arena.gd` (`MatchArena`) | The match (**Play**), an inheriting scene of `arena.tscn` with the same canyon, player, camera, sticks, Back and FPS label, `training = false` (no dummies). `MatchArena` adds the bots (one `Fighter` each at the next of `ArenaLayout.STARTS`, driven by a `BotBrain` each), the `Match` flow (countdown lock, fight, knock-outs, the end) and the match HUD: `Hud/MatchHud` with `CountdownLabel` (centre), `TimerChip` (top-centre, an `IconChip` with the clock, red text in the last 10 s) and `FightersLeftChip` (top-right, the fighters icon and the number; the FPS label goes under it). A tap on the right stick or Space fires at the nearest live bot. The `ControlsHint` sits over the countdown without covering the countdown label, the timer, "Fighters left" or **Back** (checked at the five sizes). When the match is over it makes every fighter invulnerable and stores `GameState.last_result` at once (with the trophies: `GameState.award_trophies(fighter, result)` gives the player's fighter `Trophies.reward` and saves; the reward is kept in `last_result["reward"]`; the fighter and skin are read at the start, `_player_fighter` and `_player_skin`, so a hack turning off during the match changes nothing), and 1.5 s later goes to the result screen |
 | `result_screen.tscn` | `result_screen.gd` | The result (after a match; no result → home): the heading "Victory!", "Defeat" or "Time's up!" and its line ("You are the last one standing!", "You finished 3rd", "It's a draw"), the player's fighter and skin in a `FighterStage`, the trophy part (`TrophyPanel`, from `last_result["reward"]`, shown only when there is a reward): the change ("+10 trophies", or "+0 trophies"), the count "trophies / next Prestige" and a bar from the last Prestige to the next one, counting up from the old total over 1 s (`COUNT_SECONDS`; only the tests jump to the end, with `finish_count()`); a new Prestige in the match gives a celebration (`Celebration`: "PRESTIGE n!", the `PrestigeBadge` and a short burst), once the count reaches it. **Play again** (opens `match.tscn`) and **Home**. Wide screens put the fighter left, tall screens use one column |
 | `shot.gd` | `shot.gd` (`Shot`) | A shot of the arena: a glowing sphere — or, for a picture fighter, its projectile picture (`launch(…, picture)`: one quad with `scenes/toon/projectile.gdshader`, facing the camera and turned along the flight, spec 09 M6) — that flies at `Combat.SHOT_SPEED` and stops at the first wall, rock, fighter or dummy (ray casts, D8, D6: the shooter's own RID is excluded), or after `SHOT_RANGE`; it emits `ended` and frees itself |
@@ -81,10 +81,18 @@ shoot (spec 16, D11, D12): there is no `_unhandled_input` for it and no ground-p
 click on **Back** or a touch on a stick never fires. The right stick is a second `TouchJoystick` (`Hud/AimJoystick`)
 whose `released(direction, held_seconds)` goes to `Combat.release_aim`: a drag past the dead
 zone fires that way, a quick tap fires at the nearest dummy in range (else straight ahead; in a match, the nearest bot).
-The arena's other keys (spec 09): `view_next` (V), `view_1`–`view_4` (1–4 and the number pad's
-1–4), `light_next` (L) and `saturation_boost` (K), read in `Arena._unhandled_input`, also during
-the countdown; no other action uses these keys (`test_camera_views.gd`, `test_light_presets.gd`).
-Touch has no button for them yet (V6).
+The arena's other keys (spec 09): `view_next` (V), `view_1`–`view_8` (1–8 and the number pad's
+1–8), `light_next` (L), `saturation_boost` (K) and `colour_next` (C), read in
+`Arena._unhandled_input`, also during the countdown; no other action uses these keys
+(`test_camera_views.gd`, `test_more_views.gd`, `test_light_presets.gd`,
+`test_colour_variations.gd`). Touch has no button for them yet (V6, H8). **Screen-relative
+controls** (spec 09 X3, X4, D50): the keys, the left stick and the aim stick give a direction on
+the screen; `Arena` turns it by the camera's yaw into the ground (`to_world`) before `Movement`,
+and `Arena.fire_from` turns the shot back to the screen (`to_screen`) for `Fighter.face()` and
+`FighterModel.play_shoot()`; `Fighter.screen_direction()` does the same for the bots' walking.
+So W is up the screen and the picture fighters show their back going up the screen in every view,
+also while a camera turns; with yaw 0 (Classic, Close, Behind, Overview, Low) every number is as
+before.
 
 ## Game rules (`game/`)
 
@@ -99,7 +107,8 @@ without a scene.
 | `combat.gd` (`Combat`) | The combat rules (D3 of specs 06 and 07): the numbers (`SHOT_SPEED` 16 m/s, `SHOT_RANGE` 9 m, `COOLDOWN` 0.35 s, `DAMAGE` 480, `DUMMY_HEALTH` 2400, `RESPAWN_SECONDS` 5, `AIM_DEAD_ZONE` 0.3, `TAP_SECONDS` 0.25), `can_fire(now, last_fire, cooldown)` (bots pass `COOLDOWN × level.cooldown`), `take_damage`, `is_broken`, `health_ratio(health, max_health)` and `health_color` (green, yellow below half, red below a quarter), `heal(health, max_health, quiet_seconds, delta, delay, per_second)` (no healing before the delay, never above full), `release_aim` (a drag or a tap, or no shot) and `nearest_target`; there is no ground-point (mouse) aim any more (spec 16, D12) |
 | `arena_layout.gd` (`ArenaLayout`) | The canyon as data (D2): the size 20 × 26 m (`SIZE`), the border and the rock blocks (`WALLS`), the cactus patches (`BUSHES`), the decoration spots without collision (`DECORATION`), the three dummy spots (`DUMMIES`), the start point (`START`, near the camera side) and the nine match start points (`STARTS`: the first is `START`, the others spread over the canyon, free of walls and bushes, at least 4 m apart); `in_bush(point)` and `is_free(point, radius)` (the spots lie clear of walls, `tests/test_arena_layout.gd`). Per world (spec 09 D9): these constants are the canyon's layout; `use(world_id)` makes a world's layout active (the canyon, or `GlimmerIslesLayout`; an unknown id gives the canyon), and `in_bush`, `is_free` and the accessors `walls()`, `border_count()`, `bushes()`, `decoration()`, `dummies()`, `starts()`, `start()` read the active one, so `Arena`, `MatchArena`, `BotBrain` and `ControlsHelp` work the same in every world. The active layout is static state: it stays after an arena closes, and `GameState.reset()` sets it back to the canyon with `GameState.world` |
 | `worlds.gd` (`Worlds`) | The worlds (spec 09 W1, D9): `LIST` (`canyon` "Canyon" first, the default; `glimmer_isles` "Glimmer Isles"), `ids()`, `get_world(id)`, `is_unlocked(id)` (every known world, from the start; no save field) |
-| `camera_views.gd` (`CameraViews`) | The camera views (spec 09 V1, D25), in `V`'s order: `classic`, `close`, `behind`, `overview`, each with its name, pitch and distance numbers (`LIST`, `ids()`, `get_view(id)`, `next(id)`, `view_name(id)`); `Arena` places the camera from them |
+| `camera_views.gd` (`CameraViews`) | The camera views (spec 09 V1, X1, D25, D50, D51), in `V`'s order: `classic`, `close`, `behind`, `overview`, `low`, `side`, `diagonal`, `cinematic`, each with its name, pitch and distance numbers and `yaw_degrees` (Cinematic also its swing) (`LIST`, `ids()`, `get_view(id)`, `next(id)`, `view_name(id)`, `view_yaw_degrees(view, seconds)`); `yaw_of(transform)` (a camera's yaw), `to_world(screen, yaw)` and `to_screen(world, yaw)` turn a direction between the screen and the ground; `Arena` places the camera from them |
+| `colour_variations.gd` (`ColourVariations`) | The colour variations (spec 09 H1, D48), in `C`'s order: `original` "Original", `glimmer` "Glimmer" (the default, `DEFAULT`), `lagoon` "Lagoon", `glow_night` "Glow night" (`LIST`, `ids()`, `has()`, `next()`, `number()`, `variation_name()`, `title()` → "Colours 2: Glimmer"); `GlimmerLooks` and `CanyonLooks` hold each variation's colours |
 | `light_presets.gd` (`LightPresets`) | The lighting presets (spec 09 L3–L6, D27), in `L`'s order: `bright_day` (the default, `DEFAULT`), `golden_sunset`, `neon_night`, `candy_pop` and `classic` (the world's own light), each with its name, the sun's colour, energy and height, the ambient light, the sky's colours, the colour balance and `glow` (`LIST`, `ids()`, `get_preset(id)`, `next(id)`, `preset_name(id)`, `is_world_own(id)`); `K`'s boost (`BOOST_SATURATION` 1.3, `saturation(id, boost)`, `boost_text`) and `WORLD_SHARE`; `WorldLighting` applies them |
 | `glimmer_isles_layout.gd` (`GlimmerIslesLayout`) | The layout of Glimmer Isles as data: the canyon's size and border, its own crystal ridges (`WALLS`), glow-fern patches (`BUSHES`, they hide like the cactus patches), decoration spots (crystal, mushroom), three dummy spots and nine start points (free, at least 4 m apart; `tests/test_world_layouts.gd`) |
 | `match_settings.gd` (`MatchSettings`) | The settings of a match in one place (D2 of spec 07): `match_seconds` 120, `bot_count` 3 (1–8, clamped), `bot_level` "easy", `time_up_result` "draw" (or "defeat"), `bots_fight_each_other`, `countdown_seconds` 3, `fighter_health` 3200 (7 hits of 480), `heal_delay` 3 s, `heal_per_second` 0.13, `bush_sight` 2.5 m, `trophies_per_win` 10 and `trophies_per_defeat` 0 (spec 08; the win number is never negative, the defeat number is never above 0, so it may be negative), and `LEVELS` (easy, medium, hard: reaction, aim error, cool-down and speed factors, sight; `level(name)`, an unknown name gives easy). `GameState.match_settings` holds the instance the next match reads at its start; it is not saved |
@@ -107,7 +116,7 @@ without a scene.
 | `match.gd` (`Match`) | The match flow (D4 of spec 07), no scene: `Match.new(settings, fighter_count)` (fighter 0 is the player); `advance(delta)`; the phases `COUNTDOWN`, `FIGHT` and `OVER`; `countdown_text()` ("3", "2", "1", then "FIGHT!"), `can_act()`, `seconds_left()`, `timer_text()` and `timer_red()` (last 10 s); `knock_out(index)` (records `knock_out_order`, ends the match on the player or on the last bot); `fighters_left()`, `is_alive(index)`; the `result` (`VICTORY`, `DEFEAT`, `TIME_UP`) and `place` (fighters left + 1 at the player's knock-out, else 1: a victory, or time up); `ordinal(n)` ("3rd") |
 | `bot_brain.gd` (`BotBrain`) | One bot's decisions (D5 of spec 07), pure, with a `RandomNumberGenerator` the tests seed: `can_see(from, at, in_bush, sight, bush_sight)` (a fighter in a bush is seen only within 2.5 m; walls do not block sight); `think(now, me, opponents, level)` returns `{move, aim}`: the nearest visible opponent, a reaction delay for a new target, closing in, backing off within 3 m or sidestepping, an aim turned by a random error within `aim_error`, and wandering to a free point of `ArenaLayout` when nobody is seen |
 
-| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters, the drawn ones (`drawn`, spec 09) and the picture fighters (`cutout`: Flarekid, Echo and MagMax, spec 09 C1, M1) with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
+| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters, the drawn ones (`drawn`, spec 09: Beatbolt and Beatbolt2) and the picture fighters (`cutout`: Flarekid, Echo and MagMax, spec 09 C1, M1) with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
 | `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies; `floor_of(trophies)` (the trophies of the last Prestige, 0 below 1000) and `next_at(trophies)` (the trophies of the next one) |
 | `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
@@ -239,7 +248,10 @@ three clear bands (lit, mid, shadow) with a thin light rim, colour and glow as u
 navy) grown by a few millimetres and then by about 3 px on screen, so the outline keeps its width
 on a 150 px card and in the arena. `ToonMaterials` (`scenes/toon/toon_materials.gd`) caches one
 material per colour, glow and outline choice, shared by the fighters, the canyon and Glimmer Isles
-(also on `MultiMeshInstance3D`s), and makes the transparent see-through copies. The canyon (sand floor, rock walls, cacti,
+(also on `MultiMeshInstance3D`s), and makes the transparent see-through copies;
+`ToonMaterials.from_material(material, outlined)` (spec 09 D46) makes the shared toon material of
+one of the palette pack's materials — its colour, and its emission at a quarter of the pack's
+energy (`PACK_GLOW_SHARE`) as the glow. The canyon (sand floor, rock walls, cacti,
 decoration), the dummies, the shots and the effects are built in code from Godot's primitive
 meshes (box, cylinder, sphere, capsule) and plain materials: the canyon by `Canyon` from
 `ArenaLayout` at `_ready` (a `MultiMeshInstance3D` for the sand tiles, the shared cel-shaded
@@ -263,6 +275,25 @@ builds the tiled teal-lavender ground with a path of glowing stones, the violet 
 rock plinths under the crystal ridges, the fern-patch ground, the island's rim and rocky
 underside, a starry-violet gradient sky (`ProceduralSkyMaterial`) and lavender ambient light, and
 loads `baked.tscn` (`load_baked`: fills each MultiMesh and puts the shared `ToonMaterials` on it).
+**Colour roles and variations** (spec 09 P2–P6, H1–H4, D45–D49): no world surface has its colour
+in the code that builds it. `GlimmerLooks` (`scenes/worlds/glimmer_isles/glimmer_looks.gd`,
+static) has, per colour variation (`ColourVariations`), a table role → look (`albedo`, `glow`,
+`glow_strength`, `jitter`, or a pack material by name) for the world's surfaces (`ground`,
+`path`, `border`, `plinth`, `lagoon`, …), every prop part (`part_role(kind, part_index)`: a baked
+MultiMesh finds its role from its `kind` and `part_index`, so `baked.tscn` was not re-baked) and
+the decor; and per variation its own light (`light()`: the pack's environment with the
+variation's sky, ambient and sun, or Original's gradient). **Original** is the look before the
+palette, value for value (tests pin it); **Glimmer** uses only `GlimmerPalette` colours and the
+pack's materials, with a lagoon (`flowing_water.gdshader`, the water material's colour) 14 m
+under the island; **Lagoon** and **Glow night** likewise. `CanyonLooks` (`scenes/canyon_looks.gd`)
+is the canyon's table with the same API (Original = Glimmer = the canyon before; Lagoon and Glow
+night from the palette). `GlimmerIsles`, `GlimmerProp`, `GlimmerDecor`, `Canyon` and
+`CanyonDecor` keep the role of every mesh they colour (and each MultiMesh instance's colour
+recipe), so `apply_variation(id)` repaints a built world in place. The pack's light:
+`WorldLighting.use_pack_light` copies `glimmer_isles_lighting.tscn`'s environment (never the
+`.tres` itself) and its sun into the arena, the fill light folded into the ambient light (the toon
+bands do not show an omni light); `WorldLighting.remember` / `restore` start every switch from the
+arena's own light, and in **Classic** a world's own glow, fog and colour balance stay as built.
 The fighter is `fighter.tscn` with its
 `FighterModel` on the `Model` node (the same figure as in the fighter screen). Fighters are built the same way by
 `FighterModel` (`scenes/fighter_model.tscn` + `.gd`): the six fighters with their own shapes and
@@ -285,9 +316,20 @@ recognisable and a static `build(model, look)`), registered in `DrawnFighters`
 and head (`get_rig`, `get_body`, `get_head`) with `FighterModel`'s public building blocks
 (`part`, `group`, `eyes`, `flicker`, `sphere`, `capsule`, `cone`, `cylinder`, `box`, `torus`)
 and `ToonMaterials`, so the idle, run and attack animations and the see-through work unchanged.
-The first is **Beatbolt** (`beatbolt_model.gd`, Mattia's drawing). Adding or removing one touches
+The first is **Beatbolt** (`beatbolt_model.gd`, Mattia's drawing). **Beatbolt2**
+(`beatbolt2_model.gd`, spec 09 E, D53) is Echo rebuilt from shapes: parts placed by pixels of
+Echo's front frame (`_px`), colours sampled from the frames, the named idea parts `SpikyHair`,
+`MagentaLock`, `Headphones`, `ShoulderPads`, `ArmCannon` and `NeonSoles`; the legs and the free
+arm are groups that turn at the hips and the shoulder. A look file may have a static
+`animate(model, time, state)`: `DrawnFighters.animate` calls it and `FighterModel.animate` forwards
+one call to it at its end, after the shapes' idle, run and recoil (`state`: `running`, `attack`) —
+Beatbolt2's stride and his cannon raised for a shot. After building, `_merge` joins the parts of
+one material in each group into one `ArrayMesh` (normals by the inverse transpose) and only the
+outlined parts cast a shadow, so his 99 shapes draw as 42 meshes (four of him within L8, E7).
+Adding or removing one touches
 only these places; the tests check every drawn fighter without naming it. The workflow:
-[drawing_to_fighter.md](drawing_to_fighter.md); a workflow with image and 3D tools (Google Flow →
+[drawing_to_fighter.md](drawing_to_fighter.md) (also how Beatbolt2 was made from Echo's
+pictures); a workflow with image and 3D tools (Google Flow →
 Meshy → Claude, a GLB with a skeleton, its fit limits and credits) is recommended in
 [drawing_tools.md](drawing_tools.md) — no generated model is in the game yet.
 
@@ -315,8 +357,10 @@ idle) at `clamp(8 · speed / 5, 6, 10)` frames a second with a 0.05 m hop; `play
 shows the shot's view's shoot frame for `SHOOT_SECONDS` (0.25 s); it also sets the material's
 frame and mirror, the hit flash and the knock-out. `Fighter.face(direction)` hands it the input
 (and the aim), `Arena.fire_from` calls `model.play_shoot(direction)` for the player and the bots.
-Every camera view looks north with a fixed yaw (`CameraViews`), so up on the screen is −z in all
-four views (`test_up_on_the_screen_shows_the_back_in_all_four_camera_views`). `CutoutMotion`
+The directions are on the screen: `Arena.to_screen` and `Fighter.screen_direction` turn them by
+the camera's yaw (spec 09 D50), so up on the screen shows the back in all eight views, also the
+turned ones (`test_more_views.gd`; the four views that look north in
+`test_up_on_the_screen_shows_the_back_in_the_four_views_that_look_north`). `CutoutMotion`
 (`scenes/cutout/cutout_motion.gd`, static) adds what is not a frame: `pose(time)` — breathing and
 bob standing —, the muzzle star at the shoot frame's muzzle (`build_muzzle_flash`,
 `place_muzzle_flash`), the white flash and the tip-and-fade knock-out. The health bar and the
@@ -425,8 +469,10 @@ English, in the scene.
 ## Art and licences
 
 Everything in the game is original or has a free licence (S7). Today: own work built in code
-(fighters, the drawn fighter Beatbolt credited to the child, the canyon, the Glimmer Isles props,
-the toon and menu shaders, the icons drawn in code), the pictures of Flarekid, Echo and MagMax
+(fighters, the drawn fighter Beatbolt credited to the child, Beatbolt2 built in code after Echo's
+pictures, the canyon, the Glimmer Isles props,
+the toon and menu shaders, the icons drawn in code), the author's Glimmer Isles palette pack
+(`scenes/glimmer_isles/`, made by the author, MIT), the pictures of Flarekid, Echo and MagMax
 (`characters/blaze2/`, `characters/echo/`, `characters/magmax2/`: cards, 12 frames and a
 projectile each, generated by the author with an AI image tool from Mattia's drawing or the
 author's own idea, the tool and the origin per character to be confirmed by the author; the hero
@@ -494,7 +540,7 @@ the front idle frame and its height, the hit flash, the muzzle star, the knock-o
 `test_fighter_reveal.gd` the reveal on home and the fighter screen (the pop, the sparks and halo in
 the rarity colour, none on the pictures, the entrance) and the picture fighters' idle;
 `test_camera_views.gd` the views (`V` and `1`–`4`, the toast, the player and its bar on screen in
-every view at the five sizes, Overview's four walls, Classic unchanged, the blend, kept for the
+every one of the eight views at the five sizes, Overview's four walls, Classic unchanged, the blend, kept for the
 next match); `test_light_presets.gd` the lighting (`L`'s order, `K` on any preset, every preset
 changes the sun, sky, ambient and colour balance in both worlds, Classic back to the world's own
 light, glow only in Neon night, kept for the next match, the shared environment unchanged);
@@ -511,7 +557,22 @@ material, as fast and as far, stopped by walls with `Combat.DAMAGE`; `test_showc
 loop's order within 8 s, never still, the shot with its projectile and sparks, drag and tap with
 mouse and touch, the restart after 3 s, only the fighter screen reacts, home, fighter screen and
 result, shapes unchanged; `test_living_cards.gd` only the animated cards live, idle and walk, the
-sweep, cards out of sight still, locked grey and still, the five sizes.
+sweep, cards out of sight still, locked grey and still, the five sizes. The third reopening
+(spec 09 P, H, X, E): `test_glimmer_palette.gd` the pack (no file names the pack's old path, the
+lighting scene loads, the export filter), Original pinned to the look before, every Glimmer colour
+from the palette or a pack material, the lagoon and waterfalls, the pack's light in Classic and the
+`.tres` unchanged, the same colliders, baked places and start points in every variation;
+`test_colour_variations.gd` `C`'s order, wrap, toast and default, a switch equal to a fresh build
+in both worlds, the canyon's Original and Glimmer equal, Lagoon and Glow night different and only
+from the palette, `L` and `K` on top, kept for the next match, `C` on no other action;
+`test_more_views.gd` the yaw helpers, the eight views' order, keys 5–8 and the number pad, each
+view's yaw and Cinematic's swing, and with turned cameras W, S, A, D and the sticks moving the
+player by the screen with the right back / front / side frame for the player and a bot in every
+view; `test_beatbolt2.gd` Beatbolt2's data and old saves, his look file and idea parts, shapes
+(joined per material) in the toon look with the outline, his card picture, Training and a match,
+the stride, the cannon raised for a shot and lowered, see-through, hit and knock-out.
+`test_camera_views.gd` and `test_cutout_animator.gd` keep their "looks north" tests for the four
+views without a yaw.
 `test_mvp_flow.gd` plays
 F0–F5 in one run (see *Spec order*). Every test saves to `user://test/run_save.json`, never to the
 player's file: the pre-run hook `tests/pre_run_hook.gd` sets `GameState.save_path` and starts from

@@ -2,8 +2,8 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a home screen, a fighter list with ten fighters (each with
-its skins; **Beatbolt** comes from a child's drawing, and **Flarekid**, **Echo** and **MagMax** are animated from the author's pictures), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
+It is the first basic game so far: a home screen, a fighter list with eleven fighters (each with
+its skins; **Beatbolt** comes from a child's drawing, **Flarekid**, **Echo** and **MagMax** are animated from the author's pictures, and **Beatbolt2** is Echo rebuilt in 3D from shapes), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
 your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
 codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the chosen world against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. Since spec 09 the game has a new look (see [The look](#the-look)). The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
@@ -97,7 +97,7 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
    [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
 3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
-   arena with three target dummies. **Fighters** lists the ten fighters with their trophies, power
+   arena with three target dummies. **Fighters** lists the eleven fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
    the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
    and the hack codes), then explains the words of the game. **Hack** opens the hack screen
@@ -145,15 +145,33 @@ Since the reopening of spec 09:
   [Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo-magmax).
 - **Reveal:** every fighter on a pedestal (home, the fighter screen, the result) pops in with a
   burst of sparks and a halo in its rarity colour; the picture fighters then play their showcase.
-- **Camera views:** **Classic** (the default), **Close**, **Behind** and **Overview** in Training
-  and a match (`V`, `1`–`4`; see [Controls](#controls)). The camera never turns, so the keys move
-  the fighter the same way in every view.
+- **Camera views:** eight views in Training and a match — **Classic** (the default), **Close**,
+  **Behind**, **Overview**, **Low**, **Side**, **Diagonal** and **Cinematic** (`V`, `1`–`8`; see
+  [Controls](#controls)). Side and Diagonal turn the camera and Cinematic swings it slowly, so the
+  keys, the sticks and the shots work by the screen: up is always up the screen, and the fighters
+  show their back going up the screen in every view.
 - **Brighter worlds:** warmer, more saturated colours in both worlds, and new moving decoration —
   blossoms, waving flags, circling birds and a stream in the canyon; fireflies, pulsing crystals,
   waterfalls and turning islands in Glimmer Isles.
 - **Lighting presets:** **Bright day** (the default: the brightest and most colourful with the
   calmest floor, so the fighters stand out most), **Golden sunset**, **Neon night** (the only one
   with glow), **Candy pop** and **Classic** (the light before), plus a saturation boost (`L`, `K`).
+- **The Glimmer Isles palette:** Glimmer Isles takes its colours from the author's palette pack
+  in `scenes/glimmer_isles/` (a 66-colour palette, 11 materials, a sky and lighting scene; its UI
+  theme is not used): crystals, ferns, mushrooms, islands, a lagoon under the island and the
+  waterfalls in the pack's colours and materials, still cel-shaded with the dark outline, lit by
+  the pack's sky and sun (as delivered in the **Classic** preset).
+- **Colour variations:** `C` switches both worlds between **1 Original** (the look before the
+  palette, to compare), **2 Glimmer** (the default: the palette in Glimmer Isles; the canyon as
+  in Original), **3 Lagoon** (a bright lagoon day; the canyon an oasis) and **4 Glow night** (a
+  twilight night with glowing crystals, mushrooms and gold sparkles), all from the palette;
+  `L` and `K` work on top.
+- **Beatbolt2:** Echo rebuilt as a 3D fighter of shapes (Mythic, plays like Luna, unlocked for
+  everyone): his proportions and colours measured on Echo's pictures, compared with them from the
+  front, the back and both sides in five rounds, with his own walk (a stride) and shot (the arm
+  cannon raised); the comparison sheets and the eight game views next to Echo are in
+  [docs/screenshots/beatbolt2/](docs/screenshots/beatbolt2/), how he was made in
+  [Beatbolt2](docs/drawing_to_fighter.md#beatbolt2-a-picture-fighter-rebuilt-from-shapes).
 
 ## How to play a match
 
@@ -241,6 +259,9 @@ what the result can and cannot be are in [docs/drawing_to_fighter.md](docs/drawi
 A drawing can also join as an animated picture fighter, like Flarekid, Echo and MagMax: how they
 work and how to add one from a delivery of 12 frames, a card, a hero picture and a projectile are in
 [Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo-magmax).
+A picture fighter can also be rebuilt as a 3D fighter of shapes, as Echo became **Beatbolt2**:
+measure the pictures, sample their colours, build from shapes and compare in rounds — see
+[Beatbolt2](docs/drawing_to_fighter.md#beatbolt2-a-picture-fighter-rebuilt-from-shapes).
 
 For a 3D model with a skeleton and animations made with other tools (Google Flow → Meshy →
 Claude in Godot), the recommended workflow, the facts and terms of each tool (licence first) and
@@ -372,9 +393,9 @@ the site's data for this address.
   (the shots come with a short cool-down). Space shoots at the nearest target in range (in a match,
   the nearest bot; in Training, the nearest dummy), or straight ahead when none is in range. The
   mouse does not shoot; it does not aim either.
-- **Start hint:** when Training or a match starts, a short hint (Move, Shoot and the view and light
-  keys on their own lines, then "More in Info") shows at the bottom of the screen and fades out
-  after a few seconds; it does not block the game.
+- **Start hint:** when Training or a match starts, a short hint (Move, Shoot and "View: V or 1-8,
+  light: L and K, colours: C" on their own lines, then "More in Info") shows at the bottom of the
+  screen and fades out after a few seconds; it does not block the game.
 - **iPad and phone:** the left touch joystick (bottom-left) moves the fighter. The right stick
   (bottom-right) aims and fires: drag it past the dead zone to fire that way, or tap it to fire at
   the nearest dummy in range (straight ahead when none is in range; in a match, the nearest bot).
@@ -383,13 +404,23 @@ the site's data for this address.
 - **Info:** the "How to play" section of the Info page repeats these controls and the rules.
 - **Camera views:** in Training and a match **V** switches to the next view — **Classic** (the
   default, the angled view from above), **Close** (nearer), **Behind** (low, behind the fighter,
-  looking up the arena) and **Overview** (high above, the whole arena) — and **1**–**4** (also on
-  the number pad) choose one directly, also during the countdown. The name shows briefly at the
-  top; the view is kept while the game is open (not saved). Touch players keep Classic.
+  looking up the arena), **Overview** (high above, the whole arena), **Low** (at the fighter's
+  head height, looking past him up the arena), **Side** (from the side of the arena, looking
+  across it), **Diagonal** (high, from a corner at 45°) and **Cinematic** (behind and above,
+  swinging slowly to and fro) — and **1**–**8** (also on the number pad) choose one directly, also
+  during the countdown. In every view the keys and the sticks move the fighter by the screen (up is
+  up the screen) and the shots fly that way. The name shows briefly at the top; the view is kept
+  while the game is open (not saved). Touch players keep Classic.
+- **Colours:** in Training and a match **C** switches to the next colour variation — **1 Original**
+  (the colours before the Glimmer Isles palette, to compare), **2 Glimmer** (the default), **3
+  Lagoon** and **4 Glow night** — in both worlds, also during the countdown; the lighting preset,
+  the boost and the view stay. The number and name show briefly at the top ("Colours 2:
+  Glimmer"); the choice is kept while the game is open (not saved). Touch players keep Glimmer.
 - **Lighting:** in Training and a match **L** switches to the next lighting preset — Bright day
   (the default), Golden sunset, Neon night, Candy pop and Classic (the light before the spec 09
   reopening, to compare) — and **K** switches an extra saturation boost on or off, on top of any
   preset. The name shows briefly at the top; the choice is kept while the game is open (not saved).
+  The lighting applies on top of the colour variation.
 - **Dummies:** in Training three straw dummies stand in the arena. A shot takes off part of the health bar
   and shows the damage number; a dummy that breaks apart comes back with full health after 5 s.
 - **Bushes:** in a cactus patch the fighter turns see-through, so you can look at the ground
