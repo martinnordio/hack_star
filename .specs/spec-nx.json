@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "spec_nx_version": "1d72273",
-  "generated": "2026-11-16",
+  "spec_nx_version": "fe88876",
+  "generated": "2026-11-23",
   "layer": null,
   "project": "existing",
   "languages": ["python", "typescript", "svelte", "powershell"],

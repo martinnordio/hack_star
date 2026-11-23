@@ -55,9 +55,12 @@ compute by hand.
 
 Without `-Transcript`, the script checks every log of **this project** (CLI sessions whose
 folder is the project or inside it, VS Code chats of this workspace, Claude Code sessions)
-written since the start time, and uses the one with the most requests in the time range. It
-names that log in its `Source:` line. If it finds no request, it **stops with an error** and
-lists the logs it checked — it never reports 0.
+written since the start time, and counts **only the chat that runs the command**: with
+`-Run <id>` the log that contains the marker `spec-nx run <id>`; without it, the only log with
+requests in the range. When several chats of the project have requests in the range and no
+`-Run` is given, it **stops with an error** that lists them — it never takes the busiest one.
+It names the log it used in its `Source:` line. If it finds no request, it stops with an error
+and lists the logs it checked — it never reports 0.
 
 **The estimate**, for every model request in the time range of the stage or Step:
 
@@ -94,9 +97,14 @@ too low. Measured numbers (Copilot CLI, Claude Code) have none of these limits.
 
 Only when cost tracking is on.
 
-1. **At the start** of a command, note the time (`Started:` for a Step).
-2. **At the end**, run `tools/usage` with that time and your model (and `-Until` when the
-   command is over before the next one starts), then copy:
+1. **At the start** of a command, note the time (`Started:` for a Step) and write a marker
+   into the chat: `spec-nx run <yyyymmdd-hhmm>-<4 random letters>` (for example
+   `spec-nx run 20261122-0926-kqzt`). It lets `usage` find this chat's log when other chats
+   work on the same project at the same time — another editor window, Claude Code, the
+   Copilot CLI.
+2. **At the end**, run `tools/usage` with that time, your model and `-Run <id>` / `--run <id>`
+   (the part after `spec-nx run`; and `-Until` when the command is over before the next one
+   starts), then copy:
    - Stage log columns **Tokens (estimate — see COSTS.md)** and **Cost (<currency>)**:
      `~379 k (40 k in · 334 k cached · 5 k out)` and `~CHF 0.30 (36 credits)` — measured
      numbers have no `~`;
@@ -117,5 +125,9 @@ Only when cost tracking is on.
    command that used no model.
 4. **One run, several specs:** when one command writes several specs, the first spec's row
    gets the numbers and the others say `included in <spec>`, so nothing is counted twice.
-5. Every cost number in a spec, the cost list or a pull request comes with the link to this
+5. **Measured or estimated:** a sum is written with `~` when any part of it is estimated, and
+   without when all parts are measured. A Cost summary or `.specs/costs.md` that mixes both
+   says so under the table — the two methods can differ several times (see the limits above).
+   `costs_ledger` shows a spec whose rows say `included in <spec>` as *included*, not `N/A`.
+6. Every cost number in a spec, the cost list or a pull request comes with the link to this
    page.

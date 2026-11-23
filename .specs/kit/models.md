@@ -5,13 +5,14 @@ Every stage prompt follows this file before it does any work.
 
 ## Read the setting
 
-`models` from `.specs/spec-nx.local.json` if the key is there (also when it is `null`),
-otherwise from `.specs/spec-nx.json`:
+`models` from the settings in their three layers (the kit's README, *Settings*): objects are
+merged key by key, so a developer can change one tier, and `"models": null` in a later file
+removes it (always the tool's model):
 
 | `models` | Meaning |
 |----------|---------|
 | missing or `null` | **No model handling.** Use the model selected in the tool; check, switch and ask nothing. Stop reading this file. |
-| `{ "fixed": "<model>" }` | Every stage and Step runs on that model. |
+| `{ "fixed": "<model>" }` | Every stage and Step runs on that model. A `fixed` key wins over tiers from an earlier layer. |
 | `{ "reasoning", "standard", "light", "guide" }` | **Per Step:** the tier below decides the model. |
 
 ## Which tier
