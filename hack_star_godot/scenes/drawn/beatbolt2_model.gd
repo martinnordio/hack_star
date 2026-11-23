@@ -6,7 +6,9 @@ extends RefCounted
 ## feet at y 498, the middle at x 300) into model space, so a part sits where it sits in the
 ## picture; the depth (z) is read from the side and back frames. The colours are the medians of
 ## regions of the frames (Step 46's Notes). Built with `FighterModel`'s building blocks, so the
-## idle, run and attack animations and the see-through work as for every fighter of shapes.
+## idle, run and attack animations and the see-through work as for every fighter of shapes; his
+## own stride and cannon raise (`animate`, Echo's walk and shoot frames) play on top, and his parts
+## are joined into one mesh per material and group (`_merge`, so four of him stay within L8).
 
 const LOOKS: Dictionary = {
 	"default":
@@ -118,6 +120,24 @@ const CUP_TURN: float = 0.35
 const SIZE: float = 1.0
 ## How far the head is tilted back (radians).
 const HEAD_LIFT: float = 0.2
+## The parts that stay their own mesh when the others are merged (`_merge`): they flicker.
+const OWN_MESHES: Array[String] = ["Muzzle", "BeatLight"]
+## The hips and shoulders the legs and arms swing around (model space).
+const HIP: Vector3 = Vector3(0.18, 0.86, 0.0)
+const GLOVE_SHOULDER: Vector3 = Vector3(0.25, 1.09, 0.0)
+## Walking (Echo's walk frames): upright, the legs stride and the arms swing against them.
+const STRIDE_SPEED: float = 13.0
+const STRIDE_ANGLE: float = 0.55
+const ARM_SWING: float = 0.35
+const WALK_LEAN: float = 0.05
+const WALK_BOB: float = 0.05
+## Shooting (Echo's shoot frames): the cannon arm points forwards and 30° out to his right (as the
+## front and back frames hold it), the feet in a wide stance. The
+## pose holds for the middle of the recoil (`attack` × `RAISE_HOLD`, at most 1).
+const AIM: Vector3 = Vector3(-0.58, 0.08, 1.0)
+const RAISE_HOLD: float = 1.6
+const STANCE_ANGLE: float = 0.35
+const STANCE_SPREAD: float = 0.12
 
 
 static func build(model: FighterModel, look: Dictionary) -> void:
@@ -132,6 +152,118 @@ static func build(model: FighterModel, look: Dictionary) -> void:
 	# big hair, as every one of Echo's pictures shows it.
 	model.get_head().rotation.x = -HEAD_LIFT
 	model.get_rig().scale = Vector3.ONE * SIZE
+	_merge(model.get_rig())
+
+
+## The parts of one material under one node become one mesh (E7: four of him were over L8's draw
+## calls with a mesh per part): every shape keeps its form, place and material, but it draws with
+## its outline once per material and group. Only the outlined parts cast a shadow (not the flat
+## details, the lights or the parts `_inside` his outline). The flickering parts stay alone.
+static func _merge(node: Node3D) -> void:
+	var by_material: Dictionary[Material, Array] = {}
+	for child: Node in node.get_children():
+		if child is MeshInstance3D and String(child.name) == "Shadow":
+			continue
+		if child is MeshInstance3D and OWN_MESHES.has(String(child.name)):
+			_cast_shadow_if_solid(child)
+		elif child is MeshInstance3D:
+			var piece: MeshInstance3D = child
+			if not by_material.has(piece.material_override):
+				by_material[piece.material_override] = []
+			by_material[piece.material_override].append(piece)
+		elif child is Node3D:
+			_merge(child)
+	for material: Material in by_material:
+		var pieces: Array = by_material[material]
+		var merged: MeshInstance3D = pieces[0]
+		if pieces.size() > 1:
+			merged = MeshInstance3D.new()
+			merged.name = pieces[0].name
+			merged.mesh = _joined(pieces)
+			merged.material_override = material
+			merged.cast_shadow = (pieces[0] as MeshInstance3D).cast_shadow
+			for piece: MeshInstance3D in pieces:
+				node.remove_child(piece)
+				piece.free()
+			node.add_child(merged)
+		_cast_shadow_if_solid(merged)
+
+
+## One mesh of the pieces' shapes, each moved, turned and stretched as its piece was; the normals
+## turned by the inverse transpose, so a stretched shape shades and outlines as before.
+static func _joined(pieces: Array) -> ArrayMesh:
+	var vertices: PackedVector3Array = []
+	var normals: PackedVector3Array = []
+	var indices: PackedInt32Array = []
+	for piece: MeshInstance3D in pieces:
+		var arrays: Array = piece.mesh.surface_get_arrays(0)
+		var place: Transform3D = piece.transform
+		var turn_normal: Basis = place.basis.inverse().transposed()
+		var start: int = vertices.size()
+		for vertex: Vector3 in arrays[Mesh.ARRAY_VERTEX]:
+			vertices.append(place * vertex)
+		for normal: Vector3 in arrays[Mesh.ARRAY_NORMAL]:
+			normals.append((turn_normal * normal).normalized())
+		for index: int in arrays[Mesh.ARRAY_INDEX]:
+			indices.append(start + index)
+	var joined: Array = []
+	joined.resize(Mesh.ARRAY_MAX)
+	joined[Mesh.ARRAY_VERTEX] = vertices
+	joined[Mesh.ARRAY_NORMAL] = normals
+	joined[Mesh.ARRAY_INDEX] = indices
+	var mesh: ArrayMesh = ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, joined)
+	return mesh
+
+
+static func _cast_shadow_if_solid(mesh: MeshInstance3D) -> void:
+	var material: ShaderMaterial = mesh.material_override as ShaderMaterial
+	var solid: bool = (
+		material != null
+		and material.next_pass != null
+		and float(material.get_shader_parameter("emission_energy")) == 0.0
+	)
+	if not solid:
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+## A part inside his outline (the eyes' whites, the collar, the cups' discs): the bigger parts
+## around it cast its shadow.
+static func _inside(mesh: MeshInstance3D) -> void:
+	mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+## Echo's moves on top of the fighters of shapes' idle, run and recoil (D53, E5): walking he stays
+## upright and strides, the free arm and the cannon swinging against the legs; a shot raises the
+## cannon arm to point forwards in a wide stance, then lowers it again.
+static func animate(model: FighterModel, time: float, state: Dictionary) -> void:
+	var body: Node3D = model.get_body()
+	var stride: float = 0.0
+	if state["running"]:
+		stride = sin(time * STRIDE_SPEED)
+		model.get_rig().rotation.x = WALK_LEAN
+		body.position.y = (1.0 - absf(stride)) * WALK_BOB
+	var raise: float = minf(state["attack"] * RAISE_HOLD, 1.0)
+	var walk: float = stride * (1.0 - raise)
+	body.scale = Vector3.ONE
+	var legs: Node3D = model.get_rig()
+	for side: float in [-1.0, 1.0]:
+		var leg: Node3D = legs.get_node(_leg_name(side))
+		leg.rotation = Vector3(
+			side * walk * STRIDE_ANGLE - side * raise * STANCE_ANGLE,
+			0.0,
+			side * raise * STANCE_SPREAD
+		)
+	(body.get_node("GloveArm") as Node3D).rotation.x = -walk * ARM_SWING
+	var rest: Vector3 = (CANNON_MUZZLE - CANNON_SHOULDER).normalized()
+	var aimed: Quaternion = Quaternion.IDENTITY.slerp(Quaternion(rest, AIM.normalized()), raise)
+	var swing: Quaternion = Quaternion(Vector3.RIGHT, walk * ARM_SWING)
+	(body.get_node("ArmCannon") as Node3D).quaternion = aimed * swing
+
+
+## His right leg is on the side of −x (the left of the picture from the front).
+static func _leg_name(side: float) -> String:
+	return "RightLeg" if side < 0.0 else "LeftLeg"
 
 
 ## A pixel of Echo's front idle frame in model space, with a depth `z` in metres.
@@ -139,8 +271,10 @@ static func _px(x: float, y: float, z: float = 0.0) -> Vector3:
 	return Vector3((x - FRAME_MIDDLE_X) * PX, (FRAME_FEET_Y - y) * PX, z)
 
 
+## Cel-shaded with the outline; a glowing part is a light and has no dark outline (Echo's lights
+## have none).
 static func _toon(color: Color, glow: Color = Color.BLACK, strength: float = 0.0) -> Material:
-	return ToonMaterials.toon(color, glow, strength)
+	return ToonMaterials.toon(color, glow, strength, strength == 0.0)
 
 
 static func _flat(color: Color, glow: Color = Color.BLACK, strength: float = 0.0) -> Material:
@@ -192,16 +326,19 @@ static func _lock(
 
 
 static func _legs(model: FighterModel, look: Dictionary) -> void:
-	var rig: Node3D = model.get_rig()
 	var trousers: Material = _toon(look["trousers"])
 	var shoes: Material = _toon(look["shoes"])
 	var sock: Material = _flat(look["orange"])
-	var soles: Node3D = model.group(rig, "NeonSoles")
 	var sole: Material = _toon(look["soles"], look["soles"], 0.7)
 	for side: float in [-1.0, 1.0]:
+		# Each leg swings around its hip; its glowing sole is in the leg's `NeonSoles`.
+		var leg: Node3D = model.group(
+			model.get_rig(), _leg_name(side), Vector3(side * HIP.x, HIP.y, HIP.z)
+		)
+		var soles: Node3D = model.group(leg, "NeonSoles")
 		var leg_turn: Vector3 = Vector3(0.0, 0.0, side * 0.08)
 		model.part(
-			rig,
+			leg,
 			FighterModel.capsule(0.16, 0.62),
 			trousers,
 			Vector3(side * 0.18, 0.55, 0.0),
@@ -209,14 +346,14 @@ static func _legs(model: FighterModel, look: Dictionary) -> void:
 		)
 		var cuff_at: Vector3 = Vector3(side * 0.2, 0.34, 0.0)
 		model.part(
-			rig, FighterModel.sphere(0.18), trousers, cuff_at, Vector3.ZERO, Vector3(1.0, 0.7, 1.0)
+			leg, FighterModel.sphere(0.18), trousers, cuff_at, Vector3.ZERO, Vector3(1.0, 0.7, 1.0)
 		)
 		var sock_at: Vector3 = Vector3(side * 0.23, 0.27, 0.03)
-		model.part(rig, FighterModel.torus(0.07, 0.11), sock, sock_at)
+		model.part(leg, FighterModel.torus(0.07, 0.11), sock, sock_at)
 		var foot_turn: Vector3 = Vector3(0.0, side * 0.25, 0.0)
 		var shoe_at: Vector3 = Vector3(side * 0.27, 0.15, 0.06)
 		model.part(
-			rig, FighterModel.sphere(0.17), shoes, shoe_at, foot_turn, Vector3(1.0, 0.9, 1.5)
+			leg, FighterModel.sphere(0.17), shoes, shoe_at, foot_turn, Vector3(1.0, 0.9, 1.5)
 		)
 		var sole_at: Vector3 = Vector3(side * 0.27, 0.03, 0.06)
 		model.part(
@@ -252,7 +389,7 @@ static func _jacket(model: FighterModel, look: Dictionary) -> void:
 		Vector3.ZERO,
 		Vector3(1.0, 1.0, 0.85)
 	)
-	model.part(
+	var collar: MeshInstance3D = model.part(
 		body,
 		FighterModel.cylinder(0.15, 0.2, 0.12),
 		_toon(look["collar"]),
@@ -260,6 +397,7 @@ static func _jacket(model: FighterModel, look: Dictionary) -> void:
 		Vector3.ZERO,
 		Vector3(1.0, 1.0, 0.9)
 	)
+	_inside(collar)
 	var piping: Material = _flat(look["teal"])
 	for side: float in [-1.0, 1.0]:
 		var piping_at: Vector3 = Vector3(side * 0.05, 0.98, 0.215)
@@ -289,7 +427,7 @@ static func _jacket(model: FighterModel, look: Dictionary) -> void:
 ## The model's left arm (screen right from the front): white sleeve, teal cuff and a black
 ## fingerless glove with the fingertips showing.
 static func _glove_arm(model: FighterModel, look: Dictionary) -> void:
-	var body: Node3D = model.get_body()
+	var body: Node3D = model.group(model.get_body(), "GloveArm", GLOVE_SHOULDER)
 	var arm_turn: Vector3 = Vector3(0.0, 0.0, 0.3)
 	model.part(
 		body,
@@ -394,6 +532,7 @@ static func _eyes(model: FighterModel, head: Node3D, look: Dictionary) -> void:
 			Vector3(1.0, 1.2, 0.3)
 		)
 		eye_white.name = label + "EyeWhite"
+		_inside(eye_white)
 		var iris_at: Vector3 = at + normal * 0.022 + Vector3(0.0, -0.012, 0.0)
 		var pupil: MeshInstance3D = model.part(
 			head,
@@ -517,7 +656,7 @@ static func _headphones(model: FighterModel, look: Dictionary) -> void:
 		var ring_at: Vector3 = cup_at + outwards * 0.075
 		model.part(phones, FighterModel.torus(0.11, 0.16), glow, ring_at, facing)
 		var disc_at: Vector3 = cup_at + outwards * 0.07
-		model.part(phones, FighterModel.cylinder(0.11, 0.11, 0.03), disc, disc_at, facing)
+		_inside(model.part(phones, FighterModel.cylinder(0.11, 0.11, 0.03), disc, disc_at, facing))
 		var mark_at: Vector3 = cup_at + Vector3(side * -0.02, -0.08, 0.13)
 		model.part(phones, FighterModel.box(0.03, 0.07, 0.03), orange, mark_at)
 	var band: Array[Vector3] = []

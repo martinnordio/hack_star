@@ -5,6 +5,7 @@ extends GutTest
 ## in Training and a match.
 
 const MODEL_SCENE: PackedScene = preload("res://scenes/fighter_model.tscn")
+const LOOK_FILE: GDScript = preload("res://scenes/drawn/beatbolt2_model.gd")
 const LIST: PackedScene = preload("res://scenes/fighter_list.tscn")
 const ARENA_SCENE: PackedScene = preload("res://scenes/arena.tscn")
 const MATCH_SCENE: PackedScene = preload("res://scenes/match.tscn")
@@ -74,7 +75,7 @@ func test_an_old_save_gets_beatbolt2_unlocked() -> void:
 
 func test_his_look_is_its_own_file_and_beatbolt_keeps_his() -> void:
 	assert_true(DrawnFighters.has(ID))
-	assert_eq(DrawnFighters.MODELS[ID], load("res://scenes/drawn/beatbolt2_model.gd"))
+	assert_eq(DrawnFighters.MODELS[ID], LOOK_FILE)
 	assert_eq(DrawnFighters.MODELS["beatbolt"], load("res://scenes/drawn/beatbolt_model.gd"))
 	assert_eq(DrawnFighters.looks(ID)["default"]["main"], Color("07f6f8"), "Echo's glowing teal")
 	assert_eq(
@@ -91,14 +92,28 @@ func test_he_is_built_with_the_parts_of_echo() -> void:
 		assert_not_null(part, "has %s" % part_name)
 		if part != null:
 			assert_gt(part.find_children("*", "MeshInstance3D", true, false).size(), 0, part_name)
-	var parts: int = _meshes(model).size()
-	assert_between(parts, 40, 100, "many shapes, but not too many to draw")
+	var meshes: Array[MeshInstance3D] = _meshes(model)
+	assert_between(
+		meshes.size(), 30, 50, "his shapes drawn as one mesh per material and group (E7)"
+	)
+	for mesh: MeshInstance3D in meshes:
+		var material: ShaderMaterial = mesh.material_override as ShaderMaterial
+		var glows: bool = (
+			material != null and material.get_shader_parameter("emission_energy") > 0.0
+		)
+		if material == null or material.next_pass == null or glows:
+			assert_eq(
+				mesh.cast_shadow,
+				GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,
+				"%s: flat details and lights cast no shadow" % mesh.name
+			)
 
 
 func test_he_is_only_shapes_in_the_toon_look_with_the_outline() -> void:
 	var outlined: int = 0
 	for mesh: MeshInstance3D in _meshes(_model()):
-		assert_true(mesh.mesh is PrimitiveMesh, "%s is a shape" % mesh.name)
+		var shapes: bool = mesh.mesh is PrimitiveMesh or mesh.mesh is ArrayMesh
+		assert_true(shapes, "%s is a shape or shapes joined in code" % mesh.name)
 		var material: Material = mesh.material_override
 		if material is StandardMaterial3D:
 			var shine: StandardMaterial3D = material
@@ -114,7 +129,7 @@ func test_he_is_only_shapes_in_the_toon_look_with_the_outline() -> void:
 			if shader.next_pass != null:
 				assert_eq(shader.next_pass, ToonMaterials.outline(), mesh.name)
 				outlined += 1
-	assert_gte(outlined, 30, "the body, the hair and the headphones are outlined")
+	assert_gte(outlined, 20, "the body, the hair and the headphones are outlined")
 
 
 func test_his_rendered_picture_is_on_his_card() -> void:
@@ -167,3 +182,73 @@ func test_beatbolt2_plays_in_a_match() -> void:
 	assert_eq(player.model.fighter_id, ID)
 	assert_eq(arena.fighters.size(), MatchSettings.BOT_COUNT + 1, "against the bots")
 	assert_true(arena.fire(Vector2.UP), "shoots")
+
+
+func _muzzle_at(model: FighterModel) -> Vector3:
+	var muzzle: Node3D = model.find_child("Muzzle", true, false)
+	return model.to_local(muzzle.global_position)
+
+
+func test_a_shot_raises_the_arm_cannon_forwards_and_lowers_it_again() -> void:
+	var model: FighterModel = _model()
+	model.idle_enabled = false
+	model.animate(0.0)
+	var resting: Vector3 = _muzzle_at(model)
+	assert_lt(resting.y, 0.5, "the cannon hangs down beside him")
+	model.play_attack()
+	model._process(FighterModel.ATTACK_SECONDS / 2.0)
+	model.animate(0.0)
+	var raised: Vector3 = _muzzle_at(model)
+	assert_gt(raised.z, resting.z + 0.5, "it points forwards, where he faces")
+	assert_gt(raised.y, 0.9, "at the shoulder's height")
+	var left_leg: Node3D = model.find_child("LeftLeg", true, false)
+	var right_leg: Node3D = model.find_child("RightLeg", true, false)
+	assert_lt(left_leg.rotation.x, -0.2, "a wide stance: the left foot forwards")
+	assert_gt(right_leg.rotation.x, 0.2, "the right foot back")
+	model._process(FighterModel.ATTACK_SECONDS)
+	model.animate(0.0)
+	assert_almost_eq(_muzzle_at(model), resting, Vector3.ONE * 0.01, "and down again")
+	assert_almost_eq(left_leg.rotation.x, 0.0, 0.001)
+
+
+func test_walking_he_strides_upright_with_the_arms_swinging() -> void:
+	var model: FighterModel = _model()
+	model.idle_enabled = false
+	model.running = true
+	var left_leg: Node3D = model.find_child("LeftLeg", true, false)
+	var right_leg: Node3D = model.find_child("RightLeg", true, false)
+	var glove_arm: Node3D = model.find_child("GloveArm", true, false)
+	var quarter: float = PI / 2.0 / LOOK_FILE.STRIDE_SPEED
+	for step: float in [1.0, -1.0]:
+		model.animate(quarter * (2.0 - step))
+		assert_almost_eq(left_leg.rotation.x, step * LOOK_FILE.STRIDE_ANGLE, 0.01, "left leg")
+		assert_almost_eq(right_leg.rotation.x, -step * LOOK_FILE.STRIDE_ANGLE, 0.01, "right leg")
+		assert_lt(glove_arm.rotation.x * step, -0.2, "the free arm swings against the left leg")
+	assert_lt(model.get_rig().rotation.x, 0.1, "upright, as Echo walks")
+	model.running = false
+	model.animate(0.0)
+	assert_eq(left_leg.rotation, Vector3.ZERO, "standing: the legs together")
+
+
+func test_in_play_he_turns_see_through_is_hit_and_knocked_out_as_a_fighter_of_shapes() -> void:
+	assert_true(GameState.select(ID, Fighters.DEFAULT_SKIN))
+	var arena: Node3D = ARENA_SCENE.instantiate()
+	add_child_autofree(arena)
+	arena.read_player_input = false
+	var fighter: Fighter = arena.get_node("Fighter")
+	fighter.model.set_see_through(true)
+	for mesh: MeshInstance3D in _meshes(fighter.model):
+		var material: Material = mesh.material_override
+		assert_true(material is BaseMaterial3D, "%s is see-through" % mesh.name)
+		if material is BaseMaterial3D:
+			assert_eq((material as BaseMaterial3D).transparency, BaseMaterial3D.TRANSPARENCY_ALPHA)
+	fighter.model.set_see_through(false)
+	var health: float = fighter.health
+	fighter.hit(10)
+	assert_eq(fighter.health, health - 10.0, "hit")
+	fighter.hit(int(fighter.health))
+	assert_true(fighter.knocked_out)
+	assert_false(fighter.model.knock_out_pose(0.5), "spins and shrinks as a fighter of shapes")
+	await wait_seconds(Fighter.KNOCK_OUT_SECONDS + 0.2)
+	assert_lt(fighter.model.scale.x, 0.2, "shrunk")
+	assert_false(fighter.visible, "gone")

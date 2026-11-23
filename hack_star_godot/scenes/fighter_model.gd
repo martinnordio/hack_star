@@ -430,6 +430,8 @@ func animate(time: float) -> void:
 		_flickers[index].scale = _flicker_scales[index] * wave
 	for spinner: Node3D in _spinners:
 		spinner.rotation.y = time * SPIN_SPEED
+	if DrawnFighters.has(fighter_id):
+		DrawnFighters.animate(fighter_id, self, time, {"running": running, "attack": recoil})
 
 
 func _clear() -> void:
