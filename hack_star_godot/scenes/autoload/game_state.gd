@@ -34,6 +34,9 @@ var camera_view: String = CameraViews.CLASSIC
 ## spec 09 L6); kept while the game is open, not saved.
 var light_preset: String = LightPresets.DEFAULT
 var saturation_boost: bool = false
+## The colour variation of the next match and Training (`ColourVariations`, spec 09 H1, H6);
+## kept while the game is open, not saved.
+var colour_variation: String = ColourVariations.DEFAULT
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
 ## When each active hack turns off: Unix time in seconds, `Hacks.FOREVER` for never.
@@ -89,6 +92,7 @@ func reset() -> void:
 	camera_view = CameraViews.CLASSIC
 	light_preset = LightPresets.DEFAULT
 	saturation_boost = false
+	colour_variation = ColourVariations.DEFAULT
 	ArenaLayout.use(world)
 	pictures = {}
 	match_settings = MatchSettings.new()

@@ -46,6 +46,18 @@ func _ready() -> void:
 	_animate()
 
 
+## Recolours the fireflies and the waterfalls for the colour variation `variation_id` and finds
+## the glowing crystals again (their materials were changed with the baked props).
+func apply_variation(variation_id: String) -> void:
+	variation = variation_id
+	var flies: CPUParticles3D = get_node("Fireflies")
+	flies.color_ramp = _firefly_fade()
+	for fall: MeshInstance3D in _waterfalls:
+		_paint_water(fall.material_override)
+	_find_crystals()
+	_animate()
+
+
 func _process(delta: float) -> void:
 	_time += delta
 	_animate()
@@ -77,11 +89,7 @@ func _build_fireflies() -> void:
 	flies.initial_velocity_max = 0.35
 	flies.scale_amount_min = 0.7
 	flies.scale_amount_max = 1.4
-	var fade: Gradient = Gradient.new()
-	fade.offsets = PackedFloat32Array([0.0, 0.2, 0.8, 1.0])
-	var firefly: Color = GlimmerLooks.color("firefly", variation)
-	fade.colors = PackedColorArray([Color(firefly, 0.0), firefly, firefly, Color(firefly, 0.0)])
-	flies.color_ramp = fade
+	flies.color_ramp = _firefly_fade()
 	var dot: SphereMesh = SphereMesh.new()
 	dot.radius = 0.06
 	dot.height = 0.12
@@ -97,27 +105,46 @@ func _build_fireflies() -> void:
 	add_child(flies)
 
 
+# The fireflies fade in and out in the variation's firefly colour.
+func _firefly_fade() -> Gradient:
+	var fade: Gradient = Gradient.new()
+	fade.offsets = PackedFloat32Array([0.0, 0.2, 0.8, 1.0])
+	var firefly: Color = GlimmerLooks.color("firefly", variation)
+	fade.colors = PackedColorArray([Color(firefly, 0.0), firefly, firefly, Color(firefly, 0.0)])
+	return fade
+
+
 # The glowing crystal parts and the parts of the floating islands among the baked props.
 func _find_baked() -> void:
 	if baked == null:
 		return
+	_find_crystals()
 	for child: Node in baked.get_children():
 		var instances: MultiMeshInstance3D = child
-		var kind: String = instances.get_meta("kind")
-		var glow: float = (instances.material_override as ShaderMaterial).get_shader_parameter(
-			"emission_energy"
-		)
-		if kind == "crystal_cluster" and glow > 0.0:
-			# Its own copy: the pulse must not change the shared `ToonMaterials` entry.
-			instances.material_override = instances.material_override.duplicate()
-			_crystals.append(instances)
-			_crystal_glow.append(glow)
-		elif kind == "island_chunk":
+		if instances.get_meta("kind") == "island_chunk":
 			_islands.append(instances)
 			if int(instances.get_meta("part_index")) == 0:
 				# The first part stands on the island's own axis (as the bake places it).
 				for place: Transform3D in instances.get_meta("transforms"):
 					_island_centers.append(place.origin)
+
+
+# The crystal parts that glow in the variation, each on its own copy of its material: the pulse
+# must not change the shared `ToonMaterials` entry.
+func _find_crystals() -> void:
+	_crystals.clear()
+	_crystal_glow.clear()
+	if baked == null:
+		return
+	for child: Node in baked.get_children():
+		var instances: MultiMeshInstance3D = child
+		var glow: float = (instances.material_override as ShaderMaterial).get_shader_parameter(
+			"emission_energy"
+		)
+		if instances.get_meta("kind") == "crystal_cluster" and glow > 0.0:
+			instances.material_override = instances.material_override.duplicate()
+			_crystals.append(instances)
+			_crystal_glow.append(glow)
 
 
 func _build_waterfalls() -> void:
@@ -132,8 +159,7 @@ func _build_waterfalls() -> void:
 		sheet.size = Vector2(0.7 * size, WATERFALL_LENGTH)
 		var material: ShaderMaterial = ShaderMaterial.new()
 		material.shader = WATER_SHADER
-		material.set_shader_parameter("water", GlimmerLooks.color("waterfall", variation))
-		material.set_shader_parameter("highlight", GlimmerLooks.color("waterfall_light", variation))
+		_paint_water(material)
 		material.set_shader_parameter("flow", Vector2(0.0, 1.6))
 		material.set_shader_parameter("bands", Vector2(1.5, WATERFALL_LENGTH / 1.2))
 		material.set_shader_parameter("foot_fade", 1.0)
@@ -148,6 +174,11 @@ func _build_waterfalls() -> void:
 		holder.add_child(fall)
 		_waterfalls.append(fall)
 		_waterfall_islands.append(index)
+
+
+func _paint_water(material: ShaderMaterial) -> void:
+	material.set_shader_parameter("water", GlimmerLooks.color("waterfall", variation))
+	material.set_shader_parameter("highlight", GlimmerLooks.color("waterfall_light", variation))
 
 
 func _island_scale(index: int) -> float:

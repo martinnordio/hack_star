@@ -6,7 +6,8 @@ extends Node3D
 ## the fighters (`ToonMaterials`, spec 09 D5/G10): walls, boulders, cacti and props have the dark
 ## outline, the ground is soft sand without one, less saturated than the fighters. The many small
 ## pieces (sand tiles, boulders, cacti) are MultiMeshes to keep draw calls low. The newer moving
-## decoration (flags, birds, a stream; spec 09 L2) is `CanyonDecor`, a child named `Decor`.
+## decoration (flags, birds, a stream; spec 09 L2) is `CanyonDecor`, a child named `Decor`. Every
+## colour comes from `CanyonLooks` for the colour `variation` (spec 09 H1, D48).
 
 ## Wall heights: the border, the border on the camera side (low, never hides the fighter) and
 ## the rocks inside.
@@ -22,40 +23,32 @@ const CACTUS_SPACING: float = 0.85
 const LOOK_SEED: int = 6
 const DECOR_SEED: int = 61
 
-## Brighter and warmer since the reopening (spec 09, L1, D26); the sand stays the least saturated
-## surface, so the fighters stand out (G10).
-const SAND: Color = Color("d6ad7e")
-const SAND_DARK: Color = Color("cb9f6e")
-const OUTSIDE: Color = Color("cf7b4c")
-const ROCK: Color = Color("e65a2a")
-const ROCK_BAND: Color = Color("ff9a4f")
-const ROCK_TOP: Color = Color("a83a20")
-const BOULDER: Color = Color("bf4f2a")
-const BOULDER_LIGHT: Color = Color("ee7c3e")
-const BUSH_GROUND: Color = Color("9fc05a")
-const CACTUS: Color = Color("3fd35c")
-const CACTUS_DARK: Color = Color("1fa848")
-const FLOWER: Color = Color("ff4f9e")
-## The blossoms on the cactus tops without a flower (L2), in these colours.
-const BLOSSOMS: Array[Color] = [Color("ffd23f"), Color("ff8a3d"), Color("ff6fd0")]
-const CRATE: Color = Color("d98c35")
-const CRATE_EDGE: Color = Color("7a4620")
-const BONE: Color = Color("fff6e0")
-const EYE: Color = Color("2a1d1d")
-const PEBBLE: Color = Color("b98a5e")
-
 @export var floor_body: StaticBody3D
 @export var walls: Node3D
+
+## The colour variation the canyon is built in (`CanyonLooks`; spec 09 H1); `apply_variation`
+## changes it on the built canyon.
+var variation: String = ColourVariations.DEFAULT
 
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _decor_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _boulders: Array[Transform3D] = []
-var _boulder_colors: Array[Color] = []
+var _boulder_colors: Array[Array] = []
+# Every mesh coloured by a role (its `role` and `outlined` metadata), repainted by a switch.
+var _painted: Array[MeshInstance3D] = []
+# Every MultiMesh coloured per instance, with each instance's colour recipe (`_recipe_color`).
+var _recipes: Dictionary[MultiMeshInstance3D, Array] = {}
+var _decor: CanyonDecor
+# The arena's own environment and sun as the scene has them (`WorldLighting.remember`).
+var _arena_light: Dictionary = {}
 
 
 func _ready() -> void:
 	_rng.seed = LOOK_SEED
 	_decor_rng.seed = DECOR_SEED
+	_arena_light = WorldLighting.remember(
+		get_parent().get_node_or_null("WorldEnvironment"), get_parent().get_node_or_null("Sun")
+	)
 	_build_floor()
 	_build_walls()
 	_build_outside_boulders()
@@ -64,9 +57,30 @@ func _ready() -> void:
 	_add_multimesh(
 		"Boulders", _low_poly_sphere(0.5), ToonMaterials.instanced(), _boulders, _boulder_colors
 	)
-	var decor: CanyonDecor = CanyonDecor.new()
-	decor.name = "Decor"
-	add_child(decor)
+	_decor = CanyonDecor.new()
+	_decor.name = "Decor"
+	_decor.variation = variation
+	add_child(_decor)
+
+
+## Gives the built canyon the colours of the colour variation `variation_id` (spec 09 H1, D48):
+## every surface, prop and decoration repainted by its role, the arena's own light put back;
+## nothing moves, no collider is touched. The arena then applies the lighting preset again
+## (`WorldLighting`).
+func apply_variation(variation_id: String) -> void:
+	variation = variation_id
+	WorldLighting.restore(
+		get_parent().get_node_or_null("WorldEnvironment"),
+		get_parent().get_node_or_null("Sun"),
+		_arena_light
+	)
+	for instance: MeshInstance3D in _painted:
+		instance.material_override = CanyonLooks.material(
+			instance.get_meta("role"), variation, instance.get_meta("outlined")
+		)
+	for instances: MultiMeshInstance3D in _recipes:
+		_paint_instances(instances)
+	_decor.apply_variation(variation)
 
 
 ## Height of a wall of `ArenaLayout.WALLS` (by index).
@@ -87,17 +101,17 @@ func _build_floor() -> void:
 	box.size = Vector3(size.x, FLOOR_THICKNESS, size.y)
 	shape.shape = box
 	floor_body.add_child(shape)
-	_mesh(floor_body, "Mesh", _box(box.size), SAND, Vector3.ZERO, false)
+	_mesh(floor_body, "Mesh", _box(box.size), "sand", Vector3.ZERO, false)
 	var outside: PlaneMesh = PlaneMesh.new()
 	outside.size = Vector2(OUTSIDE_SIZE, OUTSIDE_SIZE)
-	_mesh(self, "Outside", outside, OUTSIDE, Vector3(0.0, -0.15, 0.0), false)
+	_mesh(self, "Outside", outside, "outside", Vector3(0.0, -0.15, 0.0), false)
 	_build_sand_tiles(size)
 	for bush: Rect2 in ArenaLayout.BUSHES:
 		var patch: PlaneMesh = PlaneMesh.new()
 		patch.size = bush.size + Vector2(0.4, 0.4)
 		var at: Vector2 = bush.get_center()
 		var ground: MeshInstance3D = _mesh(
-			self, "BushGround", patch, BUSH_GROUND, Vector3(at.x, 0.02, at.y), false
+			self, "BushGround", patch, "bush_ground", Vector3(at.x, 0.02, at.y), false
 		)
 		ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
@@ -107,7 +121,7 @@ func _build_sand_tiles(size: Vector2) -> void:
 	var tile: PlaneMesh = PlaneMesh.new()
 	tile.size = Vector2.ONE * TILE_SIZE * 0.94
 	var transforms: Array[Transform3D] = []
-	var colors: Array[Color] = []
+	var colors: Array[Array] = []
 	var columns: int = int(size.x / TILE_SIZE)
 	var rows: int = int(size.y / TILE_SIZE)
 	for column: int in columns:
@@ -115,8 +129,8 @@ func _build_sand_tiles(size: Vector2) -> void:
 			var x: float = -size.x / 2.0 + (column + 0.5) * TILE_SIZE
 			var z: float = -size.y / 2.0 + (row + 0.5) * TILE_SIZE
 			transforms.append(Transform3D(Basis.IDENTITY, Vector3(x, 0.01, z)))
-			var shade: Color = SAND if (column + row) % 2 == 0 else SAND_DARK
-			colors.append(shade.lightened(_rng.randf_range(0.0, 0.06)))
+			var shade: String = "sand" if (column + row) % 2 == 0 else "sand_dark"
+			colors.append(_recipe(shade, shade, 0.0, _rng.randf_range(0.0, 0.06)))
 	var tiles: MultiMeshInstance3D = _add_multimesh(
 		"SandTiles", tile, ToonMaterials.instanced(false), transforms, colors
 	)
@@ -137,12 +151,12 @@ func _build_walls() -> void:
 		box.size = Vector3(rect.size.x, height, rect.size.y)
 		shape.shape = box
 		body.add_child(shape)
-		_mesh(body, "Mesh", _box(box.size), ROCK, Vector3.ZERO)
+		_mesh(body, "Mesh", _box(box.size), "rock", Vector3.ZERO)
 		var band: Vector3 = box.size + Vector3(0.08, 0.0, 0.08)
 		band.y = height * 0.16
-		_mesh(body, "Band", _box(band), ROCK_BAND, Vector3(0.0, -height * 0.12, 0.0))
+		_mesh(body, "Band", _box(band), "rock_band", Vector3(0.0, -height * 0.12, 0.0))
 		var cap: Vector3 = Vector3(rect.size.x + 0.14, 0.2, rect.size.y + 0.14)
-		_mesh(body, "Top", _box(cap), ROCK_TOP, Vector3(0.0, height / 2.0, 0.0))
+		_mesh(body, "Top", _box(cap), "rock_top", Vector3(0.0, height / 2.0, 0.0))
 		walls.add_child(body)
 		if height > CAMERA_SIDE_WALL_HEIGHT:
 			_stack_boulders(rect, height)
@@ -186,19 +200,19 @@ func _add_boulder(at: Vector3, radius: float) -> void:
 	var scale: Vector3 = Vector3(1.0, _rng.randf_range(0.55, 0.85), _rng.randf_range(0.8, 1.1))
 	var basis: Basis = Basis(Vector3.UP, _rng.randf_range(0.0, TAU)).scaled(scale * radius * 2.0)
 	_boulders.append(Transform3D(basis, at))
-	_boulder_colors.append(BOULDER.lerp(BOULDER_LIGHT, _rng.randf()))
+	_boulder_colors.append(_recipe("boulder", "boulder_light", _rng.randf()))
 
 
 ## Cacti on a jittered grid over every bush patch: trunks, arms and a few flowers.
 func _build_cacti() -> void:
 	var trunks: Array[Transform3D] = []
-	var trunk_colors: Array[Color] = []
+	var trunk_colors: Array[Array] = []
 	var arms: Array[Transform3D] = []
-	var arm_colors: Array[Color] = []
+	var arm_colors: Array[Array] = []
 	var flowers: Array[Transform3D] = []
-	var flower_colors: Array[Color] = []
+	var flower_colors: Array[Array] = []
 	var blossoms: Array[Transform3D] = []
-	var blossom_colors: Array[Color] = []
+	var blossom_colors: Array[Array] = []
 	for bush: Rect2 in ArenaLayout.BUSHES:
 		var columns: int = maxi(1, roundi(bush.size.x / CACTUS_SPACING))
 		var rows: int = maxi(1, roundi(bush.size.y / CACTUS_SPACING))
@@ -208,7 +222,7 @@ func _build_cacti() -> void:
 				var at: Vector2 = bush.position + cell * Vector2(column + 0.5, row + 0.5)
 				at += Vector2(_rng.randf_range(-0.15, 0.15), _rng.randf_range(-0.15, 0.15))
 				var tall: float = _rng.randf_range(0.85, 1.15)
-				var color: Color = CACTUS.lerp(CACTUS_DARK, _rng.randf())
+				var color: Array = _recipe("cactus", "cactus_dark", _rng.randf())
 				var base: Vector3 = Vector3(at.x, 0.0, at.y)
 				var turn: Basis = Basis(Vector3.UP, _rng.randf_range(0.0, TAU))
 				trunks.append(Transform3D(Basis.IDENTITY.scaled(Vector3(1, tall, 1)), base))
@@ -227,11 +241,12 @@ func _build_cacti() -> void:
 					arm_colors.append(color)
 				if _rng.randf() < 0.5:
 					flowers.append(Transform3D(Basis.IDENTITY, base + Vector3(0, 1.1 * tall, 0)))
-					flower_colors.append(FLOWER)
+					flower_colors.append(_recipe("flower"))
 				elif _decor_rng.randf() < 0.7:
 					var bloom: Basis = Basis(Vector3.UP, _decor_rng.randf_range(0.0, TAU))
 					blossoms.append(Transform3D(bloom, base + Vector3(0, 1.08 * tall, 0)))
-					blossom_colors.append(BLOSSOMS[_decor_rng.randi() % BLOSSOMS.size()])
+					var shade: int = _decor_rng.randi() % CanyonLooks.BLOSSOM_COUNT
+					blossom_colors.append(_recipe("blossom_%d" % shade))
 	var trunk: ArrayMesh = _shifted(_capsule(0.22, 1.1), 0.55)
 	_add_multimesh("CactusTrunks", trunk, ToonMaterials.instanced(), trunks, trunk_colors)
 	_add_multimesh("CactusArms", _capsule(0.12, 0.5), ToonMaterials.instanced(), arms, arm_colors)
@@ -265,43 +280,65 @@ func _build_decoration() -> void:
 		holder.add_child(item)
 		match spot["kind"]:
 			"crate":
-				_mesh(item, "Box", _box(Vector3(0.9, 0.9, 0.9)), CRATE, Vector3(0, 0.45, 0))
+				_mesh(item, "Box", _box(Vector3(0.9, 0.9, 0.9)), "crate", Vector3(0, 0.45, 0))
 				for y: float in [0.06, 0.84]:
 					var rim: BoxMesh = _box(Vector3(0.96, 0.12, 0.96))
-					_mesh(item, "Rim", rim, CRATE_EDGE, Vector3(0, y, 0))
+					_mesh(item, "Rim", rim, "crate_edge", Vector3(0, y, 0))
 			"skull":
 				item.rotation.y = 0.3 * (index % 3 - 1)
 				var head: SphereMesh = SphereMesh.new()
 				head.radius = 0.36
 				head.height = 0.62
-				_mesh(item, "Head", head, BONE, Vector3(0, 0.31, 0))
-				_mesh(item, "Jaw", _box(Vector3(0.32, 0.14, 0.24)), BONE, Vector3(0, 0.1, 0.2))
+				_mesh(item, "Head", head, "bone", Vector3(0, 0.31, 0))
+				_mesh(item, "Jaw", _box(Vector3(0.32, 0.14, 0.24)), "bone", Vector3(0, 0.1, 0.2))
 				for x: float in [-0.13, 0.13]:
 					var eye: SphereMesh = SphereMesh.new()
 					eye.radius = 0.1
 					eye.height = 0.2
-					_mesh(item, "Eye", eye, EYE, Vector3(x, 0.36, 0.28))
+					_mesh(item, "Eye", eye, "eye", Vector3(x, 0.36, 0.28))
 			"rock":
-				_mesh(item, "Big", _low_poly_sphere(0.45), PEBBLE, Vector3(0, 0.2, 0))
-				_mesh(item, "Small", _low_poly_sphere(0.25), BOULDER, Vector3(0.45, 0.1, 0.2))
+				_mesh(item, "Big", _low_poly_sphere(0.45), "pebble", Vector3(0, 0.2, 0))
+				_mesh(item, "Small", _low_poly_sphere(0.25), "boulder", Vector3(0.45, 0.1, 0.2))
 			"bones":
 				for turn: float in [0.6, -0.6]:
-					var bone: Node3D = _mesh(item, "Bone", _capsule(0.1, 1.0), BONE, Vector3.ZERO)
+					var bone: Node3D = _mesh(item, "Bone", _capsule(0.1, 1.0), "bone", Vector3.ZERO)
 					bone.rotation = Vector3(PI / 2.0, 0.0, 0.0)
 					bone.rotate_y(turn)
 					bone.position.y = 0.1
 
 
 func _mesh(
-	parent: Node, node_name: String, mesh: Mesh, color: Color, at: Vector3, outlined: bool = true
+	parent: Node, node_name: String, mesh: Mesh, role: String, at: Vector3, outlined: bool = true
 ) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()
 	instance.name = node_name
 	instance.mesh = mesh
-	instance.material_override = ToonMaterials.toon(color, Color.BLACK, 0.0, outlined)
+	instance.material_override = CanyonLooks.material(role, variation, outlined)
+	instance.set_meta("role", role)
+	instance.set_meta("outlined", outlined)
+	_painted.append(instance)
 	instance.position = at
 	parent.add_child(instance, true)
 	return instance
+
+
+# A colour recipe: the colour of `role` mixed `mix` of the way to `role_to`'s, lightened by
+# `lift` — so a switch of the variation gives every instance its colour again, the same way.
+static func _recipe(
+	role: String, role_to: String = "", mix: float = 0.0, lift: float = 0.0
+) -> Array:
+	return [role, role_to if not role_to.is_empty() else role, mix, lift]
+
+
+func _recipe_color(recipe: Array) -> Color:
+	var from: Color = CanyonLooks.color(recipe[0], variation)
+	return from.lerp(CanyonLooks.color(recipe[1], variation), recipe[2]).lightened(recipe[3])
+
+
+func _paint_instances(instances: MultiMeshInstance3D) -> void:
+	var recipes: Array = _recipes[instances]
+	for index: int in recipes.size():
+		instances.multimesh.set_instance_color(index, _recipe_color(recipes[index]))
 
 
 func _add_multimesh(
@@ -309,7 +346,7 @@ func _add_multimesh(
 	mesh: Mesh,
 	material: Material,
 	transforms: Array[Transform3D],
-	colors: Array[Color]
+	colors: Array[Array]
 ) -> MultiMeshInstance3D:
 	var multimesh: MultiMesh = MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_3D
@@ -318,12 +355,13 @@ func _add_multimesh(
 	multimesh.instance_count = transforms.size()
 	for index: int in transforms.size():
 		multimesh.set_instance_transform(index, transforms[index])
-		multimesh.set_instance_color(index, colors[index])
 	var instance: MultiMeshInstance3D = MultiMeshInstance3D.new()
 	instance.name = node_name
 	instance.multimesh = multimesh
 	instance.material_override = material
 	add_child(instance)
+	_recipes[instance] = colors
+	_paint_instances(instance)
 	return instance
 
 

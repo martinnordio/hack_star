@@ -9,10 +9,10 @@ extends RefCounted
 ## `ToonMaterials.from_material`). **Original** is the look before the palette, value for value;
 ## **Glimmer** uses only `GlimmerPalette` colours and the pack's materials.
 
-const ORIGINAL: String = "original"
-const GLIMMER: String = "glimmer"
-## The variation in use until the colour switch exists (spec 09 H1: a game starts in Glimmer).
-const DEFAULT: String = GLIMMER
+const ORIGINAL: String = ColourVariations.ORIGINAL
+const GLIMMER: String = ColourVariations.GLIMMER
+## The variation a game starts with (spec 09 H1).
+const DEFAULT: String = ColourVariations.DEFAULT
 const MATERIALS_DIR: String = "res://scenes/glimmer_isles/materials/"
 ## The variations lit by the pack's lighting scene (its sky, environment and sun).
 const PACK_LIGHTING: Array[String] = [GLIMMER]
@@ -142,7 +142,11 @@ static func part_role(kind: String, part_index: int) -> String:
 ## The look of a role: `albedo` (alpha included), `glow`, `glow_strength` and `jitter`, taken
 ## from the pack material when the role names one.
 static func look(role: String, variation: String = DEFAULT) -> Dictionary:
-	var entry: Dictionary = _table(variation)[role]
+	return look_of(_table(variation)[role])
+
+
+## The look of one table entry (also `CanyonLooks`'): its own colours or its pack material's.
+static func look_of(entry: Dictionary) -> Dictionary:
 	var result: Dictionary = {
 		"albedo": entry.get("albedo", Color.WHITE),
 		"glow": entry.get("glow", Color.BLACK),
@@ -169,10 +173,14 @@ static func color(role: String, variation: String = DEFAULT) -> Color:
 static func material(
 	role: String, variation: String = DEFAULT, outlined: bool = true
 ) -> ShaderMaterial:
-	var entry: Dictionary = _table(variation)[role]
+	return material_of(_table(variation)[role], outlined)
+
+
+## The shared cel-shaded material of one table entry (also `CanyonLooks`').
+static func material_of(entry: Dictionary, outlined: bool = true) -> ShaderMaterial:
 	if entry.has("material"):
 		return ToonMaterials.from_material(pack_material(entry["material"]), outlined)
-	var result: Dictionary = look(role, variation)
+	var result: Dictionary = look_of(entry)
 	return ToonMaterials.toon(result["albedo"], result["glow"], result["glow_strength"], outlined)
 
 
@@ -186,7 +194,8 @@ static func pack_material(material_name: String) -> BaseMaterial3D:
 	return load(MATERIALS_DIR + material_name + ".tres")
 
 
+# The table of a variation; one without a table of its own looks like Original.
 static func _table(variation: String) -> Dictionary[String, Dictionary]:
-	if variation == ORIGINAL:
-		return ORIGINAL_LOOKS
-	return GLIMMER_LOOKS
+	if variation == GLIMMER:
+		return GLIMMER_LOOKS
+	return ORIGINAL_LOOKS

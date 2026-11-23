@@ -11,14 +11,11 @@ const KINDS: Array[String] = ["Flags", "Birds", "Stream"]
 const FLAG_SHADER: Shader = preload("res://scenes/toon/flag.gdshader")
 const WATER_SHADER: Shader = preload("res://scenes/toon/flowing_water.gdshader")
 
-const FLAG_COLORS: Array[Color] = [Color("ff3b5c"), Color("ffd23f"), Color("23c9b8")]
-const POLE: Color = Color("7a4620")
 const POLE_HEIGHT: float = 1.5
 const FLAG_SIZE: Vector2 = Vector2(0.9, 0.55)
 ## Where along a high border wall the flags stand (shares of its length).
 const FLAG_PLACES: Array[float] = [0.12, 0.5, 0.88]
 
-const BIRD: Color = Color("3b2b3f")
 const BIRD_COUNT: int = 5
 ## The birds circle this point, this far out and this high (metres), this fast (radians/second).
 const BIRD_CENTER: Vector3 = Vector3(0.0, 0.0, -3.0)
@@ -27,17 +24,22 @@ const BIRD_HEIGHT: Vector2 = Vector2(6.5, 9.0)
 const BIRD_SPEED: Vector2 = Vector2(0.25, 0.45)
 const FLAP_SPEED: float = 9.0
 
-const STREAM: Color = Color("27d3c3")
-const STREAM_LIGHT: Color = Color("c8fff6")
 const STREAM_SIZE: Vector2 = Vector2(3.2, 70.0)
 ## How far outside the east border wall the stream runs (metres), among the outside boulders.
 const STREAM_BEYOND: float = 3.4
+
+## The colour variation of the canyon (`CanyonLooks`), set before `_ready`.
+var variation: String = ColourVariations.DEFAULT
 
 var _time: float = 0.0
 var _birds: Array[Node3D] = []
 ## Per bird: radius, height, speed (signed: the way round) and the start angle.
 var _bird_paths: Array[Vector4] = []
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _poles: Array[MeshInstance3D] = []
+var _cloths: Array[ShaderMaterial] = []
+var _bird_parts: Array[MeshInstance3D] = []
+var _stream: ShaderMaterial
 
 
 func _ready() -> void:
@@ -51,6 +53,19 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_time += delta
 	_place_birds()
+
+
+## Recolours the flags, the birds and the stream for the colour variation `variation_id`.
+func apply_variation(variation_id: String) -> void:
+	variation = variation_id
+	for pole: MeshInstance3D in _poles:
+		pole.material_override = CanyonLooks.material("pole", variation)
+	for index: int in _cloths.size():
+		_cloths[index].set_shader_parameter("color", _flag_color(index))
+	var bird: Material = CanyonLooks.material("bird", variation, false)
+	for part: MeshInstance3D in _bird_parts:
+		part.material_override = bird
+	_paint_stream()
 
 
 ## The birds (for tests).
@@ -88,13 +103,17 @@ func _build_flags() -> void:
 			flag.name = "Flag%d" % count
 			flag.position = Vector3(at.x, height + 0.1, at.y)
 			holder.add_child(flag)
-			var stick: MeshInstance3D = _instance("Pole", pole, ToonMaterials.toon(POLE))
+			var stick: MeshInstance3D = _instance(
+				"Pole", pole, CanyonLooks.material("pole", variation)
+			)
 			stick.position.y = POLE_HEIGHT / 2.0
 			flag.add_child(stick)
+			_poles.append(stick)
 			var material: ShaderMaterial = ShaderMaterial.new()
 			material.shader = FLAG_SHADER
-			material.set_shader_parameter("color", FLAG_COLORS[count % FLAG_COLORS.size()])
+			material.set_shader_parameter("color", _flag_color(count))
 			material.set_shader_parameter("length", FLAG_SIZE.x)
+			_cloths.append(material)
 			var banner: MeshInstance3D = _instance("Cloth", cloth, material)
 			banner.position.y = POLE_HEIGHT - FLAG_SIZE.y / 2.0
 			flag.add_child(banner)
@@ -110,19 +129,21 @@ func _build_birds() -> void:
 	body.height = 0.55
 	body.radial_segments = 6
 	body.rings = 1
-	var material: Material = ToonMaterials.toon(BIRD, Color.BLACK, 0.0, false)
+	var material: Material = CanyonLooks.material("bird", variation, false)
 	for index: int in BIRD_COUNT:
 		var bird: Node3D = Node3D.new()
 		bird.name = "Bird%d" % index
 		var trunk: MeshInstance3D = _instance("Body", body, material)
 		trunk.rotation.x = PI / 2.0
 		bird.add_child(trunk)
+		_bird_parts.append(trunk)
 		for side: float in [-1.0, 1.0]:
 			var feather: MeshInstance3D = _instance(
 				"WingLeft" if side < 0.0 else "WingRight", wing, material
 			)
 			feather.position.x = side * 0.38
 			bird.add_child(feather)
+			_bird_parts.append(feather)
 		holder.add_child(bird)
 		_birds.append(bird)
 		var way: float = 1.0 if index % 2 == 0 else -1.0
@@ -157,13 +178,22 @@ func _build_stream() -> void:
 	water.size = STREAM_SIZE
 	var material: ShaderMaterial = ShaderMaterial.new()
 	material.shader = WATER_SHADER
-	material.set_shader_parameter("water", STREAM)
-	material.set_shader_parameter("highlight", STREAM_LIGHT)
+	_stream = material
+	_paint_stream()
 	material.set_shader_parameter("flow", Vector2(0.0, 0.6))
 	material.set_shader_parameter("bands", Vector2(2.0, STREAM_SIZE.y / 2.5))
 	var stream: MeshInstance3D = _instance("Water", water, material)
 	stream.position = Vector3(ArenaLayout.SIZE.x / 2.0 + STREAM_BEYOND, -0.11, 0.0)
 	holder.add_child(stream)
+
+
+func _paint_stream() -> void:
+	_stream.set_shader_parameter("water", CanyonLooks.color("stream", variation))
+	_stream.set_shader_parameter("highlight", CanyonLooks.color("stream_light", variation))
+
+
+func _flag_color(index: int) -> Color:
+	return CanyonLooks.color("flag_%d" % (index % CanyonLooks.FLAG_COUNT), variation)
 
 
 func _holder(holder_name: String) -> Node3D:

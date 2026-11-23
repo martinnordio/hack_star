@@ -35,27 +35,64 @@ const LAGOON_SIZE: float = 160.0
 @export var floor_body: StaticBody3D
 @export var walls: Node3D
 
-## The colour variation the world is built in (`GlimmerLooks`; spec 09 H1).
+## The colour variation the world is built in (`GlimmerLooks`; spec 09 H1); `apply_variation`
+## changes it on the built world.
 var variation: String = GlimmerLooks.DEFAULT
 
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+# Every mesh coloured by a role (its `role` and `outlined` metadata), repainted by a switch.
+var _painted: Array[MeshInstance3D] = []
+var _tiles: MultiMeshInstance3D
+# Each ground tile's role and its random lightening, so a switch gives the same tiles.
+var _tile_roles: Array[String] = []
+var _tile_lifts: PackedFloat32Array = []
+var _path: MultiMeshInstance3D
+var _baked: Node3D
+var _decor: GlimmerDecor
+# The arena's own environment and sun as the scene has them, before this world lit it.
+var _arena_light: Dictionary = {}
 
 
 func _ready() -> void:
 	_rng.seed = LOOK_SEED
+	_remember_arena_light()
 	_build_sky()
 	_build_floor()
 	_build_island()
 	_build_walls()
 	_build_cover()
 	_build_path()
-	var baked: Node3D = load_baked(variation)
-	add_child(baked)
-	var decor: GlimmerDecor = GlimmerDecor.new()
-	decor.name = "Decor"
-	decor.baked = baked
-	decor.variation = variation
-	add_child(decor)
+	_baked = load_baked(variation)
+	add_child(_baked)
+	_decor = GlimmerDecor.new()
+	_decor.name = "Decor"
+	_decor.baked = _baked
+	_decor.variation = variation
+	add_child(_decor)
+
+
+## Gives the built world the colours and the own light of the colour variation `variation_id`
+## (spec 09 H1, D48): every surface, baked part and decoration repainted by its role, the lagoon
+## added or removed, the arena's environment and sun lit again; nothing moves, no collider is
+## touched. The arena then applies the lighting preset again (`WorldLighting`).
+func apply_variation(variation_id: String) -> void:
+	variation = variation_id
+	_restore_arena_light()
+	_build_sky()
+	for instance: MeshInstance3D in _painted:
+		instance.material_override = GlimmerLooks.material(
+			instance.get_meta("role"), variation, instance.get_meta("outlined")
+		)
+	_paint_tiles()
+	_path.material_override = GlimmerLooks.material("path", variation, false)
+	paint_baked(_baked, variation)
+	var lagoon: Node = get_node_or_null("Lagoon")
+	if lagoon != null:
+		remove_child(lagoon)
+		lagoon.queue_free()
+	if GlimmerLooks.has_role("lagoon", variation):
+		_build_lagoon()
+	_decor.apply_variation(variation)
 
 
 ## Height of a wall of `ArenaLayout.walls()` (by index), as in the canyon.
@@ -81,13 +118,37 @@ static func load_baked(look_variation: String = GlimmerLooks.DEFAULT) -> Node3D:
 		for index: int in transforms.size():
 			multimesh.set_instance_transform(index, transforms[index])
 		instances.multimesh = multimesh
+	paint_baked(baked, look_variation)
+	return baked
+
+
+## Puts every part of the baked props on the shared toon material of its role in the colour
+## variation (its `kind` and `part_index`, `GlimmerLooks.part_role`).
+static func paint_baked(baked: Node3D, look_variation: String) -> void:
+	for child: Node in baked.get_children():
+		var instances: MultiMeshInstance3D = child
 		var role: String = GlimmerLooks.part_role(
 			instances.get_meta("kind"), instances.get_meta("part_index")
 		)
 		instances.material_override = GlimmerLooks.material(
 			role, look_variation, instances.get_meta("outlined")
 		)
-	return baked
+
+
+# The arena's environment and sun before this world lights them (`apply_variation` starts again
+# from them).
+func _remember_arena_light() -> void:
+	_arena_light = WorldLighting.remember(
+		get_parent().get_node_or_null("WorldEnvironment"), get_parent().get_node_or_null("Sun")
+	)
+
+
+func _restore_arena_light() -> void:
+	WorldLighting.restore(
+		get_parent().get_node_or_null("WorldEnvironment"),
+		get_parent().get_node_or_null("Sun"),
+		_arena_light
+	)
 
 
 # In the variations of the pack's lighting: its environment and sun (`_use_pack_light`).
@@ -165,23 +226,27 @@ func _build_floor() -> void:
 	var tile: PlaneMesh = PlaneMesh.new()
 	tile.size = Vector2.ONE * TILE_SIZE * 0.94
 	var transforms: Array[Transform3D] = []
-	var colors: Array[Color] = []
 	for column: int in int(size.x / TILE_SIZE):
 		for row: int in int(size.y / TILE_SIZE):
 			var x: float = -size.x / 2.0 + (column + 0.5) * TILE_SIZE
 			var z: float = -size.y / 2.0 + (row + 0.5) * TILE_SIZE
 			transforms.append(Transform3D(Basis.IDENTITY, Vector3(x, 0.01, z)))
-			var role: String = "ground" if (column + row) % 2 == 0 else "ground_alt"
-			var shade: Dictionary = GlimmerLooks.look(role, variation)
+			_tile_roles.append("ground" if (column + row) % 2 == 0 else "ground_alt")
 			# Drawn every time, so the path's random places stay the same in every variation.
-			var lift: float = _rng.randf_range(0.0, 0.05)
-			colors.append(
-				(shade["albedo"] as Color).lightened(lift if shade["jitter"] > 0 else 0.0)
-			)
-	var tiles: MultiMeshInstance3D = _multimesh(
-		"Tiles", tile, ToonMaterials.instanced(false), transforms, colors
-	)
-	tiles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			_tile_lifts.append(_rng.randf_range(0.0, 0.05))
+	var colors: Array[Color] = []
+	colors.resize(transforms.size())
+	_tiles = _multimesh("Tiles", tile, ToonMaterials.instanced(false), transforms, colors)
+	_tiles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_paint_tiles()
+
+
+# Each ground tile in its role's colour, lightened at random where the variation says so.
+func _paint_tiles() -> void:
+	for index: int in _tile_roles.size():
+		var shade: Dictionary = GlimmerLooks.look(_tile_roles[index], variation)
+		var lift: float = _tile_lifts[index] if shade["jitter"] > 0 else 0.0
+		_tiles.multimesh.set_instance_color(index, (shade["albedo"] as Color).lightened(lift))
 
 
 # The island around the arena (the rim the giant mushrooms stand on), its rocky underside and,
@@ -289,8 +354,8 @@ func _build_path() -> void:
 	colors.resize(transforms.size())
 	colors.fill(Color.WHITE)
 	var material: Material = GlimmerLooks.material("path", variation, false)
-	var path: MultiMeshInstance3D = _multimesh("Path", stone, material, transforms, colors)
-	path.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_path = _multimesh("Path", stone, material, transforms, colors)
+	_path.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _mesh(
@@ -300,6 +365,9 @@ func _mesh(
 	instance.name = node_name
 	instance.mesh = mesh
 	instance.material_override = GlimmerLooks.material(role, variation, outlined)
+	instance.set_meta("role", role)
+	instance.set_meta("outlined", outlined)
+	_painted.append(instance)
 	instance.position = at
 	parent.add_child(instance, true)
 	return instance

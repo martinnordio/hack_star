@@ -11,6 +11,8 @@ const GLOW_INTENSITY: float = 1.2
 const GLOW_STRENGTH: float = 1.0
 const GLOW_BLOOM: float = 0.0
 const GLOW_HDR_THRESHOLD: float = 0.5
+## What a world may change on the arena's sun (`remember`, `restore`).
+const SUN_PROPERTIES: Array[String] = ["light_color", "light_energy", "rotation", "shadow_opacity"]
 
 var _holder: WorldEnvironment
 var _sun: DirectionalLight3D
@@ -101,6 +103,28 @@ func apply(preset_id: String, boost: bool) -> void:
 ## The preset in use.
 func preset() -> String:
 	return _preset
+
+
+## The arena's environment and sun as a world finds them before it lights them, so a switch of
+## the colour variation can start again from them (`restore`).
+static func remember(holder: WorldEnvironment, sun: DirectionalLight3D) -> Dictionary:
+	var saved: Dictionary = {}
+	if holder != null:
+		saved["environment"] = holder.environment
+	if sun != null:
+		for property: String in SUN_PROPERTIES:
+			saved[property] = sun.get(property)
+	return saved
+
+
+## Puts back what `remember` saved.
+static func restore(holder: WorldEnvironment, sun: DirectionalLight3D, saved: Dictionary) -> void:
+	if holder != null and saved.has("environment"):
+		holder.environment = saved["environment"]
+	if sun != null:
+		for property: String in SUN_PROPERTIES:
+			if saved.has(property):
+				sun.set(property, saved[property])
 
 
 ## Whether the saturation boost is on.

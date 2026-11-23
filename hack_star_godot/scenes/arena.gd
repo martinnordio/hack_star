@@ -9,7 +9,8 @@ extends Node3D
 ## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
 ## `V` and `1`–`4` switch the camera view (`CameraViews`, spec 09 V1–V6), kept in
 ## `GameState.camera_view`; `L` switches the lighting preset and `K` the saturation boost
-## (`LightPresets`, `WorldLighting`, L3–L6), kept in `GameState`; `HudToast` names them.
+## (`LightPresets`, `WorldLighting`, L3–L6), `C` the colour variation (`ColourVariations`,
+## H1–H6), all kept in `GameState`; `HudToast` names them.
 
 ## The camera looks at the fighter from above and behind (towards +z), at this angle down.
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -98,12 +99,15 @@ func _notification(what: int) -> void:
 ## `GlimmerIsles` in place of the scene's `Canyon`, on the same floor and walls.
 func _use_world() -> void:
 	ArenaLayout.use(GameState.world)
+	if has_node("Canyon"):
+		(get_node("Canyon") as Canyon).variation = GameState.colour_variation
 	# An inherited scene (`match.tscn`) gets the notification once per scene level.
 	if ArenaLayout.world() == Worlds.CANYON or not has_node("Canyon"):
 		return
 	var canyon: Node = get_node("Canyon")
 	var isles: GlimmerIsles = GlimmerIsles.new()
 	isles.name = "GlimmerIsles"
+	isles.variation = GameState.colour_variation
 	isles.floor_body = get_node("Floor")
 	isles.walls = get_node("Walls")
 	add_child(isles)
@@ -183,6 +187,9 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("colour_next"):
+		set_colour_variation(ColourVariations.next(GameState.colour_variation))
+		return
 	if event.is_action_pressed("light_next"):
 		set_light_preset(LightPresets.next(GameState.light_preset))
 		return
@@ -240,6 +247,27 @@ func set_saturation_boost(boost: bool) -> void:
 	_lighting.apply(GameState.light_preset, boost)
 	GameState.saturation_boost = boost
 	_toast.show_text(LightPresets.boost_text(boost))
+
+
+## The world built in the arena (`Canyon` or `GlimmerIsles`).
+func world() -> Node3D:
+	if has_node("GlimmerIsles"):
+		return get_node("GlimmerIsles")
+	return get_node("Canyon")
+
+
+## Gives the world the colour variation `variation_id` (spec 09 H1–H6, D48), kept for the next
+## match and Training, and names it in the toast: the world repaints itself and lights the arena
+## with its own light again, then the lighting preset and the boost apply on top as before; the
+## view and the camera stay.
+func set_colour_variation(variation_id: String) -> void:
+	if not ColourVariations.has(variation_id):
+		return
+	world().call("apply_variation", variation_id)
+	GameState.colour_variation = variation_id
+	_lighting.setup($WorldEnvironment, $Sun)
+	_lighting.apply(GameState.light_preset, GameState.saturation_boost)
+	_toast.show_text(ColourVariations.title(variation_id))
 
 
 func _physics_process(_delta: float) -> void:
