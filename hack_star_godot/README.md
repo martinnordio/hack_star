@@ -2,8 +2,8 @@
 
 This folder holds the Godot version of Hack star: a re-implementation with the
 [Godot Engine](https://godotengine.org/) 4.7.2, for the browser only (desktop, iPad and phone).
-It is the first basic game so far: a home screen, a fighter list with nine fighters (each with
-its skins; **Beatbolt** comes from a child's drawing, and **Flarekid** and **Echo** are the author's pictures made from drawings), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
+It is the first basic game so far: a home screen, a fighter list with ten fighters (each with
+its skins; **Beatbolt** comes from a child's drawing, and **Flarekid**, **Echo** and **MagMax** are animated from the author's pictures), a fighter screen, an info page with the words of the game, a 3D arena in two worlds — the canyon and **Glimmer Isles** — where
 your fighter runs and shoots at three target dummies (with bushes to hide in), and the hack
 codes: a hack screen to type or scan a code, the three hacks, and a QR code page. The hack codes are checked by the FastAPI server in `server/`. The first match is there too: a "last fighter standing" fight in the chosen world against bots, with health, healing, a timer and a result. A win gives trophies, with Prestige levels, and the trophies and the chosen fighter are saved between visits. The first playable version (F0–F5 of the feature list) is complete. Since spec 09 the game has a new look (see [The look](#the-look)). The Python + Svelte game in the rest of the repository is unchanged; see the [root README](../README.md).
 
@@ -97,7 +97,7 @@ The versions are fixed in [tools/versions.json](tools/versions.json) for everybo
    **Fighters**, **Info** and **Hack**. The hack codes need the server running, see
    [Run the hack server and the web game](#run-the-hack-server-and-the-web-game).
 3. **Play** starts a match (see [How to play a match](#how-to-play-a-match)). **Training** opens the
-   arena with three target dummies. **Fighters** lists the nine fighters with their trophies, power
+   arena with three target dummies. **Fighters** lists the ten fighters with their trophies, power
    level and Prestige; open one to see its skins, choose a skin and press **Select** to make it
    the home fighter. **Info** starts with "How to play" (the controls, the match, Training, trophies
    and the hack codes), then explains the words of the game. **Hack** opens the hack screen
@@ -124,16 +124,27 @@ font and icons and their licences: [LICENSES.md](LICENSES.md).
 
 Since the reopening of spec 09:
 
-- **Two picture fighters:** **Flarekid** (a kid whose hood is a flame — the "hero upgrade" of
-  Blaze, Legendary, plays like Blaze) and **Echo** (the sound-powered hero, Mythic, plays like
-  Luna), unlocked for everyone, shown with the author's pictures from `characters/blaze2/` and
-  `characters/echo/`: an outlined cut-out with a soft shadow in 3D, the card picture on the cards.
-  In play they move like paper cut-outs — hop, lean, look left or right, recoil with a muzzle
-  star, flash white when hit, tip over and fade at a knock-out. What one picture cannot do, which
-  pictures would make them better, and the newer art the author has already dropped for a
-  follow-up: [Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo).
+- **Three animated picture fighters:** **Flarekid** (a kid whose hood is a flame — the "hero
+  upgrade" of Blaze, Legendary, plays like Blaze), **Echo** (the sound-powered hero, Mythic, plays
+  like Luna) and **MagMax** (a green hero with flaming hair and lava-rock fists, Epic, plays like
+  Rocko), unlocked for everyone, shown with the author's pictures from `characters/blaze2/`,
+  `characters/echo/` and `characters/magmax2/`: 12 frames each, an outlined cut-out with a soft
+  shadow in 3D, the card picture on the cards.
+- **In play** they show their back walking up the screen, their front walking down and their side
+  walking left or right (the same in every camera view), play a walk loop with a small hop, idle
+  and breathe when they stop, strike a shoot pose with a star at the muzzle on every shot, and
+  shoot their own projectile (a lava fist, a sound wave, a fireball); they flash white when hit,
+  are see-through in a bush and tip over and fade at a knock-out.
+- **Showcase:** on home, the fighter screen and the result they pop in and then play a 7 s loop —
+  idle, a turn through their views, walk steps on the spot, a shot with their projectile and
+  sparks. On the fighter screen, drag left or right over the fighter to turn it, tap or click it to
+  make it shoot (mouse and touch); the loop goes on 3 s later.
+- **Living cards:** on the fighter list their card carries a small figure that idles and walks, and
+  a light sweep in the rarity colour crosses the card every 4 s (locked cards stay grey and still).
+  How they work and how to add another one from the same kind of delivery:
+  [Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo-magmax).
 - **Reveal:** every fighter on a pedestal (home, the fighter screen, the result) pops in with a
-  burst of sparks and a halo in its rarity colour; the picture fighters breathe, bob and sway.
+  burst of sparks and a halo in its rarity colour; the picture fighters then play their showcase.
 - **Camera views:** **Classic** (the default), **Close**, **Behind** and **Overview** in Training
   and a match (`V`, `1`–`4`; see [Controls](#controls)). The camera never turns, so the keys move
   the fighter the same way in every view.
@@ -227,9 +238,9 @@ baked result.
 A child's drawing can become a fighter of the game, built by Claude via Copilot from shapes:
 how to photograph it (privacy first), where to put the photo, the exact request to Claude and
 what the result can and cannot be are in [docs/drawing_to_fighter.md](docs/drawing_to_fighter.md).
-A drawing can also join as a picture fighter, like Flarekid and Echo: what one picture can and
-cannot do and which pictures make it better are in
-[Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo).
+A drawing can also join as an animated picture fighter, like Flarekid, Echo and MagMax: how they
+work and how to add one from a delivery of 12 frames, a card, a hero picture and a projectile are in
+[Picture fighters](docs/drawing_to_fighter.md#picture-fighters-flarekid-echo-magmax).
 
 For a 3D model with a skeleton and animations made with other tools (Google Flow → Meshy →
 Claude in Godot), the recommended workflow, the facts and terms of each tool (licence first) and

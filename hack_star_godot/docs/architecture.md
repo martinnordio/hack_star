@@ -15,8 +15,8 @@ Godot 4.7.2, GDScript only, Compatibility renderer, web export without threads (
 | Path | What |
 |------|------|
 | `project.godot` | The project: main scene `scenes/home.tscn`, 1280×720 base size, stretch mode `canvas_items` with aspect `expand`, the input actions `move_left/right/up/down` (WASD and arrow keys) |
-| `scenes/` | Screens and objects: each `.tscn` with the script of the same name; `scenes/toon/` the shaders (toon, outline, cut-out, flag, flowing water) and `ToonMaterials`; `scenes/cutout/` the picture fighters (`CutoutFighters`, `CutoutMotion`); `scenes/drawn/` the drawn fighters; `scenes/worlds/glimmer_isles/` Glimmer Isles |
-| `characters/` | The author's pictures of the picture fighters (spec 09, C2): `blaze2/` (Flarekid) and `echo/` (Echo), each a hero and a card picture (exported), with the delivered README, preview script and `Sprite3D` scenes (not used, not exported). The author's newer folders (`echo_new/`, `blaze_new/`, `magmax/`, `magmax_new/`) are untracked, not used and kept out of the export (D31) |
+| `scenes/` | Screens and objects: each `.tscn` with the script of the same name; `scenes/toon/` the shaders (toon, outline, cut-out, projectile, flag, flowing water) and `ToonMaterials`; `scenes/cutout/` the picture fighters (`CutoutFighters`, `CutoutAnimator`, `CutoutMotion`, `CutoutShowcase`); `scenes/drawn/` the drawn fighters; `scenes/worlds/glimmer_isles/` Glimmer Isles |
+| `characters/` | The author's deliveries of the picture fighters (spec 09, C2, M2): `blaze2/` (Flarekid), `echo/` (Echo) and `magmax2/` (MagMax), each a card picture and `gameplay/` with 12 frames (`frames/`), their `SpriteFrames` (`*_frames.tres`) and a projectile picture (exported); the hero picture, the README, the preview sheet and the delivered example scripts and scenes stay in the folder but are not used and not exported. `magmax/` (the author's older MagMax) is untracked, ignored by git and kept out of the export (D43) |
 | `scenes/ui/` | Shared UI parts: the theme (`hack_star_theme.tres`), the Back button, the fighter stage and pictures, the fighter card and skin button, the Prestige badge |
 | `scenes/autoload/` | The autoloads of `project.godot`: `Screens` (the way from screen to screen), `GameState` (what the player has and has chosen, with the progress and the active hacks saved), `HackServer` (the calls to the server, see *Server, hack codes and rooms*) and `UiScaler` (the content scale factor of the window, see *Minimum sizes* below) |
 | `game/` | Game rules: plain scripts without scene access |
@@ -44,7 +44,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | `arena.tscn` | `arena.gd` (`Arena`) | The 3D arena (**Training**): the chosen world (`GameState.world`; when the scene is instantiated, `Arena` calls `ArenaLayout.use` and, for Glimmer Isles, puts `GlimmerIsles` — `worlds/glimmer_isles/glimmer_isles.gd`, built from the active layout — in place of `Canyon` on the same `Floor` and `Walls`; spec 09 D9) or the canyon (`canyon.gd`, `Canyon`, built in code from `ArenaLayout`), one fighter (`Fighter`, with its `FighterModel`), three target dummies (`@export var training`, true here), the shots, the effects, a following camera (it never looks so far south that the camera-side wall and the ground behind it take more than `NEAR_WALL_SHARE`, 8 %, of the screen height; spec 09 G11) and the HUD: **Back** (top-left, returns to the home screen), the touch joystick (left), the aim stick `AimJoystick` (right, drag or tap to fire), the FPS label (top-right, hidden unless the info screen's **Show FPS (play-test)** switch sets `GameState.show_fps`, kept while the game is open) and `ControlsHint` (the start hint from `ControlsHelp` on a dark rounded backing with an info icon, shown at once and faded out after `HINT_SECONDS` + `HINT_FADE_SECONDS`, `mouse_filter` ignore; above the sticks on a touch screen, where it names only the sticks and `Arena.touch_controls` says so; two lines per control, not one line with a separator). Space (`shoot`, held) fires too (see *Input*). **Views and light** (spec 09, D25, D27): `V` and `1`–`4` switch the camera between the rigs of `CameraViews` (`Arena.set_view`, `view_pose`: Classic as described below, Close nearer with its own near-wall limit, Behind low behind the fighter, Overview fitted to the whole arena; a 0.3 s blend; the yaw never changes), kept in `GameState.camera_view`; `L` and `K` switch the lighting preset and the saturation boost (`set_light_preset`, `set_saturation_boost`) through the arena's `WorldLighting` child, kept in `GameState.light_preset` and `GameState.saturation_boost`; a `HudToast` (top centre) names the view, the preset or the boost |
 | `match.tscn` | `match_arena.gd` (`MatchArena`) | The match (**Play**), an inheriting scene of `arena.tscn` with the same canyon, player, camera, sticks, Back and FPS label, `training = false` (no dummies). `MatchArena` adds the bots (one `Fighter` each at the next of `ArenaLayout.STARTS`, driven by a `BotBrain` each), the `Match` flow (countdown lock, fight, knock-outs, the end) and the match HUD: `Hud/MatchHud` with `CountdownLabel` (centre), `TimerChip` (top-centre, an `IconChip` with the clock, red text in the last 10 s) and `FightersLeftChip` (top-right, the fighters icon and the number; the FPS label goes under it). A tap on the right stick or Space fires at the nearest live bot. The `ControlsHint` sits over the countdown without covering the countdown label, the timer, "Fighters left" or **Back** (checked at the five sizes). When the match is over it makes every fighter invulnerable and stores `GameState.last_result` at once (with the trophies: `GameState.award_trophies(fighter, result)` gives the player's fighter `Trophies.reward` and saves; the reward is kept in `last_result["reward"]`; the fighter and skin are read at the start, `_player_fighter` and `_player_skin`, so a hack turning off during the match changes nothing), and 1.5 s later goes to the result screen |
 | `result_screen.tscn` | `result_screen.gd` | The result (after a match; no result → home): the heading "Victory!", "Defeat" or "Time's up!" and its line ("You are the last one standing!", "You finished 3rd", "It's a draw"), the player's fighter and skin in a `FighterStage`, the trophy part (`TrophyPanel`, from `last_result["reward"]`, shown only when there is a reward): the change ("+10 trophies", or "+0 trophies"), the count "trophies / next Prestige" and a bar from the last Prestige to the next one, counting up from the old total over 1 s (`COUNT_SECONDS`; only the tests jump to the end, with `finish_count()`); a new Prestige in the match gives a celebration (`Celebration`: "PRESTIGE n!", the `PrestigeBadge` and a short burst), once the count reaches it. **Play again** (opens `match.tscn`) and **Home**. Wide screens put the fighter left, tall screens use one column |
-| `shot.gd` | `shot.gd` (`Shot`) | A shot of the arena: a glowing sphere that flies at `Combat.SHOT_SPEED` and stops at the first wall, rock, fighter or dummy (ray casts, D8, D6: the shooter's own RID is excluded), or after `SHOT_RANGE`; it emits `ended` and frees itself |
+| `shot.gd` | `shot.gd` (`Shot`) | A shot of the arena: a glowing sphere — or, for a picture fighter, its projectile picture (`launch(…, picture)`: one quad with `scenes/toon/projectile.gdshader`, facing the camera and turned along the flight, spec 09 M6) — that flies at `Combat.SHOT_SPEED` and stops at the first wall, rock, fighter or dummy (ray casts, D8, D6: the shooter's own RID is excluded), or after `SHOT_RANGE`; it emits `ended` and frees itself |
 | `health_bar.gd` | `health_bar.gd` (`HealthBar`) | The health bar above a fighter or a dummy: two billboard quads; `show_ratio(ratio)` sets the fill and the colour (`Combat.health_color`), or `fixed_color` when set (green for the player and red for bots in a match, D7) |
 | `damage_number.gd` | `damage_number.gd` (`DamageNumber`) | The rising damage number, `DamageNumber.spawn(parent, at, amount, color)`; white for hits on bots, red for hits on the player, the dummies' colour in Training (D7) |
 | `target_dummy.tscn` | `target_dummy.gd` (`TargetDummy`) | A straw dummy (a `StaticBody3D` on the targets layer): health bar (`HealthBar`), damage number (`DamageNumber`), flash on a hit; it breaks apart at 0 and comes back after `respawn_seconds` |
@@ -54,7 +54,7 @@ rules of `game/`; it holds no rules itself. A screen opens the next one with `Sc
 | `canyon_decor.gd` | `canyon_decor.gd` (`CanyonDecor`) | The canyon's moving decoration (spec 09, D26), the child `Decor` of `Canyon`: waving flags on the high border walls (`toon/flag.gdshader`), circling birds and a turquoise stream outside the east wall (`toon/flowing_water.gdshader`); no collider |
 | `worlds/glimmer_isles/glimmer_decor.gd` | `glimmer_decor.gd` (`GlimmerDecor`) | Glimmer Isles' moving decoration (spec 09, D26), the child `Decor` of `GlimmerIsles`: fireflies (`CPUParticles3D`, at most 64), the baked crystals' glow pulsing (on its own copy of the crystal material, so the shared `ToonMaterials` entry stays as it is), waterfalls under the floating islands and the islands turning and bobbing; no collider |
 | `fighter_list.tscn` | `fighter_list.gd` | The fighter list (**Fighters** on home; Back goes home): a scrolling grid, columns follow the width, of `ui/fighter_card.tscn` cards on `MenuBackground` — picture on a backdrop in the rarity's colour, name, rarity in its colour, Prestige badge, trophies and power level as `IconChip`s; a locked fighter has a grey backdrop, a grey picture (`ui/fighter_picture.gdshader`) with a lock icon and a lock chip. A card opens the fighter screen |
-| `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (opened from a card; the fighter comes from `GameState.viewed_fighter`): on `MenuBackground`: the fighter in a `FighterStage` on its pedestal inside a frame (`StageFrame`, theme `StageFramePanel`), name, rarity, trophies and power level as `IconChip`s, Prestige badge and one `ui/skin_button.tscn` per skin (the fighter's picture in that skin, its name and rarity, framed in the rarity's colour — Legendary in the thicker gold frame); choosing a skin previews it; **Select** (`GameState.select`, green with a tick) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked" with a lock. Back goes home |
+| `fighter_screen.tscn` | `fighter_screen.gd` | The fighter screen (opened from a card; the fighter comes from `GameState.viewed_fighter`): on `MenuBackground`: the fighter in a `FighterStage` on its pedestal inside a frame (`StageFrame`, theme `StageFramePanel`), name, rarity, trophies and power level as `IconChip`s, Prestige badge and one `ui/skin_button.tscn` per skin; the stage is `interactive`: a drag over an animated fighter turns it, a tap makes it shoot (spec 09 M9) (the fighter's picture in that skin, its name and rarity, framed in the rarity's colour — Legendary in the thicker gold frame); choosing a skin previews it; **Select** (`GameState.select`, green with a tick) makes the fighter and previewed skin the home fighter and goes home; for a locked fighter it is disabled and reads "Locked" with a lock. Back goes home |
 | `info.tscn` | `info.gd` | The info page (**Info** on home; Back goes home): a title and a scrolling list. It starts with the "How to play" heading and one section per entry of `ControlsHelp.how_to_play()` (Controls, Match, Training, Trophies and Prestige, Hack codes; the numbers come from the rules), then one row per word of `Vocabulary`, the word in the `WordLabel` style (bold) and its meaning wrapped |
 | `fighter.tscn` | `fighter.gd` (`Fighter`) | A `CharacterBody3D` that walks on the ground plane; the arena sets its `input_direction` every physics frame. It has `max_health` and `health` (`MatchSettings.FIGHTER_HEALTH`, 3200), `hit(amount)` (ignored when knocked out or `invulnerable`, which the match sets on every fighter when it is over; emits `hurt`), `heal_step(now, delta)` (`Combat.heal`), `note_action()` (the last hit or shot, for the healing delay), `knock_out()` (spins and shrinks for 0.5 s, then hidden with its collision off; emits `knocked_out_now`) and its own health bar (`show_health_bar(color)`). Only the match's fighters have health; the player in Training shows no bar |
 | `target_dummy.tscn` | `target_dummy.gd` (`TargetDummy`) | A straw dummy (a `StaticBody3D` on the targets layer): health bar (`HealthBar`), damage number (`DamageNumber`), flash on a hit; it breaks apart at 0 and comes back after `respawn_seconds` |
@@ -107,7 +107,7 @@ without a scene.
 | `match.gd` (`Match`) | The match flow (D4 of spec 07), no scene: `Match.new(settings, fighter_count)` (fighter 0 is the player); `advance(delta)`; the phases `COUNTDOWN`, `FIGHT` and `OVER`; `countdown_text()` ("3", "2", "1", then "FIGHT!"), `can_act()`, `seconds_left()`, `timer_text()` and `timer_red()` (last 10 s); `knock_out(index)` (records `knock_out_order`, ends the match on the player or on the last bot); `fighters_left()`, `is_alive(index)`; the `result` (`VICTORY`, `DEFEAT`, `TIME_UP`) and `place` (fighters left + 1 at the player's knock-out, else 1: a victory, or time up); `ordinal(n)` ("3rd") |
 | `bot_brain.gd` (`BotBrain`) | One bot's decisions (D5 of spec 07), pure, with a `RandomNumberGenerator` the tests seed: `can_see(from, at, in_bush, sight, bush_sight)` (a fighter in a bush is seen only within 2.5 m; walls do not block sight); `think(now, me, opponents, level)` returns `{move, aim}`: the nearest visible opponent, a reaction delay for a new target, closing in, backing off within 3 m or sidestepping, an aim turned by a random error within `aim_error`, and wandering to a free point of `ArenaLayout` when nobody is seen |
 
-| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters, the drawn ones (`drawn`, spec 09) and the picture fighters (`cutout`: Flarekid and Echo, spec 09 C1) with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
+| `fighters.gd` (`Fighters`) | The catalogue: the 6 fighters, the drawn ones (`drawn`, spec 09) and the picture fighters (`cutout`: Flarekid, Echo and MagMax, spec 09 C1, M1) with id, name, rarity, idea, skins (id, name, rarity) and the start unlocks (`ids`, `get_fighter`, `get_skin`, `start_unlocked`) |
 | `rarity.gd` (`Rarity`) | The five rarities in order (`NAMES`), their colours (`COLORS`, Legendary gold `LEGENDARY_GOLD`), `rank` and `color` |
 | `prestige.gd` (`Prestige`) | `level(trophies)`: 0 below 1000, then one level per 1000 trophies; `floor_of(trophies)` (the trophies of the last Prestige, 0 below 1000) and `next_at(trophies)` (the trophies of the next one) |
 | `sample_progress.gd` (`SampleProgress`) | The sample progress every game starts with (trophies, power levels, 500 credits) until matches exist; the start unlocks are `Fighters.start_unlocked()`, and `GameState.reset()` sets the Default skins |
@@ -193,6 +193,15 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   halo quad behind the fighter in its rarity colour (`rarity_color()`) that flares and settles;
   home's entrance hides it while the fighter falls (`hide_reveal()`) and plays it without the pop
   at the landing; `finish_reveal()` ends it settled. The off-screen pictures build no reveal.
+  **Showcase** (spec 09 M8, D39): after the reveal an animated picture fighter on a pedestal plays
+  the 7 s timeline of `CutoutShowcase` (`scenes/cutout/cutout_showcase.gd`, static: `at(time)`
+  gives the view, mirror, walk or shoot of the moment — idle front, a turn through the ring front,
+  side, back, other side, walk steps on the spot, a side shot, idle); `step_showcase` applies it
+  each frame, and the shot sends a `ShowcaseShot` (the projectile picture flying 1.5 m and fading)
+  and a `ShotSparks` burst in the main colour. With `interactive` (the fighter screen) a press
+  and drag turns the figure one view of the ring per 80 px and a press and release within 0.25 s
+  and 10 px shoots, with the mouse and touch (emulated mouse events ignored); the loop starts again
+  3 s after the last input.
   `scenes/ui/fighter_pictures.gd` (`FighterPictures`) renders each fighter once per game
   start into `GameState.pictures`, for the cards of the list (`ensure`), and each skin of the
   fighter on the fighter screen once (`ensure_skins`) for its skin buttons; a picture fighter's
@@ -203,7 +212,13 @@ Every screen uses the same parts, so a later spec reuses them and does not build
   view, the lighting preset and the saturation boost (`Arena.toast()`).
 - **Small parts:** `scenes/ui/prestige_badge.tscn` (`PrestigeBadge`, hidden below 1000
   trophies), `scenes/ui/fighter_card.tscn` (`FighterCard`), `scenes/ui/skin_button.tscn`
-  (`SkinButton`).
+  (`SkinButton`). **Living cards** (spec 09 M10, D40): the `FighterCard` of an unlocked animated
+  fighter builds a `FigureBox` with an outlined `Figure` (front frames,
+  `scenes/ui/card_figure.gdshader`) and an oval shadow at the bottom right of its picture — 1.2 s
+  idle with breathing, 1.6 s the front walk with a hop — and a `Sweep` over the picture
+  (`scenes/ui/card_sweep.gdshader`, a band in the rarity colour every 4 s, each card later than
+  the one before); it moves only while `is_on_screen()` (inside the list's visible part); a locked
+  card stays grey without figure and sweep.
 
 Screen sizes: the layouts use anchors and containers; `tests/test_screen_sizes.gd` checks every
 screen at the five sizes.
@@ -276,25 +291,40 @@ only these places; the tests check every drawn fighter without naming it. The wo
 Meshy → Claude, a GLB with a skeleton, its fit limits and credits) is recommended in
 [drawing_tools.md](drawing_tools.md) — no generated model is in the game yet.
 
-**Picture fighters** (spec 09 C, D21, D24): **Flarekid** and **Echo** are rows in `Fighters.LIST`
-with `"cutout": true` (unlocked, one `default` skin, playing like Blaze and Luna) and rows in
-`CutoutFighters` (`scenes/cutout/cutout_fighters.gd`: id → hero and card picture under
-`characters/`, height, feet point, main colour, which way the picture looks, where its muzzle
-is). `FighterModel.setup` asks `CutoutFighters` after `DrawnFighters`; `CutoutFighters.build` puts
-one `QuadMesh` into the model's body with a `ShaderMaterial` of `scenes/toon/cutout.gdshader`: the
-quad turns to the camera in the vertex shader and shrinks around its feet with part of the
-camera's foreshortening (`FORESHORTEN`), alpha-blended and unshaded, with a dark outline found
-from the picture's alpha at `ToonMaterials.OUTLINE_PIXELS` screen pixels, and the uniforms `flash`
-(white), `fade` (see-through and knock-out), `flip` (mirror), `tilt` (sway and lean), `tip`
-(knock-out) and `saturation`; the rig's shadow becomes a soft round blob. Their moves are in
-`CutoutMotion` (`scenes/cutout/cutout_motion.gd`, static): `pose(time, running, facing_left)` —
-breathing, bob and sway standing, a hop with a squash and a lean running —, the muzzle star of a
-shot (`build_muzzle_flash`, `place_muzzle_flash`), the white flash of a hit and the tip-and-fade
-knock-out; `Fighter.face(direction)` sets `FighterModel.facing_left` from the input or the shot.
-The health bar and the damage numbers over a picture fighter follow the picture's top on screen
-(`CutoutFighters.top_offset`: along the camera's up, so they stay over the picture in every view). What one picture cannot do and what the author can deliver next:
-[Picture fighters](drawing_to_fighter.md#picture-fighters-flarekid-echo).
-
+**Picture fighters** (spec 09 C and M, D21, D36–D38): **Flarekid**, **Echo** and **MagMax** are
+rows in `Fighters.LIST` with `"cutout": true` (unlocked, one `default` skin, playing like Blaze,
+Luna and Rocko) and rows in the frame table `CutoutFighters` (`scenes/cutout/cutout_fighters.gd`):
+the card picture (preloaded), the paths of the delivered `SpriteFrames` (`*_frames.tres`: `idle_`,
+`walk_`, `shoot_` × `down` = front, `up` = back, `side` = looking right) and of the projectile
+picture — both **loaded on first use** (`sprite_frames()`, `frame()`, `projectile()`) and kept in
+a static cache (`is_loaded()`), so only the fighters in use are in memory —, the figure's height
+(`figure_height`), the frames' feet point and top (`feet`, `top`; `picture_size()` sizes the quad
+to the frame's aspect), the main colour and per view the shoot frame's `muzzle`. `FighterModel.setup`
+asks `CutoutFighters` after `DrawnFighters`; `CutoutFighters.build` puts one `QuadMesh` into the
+model's body with a `ShaderMaterial` of `scenes/toon/cutout.gdshader`: the quad turns to the
+camera in the vertex shader and shrinks around its feet with part of the camera's foreshortening
+(`FORESHORTEN`), alpha-blended and unshaded, with a dark outline found from the picture's alpha at
+`ToonMaterials.OUTLINE_PIXELS` screen pixels, and the uniforms `flash` (white), `fade` (see-through
+and knock-out), `flip` (mirror), `tip` (knock-out) and `saturation`; the rig's shadow becomes a
+soft round blob. **In play** `CutoutAnimator` (`scenes/cutout/cutout_animator.gd`, owned by
+`FighterModel`, reached with `cutout_animator()`) chooses the frame: `view_for(direction)` gives
+`side` when the screen direction is mostly left or right (mirrored for left), else `up` (the back)
+going up the screen and `down` (the front) going down; `face()` keeps the last view while the
+fighter stands (the front at the start); walking plays the view's walk loop (walk 1, idle, walk 2,
+idle) at `clamp(8 · speed / 5, 6, 10)` frames a second with a 0.05 m hop; `play_shoot(direction)`
+shows the shot's view's shoot frame for `SHOOT_SECONDS` (0.25 s); it also sets the material's
+frame and mirror, the hit flash and the knock-out. `Fighter.face(direction)` hands it the input
+(and the aim), `Arena.fire_from` calls `model.play_shoot(direction)` for the player and the bots.
+Every camera view looks north with a fixed yaw (`CameraViews`), so up on the screen is −z in all
+four views (`test_up_on_the_screen_shows_the_back_in_all_four_camera_views`). `CutoutMotion`
+(`scenes/cutout/cutout_motion.gd`, static) adds what is not a frame: `pose(time)` — breathing and
+bob standing —, the muzzle star at the shoot frame's muzzle (`build_muzzle_flash`,
+`place_muzzle_flash`), the white flash and the tip-and-fade knock-out. The health bar and the
+damage numbers over a picture fighter follow the figure's top on screen
+(`CutoutFighters.top_offset`: along the camera's up, so they stay over the picture in every
+view). Their **shots** are their projectile pictures (`Shot.launch(…, picture)`, *Screens*). How
+they work and how to add one from a delivery:
+[Picture fighters](drawing_to_fighter.md#picture-fighters-flarekid-echo-magmax).
 **Brighter worlds** (spec 09 L1, L2, D26): the palettes of `Canyon`, `GlimmerIsles` and
 `GlimmerProp` are warmer and more saturated (the floors stay the least saturated surfaces), and
 each world has moving decoration without colliders — `CanyonDecor` and `GlimmerDecor` (see
@@ -396,9 +426,11 @@ English, in the scene.
 
 Everything in the game is original or has a free licence (S7). Today: own work built in code
 (fighters, the drawn fighter Beatbolt credited to the child, the canyon, the Glimmer Isles props,
-the toon and menu shaders, the icons drawn in code), the pictures of Flarekid and Echo
-(`characters/blaze2/`, `characters/echo/`: generated by the author with an AI image tool from
-Mattia's drawings, the tool to be confirmed by the author), the display font Lilita One (SIL OFL 1.1,
+the toon and menu shaders, the icons drawn in code), the pictures of Flarekid, Echo and MagMax
+(`characters/blaze2/`, `characters/echo/`, `characters/magmax2/`: cards, 12 frames and a
+projectile each, generated by the author with an AI image tool from Mattia's drawing or the
+author's own idea, the tool and the origin per character to be confirmed by the author; the hero
+pictures are kept but not exported), the display font Lilita One (SIL OFL 1.1,
 with `assets/fonts/OFL.txt`), 14 Kenney *Game Icons* (CC0, with `assets/icons/License.txt`),
 Godot's built-in default font for body text, GUT and ProtonScatter (editor tools, not exported)
 and jsQR 1.4.0 (Apache-2.0, `web/jsQR.js`, copied into the web export for the camera scanner).
@@ -458,7 +490,7 @@ start of Training and a match, at the five sizes, in every world, with the playe
 yellow **Play again**, the trophy icon, the pedestal, the hack buttons' colours and icons).
 The reopening of spec 09: `test_cutout_fighters.gd` the picture fighters (in the list and
 unlocked, also for old saves, the card picture, the outlined quad with its shadow, see-through,
-facing, hop and lean, the hit flash, the muzzle star, the knock-out, Training and a match);
+the front idle frame and its height, the hit flash, the muzzle star, the knock-out, Training and a match);
 `test_fighter_reveal.gd` the reveal on home and the fighter screen (the pop, the sparks and halo in
 the rarity colour, none on the pictures, the entrance) and the picture fighters' idle;
 `test_camera_views.gd` the views (`V` and `1`–`4`, the toast, the player and its bar on screen in
@@ -467,7 +499,19 @@ next match); `test_light_presets.gd` the lighting (`L`'s order, `K` on any prese
 changes the sun, sky, ambient and colour balance in both worlds, Classic back to the world's own
 light, glow only in Neon night, kept for the next match, the shared environment unchanged);
 `test_world_decor.gd` the new decoration (at least three kinds per world, moving, no collider,
-the layouts unchanged).
+the layouts unchanged). The animated fighters (spec 09 M): `test_animated_fighters.gd` MagMax's
+data and an old save, every frame and projectile from its final folder (no old path, loaded once),
+12 frames of one size per fighter, the front idle frame at the planned height, the card on the card
+and skin button, MagMax in Training and a match; `test_cutout_animator.gd` the view per
+direction and diagonal, the front at the start, the last view kept, the walk loop's order and pace,
+the hop, the shoot frame for 0.25 s in the shot's view for the player and a bot, the back view for
+W in all four camera views, flash and see-through with the frames; `test_projectile_look.gd` the
+three shoot their own pictures (others the ball), turned along the flight, shared mesh and
+material, as fast and as far, stopped by walls with `Combat.DAMAGE`; `test_showcase.gd` the
+loop's order within 8 s, never still, the shot with its projectile and sparks, drag and tap with
+mouse and touch, the restart after 3 s, only the fighter screen reacts, home, fighter screen and
+result, shapes unchanged; `test_living_cards.gd` only the animated cards live, idle and walk, the
+sweep, cards out of sight still, locked grey and still, the five sizes.
 `test_mvp_flow.gd` plays
 F0–F5 in one run (see *Spec order*). Every test saves to `user://test/run_save.json`, never to the
 player's file: the pre-run hook `tests/pre_run_hook.gd` sets `GameState.save_path` and starts from
