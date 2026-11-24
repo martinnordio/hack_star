@@ -27,13 +27,22 @@ func _meshes(node: Node) -> int:
 	return count
 
 
+## The fighters built from shapes (the picture fighters are checked in `test_cutout_fighters.gd`).
+func _shape_fighters() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for fighter: Dictionary in Fighters.LIST:
+		if not fighter.get("cutout", false):
+			result.append(fighter)
+	return result
+
+
 func _distance(a: Color, b: Color) -> float:
 	return Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()
 
 
 func test_every_fighter_and_skin_builds() -> void:
 	var built: int = 0
-	for fighter: Dictionary in Fighters.LIST:
+	for fighter: Dictionary in _shape_fighters():
 		for skin: Dictionary in fighter["skins"]:
 			var model: FighterModel = _model(fighter["id"])
 			model.setup(fighter["id"], skin["id"])
@@ -41,7 +50,11 @@ func test_every_fighter_and_skin_builds() -> void:
 			assert_eq(model.skin_id, skin["id"], "%s has its own look" % skin["name"])
 			assert_gt(_meshes(model), 10, "%s %s is built" % [fighter["name"], skin["name"]])
 			built += 1
-	assert_eq(built, 14, "all 14 combinations")
+	var expected: int = 14
+	for fighter: Dictionary in _shape_fighters():
+		if fighter.get("drawn", false):
+			expected += fighter["skins"].size()
+	assert_eq(built, expected, "the 14 combinations of the six and the drawn fighters' skins")
 
 
 func test_a_skin_changes_the_main_colour() -> void:
@@ -77,8 +90,12 @@ func test_only_legendary_skins_glow() -> void:
 
 
 func test_every_fighter_builds_with_the_parts_of_its_idea() -> void:
-	assert_eq(IDEA_PARTS.keys(), Fighters.ids(), "every fighter is checked")
+	var originals: Array[String] = []
 	for fighter_id: String in Fighters.ids():
+		if not DrawnFighters.has(fighter_id) and not CutoutFighters.has(fighter_id):
+			originals.append(fighter_id)
+	assert_eq(IDEA_PARTS.keys(), originals, "every fighter is checked (drawn, pictures: own tests)")
+	for fighter_id: String in originals:
 		var model: FighterModel = _model(fighter_id)
 		assert_eq(model.fighter_id, fighter_id)
 		assert_eq(model.skin_id, Fighters.DEFAULT_SKIN)
@@ -187,3 +204,71 @@ func test_stage_shows_the_fighter_and_keeps_it_in_view() -> void:
 		var on_screen: Vector2 = stage.camera.unproject_position(point)
 		var view: Rect2 = Rect2(Vector2.ZERO, Vector2(stage.get_node("Viewport").size))
 		assert_true(view.has_point(on_screen), "%s is in view" % point)
+
+
+func _all_meshes(node: Node) -> Array[MeshInstance3D]:
+	var found: Array[MeshInstance3D] = []
+	for child: Node in node.get_children():
+		if child is MeshInstance3D:
+			found.append(child)
+		found.append_array(_all_meshes(child))
+	return found
+
+
+func test_every_fighter_and_skin_is_cel_shaded_with_the_shared_outline() -> void:
+	for fighter: Dictionary in _shape_fighters():
+		for skin: Dictionary in fighter["skins"]:
+			var model: FighterModel = _model(fighter["id"])
+			model.setup(fighter["id"], skin["id"])
+			var label: String = "%s %s" % [fighter["name"], skin["name"]]
+			var outlined: int = 0
+			for mesh: MeshInstance3D in _all_meshes(model):
+				var material: Material = mesh.material_override
+				if material is StandardMaterial3D:
+					assert_ne(
+						(material as StandardMaterial3D).diffuse_mode,
+						BaseMaterial3D.DIFFUSE_TOON,
+						"%s %s: toon parts use the toon shader" % [label, mesh.name]
+					)
+				elif ToonMaterials.is_toon(material) and material.next_pass != null:
+					assert_eq(material.next_pass, ToonMaterials.outline(), label)
+					outlined += 1
+			assert_gte(outlined, 8, "%s: the body parts are outlined" % label)
+
+
+func test_fighters_share_their_materials() -> void:
+	var first: FighterModel = _model("blaze")
+	var second: FighterModel = _model("blaze")
+	var first_parts: Array[MeshInstance3D] = _all_meshes(first)
+	var second_parts: Array[MeshInstance3D] = _all_meshes(second)
+	assert_eq(first_parts.size(), second_parts.size())
+	var shared: int = 0
+	for index: int in first_parts.size():
+		if first_parts[index].material_override == second_parts[index].material_override:
+			shared += 1
+	assert_gte(shared, 8, "one material per colour, not per fighter")
+
+
+func test_dark_eyes_have_a_white_large_enough_for_a_card() -> void:
+	for fighter_id: String in ["blaze", "turbo", "frosty", "luna"]:
+		var model: FighterModel = _model(fighter_id)
+		var whites: Array[Node] = model.find_children("*EyeWhite", "MeshInstance3D", true, false)
+		var pupils: Array[Node] = model.find_children("*Pupil", "MeshInstance3D", true, false)
+		assert_eq(whites.size(), 2, "%s has two eye whites" % fighter_id)
+		assert_eq(pupils.size(), 2, "%s has two pupils" % fighter_id)
+		if whites.size() == 2 and pupils.size() == 2:
+			var white: MeshInstance3D = whites[0]
+			var pupil: MeshInstance3D = pupils[0]
+			assert_gt(white.get_aabb().size.x, pupil.get_aabb().size.x, "the white shows around")
+			assert_gt(pupil.position.z, white.position.z, "the pupil is in front")
+	var glowing: FighterModel = _model("rocko")
+	assert_null(glowing.find_child("*EyeWhite", true, false), "Rocko's yellow eyes glow alone")
+
+
+func test_see_through_copies_are_transparent_and_keep_a_faded_outline() -> void:
+	var toon: ShaderMaterial = ToonMaterials.toon(Color("e8322b"))
+	var faded: StandardMaterial3D = ToonMaterials.see_through(toon)
+	assert_eq(faded.transparency, BaseMaterial3D.TRANSPARENCY_ALPHA)
+	assert_almost_eq(faded.albedo_color.a, FighterModel.SEE_THROUGH_ALPHA, 0.001)
+	assert_not_null(faded.next_pass, "the outline fades too")
+	assert_eq(ToonMaterials.see_through(toon), faded, "one copy per material")

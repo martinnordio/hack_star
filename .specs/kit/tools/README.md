@@ -26,13 +26,27 @@ Without it, that block is left as it is.
 
 | Script | Does |
 |--------|------|
-| `github/create_issue.ps1` | Creates an issue with the summary; optionally a sub-issue of a parent issue; prints its number |
+| `github/create_issue.ps1` | Creates an issue with the summary; optionally a sub-issue of a parent issue; type (`-Type`, `work_items.type`, organizations only) and assignee (`-AssignedTo`, `work_items.assigned_to`; default you, `null` / `-Unassigned` none), checked first; prints its number |
 | `github/update_issue.ps1` | Issue description |
 | `github/update_pr.ps1` | Pull request of the current branch; creates it (draft allowed, `Closes #<issue>`) if there is none |
 | `spec_summary.ps1` | Shared helper: puts a text between the markers |
 
 **Needs:** the GitHub CLI `gh`, logged in (`gh auth status`). Credentials are never printed.
 The scripts run in Windows PowerShell 5.1 and PowerShell 7.
+
+## Settings
+
+`settings.ps1` reads the settings in their layers — the project's `.specs/spec-nx.json` and the
+developer's `.specs/spec-nx.local.json` (and the kit's own `<kit>/.specs/spec-nx.json` when the
+kit is a repository of its own) — and merges them: a later layer wins, objects are merged key
+by key, lists are replaced, `null` removes a key; the keys that describe the generated kit come
+from the project's file only. Every other script reads its settings through it.
+
+```
+.specs/kit/tools/settings.ps1                       # every setting with the file it comes from
+.specs/kit/tools/settings.ps1 -Get cost.currency    # one value (JSON for objects and lists)
+.specs/kit/tools/settings.ps1 -Source parent        # the file it comes from
+```
 
 ## Examples
 
@@ -57,11 +71,12 @@ file.
 | `-Since` | Start of the range: the stage's or Step's start time (local time or ISO with `Z`) |
 | `-Until` | End of the range (default: now) |
 | `-Model` | The model that ran, as named in the tool's model list or in `cost.prices` (a Copilot CLI log names its models itself) |
-| `-Transcript` | The chat log (default: of all logs of this project written since `-Since` — Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions — the one with the most requests in the range) |
+| `-Transcript` | The chat log (default: of all logs of this project written since `-Since` — Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions — the one of this chat, see `-Run`) |
+| `-Run` | The id of the marker `spec-nx run <id>` the stage wrote into its chat at its start: only the log that contains it is counted. Without it, `usage` stops when several chats of the project have requests in the range |
 | `-Root` | The project root (default: the current folder) |
 | `-ContextCap` | Context size at which the chat is assumed to be summarized (default 200000) |
 | `-Agent` | `all` (default), `main` (only the chat's own requests) or `subagents` (only its sub-agents') — Copilot CLI logs only; a `Split:` line always shows both parts |
-| `-AgentName` | Only the requests of the sub-agents started under these display names (also nested ones) — Copilot CLI logs only; exact per-agent rows without time windows |
+| `-AgentName` | Only the requests of the sub-agents started under these display names — Copilot CLI logs only; exact per-agent rows without time windows |
 | `-Json` | One JSON line instead of the three text lines |
 
 ```
@@ -76,7 +91,7 @@ Cost: ~CHF 0.48 (57 credits, 3.0 % of Copilot Business)
 Source: estimated from <transcript> · 17 requests · Claude Opus 5.5
 ```
 
-With no request in the range it stops with an error that lists the logs it checked.
+With no request in the range it stops with an error that lists the logs it checked; with several chats of the project in the range and no `-Run`, it stops with an error that lists them.
 
 `costs_ledger.ps1` rebuilds `.specs/costs.md` — every spec in
 `.specs/features/` and `done/` with its tokens and cost per stage, per Step and in total, and

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://characters/magmax2/gameplay/magmax_projectile.png" id="1_tex"]
+[ext_resource type="Script" path="res://characters/magmax2/gameplay/magmax_projectile.gd" id="2_proj"]
+
+[node name="MagmaxProjectile" type="Sprite3D"]
+pixel_size = 0.004
+axis = 1
+shaded = false
+double_sided = true
+texture_filter = 4
+texture = ExtResource("1_tex")
+script = ExtResource("2_proj")

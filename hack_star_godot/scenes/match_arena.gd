@@ -1,7 +1,8 @@
 class_name MatchArena
 extends Arena
-## A match (`match.tscn`, the canyon of `Arena` without dummies): the player and the bots at
-## their start points (`ArenaLayout.STARTS`), each bot driven by a `BotBrain`, the flow of a
+## A match (`match.tscn`, the arena of `Arena` in the chosen world, without dummies): the
+## player and the bots at their start points (`ArenaLayout.starts()`), each bot driven by a
+## `BotBrain`, the flow of a
 ## `Match` (countdown, fight, knock-outs, timer, result) under `GameState.match_settings`.
 ## Nobody moves or fires before the fight or after it ends; then the player's fighter gets its
 ## trophies (saved at once), the result is stored in `GameState.last_result` and, after
@@ -27,8 +28,8 @@ var _end_left: float = -1.0
 
 @onready var _bots: Node3D = $Bots
 @onready var _countdown_label: Label = $Hud/MatchHud/CountdownLabel
-@onready var _timer_label: Label = $Hud/MatchHud/TimerLabel
-@onready var _fighters_left_label: Label = $Hud/MatchHud/FightersLeftLabel
+@onready var _timer_chip: IconChip = $Hud/MatchHud/TimerChip
+@onready var _fighters_left_chip: IconChip = $Hud/MatchHud/FightersLeftChip
 
 
 func _ready() -> void:
@@ -41,7 +42,7 @@ func _ready() -> void:
 	var bot_ids: Array[String] = _bot_fighter_ids()
 	for i: int in bot_ids.size():
 		var bot: Fighter = FIGHTER_SCENE.instantiate()
-		var start: Vector2 = ArenaLayout.STARTS[i + 1]
+		var start: Vector2 = ArenaLayout.starts()[i + 1]
 		bot.name = "Bot%d" % (i + 1)
 		bot.position = Vector3(start.x, 0.0, start.y)
 		bot.rotation.y = PI
@@ -94,12 +95,9 @@ func _update_hud() -> void:
 	var countdown: String = match_state.countdown_text()
 	_countdown_label.text = countdown
 	_countdown_label.visible = not countdown.is_empty()
-	_timer_label.text = match_state.timer_text()
-	if match_state.timer_red():
-		_timer_label.add_theme_color_override("font_color", Combat.COLOR_RED)
-	else:
-		_timer_label.remove_theme_color_override("font_color")
-	_fighters_left_label.text = "Fighters left: %d" % match_state.fighters_left()
+	_timer_chip.text = match_state.timer_text()
+	_timer_chip.text_color = Combat.COLOR_RED if match_state.timer_red() else Color.WHITE
+	_fighters_left_chip.text = str(match_state.fighters_left())
 
 
 func _add_to_match(fighter: Fighter, bar_color: Color, number_color: Color) -> void:

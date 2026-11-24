@@ -1,0 +1,70 @@
+GIMP Palette
+Name: Glimmer Isles
+Columns: 6
+#
+ 11  60  93	deep_lagoon
+ 14 110 140	lagoon
+ 20 163 184	shallow_water
+ 63 208 212	turquoise
+139 239 230	waterfall_light
+224 255 251	foam
+ 42  35  80	night_sky
+ 75  63 140	twilight
+124 111 214	dream_violet
+169 200 255	day_sky
+255 214 232	blush_cloud
+255 244 214	sun_mist
+ 18  53  43	deep_jungle
+ 31  94  59	forest
+ 46 139  71	leaf
+ 92 193  79	grass
+166 227  90	spring
+228 249 139	sunlit_leaf
+ 15  74  71	moss_shadow
+ 27 122 110	fern
+ 47 179 154	jade
+111 224 192	mint
+184 245 224	dew
+230 255 245	pale_mint
+ 90  24  70	berry_shadow
+155  45 111	plum_cap
+214  69 143	magenta_cap
+255 119 183	bubblegum
+255 179 217	pink_spot
+255 227 241	cap_highlight
+ 59  30 119	glow_deep
+106  63 209	glow_violet
+157 123 255	glow_lilac
+ 79 242 227	glow_cyan
+198 255 107	glow_lime
+244 255 252	glow_core
+ 62  42  36	root_dark
+107  78  61	bark
+166 124  91	stem
+217 180 143	stem_light
+242 223 194	cream
+255 246 230	ivory
+ 35  35  58	stone_shadow
+ 59  61  92	cliff
+ 92  97 133	stone
+135 144 176	pebble
+185 194 217	stone_light
+227 232 245	stone_glint
+ 74  46  42	earth_dark
+122  75  53	earth
+176 122  79	path
+221 174 116	sand
+242 212 155	beach
+255 240 201	shell
+138  75   0	amber_dark
+217 138   0	amber
+255 182  39	gold
+255 217  90	sunbeam
+255 241 168	sparkle
+255 253 240	star_white
+ 14  15  31	ui_outline
+ 26  27  51	ui_panel
+ 61 165 255	info_blue
+ 46 230 168	energy_green
+255 138  61	warning_orange
+255  77  94	health_red

@@ -4,10 +4,10 @@ Checks that the pinned Godot tools (tools\versions.json) are installed.
 
 .DESCRIPTION
 Finds Godot through $env:GODOT, else `godot` on the PATH, else the winget package folder.
-Checks Godot, the web export templates, gdtoolkit (gdlint) and GUT. GUT lives in
+Checks Godot, the web export templates, gdtoolkit (gdlint), GUT and ProtonScatter. GUT lives in
 addons\gut, which Step 2 adds together with project.godot: while project.godot does not
 exist GUT is reported as pending and does not fail the check; once it exists a missing or
-wrong GUT fails. Exit code 1 if anything is missing or has the wrong version.
+wrong GUT fails. ProtonScatter (addons\proton_scatter) follows the same rules. Exit code 1 if anything is missing or has the wrong version.
 #>
 #Requires -Version 5.1
 [CmdletBinding()]
@@ -86,6 +86,20 @@ elseif (Test-Path -LiteralPath (Join-Path $projectRoot 'project.godot')) {
 }
 else {
     Write-Host 'pending  GUT: not in addons/gut yet (added together with project.godot)'
+}
+
+# ProtonScatter (editor-only: places the Glimmer Isles props, baked before the game runs)
+$scatterConfig = Join-Path $projectRoot 'addons\proton_scatter\plugin.cfg'
+if (Test-Path -LiteralPath $scatterConfig) {
+    $line = Select-String -LiteralPath $scatterConfig -Pattern '^version="([^"]+)"' | Select-Object -First 1
+    $actual = if ($line) { $line.Matches[0].Groups[1].Value } else { 'unknown' }
+    Write-Result 'ProtonScatter' ($actual -eq $versions.protonscatter) "addons\proton_scatter is $actual, need $($versions.protonscatter)"
+}
+elseif (Test-Path -LiteralPath (Join-Path $projectRoot 'project.godot')) {
+    Write-Result 'ProtonScatter' $false "addons\proton_scatter\plugin.cfg missing. Install ProtonScatter $($versions.protonscatter) from the Godot Asset Store into addons\proton_scatter (without demos\ and tests\)"
+}
+else {
+    Write-Host 'pending  ProtonScatter: not in addons/proton_scatter yet'
 }
 
 if ($failed) {

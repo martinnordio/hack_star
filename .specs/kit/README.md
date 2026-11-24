@@ -49,7 +49,58 @@ commit message carries the spec's issue reference (`#<n>`) — `guidelines/commi
 
 ## Settings
 
-- `.specs/spec-nx.json` — the team's answers (committed).
-- `.specs/spec-nx.local.json` — your settings, e.g. your shell (not committed).
-- Update the kit: `git submodule update --remote .spec-nx`, then load
-  `.spec-nx/generator/prompt.md` and run `GENERATE KIT --update`.
+**You can customize the kit per project and per developer.** Two files, the second winning
+over the first:
+
+1. `.specs/spec-nx.json` — the project's (committed);
+2. `.specs/spec-nx.local.json` — yours (not committed).
+
+A file holds only what it changes. A key replaces the same key; objects (`work_items`,
+`cost`, `models`) are merged key by key; lists (`stages`) are replaced as a whole; `null`
+removes the key. `version`, `spec_nx_version`, `generated`, `kit`, `kit_dir`, `kit_ref`,
+`kit_files`, `shells` (and `model` of a shared kit) come from the project's file only.
+`.specs/kit/tools/settings.ps1` shows every setting with the file it comes from.
+
+When the settings list `stages`, each stage runs only when it is in it (or in `on_demand`) — with
+`"stages": ["requirements"]` in your file, the other stages say they are turned off for you —
+and its report names the settings it used that do not come from the kit. `GUIDELINES:` is
+always part of the kit and is never turned off. All keys and
+examples: [Customizing spec-nx](https://github.com/martinnordio/spec-nx/blob/main/docs/customize.md).
+
+## Prompt log
+
+Off by default. With `"prompt_log": true` in your settings (usually your own
+`.specs/spec-nx.local.json`), every stage that runs adds the prompt it was given — the
+command and its text as the user typed them, without `Load …` lines — at its start, and fills
+in its reply summary when it ends:
+
+- `.specs/prompts/<yyyy_mm_dd>_<name>_prompt.md` — the prompts of the spec
+  `<yyyy_mm_dd>_<name>_spec.md`; the first `REQUIREMENTS:` uses the name the spec is about to
+  get;
+- `.specs/prompts/<yyyy_mm_dd>_other_prompt.md` — the day's prompts that belong to no spec
+  (for example `GUIDELINES:`, `GENERATE KIT`).
+
+A new file starts with `# Prompt history`, one sentence about what it holds (the spec, or "the
+prompts of <date> that belong to no spec") and `---`. Prompts are numbered per file. Each
+prompt:
+
+```markdown
+## Prompt <n> — <short title>
+
+<yyyy-mm-dd> · `<COMMAND:>` · <model>
+
+> <the prompt, exactly as given, every line quoted>
+
+Reply summary: <two or three sentences: what was done or decided>
+
+---
+```
+
+A stage that stops early writes why in its reply summary; a stage that is turned off writes nothing.
+
+Passwords, tokens and keys are written as `«redacted»`. The files are committed with the
+spec; to keep them private, add `.specs/prompts/` to your `.git/info/exclude`. With the log
+off, nothing in `.specs/prompts/` is created or changed.
+
+Update the kit: `git submodule update --remote .spec-nx`, then load
+`.spec-nx/generator/prompt.md` and run `GENERATE KIT --update`.

@@ -3,9 +3,12 @@
   Tokens and cost of a time range of the AI chat, by the method of COSTS.md.
   Without -Transcript it checks every chat log of this project written since -Since
   (Copilot CLI sessions, VS Code Copilot chats of this workspace, Claude Code sessions) and
-  uses the one with the most requests in the range. It stops with an error when it finds none.
+  uses the one of this chat: with -Run <id>, the log that contains the marker "spec-nx run <id>"
+  the stage wrote at its start; without it, the only log with requests in the range. It stops
+  with an error when it finds none, or several without -Run.
 .EXAMPLE
   ./usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5"
+  ./usage.ps1 -Since "2026-11-16 08:55" -Model "Claude Opus 5.5" -Run 20261116-0855-kqzt
   ./usage.ps1 -Since 2026-11-16T07:55:00Z -Until 2026-11-16T08:10:00Z -Model "Claude Opus 5.5" -Json
 #>
 param(
@@ -17,30 +20,26 @@ param(
     [int] $ContextCap = 200000,
     [ValidateSet('all', 'main', 'subagents')] [string] $Agent = 'all',
     [string[]] $AgentName,
+    [string] $Run,
     [switch] $Json
 )
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 $inv = [Globalization.CultureInfo]::InvariantCulture
 
-function Read-Settings([string] $path) {
-    if (Test-Path $path) { return Get-Content $path -Raw -Encoding UTF8 | ConvertFrom-Json }
-    return $null
-}
 function To-Utc([string] $text) {
     $d = [datetime]::Parse($text.Trim(), $inv, [Globalization.DateTimeStyles]::AssumeLocal)
     return $d.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", $inv)
 }
 
-$project = Read-Settings (Join-Path $Root '.specs/spec-nx.json')
-$local = Read-Settings (Join-Path $Root '.specs/spec-nx.local.json')
-$hasProject = $project -and $project.PSObject.Properties['cost'] -and $project.cost
-$hasLocal = $local -and $local.PSObject.Properties['cost'] -and $local.cost
-if (-not $hasProject -and -not $hasLocal) { Write-Output 'Cost tracking is off: no cost block in .specs/spec-nx.json.'; return }
+# The kit's, the project's and the developer's settings, the later winning (settings.ps1).
+. (Join-Path $PSScriptRoot 'settings.ps1')
+$settings = Get-SpecNxSettings -Root $Root
+foreach ($w in $settings.Warnings) { [Console]::Error.WriteLine("warning: $w") }
+$costBlock = Get-SpecNxValue $settings 'cost'
+if ($costBlock -isnot [System.Collections.IDictionary]) { Write-Output 'Cost tracking is off: no cost block in the settings (.specs/spec-nx.json).'; return }
 $cost = @{}
-foreach ($block in @($(if ($hasProject) { $project.cost }), $(if ($hasLocal) { $local.cost }))) {
-    if ($block) { foreach ($p in $block.PSObject.Properties) { $cost[$p.Name] = $p.Value } }
-}
+foreach ($k in $costBlock.Keys) { $cost[$k] = $costBlock[$k] }
 if ($cost.ContainsKey('enabled') -and -not $cost['enabled']) { Write-Output 'Cost tracking is off: cost.enabled is false.'; return }
 
 $sinceUtc = To-Utc $Since
@@ -162,16 +161,24 @@ function Test-Inside([string] $folder, [string] $rootPath) {
         $f.StartsWith($r + '/', [StringComparison]::OrdinalIgnoreCase)
 }
 
+function Test-Marker([string] $path) {
+    # The whole id: "spec-nx run abc" must not match "spec-nx run abcd".
+    return [regex]::IsMatch([IO.File]::ReadAllText($path, [Text.Encoding]::UTF8), [regex]::Escape($marker) + '(?![A-Za-z0-9_-])')
+}
+
 $rootPath = (Resolve-Path $Root).Path
+$marker = if ($Run) { "spec-nx run $Run" } else { $null }
 $tried = @()
 if ($Transcript) {
     $Transcript = (Resolve-Path -LiteralPath $Transcript).Path
+    if ($marker -and -not (Test-Marker $Transcript)) { throw "$Transcript does not contain the marker `"$marker`": is it the log of this chat?" }
     $t = Measure-Log $Transcript
     $tried += $Transcript
 } else {
     # Every chat log of this project written to since the start time: Copilot CLI sessions,
-    # VS Code Copilot chats of this workspace, Claude Code sessions. The one with the most
-    # requests in the time range wins.
+    # VS Code Copilot chats of this workspace, Claude Code sessions. Only the log of this chat
+    # counts: with -Run the one that holds the marker; without it, the only log with requests in
+    # the range - never the busiest of several.
     $sinceLocal = [datetime]::Parse($sinceUtc, $inv, [Globalization.DateTimeStyles]::AdjustToUniversal).ToLocalTime()
     $candidates = @()
     $cli = Join-Path $HOME '.copilot/session-state'
@@ -206,10 +213,25 @@ if ($Transcript) {
     if (Test-Path -LiteralPath $claude) { $candidates += Get-ChildItem -LiteralPath $claude -Filter *.jsonl -File }
 
     $t = $null
+    $found = @()
     foreach ($c in ($candidates | Where-Object { $_.LastWriteTime -ge $sinceLocal })) {
         $tried += $c.FullName
         $m = Measure-Log $c.FullName
-        if ($null -eq $t -or $m.requests -gt $t.requests) { $t = $m; $Transcript = $c.FullName }
+        if ($m.requests -gt 0) { $found += , @{ path = $c.FullName; m = $m } }
+    }
+    $listed = ($found | ForEach-Object { "  $($_.path) ($($_.m.requests) requests)" }) -join "`n"
+    if ($marker) {
+        $hits = @($found | Where-Object { Test-Marker $_.path })
+        if ($hits.Count -ne 1) {
+            $what = if ($hits.Count -eq 0) { 'No' } else { 'Several' }
+            if (-not $listed) { $listed = '  (none with requests)' }
+            throw "$what logs of $rootPath with requests contain the marker `"$marker`". Logs with requests:`n$listed`nWrite the marker into the chat at the start of the command, or pass -Transcript <file>."
+        }
+        $t = $hits[0].m; $Transcript = $hits[0].path
+    } elseif ($found.Count -gt 1) {
+        throw "Several chats of $rootPath have requests in this range, so the one of this command is not known:`n$listed`nPass -Run <id> (the marker `"spec-nx run <id>`" written at the start of the command) or -Transcript <file>."
+    } elseif ($found.Count -eq 1) {
+        $t = $found[0].m; $Transcript = $found[0].path
     }
 }
 
@@ -237,11 +259,11 @@ function Get-Prices {
         }
     }
     if ($cost['prices']) {
-        foreach ($p in $cost['prices'].PSObject.Properties) {
-            if ($p.Name.ToLower() -ne $Model.ToLower()) { continue }
-            $v = $p.Value
-            $cw = if ($null -ne $v.cache_write) { $v.cache_write } else { $v.input }
-            return @{ input = $v.input; cache_write = $cw; cached = $v.cached; output = $v.output }
+        foreach ($name in $cost['prices'].Keys) {
+            if ($name.ToLower() -ne $Model.ToLower()) { continue }
+            $v = $cost['prices'][$name]
+            $cw = if ($null -ne $v['cache_write']) { $v['cache_write'] } else { $v['input'] }
+            return @{ input = $v['input']; cache_write = $cw; cached = $v['cached']; output = $v['output'] }
         }
     }
     throw "No price for `"$Model`": add it to cost.prices in .specs/spec-nx.json."

@@ -1,0 +1,14 @@
+# hack_star_godot/.gitignore
+/.godot/
+/build/
+/assets/music/
+*.tmp
+
+# export_presets.cfg exclude_filter (one entry per line)
+addons/gut/*
+addons/proton_scatter/*
+scenes/worlds/glimmer_isles/scatter_source.tscn
+tests/*
+.specs/*
+tools/*
+build/*

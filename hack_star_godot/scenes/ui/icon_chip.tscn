@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/icon_chip.gd" id="1_chip"]
+
+[node name="IconChip" type="PanelContainer"]
+theme_type_variation = &"ChipPanel"
+script = ExtResource("1_chip")
+
+[node name="Row" type="HBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Icon" type="TextureRect" parent="Row"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Row"]
+layout_mode = 2
+theme_type_variation = &"NumberLabel"

@@ -52,6 +52,10 @@ func _ready() -> void:
 	_scan_button.pressed.connect(_on_scan_pressed)
 	_confirm.confirmed.connect(_on_reset_confirmed)
 	_message.resized.connect(_center_message_pivot)
+	_use_button.icon = Icons.get_icon("check")
+	_scan_button.icon = Icons.get_icon("eye")
+	_reset_button.icon = Icons.get_icon("close")
+	_qr_button.icon = Icons.get_icon("qr")
 	scanner = QrScanner.new()
 	scanner.name = "QrScanner"
 	scanner.scanned.connect(_on_scanned)

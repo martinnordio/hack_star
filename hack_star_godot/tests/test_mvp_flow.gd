@@ -94,7 +94,7 @@ func test_from_home_to_a_won_match_and_back_with_the_progress_kept() -> void:
 
 	screen = await _click("Margin/Column/Body/Controls/HomeButton")
 	assert_eq(screen.scene_file_path, Screens.HOME)
-	assert_eq(screen.get_node("Margin/Column/TopBar/TrophiesLabel").text, "Trophies: 1755")
+	assert_eq(screen.get_node("Margin/Column/TopBar/TrophiesChip").text, "1755")
 	assert_true(screen.get_node(HOME_CONTROLS + "/NameRow/PrestigeBadge").visible, "the badge")
 
 	GameState.reset()

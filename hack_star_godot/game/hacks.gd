@@ -125,9 +125,9 @@ static func link(game_address: String, code: String) -> String:
 	return "%s?%s=%s" % [game_address, CODE_PARAMETER, normalize_code(code).uri_encode()]
 
 
-## "Credits: 321", or the unlimited sign with the hack.
-static func credits_text(credits: int, hacks: Array[String]) -> String:
-	return "Credits: %s" % (UNLIMITED_TEXT if INFINITE_CREDITS in hacks else str(credits))
+## The credits next to the coin icon: "321", or the unlimited sign with the hack.
+static func credits_amount(credits: int, hacks: Array[String]) -> String:
+	return UNLIMITED_TEXT if INFINITE_CREDITS in hacks else str(credits)
 
 
 ## The credits after paying a price: unchanged with the unlimited-credits hack.
@@ -152,6 +152,6 @@ static func max_power(hacks: Array[String]) -> int:
 	return HACKED_MAX_POWER if POWER22 in hacks else NORMAL_MAX_POWER
 
 
-## "Power 7 / 11", or "Power 7 / 22" with the 22-levels hack.
-static func power_text(level: int, hacks: Array[String]) -> String:
-	return "Power %d / %d" % [level, max_power(hacks)]
+## "7 / 11" (next to a power icon), or "7 / 22" with the 22-levels hack.
+static func power_amount(level: int, hacks: Array[String]) -> String:
+	return "%d / %d" % [level, max_power(hacks)]

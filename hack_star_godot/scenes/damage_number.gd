@@ -7,8 +7,11 @@ const RISE: float = 0.8
 const OUTLINE_COLOR: Color = Color("5a1a10")
 
 
-## Shows `amount` in `color` at `at` (local to `parent`); it frees itself after `SECONDS`.
-static func spawn(parent: Node3D, at: Vector3, amount: int, color: Color) -> Label3D:
+## Shows `amount` in `color` at `at` (local to `parent`), rising along `rise` (local; up unless a
+## picture fighter's bar needs the camera's up); it frees itself after `SECONDS`.
+static func spawn(
+	parent: Node3D, at: Vector3, amount: int, color: Color, rise: Vector3 = Vector3.UP
+) -> Label3D:
 	var label: Label3D = Label3D.new()
 	label.text = str(amount)
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -22,7 +25,7 @@ static func spawn(parent: Node3D, at: Vector3, amount: int, color: Color) -> Lab
 	label.position = at
 	parent.add_child(label)
 	var tween: Tween = label.create_tween().set_parallel(true)
-	tween.tween_property(label, "position:y", at.y + RISE, SECONDS)
+	tween.tween_property(label, "position", at + rise * RISE, SECONDS)
 	tween.tween_property(label, "modulate:a", 0.0, SECONDS)
 	tween.chain().tween_callback(label.queue_free)
 	return label

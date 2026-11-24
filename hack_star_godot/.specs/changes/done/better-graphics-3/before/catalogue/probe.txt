@@ -1,0 +1,4 @@
+fighters 9: blaze (Rare, shapes, unlocked), rocko (Rare, shapes, unlocked), turbo (Super Rare, shapes, unlocked), frosty (Epic, shapes), luna (Mythic, shapes), pixel (Legendary, shapes), beatbolt (Mythic, drawn, unlocked), flarekid (Legendary, picture, unlocked), echo (Mythic, picture, unlocked)
+views: classic, close, behind, overview
+light presets: bright_day, golden_sunset, neon_night, candy_pop, classic
+colour variations: (none)

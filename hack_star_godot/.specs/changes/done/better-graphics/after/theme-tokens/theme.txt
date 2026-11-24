@@ -1,0 +1,32 @@
+﻿default font: <engine default>
+default font size: 28
+BackgroundPanel: base Panel, panel 171a29
+BadgeLabel: base Label, font_color 402405, font LilitaOne-Regular.ttf
+BadgePanel: base PanelContainer, panel ffd133
+BigButton: base Button, font_size 48
+BlueButton: base Button, hover 549cff, normal 3380f2, pressed 2163cc
+Button: hover 8763f5, normal 6b45d9, pressed 5433b3, font_color ffffff, font_outline_color 120d2e, font_size 36, outline_size 8, font LilitaOne-Regular.ttf
+CardPanel: base PanelContainer, panel 1a123d
+ChipPanel: base PanelContainer, panel 120d2e
+ContentScroll: base ScrollContainer, panel 140d33
+GreenButton: base Button, hover 52d978, normal 33bd5c, pressed 219445
+HeadingLabel: base Label, font_outline_color 120d2e, font_size 56, outline_size 12, font LilitaOne-Regular.ttf
+HudLabel: base Label, font_outline_color 120d2e, outline_size 10, font LilitaOne-Regular.ttf
+IconButton: base Button, hover 549cff, normal 3380f2, pressed 2163cc
+Label: font_color f0f2ff, font_size 28
+LegendarySkinButton: base Button, hover 33266b, normal 1a123d, pressed 6b45d9, font_size 24
+LineEdit: normal 1a1a2e, font_size 36
+LogoHackLabel: base Label, font_color ffd633, font_outline_color 120d2e, font_size 88, outline_size 18, font hack_star_theme.tres::Logo_font
+LogoStarLabel: base Label, font_color ff61b8, font_outline_color 120d2e, font_size 88, outline_size 18, font hack_star_theme.tres::Logo_font
+NumberLabel: base Label, font_color ffffff, font_outline_color 120d2e, font_size 32, outline_size 8, font LilitaOne-Regular.ttf
+Panel: panel 262b42
+PinkButton: base Button, hover ff6eb3, normal ed4d99, pressed c7337d
+PlayButton: base Button, hover ffe061, normal ffcc26, pressed e6a60d, font_color 291a54, font_size 60, outline_size 0
+ProgressBar: 
+RarityLabel: base Label, font_outline_color 120d2e, font_size 26, outline_size 6, font LilitaOne-Regular.ttf
+SkinButton: base Button, hover 33266b, normal 1a123d, pressed 6b45d9, font_size 24
+StageFramePanel: base PanelContainer, panel 6b4de6
+SubheadingLabel: base Label, font_outline_color 120d2e, font_size 40, outline_size 10, font LilitaOne-Regular.ttf
+TealButton: base Button, hover 33ccc2, normal 14ada3, pressed 0d857d, font_size 28
+Window: title_font_size 28
+WordLabel: base Label, font_color ffd633, font_outline_color 120d2e, outline_size 6, font LilitaOne-Regular.ttf

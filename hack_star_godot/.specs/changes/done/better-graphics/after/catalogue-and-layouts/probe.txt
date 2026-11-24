@@ -1,0 +1,14 @@
+﻿== fighters
+ids: ["blaze", "rocko", "turbo", "frosty", "luna", "pixel", "beatbolt"]
+skins: 15
+start_unlocked: ["blaze", "rocko", "turbo", "beatbolt"]
+== session (GameState, not saved)
+world: canyon
+show_fps: false
+== hacks texts (credits 500, power 7)
+credits_amount(500): 500
+power_text(7): Power 7 / 11
+power_amount(7): 7 / 11
+== arena layouts
+canyon: walls 11 (border 4), cover patches 4, decoration 12, dummies 3, starts 9, start (0.0, 9.5)
+glimmer_isles: walls 11 (border 4), cover patches 5, decoration 10, dummies 3, starts 9, start (0.0, 9.5)

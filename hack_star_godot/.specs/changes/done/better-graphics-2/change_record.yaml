@@ -1,0 +1,237 @@
+# yaml-language-server: $schema=../../../../../.specs/kit/review/change_record.schema.json
+# Change record of the reopening of spec 09 Better Graphics (#35) on feature/better-graphics
+# (written by REVIEW:, 2026-11-22, second review). Range: bccd2ed..f10d71c (requirements revision,
+# re-plan and Steps 21-29: parts C, V and L; D20-D31). The first round's record is
+# changes/done/better-graphics/ (Steps 1-20).
+# spec.path is relative to hack_star_godot/ (the Godot project root): the kit schema only
+# accepts paths that start with ".specs/". The schema only accepts statement ids S<n>; this spec's
+# reopened statements are C1-C11, V1-V7 and L1-L8, so each block lists its S<n> under `statements`
+# and names its C/V/L statements in its `note` (first review, finding 9, deferred).
+# Screens: a windowed Godot 4.7.2 run (Compatibility, 1280x720 unless named) with a temporary
+# capture script (-s, removed), the same script on both sides: GameState.save_path =
+# user://review09b/save.json, GameState.reset() (sample progress, Blaze unless named, never the
+# player's file), entrance skipped; matches from match.tscn with MatchArena.rng.seed = 5, 4.5 s in
+# (views and lights: 3.0 s in, then the switch, then 0.6 s). Before from a temporary worktree at
+# bccd2ed, after from a temporary worktree at f10d71c without the author's untracked files (both
+# removed). The bots are a shuffle of the other fighters, so a side with more fighters gets other
+# bots for the same seed. Outputs: a temporary headless probe, the same source on both sides.
+version: 1
+branch: feature/better-graphics
+base: bccd2ed
+why: |
+  The author asked to reopen spec 09 for two new fighters from his generated pictures of
+  Mattia's drawings (Flarekid, the hero upgrade of Blaze, and Echo), shown as outlined paper
+  cut-outs that pop in on the pedestal and move in play; four camera views switchable with V
+  and 1-4; and brighter, more detailed worlds with lighting presets (L) and a saturation
+  boost (K).
+spec:
+  path: .specs/features/done/2026_11_21_09_better_graphics_spec.md
+  statements: [S2, S3, S4, S6]
+changes:
+- id: home
+  kind: ui
+  change: modified
+  object: Home screen (sample progress, Blaze, after the entrance)
+  note: C3/D23 the fighter on the pedestal now stands in front of a soft halo in its rarity colour (it popped in with sparks; settled after 2 s). Nothing else on home changed.
+  statements: [S6]
+  examples:
+  - name: home-1280x720
+    input: |
+      godot --path hack_star_godot --resolution 1280x720 -s <temporary capture script>
+      -- shots=home (GameState.reset(), entrance_played = true, 2.0 s)
+    views: [desktop]
+- id: home-picture-fighter
+  kind: ui
+  change: added
+  object: Home with Flarekid chosen
+  note: C1/C2/C6 Flarekid, the author's picture as an outlined cut-out on the pedestal with a soft shadow, the Legendary gold halo behind him (C3); breathing, bob and sway (C4) are motion and do not show on a still.
+  statements: [S4]
+  examples:
+  - name: home-flarekid-1280x720
+    input: |
+      same capture script -- shots=home_flarekid (select flarekid, 2.0 s)
+    views: [desktop]
+- id: fighter-list
+  kind: ui
+  change: modified
+  object: Fighter list scrolled to its end
+  note: C1/C2 two more cards, Flarekid (Legendary) and Echo (Mythic), unlocked, with the delivered 512 px card pictures (Echo's has a light fringe in the delivered file).
+  statements: [S6]
+  examples:
+  - name: fighters-end-1280x720
+    input: |
+      same capture script -- shots=fighters (2.5 s, then Scroll.scroll_vertical = max, 0.8 s)
+    views: [desktop]
+- id: picture-fighter-screen
+  kind: ui
+  change: added
+  object: Fighter screens of Flarekid and Echo, and Echo's reveal
+  note: 'C1/C2/C3 each picture fighter on the framed pedestal with its card picture as the one Default skin; the reveal 7 frames after opening (about 0.23 s: grown back to size, sparks around him, the halo flaring in Mythic red).'
+  statements: [S4, S6]
+  examples:
+  - name: fighter-flarekid-1280x720
+    input: |
+      same capture script -- shots=fighter_flarekid (viewed_fighter = flarekid, 2.5 s)
+    views: [desktop]
+  - name: fighter-echo-1280x720
+    input: |
+      same capture script -- shots=fighter_echo (viewed_fighter = echo, 2.5 s)
+    views: [desktop]
+  - name: reveal-echo-1280x720
+    input: |
+      same capture script -- shots=reveal_echo (viewed_fighter = echo, 7 frames after opening)
+    views: [desktop]
+- id: match-canyon
+  kind: ui
+  change: modified
+  object: A match in the canyon, 4.5 s after the start (Blaze, seed 5)
+  note: 'L1/L2 under the default Bright day: warmer orange-red rock, lighter apricot sand (still the calmest surface), greener cacti with blossoms, flags on the high walls; V7 the start hint names V, 1-4, L and K. The bots differ (the shuffle has two more fighters).'
+  statements: [S2]
+  examples:
+  - name: match-canyon-1280x720
+    input: |
+      same capture script -- shots=match_canyon (match.tscn, MatchArena.rng.seed = 5, 4.5 s)
+    views: [desktop]
+- id: match-glimmer
+  kind: ui
+  change: modified
+  object: A match in Glimmer Isles, 4.5 s after the start (Blaze, seed 5)
+  note: L1/L2 cyan and lilac tiles instead of grey-blue and lavender, deeper violet walls, brighter crystals and ferns, fireflies; the start hint as in the canyon.
+  statements: [S2]
+  examples:
+  - name: match-glimmer-1280x720
+    input: |
+      same capture script -- shots=match_glimmer (GameState.world = glimmer_isles, seed 5, 4.5 s)
+    views: [desktop]
+- id: camera-views
+  kind: ui
+  change: added
+  object: Camera views Close, Behind and Overview (Flarekid, seed 5)
+  note: V1/V3/V5 Close nearer at the same angle, Behind low behind the fighter looking up the arena, Overview the whole arena; the toast names the view under the timer. In Overview at 820x1180 the picture fighter's health bar shows under him (finding 1).
+  statements: [S2]
+  examples:
+  - name: view-close-canyon-1280x720
+    input: |
+      same capture script -- shots=views (match, 3.0 s, Arena.set_view("close"), 0.6 s)
+    views: [desktop]
+  - name: view-behind-canyon-1280x720
+    input: |
+      same, Arena.set_view("behind")
+    views: [desktop]
+  - name: view-overview-glimmer-isles-1280x720
+    input: |
+      same in Glimmer Isles, Arena.set_view("overview")
+    views: [desktop]
+  - name: view-overview-canyon-820x1180
+    input: |
+      same in the canyon at --resolution 820x1180, Arena.set_view("overview")
+    views: [tablet-portrait]
+- id: lighting-presets
+  kind: ui
+  change: added
+  object: Lighting presets and the saturation boost (Echo, seed 5)
+  note: L3/L4/L5 Golden sunset, Neon night (glow on), Candy pop and the boost on top of Bright day, each named in the toast; the default Bright day is in the match blocks above (L6). Fighters, bars and HUD stay readable (L7).
+  statements: [S2]
+  examples:
+  - name: light-golden-sunset-canyon-1280x720
+    input: |
+      same capture script -- shots=lights (match, 3.0 s, Arena.set_light_preset("golden_sunset"), 0.6 s)
+    views: [desktop]
+  - name: light-neon-night-glimmer-isles-1280x720
+    input: |
+      same in Glimmer Isles, Arena.set_light_preset("neon_night")
+    views: [desktop]
+  - name: light-candy-pop-canyon-1280x720
+    input: |
+      same, Arena.set_light_preset("candy_pop")
+    views: [desktop]
+  - name: light-boost-glimmer-isles-1280x720
+    input: |
+      same in Glimmer Isles, Arena.set_saturation_boost(true)
+    views: [desktop]
+- id: catalogue-and-session
+  kind: output
+  change: modified
+  object: Fighter catalogue and the session fields of GameState
+  note: 'C1/D20 nine fighters: flarekid (Legendary, plays like Blaze) and echo (Mythic, plays like Luna), picture fighters (cutout), one skin, unlocked at the start; V6/L6 camera_view, light_preset and saturation_boost kept in memory, not saved.'
+  statements: [S2]
+  examples:
+  - name: probe
+    input: |
+      godot --headless --path hack_star_godot -s <temporary probe>: after GameState.reset(),
+      Fighters.ids(), start_unlocked() and each LIST row; the GameState session fields
+- id: input-actions
+  kind: config
+  change: modified
+  object: Input actions of project.godot and the keyboard start hint
+  note: V2/L3/L4/D25 view_next (V), view_1-view_4 (1-4 and the number pad), light_next (L), saturation_boost (K), bound to no other action; V7 the hint's new line.
+  statements: [S2, S6]
+  examples:
+  - name: actions
+    input: |
+      same probe: InputMap.get_actions() without ui_*, each with its events;
+      ControlsHelp.KEYBOARD_HINT
+- id: save-file
+  kind: data-format
+  change: modified
+  object: The save file after GameState.reset() (version 3)
+  note: C1 same version 3 and fields; every fighter dictionary gets flarekid and echo (0 trophies, power 1, Default skin, unlocked). Views, presets and the boost are not saved. revision masked.
+  statements: [S2]
+  examples:
+  - name: save-after-reset
+    input: |
+      same probe: GameState.save_path = user://review09b/save.json; reset(); save(); the JSON
+- id: export-filter
+  kind: config
+  change: modified
+  object: What git and the web export leave out (.gitignore, exclude_filter)
+  note: C10/D22/D31 the delivery's zips and duplicate folder ignored; the preview scripts, Sprite3D scenes, READMEs and the author's newer folders (*_new, magmax*) and zips excluded from the export.
+  statements: [S3, S4]
+  examples:
+  - name: filters
+    input: |
+      git show <rev>:hack_star_godot/.gitignore and the exclude_filter of
+      hack_star_godot/export_presets.cfg
+- id: web-size
+  kind: performance
+  change: modified
+  object: Web export size (build/web)
+  note: 'C11/G15/D28 +728,093 bytes (index.pck 395,200 -> 1,123,292), of which 670,348 the four pictures (C11 <= 1.0 MB); total 41,244,423 <= 45,361,090. The same total as Step 29''s working-tree export with the author''s untracked folders: the filter keeps them out.'
+  statements: [S3]
+  examples:
+  - name: build-web
+    input: |
+      powershell -File hack_star_godot/tools/export_web.ps1 in a clean worktree of the revision
+breaking: |
+  none for players and saves: version 3 saves load (an old save gets Flarekid and Echo
+  unlocked), the view, the preset and the boost are not saved, the server and the Python +
+  Svelte game are unchanged. For code: FighterStage.show_fighter does nothing when the same
+  fighter and skin are shown again (it used to rebuild the model), and the arena's camera is
+  placed by Arena.view_pose instead of look_at_from_position.
+review:
+- question: Why a picture on a camera-facing quad instead of the delivered Sprite3D scenes?
+  answer: |
+    D21: a Sprite3D cannot draw an outline of a fixed pixel width, flash, flip or fade.
+    cutout.gdshader turns the quad to the camera in the vertex shader (the rig's yaw no
+    longer matters), rings the picture's alpha for the outline and has the uniforms
+    flash, fade, flip, tilt and tip; FighterModel's rig/body keep the idle, run and
+    recoil code working. The delivered scenes stay in characters/ and out of the export.
+- question: Why does the camera never turn in the Behind view?
+  answer: |
+    D25/V4 (Q12): with a fixed yaw (always looking north) the movement keys keep their
+    screen direction in every view and the picture fighters still face the camera.
+    Behind stands 6 m behind the fighter at the height where its line to a point 4 m ahead
+    is 28 degrees down (Step 25 Notes).
+- question: How do the lighting presets keep each world's own look?
+  answer: |
+    D27: WorldLighting remembers the world's own sun, ambient and sky after the world is
+    built, applies a preset to a fresh copy of the environment (the scene's shared one is
+    never changed) and keeps 30 % of the world's colours (WORLD_SHARE). Classic brings the
+    world's light back exactly; glow is on only in Neon night (checked on the desktop and
+    in the web export).
+- question: What keeps the author's newer art out of git and the web export?
+  answer: |
+    D22/D31: .gitignore names the zips and scenes/blaze_godot/; export_presets.cfg's
+    exclude_filter names the delivery's preview files and characters/*_new/*,
+    characters/magmax*/* and characters/*.zip. A clean export at f10d71c and Step 29's
+    working-tree export are both 41,244,423 bytes; the .pck holds no excluded name.

@@ -1,0 +1,17 @@
+== input actions (project.godot)
+move_left: A, Left
+move_right: D, Right
+move_up: W, Up
+move_down: S, Down
+shoot: Space
+view_next: V
+view_1: 1, Kp 1
+view_2: 2, Kp 2
+view_3: 3, Kp 3
+view_4: 4, Kp 4
+light_next: L
+saturation_boost: K
+== start hint (keyboard)
+Move: WASD or arrow keys
+Shoot: Space
+View: V or 1-4, light: L and K

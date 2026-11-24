@@ -22,7 +22,8 @@ func _show_home() -> Control:
 
 func test_shows_title_and_play() -> void:
 	var screen: Control = _show_home()
-	assert_eq(screen.get_node("Margin/Column/Title").text, "Hack star")
+	assert_eq(screen.get_node("Margin/Column/Title/Hack").text, "Hack")
+	assert_eq(screen.get_node("Margin/Column/Title/Star").text, "star")
 	var button: Button = screen.get_node("Margin/Column/Body/Controls/PlayButton")
 	assert_eq(button.text, "Play")
 	assert_gte(button.custom_minimum_size.y, 100.0, "big enough for a thumb")
@@ -31,9 +32,9 @@ func test_shows_title_and_play() -> void:
 func test_shows_the_values_of_game_state() -> void:
 	GameState.credits = 321
 	var screen: Control = _show_home()
-	var trophies_text: String = screen.get_node("Margin/Column/TopBar/TrophiesLabel").text
-	assert_eq(trophies_text, "Trophies: %d" % GameState.total_trophies())
-	assert_eq(screen.get_node("Margin/Column/TopBar/CreditsLabel").text, "Credits: 321")
+	var trophies_text: String = screen.get_node("Margin/Column/TopBar/TrophiesChip").text
+	assert_eq(trophies_text, str(GameState.total_trophies()))
+	assert_eq(screen.get_node("Margin/Column/TopBar/CreditsChip").text, "321")
 	assert_eq(screen.get_node("Margin/Column/Body/Controls/NameRow/NameLabel").text, "Blaze")
 
 

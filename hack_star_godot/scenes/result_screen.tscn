@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/result_screen.gd" id="1_result"]
 [ext_resource type="PackedScene" path="res://scenes/ui/fighter_stage.tscn" id="2_stage"]
 [ext_resource type="PackedScene" path="res://scenes/ui/prestige_badge.tscn" id="3_badge"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu_background.tscn" id="9_background"]
 
 [node name="Result" type="Control"]
 layout_mode = 3
@@ -13,14 +14,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_result")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" parent="." instance=ExtResource("9_background")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"BackgroundPanel"
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -68,6 +63,7 @@ horizontal_alignment = 1
 
 [node name="CountLabel" type="Label" parent="Margin/Column/TrophyPanel/Trophies"]
 layout_mode = 2
+theme_type_variation = &"NumberLabel"
 text = "0 / 1000"
 horizontal_alignment = 1
 
@@ -106,6 +102,15 @@ scale_amount_min = 6.0
 scale_amount_max = 12.0
 color = Color(1, 0.82, 0.2, 1)
 
+[node name="TrophyIcon" type="TextureRect" parent="Margin/Column/TrophyPanel"]
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="Body" type="BoxContainer" parent="Margin/Column"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -127,11 +132,12 @@ alignment = 1
 custom_minimum_size = Vector2(320, 120)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_type_variation = &"BigButton"
+theme_type_variation = &"PlayButton"
 text = "Play again"
 
 [node name="HomeButton" type="Button" parent="Margin/Column/Body/Controls"]
 custom_minimum_size = Vector2(260, 80)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"BlueButton"
 text = "Home"

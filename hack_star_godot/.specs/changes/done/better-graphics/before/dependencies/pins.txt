@@ -1,0 +1,13 @@
+﻿# tools/versions.json
+{
+  "godot": "4.7.2",
+  "gut": "9.7.1",
+  "gdtoolkit": "4.5.0",
+  "cryptography": "50.0.2"
+}
+
+# project.godot [editor_plugins]
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+# export_presets.cfg
+exclude_filter="addons/gut/*, tests/*, .specs/*, tools/*, build/*"

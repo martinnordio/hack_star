@@ -1,0 +1,19 @@
+﻿default font: <engine default>
+default font size: 28
+BackgroundPanel: base Panel, panel 171a29
+BadgeLabel: base Label, font_color 402405
+BadgePanel: base PanelContainer, panel ffd133
+BigButton: base Button, font_size 48
+Button: hover 855ef2, normal 6b45d9, pressed 5733b8, font_color ffffff, font_size 36
+CardPanel: base PanelContainer, panel 262b42
+HeadingLabel: base Label, font_size 56
+HudLabel: base Label, font_outline_color 1a0f33, outline_size 10
+Label: font_color f0f2ff, font_size 28
+LegendarySkinButton: base Button, hover 38405e, normal 262b42, pressed 6b45d9, font_size 28
+LineEdit: normal 1a1a2e, font_size 36
+Panel: panel 262b42
+ProgressBar: 
+SkinButton: base Button, hover 38405e, normal 262b42, pressed 6b45d9, font_size 28
+SubheadingLabel: base Label, font_size 40
+Window: title_font_size 28
+WordLabel: base Label, font_outline_color f0f2ff, outline_size 2

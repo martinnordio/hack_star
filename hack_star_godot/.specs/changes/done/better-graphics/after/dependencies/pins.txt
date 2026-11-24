@@ -1,0 +1,16 @@
+﻿# tools/versions.json
+{
+  "godot": "4.7.2",
+  "gut": "9.7.1",
+  "gdtoolkit": "4.5.0",
+  "cryptography": "50.0.2",
+  "font_lilita_one": "1.002",
+  "kenney_game_icons": "2014-11-03",
+  "protonscatter": "4.2.0"
+}
+
+# project.godot [editor_plugins]
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/proton_scatter/plugin.cfg")
+
+# export_presets.cfg
+exclude_filter="addons/gut/*, addons/proton_scatter/*, scenes/worlds/glimmer_isles/scatter_source.tscn, tests/*, .specs/*, tools/*, build/*"

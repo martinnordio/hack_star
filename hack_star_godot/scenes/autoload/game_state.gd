@@ -21,6 +21,22 @@ var selected_skins: Dictionary[String, String] = {}
 ## The fighter the fighter screen shows (set by the list before it opens the screen).
 var viewed_fighter: String = ""
 var entrance_played: bool = false
+## The arena's FPS label is shown (the info screen's play-test switch, spec 09 D8); kept while
+## the game is open, not saved.
+var show_fps: bool = false
+## The world of the next match and Training (`Worlds`, spec 09 W2); kept while the game is open,
+## not saved (saving it is spec 18).
+var world: String = Worlds.CANYON
+## The camera view of the next match and Training (`CameraViews`, spec 09 V6); kept while the
+## game is open, not saved.
+var camera_view: String = CameraViews.CLASSIC
+## The lighting preset and the saturation boost of the next match and Training (`LightPresets`,
+## spec 09 L6); kept while the game is open, not saved.
+var light_preset: String = LightPresets.DEFAULT
+var saturation_boost: bool = false
+## The colour variation of the next match and Training (`ColourVariations`, spec 09 H1, H6);
+## kept while the game is open, not saved.
+var colour_variation: String = ColourVariations.DEFAULT
 ## The ids of the hacks that are on (see `Hacks`); kept in the save file.
 var active_hacks: Array[String] = []
 ## When each active hack turns off: Unix time in seconds, `Hacks.FOREVER` for never.
@@ -71,6 +87,13 @@ func reset() -> void:
 	for fighter_id: String in Fighters.ids():
 		selected_skins[fighter_id] = Fighters.DEFAULT_SKIN
 	entrance_played = false
+	show_fps = false
+	world = Worlds.CANYON
+	camera_view = CameraViews.CLASSIC
+	light_preset = LightPresets.DEFAULT
+	saturation_boost = false
+	colour_variation = ColourVariations.DEFAULT
+	ArenaLayout.use(world)
 	pictures = {}
 	match_settings = MatchSettings.new()
 	last_result = {}

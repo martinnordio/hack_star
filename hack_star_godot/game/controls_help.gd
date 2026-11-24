@@ -4,7 +4,9 @@ extends RefCounted
 ## the "How to play" section of the Info page. The numbers come from the rules, so the texts
 ## stay true when a rule changes. English only (spec 16, S23).
 
-const KEYBOARD_HINT: String = "Move: WASD or arrow keys\nShoot: Space"
+const KEYBOARD_HINT: String = (
+	"Move: WASD or arrow keys\nShoot: Space\n" + "View: V or 1-8, light: L and K, colours: C"
+)
 const TOUCH_HINT: String = "Move: left stick\nShoot: drag or tap the right stick"
 const MORE_IN_INFO: String = "More in Info"
 
@@ -21,9 +23,17 @@ static func how_to_play() -> Array[Dictionary]:
 					+ "firing). Touch: move with the left stick; drag the right stick and let go to "
 					+ "shoot that way, or tap it to shoot at the nearest target. Space and a tap fire "
 					+ "at the nearest target in range (%d metres), or straight ahead. "
+					+ "V switches the camera view, 1 to 8 choose one (%s). "
+					+ "L switches the lighting (%s), K a saturation boost. "
+					+ "C switches the colours (%s). "
 					+ "Back goes home."
 				)
-				% int(Combat.SHOT_RANGE)
+				% [
+					int(Combat.SHOT_RANGE),
+					", ".join(_view_names()),
+					", ".join(_light_names()),
+					", ".join(_colour_names()),
+				]
 			),
 		},
 		{
@@ -47,7 +57,7 @@ static func how_to_play() -> Array[Dictionary]:
 			"text":
 			(
 				"Practise on %d dummies. A broken dummy comes back after %d seconds."
-				% [ArenaLayout.DUMMIES.size(), int(Combat.RESPAWN_SECONDS)]
+				% [ArenaLayout.dummies().size(), int(Combat.RESPAWN_SECONDS)]
 			),
 		},
 		{
@@ -70,3 +80,27 @@ static func how_to_play() -> Array[Dictionary]:
 			),
 		},
 	]
+
+
+# The camera views' names in the order of the keys 1 to 8.
+static func _view_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for view_id: String in CameraViews.ids():
+		names.append(CameraViews.view_name(view_id))
+	return names
+
+
+# The lighting presets' names in the order of `L`.
+static func _light_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for preset_id: String in LightPresets.ids():
+		names.append(LightPresets.preset_name(preset_id))
+	return names
+
+
+# The colour variations' names in the order of `C`.
+static func _colour_names() -> PackedStringArray:
+	var names: PackedStringArray = []
+	for variation_id: String in ColourVariations.ids():
+		names.append(ColourVariations.variation_name(variation_id))
+	return names

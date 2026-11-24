@@ -1,0 +1,612 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/proton_scatter/src/scatter.gd" id="1_d1l77"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/stack/modifier_stack.gd" id="2_j0vw2"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/modifiers/base_modifier.gd" id="3_tsm6i"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/modifiers/create_inside_grid.gd" id="4_j84tf"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/modifiers/randomize_transforms.gd" id="5_pu5d6"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/scatter_item.gd" id="6_xg45l"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/scatter_shape.gd" id="7_cgmee"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/shapes/box_shape.gd" id="8_1e26n"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/modifiers/create_inside_random.gd" id="9_5v8by"]
+[ext_resource type="Script" path="res://addons/proton_scatter/src/modifiers/single_item.gd" id="10_4o1y4"]
+
+[sub_resource type="Resource" id="Resource_dn857"]
+script = ExtResource("4_j84tf")
+spacing = Vector3(0.85, 1, 0.85)
+restrict_height = true
+
+[sub_resource type="Resource" id="Resource_0poyn"]
+script = ExtResource("5_pu5d6")
+position = Vector3(0.12, 0, 0.12)
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.3, 0.35, 0.3)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_ly048"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_dn857"), SubResource("Resource_0poyn")])
+
+[sub_resource type="Resource" id="Resource_eq164"]
+script = ExtResource("8_1e26n")
+size = Vector3(3.7, 0.75, 1.2)
+
+[sub_resource type="Resource" id="Resource_sl0qi"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.2, 0.75, 3.2)
+
+[sub_resource type="Resource" id="Resource_1cyj1"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.2, 0.75, 3.2)
+
+[sub_resource type="Resource" id="Resource_8tcp2"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.2, 0.75, 1.2)
+
+[sub_resource type="Resource" id="Resource_fq0n5"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.2, 0.75, 1.2)
+
+[sub_resource type="Resource" id="Resource_om6ye"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.2, 0.75, 1.2)
+
+[sub_resource type="Resource" id="Resource_6jv1i"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.2, 0.75, 1.2)
+
+[sub_resource type="Resource" id="Resource_hh1fd"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_64ypl"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_thpwd"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_ti1fi"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_mbgfw"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_w4f2j"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_mbajc"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_ifajh"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_nlvkb"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_d448r"]
+script = ExtResource("9_5v8by")
+amount = 44
+
+[sub_resource type="Resource" id="Resource_tg4ci"]
+script = ExtResource("5_pu5d6")
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.3, 0.5, 0.3)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_ypw48"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_d448r"), SubResource("Resource_tg4ci")])
+
+[sub_resource type="Resource" id="Resource_ocjnr"]
+script = ExtResource("8_1e26n")
+size = Vector3(19.7, 0.2, 0.7)
+
+[sub_resource type="Resource" id="Resource_desvs"]
+script = ExtResource("8_1e26n")
+size = Vector3(0.7, 0.2, 23.7)
+
+[sub_resource type="Resource" id="Resource_1fkin"]
+script = ExtResource("8_1e26n")
+size = Vector3(0.7, 0.2, 23.7)
+
+[sub_resource type="Resource" id="Resource_ro7e4"]
+script = ExtResource("4_j84tf")
+spacing = Vector3(0.62, 1, 0.62)
+restrict_height = true
+
+[sub_resource type="Resource" id="Resource_1m21m"]
+script = ExtResource("5_pu5d6")
+position = Vector3(0.15, 0, 0.15)
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.2, 0.3, 0.2)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_0d7st"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_ro7e4"), SubResource("Resource_1m21m")])
+
+[sub_resource type="Resource" id="Resource_jtf7s"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.8, 0.5, 2.8)
+
+[sub_resource type="Resource" id="Resource_801do"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.8, 0.5, 2.8)
+
+[sub_resource type="Resource" id="Resource_8casl"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.8, 0.5, 1.8)
+
+[sub_resource type="Resource" id="Resource_1sxfm"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.3, 0.5, 2.8)
+
+[sub_resource type="Resource" id="Resource_rjxw2"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.3, 0.5, 2.8)
+
+[sub_resource type="Resource" id="Resource_6i6wa"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_rowgk"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_ch6yv"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_st3cu"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_mprs5"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_1qfd3"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_s1axu"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_h8fej"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_j3klx"]
+script = ExtResource("8_1e26n")
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="Resource" id="Resource_tufa4"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(-8, 0, 11)
+
+[sub_resource type="Resource" id="Resource_h7sgs"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(-3, 0, 8)
+
+[sub_resource type="Resource" id="Resource_5ed0u"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(-8.2, 0, -6)
+
+[sub_resource type="Resource" id="Resource_qn6pa"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(0, 0, -6.5)
+
+[sub_resource type="Resource" id="Resource_40hai"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(-2, 0, -11)
+
+[sub_resource type="Resource" id="Resource_cfsqs"]
+script = ExtResource("5_pu5d6")
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.2, 0.2, 0.2)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_r5toi"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_tufa4"), SubResource("Resource_h7sgs"), SubResource("Resource_5ed0u"), SubResource("Resource_qn6pa"), SubResource("Resource_40hai"), SubResource("Resource_cfsqs")])
+
+[sub_resource type="Resource" id="Resource_idv7v"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(8, 0, 11)
+
+[sub_resource type="Resource" id="Resource_y0edm"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(3, 0, 8)
+
+[sub_resource type="Resource" id="Resource_rn8f8"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(0, 0, 2)
+
+[sub_resource type="Resource" id="Resource_6t136"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(8.2, 0, -6)
+
+[sub_resource type="Resource" id="Resource_j6dfb"]
+script = ExtResource("10_4o1y4")
+offset = Vector3(2, 0, -11)
+
+[sub_resource type="Resource" id="Resource_4pni5"]
+script = ExtResource("5_pu5d6")
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.2, 0.2, 0.2)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_xqdcx"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_idv7v"), SubResource("Resource_y0edm"), SubResource("Resource_rn8f8"), SubResource("Resource_6t136"), SubResource("Resource_j6dfb"), SubResource("Resource_4pni5")])
+
+[sub_resource type="Resource" id="Resource_311ow"]
+script = ExtResource("9_5v8by")
+amount = 12
+
+[sub_resource type="Resource" id="Resource_pp8or"]
+script = ExtResource("5_pu5d6")
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.5, 0.6, 0.5)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_36l5k"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_311ow"), SubResource("Resource_pp8or")])
+
+[sub_resource type="Resource" id="Resource_uienc"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.5, 0.25, 26)
+
+[sub_resource type="Resource" id="Resource_44bd7"]
+script = ExtResource("8_1e26n")
+size = Vector3(2.5, 0.25, 26)
+
+[sub_resource type="Resource" id="Resource_mygb4"]
+script = ExtResource("8_1e26n")
+size = Vector3(22, 0.25, 2.5)
+
+[sub_resource type="Resource" id="Resource_dvbdd"]
+script = ExtResource("9_5v8by")
+amount = 16
+
+[sub_resource type="Resource" id="Resource_f2o2w"]
+script = ExtResource("5_pu5d6")
+rotation = Vector3(0, 360, 0)
+scale = Vector3(0.8, 0.5, 0.8)
+reference_frame = 2
+
+[sub_resource type="Resource" id="Resource_8j21m"]
+script = ExtResource("2_j0vw2")
+stack = Array[ExtResource("3_tsm6i")]([SubResource("Resource_dvbdd"), SubResource("Resource_f2o2w")])
+
+[sub_resource type="Resource" id="Resource_jd71m"]
+script = ExtResource("8_1e26n")
+size = Vector3(13, 5, 40)
+
+[sub_resource type="Resource" id="Resource_kairy"]
+script = ExtResource("8_1e26n")
+size = Vector3(13, 5, 40)
+
+[sub_resource type="Resource" id="Resource_l25dp"]
+script = ExtResource("8_1e26n")
+size = Vector3(34, 5, 13)
+
+[node name="ScatterSource" type="Node3D" unique_id=389906861]
+
+[node name="Crystals" type="Node3D" parent="." unique_id=1687501301]
+script = ExtResource("1_d1l77")
+global_seed = 11
+modifier_stack = SubResource("Resource_ly048")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="CrystalCluster" type="Node3D" parent="Crystals" unique_id=1638846885]
+script = ExtResource("6_xg45l")
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/crystal_cluster.tscn"
+
+[node name="Wall4" type="Node3D" parent="Crystals" unique_id=777410248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 5.25)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_eq164")
+
+[node name="Wall5" type="Node3D" parent="Crystals" unique_id=1782150049]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 0.125, 0.75)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_sl0qi")
+
+[node name="Wall6" type="Node3D" parent="Crystals" unique_id=471650049]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0.125, 0.75)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_1cyj1")
+
+[node name="Wall7" type="Node3D" parent="Crystals" unique_id=1776061555]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.25, 0.125, -6.25)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_8tcp2")
+
+[node name="Wall8" type="Node3D" parent="Crystals" unique_id=2001934579]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0.125, -6.25)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_fq0n5")
+
+[node name="Wall9" type="Node3D" parent="Crystals" unique_id=1572099973]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.25, 0.125, 1.75)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_om6ye")
+
+[node name="Wall10" type="Node3D" parent="Crystals" unique_id=1158346962]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0.125, 1.75)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_6jv1i")
+
+[node name="StartGuard0" type="Node3D" parent="Crystals" unique_id=2093065626]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 9.5)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_hh1fd")
+
+[node name="StartGuard1" type="Node3D" parent="Crystals" unique_id=455606598]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, -10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_64ypl")
+
+[node name="StartGuard2" type="Node3D" parent="Crystals" unique_id=1795742053]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.125, -4)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_thpwd")
+
+[node name="StartGuard3" type="Node3D" parent="Crystals" unique_id=760893934]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0.125, -4)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_ti1fi")
+
+[node name="StartGuard4" type="Node3D" parent="Crystals" unique_id=909854269]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.125, -10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_mbgfw")
+
+[node name="StartGuard5" type="Node3D" parent="Crystals" unique_id=860767142]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.125, -10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_w4f2j")
+
+[node name="StartGuard6" type="Node3D" parent="Crystals" unique_id=239410998]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.125, 10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_mbajc")
+
+[node name="StartGuard7" type="Node3D" parent="Crystals" unique_id=1823810482]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.125, 3.5)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_ifajh")
+
+[node name="StartGuard8" type="Node3D" parent="Crystals" unique_id=240204077]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.125, 3.5)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_nlvkb")
+
+[node name="BorderCrystals" type="Node3D" parent="." unique_id=1772701698]
+script = ExtResource("1_d1l77")
+global_seed = 12
+modifier_stack = SubResource("Resource_ypw48")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="CrystalCluster" type="Node3D" parent="BorderCrystals" unique_id=1086489242]
+script = ExtResource("6_xg45l")
+source_scale_multiplier = 0.9
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/crystal_cluster.tscn"
+
+[node name="Border0" type="Node3D" parent="BorderCrystals" unique_id=1093727515]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -12.5)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_ocjnr")
+
+[node name="Border2" type="Node3D" parent="BorderCrystals" unique_id=1241121695]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 2.2, 0)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_desvs")
+
+[node name="Border3" type="Node3D" parent="BorderCrystals" unique_id=330623604]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 2.2, 0)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_1fkin")
+
+[node name="Ferns" type="Node3D" parent="." unique_id=1010059237]
+script = ExtResource("1_d1l77")
+global_seed = 13
+modifier_stack = SubResource("Resource_0d7st")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="GlowFern" type="Node3D" parent="Ferns" unique_id=1747236690]
+script = ExtResource("6_xg45l")
+proportion = 75
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/glow_fern.tscn"
+
+[node name="SmallMushroom" type="Node3D" parent="Ferns" unique_id=682155048]
+script = ExtResource("6_xg45l")
+proportion = 25
+source_scale_multiplier = 1.2
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/small_mushroom.tscn"
+
+[node name="Patch0" type="Node3D" parent="Ferns" unique_id=822328001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.9999995, 0, 7)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_jtf7s")
+
+[node name="Patch1" type="Node3D" parent="Ferns" unique_id=538944915]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 7)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_801do")
+
+[node name="Patch2" type="Node3D" parent="Ferns" unique_id=149819054]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_8casl")
+
+[node name="Patch3" type="Node3D" parent="Ferns" unique_id=1770939246]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.2499995, 0, -9)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_1sxfm")
+
+[node name="Patch4" type="Node3D" parent="Ferns" unique_id=870686927]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, 0, -9)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_rjxw2")
+
+[node name="StartGuard0" type="Node3D" parent="Ferns" unique_id=1883938537]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.5)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_6i6wa")
+
+[node name="StartGuard1" type="Node3D" parent="Ferns" unique_id=776841718]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_rowgk")
+
+[node name="StartGuard2" type="Node3D" parent="Ferns" unique_id=1585207494]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -4)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_ch6yv")
+
+[node name="StartGuard3" type="Node3D" parent="Ferns" unique_id=2045160686]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -4)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_st3cu")
+
+[node name="StartGuard4" type="Node3D" parent="Ferns" unique_id=1392416288]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_mprs5")
+
+[node name="StartGuard5" type="Node3D" parent="Ferns" unique_id=1085085269]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_1qfd3")
+
+[node name="StartGuard6" type="Node3D" parent="Ferns" unique_id=1654276870]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 10)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_s1axu")
+
+[node name="StartGuard7" type="Node3D" parent="Ferns" unique_id=1570146846]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 3.5)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_h8fej")
+
+[node name="StartGuard8" type="Node3D" parent="Ferns" unique_id=1922552449]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 3.5)
+script = ExtResource("7_cgmee")
+negative = true
+shape = SubResource("Resource_j3klx")
+
+[node name="DecorationCrystal" type="Node3D" parent="." unique_id=991354331]
+script = ExtResource("1_d1l77")
+global_seed = 14
+modifier_stack = SubResource("Resource_r5toi")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="CrystalCluster" type="Node3D" parent="DecorationCrystal" unique_id=477036598]
+script = ExtResource("6_xg45l")
+source_scale_multiplier = 0.55
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/crystal_cluster.tscn"
+
+[node name="DecorationMushroom" type="Node3D" parent="." unique_id=206533535]
+script = ExtResource("1_d1l77")
+global_seed = 15
+modifier_stack = SubResource("Resource_xqdcx")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="SmallMushroom" type="Node3D" parent="DecorationMushroom" unique_id=1566145861]
+script = ExtResource("6_xg45l")
+source_scale_multiplier = 1.7
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/small_mushroom.tscn"
+
+[node name="GiantMushrooms" type="Node3D" parent="." unique_id=1125324350]
+script = ExtResource("1_d1l77")
+global_seed = 16
+modifier_stack = SubResource("Resource_36l5k")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="GiantMushroom" type="Node3D" parent="GiantMushrooms" unique_id=1062167129]
+script = ExtResource("6_xg45l")
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/giant_mushroom.tscn"
+
+[node name="West" type="Node3D" parent="GiantMushrooms" unique_id=1652487424]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.25, -0.125, -2.5)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_uienc")
+
+[node name="East" type="Node3D" parent="GiantMushrooms" unique_id=1749707839]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.25, -0.125, -2.5)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_44bd7")
+
+[node name="North" type="Node3D" parent="GiantMushrooms" unique_id=1105535323]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125, -14.75)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_mygb4")
+
+[node name="Islands" type="Node3D" parent="." unique_id=1146745097]
+script = ExtResource("1_d1l77")
+global_seed = 17
+modifier_stack = SubResource("Resource_8j21m")
+Performance/use_chunks = false
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+
+[node name="IslandChunk" type="Node3D" parent="Islands" unique_id=1648467070]
+script = ExtResource("6_xg45l")
+lod_generate = false
+path = "res://scenes/worlds/glimmer_isles/props/island_chunk.tscn"
+
+[node name="West" type="Node3D" parent="Islands" unique_id=228399602]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, -1.5, -8)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_jd71m")
+
+[node name="East" type="Node3D" parent="Islands" unique_id=596086658]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, -1.5, -8)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_kairy")
+
+[node name="North" type="Node3D" parent="Islands" unique_id=787140218]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, -27.5)
+script = ExtResource("7_cgmee")
+shape = SubResource("Resource_l25dp")

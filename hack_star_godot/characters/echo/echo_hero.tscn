@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://characters/echo/echo_hero.png" id="1_echo"]
+
+[node name="EchoHero" type="Sprite3D"]
+texture = ExtResource("1_echo")
+pixel_size = 0.00091
+offset = Vector2(0, 715.5)
+billboard = 2
+shaded = false
+double_sided = true
+alpha_cut = 1
+texture_filter = 4

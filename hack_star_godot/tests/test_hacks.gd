@@ -25,9 +25,9 @@ func test_the_game_address_gives_the_code_only_with_hack() -> void:
 
 
 func test_credits_show_the_infinity_sign_only_with_the_hack() -> void:
-	assert_eq(Hacks.credits_text(500, _none), "Credits: 500")
-	assert_eq(Hacks.credits_text(500, _credits), "Credits: ∞")
-	assert_eq(Hacks.credits_text(500, _power), "Credits: 500")
+	assert_eq(Hacks.credits_amount(500, _none), "500")
+	assert_eq(Hacks.credits_amount(500, _credits), "∞")
+	assert_eq(Hacks.credits_amount(500, _power), "500")
 
 
 func test_spend_keeps_the_credits_with_the_hack() -> void:
@@ -46,8 +46,8 @@ func test_unlock_all_unlocks_every_fighter() -> void:
 func test_power_22_raises_the_maximum_and_shows_it() -> void:
 	assert_eq(Hacks.max_power(_none), 11)
 	assert_eq(Hacks.max_power(_power), 22)
-	assert_eq(Hacks.power_text(7, _none), "Power 7 / 11")
-	assert_eq(Hacks.power_text(7, _power), "Power 7 / 22")
+	assert_eq(Hacks.power_amount(7, _none), "7 / 11")
+	assert_eq(Hacks.power_amount(7, _power), "7 / 22")
 
 
 func test_a_qr_link_carries_the_code_and_reads_back_as_the_code() -> void:

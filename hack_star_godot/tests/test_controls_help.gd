@@ -29,6 +29,19 @@ func test_the_controls_name_the_keys_and_the_sticks() -> void:
 		assert_false(hint.is_empty())
 	assert_true(ControlsHelp.KEYBOARD_HINT.contains("WASD"))
 	assert_true(ControlsHelp.KEYBOARD_HINT.contains("Space"))
+	assert_true(ControlsHelp.KEYBOARD_HINT.contains("View: V or 1-8"), "the view keys (X8)")
+	assert_true(controls.contains("V switches the camera view, 1 to 8"), "the view keys (X8)")
+	for view_id: String in CameraViews.ids():
+		assert_true(controls.contains(CameraViews.view_name(view_id)), view_id)
+	assert_true(ControlsHelp.KEYBOARD_HINT.contains("light: L and K"), "the light keys (L3, L4)")
+	assert_true(controls.contains("L switches the lighting"), "the light keys (L3)")
+	assert_true(controls.contains("K a saturation boost"), "the boost key (L4)")
+	for preset_id: String in LightPresets.ids():
+		assert_true(controls.contains(LightPresets.preset_name(preset_id)), preset_id)
+	assert_true(ControlsHelp.KEYBOARD_HINT.contains("colours: C"), "the colour key (H8)")
+	assert_true(controls.contains("C switches the colours"), "the colour key (H8)")
+	for variation_id: String in ColourVariations.ids():
+		assert_true(controls.contains(ColourVariations.variation_name(variation_id)), variation_id)
 	assert_true(ControlsHelp.TOUCH_HINT.contains("stick"))
 
 

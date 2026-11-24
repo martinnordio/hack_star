@@ -1,11 +1,17 @@
 class_name Arena
 extends Node3D
-## The arena: the canyon (`Canyon`, built from `ArenaLayout`), one fighter, a camera above
+## The arena: the chosen world (`GameState.world`: the canyon, `Canyon`, or Glimmer Isles,
+## `GlimmerIsles`, each built from its `ArenaLayout`), one fighter, a camera above
 ## and behind it, and the HUD. With `training` (the Training arena) the three target dummies
 ## stand in it; `MatchArena` (`match.tscn`) inherits the scene for a match.
-## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`); Space (the
+## Keyboard and touch joystick feed the same movement rule (`game/movement.gd`), turned from the
+## screen to the ground by the camera's yaw (`to_world`, D50); Space (the
 ## `shoot` action, held to keep firing) and the right stick (`AimJoystick`, drag and release or a
 ## quick tap) fire shots (`Shot`) under the rules of `game/combat.gd`. The mouse does not fire.
+## `V` and `1`–`8` switch the camera view (`CameraViews`, spec 09 V1–V6, X1–X6), kept in
+## `GameState.camera_view`; `L` switches the lighting preset and `K` the saturation boost
+## (`LightPresets`, `WorldLighting`, L3–L6), `C` the colour variation (`ColourVariations`,
+## H1–H6), all kept in `GameState`; `HudToast` names them.
 
 ## The camera looks at the fighter from above and behind (towards +z), at this angle down.
 const CAMERA_PITCH_DEGREES: float = 55.0
@@ -19,16 +25,32 @@ const CAMERA_FOLLOW_RATE: float = 6.0
 ## and the fighter's height.
 const VIEW_HALF_SIZE: Vector2 = Vector2(7.0, 5.0)
 const FIGHTER_HEIGHT: float = 1.9
+## The box around the fighter that Diagonal fits: square, so it reads the same turned by 45°.
+const DIAGONAL_HALF_SIZE: Vector2 = Vector2(5.0, 5.0)
+## Low's camera stands at most this far south of the camera-side wall's inner face (metres).
+const LOW_WALL_CLEARANCE: float = 2.0
+## Low's camera looks down at the fighter's feet at most this steeply (degrees).
+const LOW_FEET_DEGREES: float = 20.0
 ## Free border around that box as a share of the screen; more at the top for the Back button.
 const FRAME_MARGIN: float = 0.03
 const FRAME_TOP_MARGIN: float = 0.12
-## The FPS label (only while the first game is being checked) refreshes this often.
+## The camera-side border wall covers at most this share of the screen height (spec 09, G11):
+## the camera never looks farther south than that, so the extra height of a tall screen shows
+## the arena ahead instead of the wall and the ground behind it.
+const NEAR_WALL_SHARE: float = 0.08
+## The near wall's top above its height: the cap `Canyon` puts on every wall.
+const WALL_CAP_HEIGHT: float = 0.1
+## The FPS label (hidden unless the info screen's play-test switch is on) refreshes this often.
 const FPS_LABEL_INTERVAL: float = 0.25
 ## The controls hint at the start is fully visible for this long, then fades out over the next.
 const HINT_SECONDS: float = 5.0
 const HINT_FADE_SECONDS: float = 1.0
 ## With touch controls the hint stands this far above the bottom edge, clear of the sticks.
 const HINT_ABOVE_STICKS: float = 288.0
+## A switch of the camera view moves the camera over this long (D25).
+const VIEW_BLEND_SECONDS: float = 0.3
+## Overview keeps this share of the screen free at the sides and the bottom around the arena.
+const OVERVIEW_MARGIN: float = 0.02
 
 const DUMMY_SCENE: PackedScene = preload("res://scenes/target_dummy.tscn")
 ## Dust puffs under a running fighter come this often, in this colour.
@@ -48,6 +70,20 @@ var touch_controls: bool = DisplayServer.is_touchscreen_available()
 var _fps_timer: float = 0.0
 var _camera_target: Vector3 = Vector3.ZERO
 var _camera_distance: float = CAMERA_MIN_DISTANCE
+# The southmost the camera target may go (see `NEAR_WALL_SHARE`).
+var _camera_max_z: float = INF
+var _close_max_z: float = INF
+# The fighter's position, followed like `_camera_target` (Close and Behind).
+var _follow_point: Vector3 = Vector3.ZERO
+var _overview_distance: float = CAMERA_MIN_DISTANCE
+var _diagonal_distance: float = CAMERA_MIN_DISTANCE
+# Seconds the arena has run, for Cinematic's swing.
+var _swing_time: float = 0.0
+var _view: String = CameraViews.CLASSIC
+var _blend_from: Transform3D = Transform3D.IDENTITY
+var _blend_left: float = 0.0
+var _toast: HudToast
+var _lighting: WorldLighting
 var _dust_left: float = 0.0
 
 @onready var _fighter: Fighter = $Fighter
@@ -59,21 +95,61 @@ var _dust_left: float = 0.0
 @onready var _dummies: Node3D = $Dummies
 @onready var _effects: ArenaEffects = $Effects
 @onready var _fps_label: Label = $Hud/FpsLabel
-@onready var _controls_hint: Label = $Hud/ControlsHint
+@onready var _controls_hint: Control = $Hud/ControlsHint
+@onready var _controls_hint_label: Label = $Hud/ControlsHint/Row/Label
+
+
+func _notification(what: int) -> void:
+	# Before any child is ready: the chosen world's layout and scenery (spec 09, D9).
+	if what == NOTIFICATION_SCENE_INSTANTIATED:
+		_use_world()
+
+
+## Makes the chosen world (`GameState.world`) the active layout and, for Glimmer Isles, puts
+## `GlimmerIsles` in place of the scene's `Canyon`, on the same floor and walls.
+func _use_world() -> void:
+	ArenaLayout.use(GameState.world)
+	if has_node("Canyon"):
+		(get_node("Canyon") as Canyon).variation = GameState.colour_variation
+	# An inherited scene (`match.tscn`) gets the notification once per scene level.
+	if ArenaLayout.world() == Worlds.CANYON or not has_node("Canyon"):
+		return
+	var canyon: Node = get_node("Canyon")
+	var isles: GlimmerIsles = GlimmerIsles.new()
+	isles.name = "GlimmerIsles"
+	isles.variation = GameState.colour_variation
+	isles.floor_body = get_node("Floor")
+	isles.walls = get_node("Walls")
+	add_child(isles)
+	move_child(isles, canyon.get_index())
+	remove_child(canyon)
+	canyon.free()
 
 
 func _ready() -> void:
-	_fighter.position = Vector3(ArenaLayout.START.x, 0.0, ArenaLayout.START.y)
+	_fighter.position = Vector3(ArenaLayout.start().x, 0.0, ArenaLayout.start().y)
 	_fighter.set_look(GameState.selected_fighter, GameState.selected_skin())
 	_aim_joystick.released.connect(_on_aim_released)
+	_toast = HudToast.new()
+	$Hud.add_child(_toast)
+	_view = GameState.camera_view
+	# The world has built its own light by now (its `_ready` runs first).
+	_lighting = WorldLighting.new()
+	_lighting.name = "Lighting"
+	add_child(_lighting)
+	_lighting.setup($WorldEnvironment, $Sun)
+	_lighting.apply(GameState.light_preset, GameState.saturation_boost)
 	if training:
-		for spot: Vector2 in ArenaLayout.DUMMIES:
+		for spot: Vector2 in ArenaLayout.dummies():
 			var dummy: TargetDummy = DUMMY_SCENE.instantiate()
 			dummy.position = Vector3(spot.x, 0.0, spot.y)
 			_dummies.add_child(dummy)
-	_camera_target = _wanted_camera_target()
 	get_viewport().size_changed.connect(_frame_camera)
 	_frame_camera()
+	_camera_target = _wanted_camera_target()
+	_follow_point = _fighter.position
+	_place_camera()
+	_fps_label.visible = GameState.show_fps
 	_update_fps_label()
 	_show_controls_hint()
 
@@ -90,7 +166,8 @@ func _show_controls_hint() -> void:
 	else:
 		lines.append(ControlsHelp.KEYBOARD_HINT)
 		lines.append(ControlsHelp.MORE_IN_INFO)
-	_controls_hint.text = "\n".join(lines)
+	_controls_hint_label.text = "\n".join(lines)
+	($Hud/ControlsHint/Row/Icon as TextureRect).texture = Icons.get_icon("info")
 	_controls_hint.modulate.a = 1.0
 	_controls_hint.show()
 	var fade: Tween = create_tween()
@@ -103,6 +180,9 @@ func _process(delta: float) -> void:
 	_camera_target = Movement.follow(
 		_camera_target, _wanted_camera_target(), delta, CAMERA_FOLLOW_RATE
 	)
+	_follow_point = Movement.follow(_follow_point, _fighter.position, delta, CAMERA_FOLLOW_RATE)
+	_swing_time += delta
+	_blend_left = maxf(_blend_left - delta, 0.0)
 	_place_camera()
 	if read_player_input and Input.is_action_pressed("shoot"):
 		fire(_aim_direction())
@@ -112,9 +192,93 @@ func _process(delta: float) -> void:
 		_dust_left = DUST_INTERVAL
 		_effects.play(ArenaEffects.DUST, _fighter.global_position + Vector3.UP * 0.1, DUST_COLOR)
 	_fps_timer += delta
-	if _fps_timer >= FPS_LABEL_INTERVAL:
+	if _fps_label.visible and _fps_timer >= FPS_LABEL_INTERVAL:
 		_fps_timer = 0.0
 		_update_fps_label()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("colour_next"):
+		set_colour_variation(ColourVariations.next(GameState.colour_variation))
+		return
+	if event.is_action_pressed("light_next"):
+		set_light_preset(LightPresets.next(GameState.light_preset))
+		return
+	if event.is_action_pressed("saturation_boost"):
+		set_saturation_boost(not GameState.saturation_boost)
+		return
+	if event.is_action_pressed("view_next"):
+		set_view(CameraViews.next(_view))
+		return
+	var all: Array[String] = CameraViews.ids()
+	for index: int in all.size():
+		if event.is_action_pressed("view_%d" % (index + 1)):
+			set_view(all[index])
+			return
+
+
+## The camera view in use (`CameraViews`).
+func view() -> String:
+	return _view
+
+
+## Switches to the camera view `view_id`, kept for the next match and Training, names it in the
+## toast and moves the camera there over `VIEW_BLEND_SECONDS`.
+func set_view(view_id: String) -> void:
+	if not CameraViews.ids().has(view_id):
+		return
+	if view_id != _view:
+		_blend_from = _camera.global_transform
+		_blend_left = VIEW_BLEND_SECONDS
+	_view = view_id
+	GameState.camera_view = view_id
+	_toast.show_text(CameraViews.view_name(view_id))
+
+
+## The toast that names the view and the lighting preset.
+func toast() -> HudToast:
+	return _toast
+
+
+## The arena's lighting (`WorldLighting`).
+func lighting() -> WorldLighting:
+	return _lighting
+
+
+## Lights the arena with the preset `preset_id`, kept for the next match and Training, and names
+## it in the toast.
+func set_light_preset(preset_id: String) -> void:
+	_lighting.apply(preset_id, GameState.saturation_boost)
+	GameState.light_preset = _lighting.preset()
+	_toast.show_text(LightPresets.preset_name(_lighting.preset()))
+
+
+## Switches the saturation boost on or off, kept for the next match and Training, and says so.
+func set_saturation_boost(boost: bool) -> void:
+	_lighting.apply(GameState.light_preset, boost)
+	GameState.saturation_boost = boost
+	_toast.show_text(LightPresets.boost_text(boost))
+
+
+## The world built in the arena (`Canyon` or `GlimmerIsles`).
+func world() -> Node3D:
+	if has_node("GlimmerIsles"):
+		return get_node("GlimmerIsles")
+	return get_node("Canyon")
+
+
+## Gives the world the colour variation `variation_id` (spec 09 H1–H6, D48), kept for the next
+## match and Training, and names it in the toast: the world repaints itself and lights the arena
+## with its own light again, then the lighting preset and the boost apply on top as before; the
+## view and the camera stay.
+func set_colour_variation(variation_id: String) -> void:
+	if not ColourVariations.has(variation_id):
+		return
+	world().call("apply_variation", variation_id)
+	GameState.colour_variation = variation_id
+	_lighting.setup($WorldEnvironment, $Sun)
+	_lighting.apply(GameState.light_preset, GameState.saturation_boost)
+	_toast.show_text(ColourVariations.title(variation_id))
 
 
 func _physics_process(_delta: float) -> void:
@@ -127,7 +291,23 @@ func _physics_process(_delta: float) -> void:
 	if not read_player_input:
 		return
 	var keys: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	_fighter.input_direction = Movement.clamp_direction(keys + _joystick.direction)
+	_fighter.input_direction = to_world(Movement.clamp_direction(keys + _joystick.direction))
+
+
+## The yaw of the camera as it stands now (radians, `CameraViews.yaw_of`): right during a blend
+## and while a view swings.
+func camera_yaw() -> float:
+	return CameraViews.yaw_of(_camera.global_transform)
+
+
+## A direction on the screen (keys, sticks) as a direction on the ground for the camera now (D50).
+func to_world(screen_direction: Vector2) -> Vector2:
+	return CameraViews.to_world(screen_direction, camera_yaw())
+
+
+## A direction on the ground (a move or a shot) as a direction on the screen for the camera now.
+func to_screen(world_direction: Vector2) -> Vector2:
+	return CameraViews.to_screen(world_direction, camera_yaw())
 
 
 ## Fires a shot along `direction` (ground plane, x and z) when the cool-down is over: the
@@ -167,13 +347,20 @@ func fire_from(fighter: Fighter, direction: Vector2, cooldown: float) -> bool:
 	fighter.last_fire_seconds = now
 	fighter.note_action()
 	fighter.rotation.y = Movement.facing_yaw(direction)
+	var on_screen: Vector2 = to_screen(direction)
+	fighter.face(on_screen)
+	fighter.model.play_shoot(on_screen)
 	fighter.model.play_attack()
+	fighter.model.muzzle_flash()
 	var shot: Shot = Shot.new()
 	var muzzle: Vector3 = fighter.muzzle.global_position
 	# The first ray starts at the fighter's body, so a wall or dummy it touches is hit.
 	var body: Vector3 = Vector3(fighter.global_position.x, muzzle.y, fighter.global_position.z)
 	var color: Color = fighter.model.main_color
-	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), color, body, fighter)
+	var picture: Texture2D = null
+	if CutoutFighters.has(fighter.model.fighter_id):
+		picture = CutoutFighters.projectile(fighter.model.fighter_id)
+	shot.launch(muzzle, Vector3(direction.x, 0.0, direction.y), color, body, fighter, picture)
 	_shots.add_child(shot)
 	shot.ended.connect(_on_shot_ended.bind(color))
 	_effects.play(ArenaEffects.FLASH, muzzle, Color(1.0, 0.95, 0.7))
@@ -202,6 +389,8 @@ func _on_aim_released(direction: Vector2, held_seconds: float) -> void:
 		return
 	if aim == Vector2.ZERO:
 		aim = _aim_direction()
+	else:
+		aim = to_world(aim)
 	fire(aim)
 
 
@@ -223,24 +412,102 @@ func _update_aim_line() -> void:
 	_aim_line.visible = aiming
 	if not aiming:
 		return
-	var unit: Vector2 = aim.normalized()
+	var unit: Vector2 = to_world(aim).normalized()
 	var middle: Vector2 = unit * Combat.SHOT_RANGE / 2.0
 	_aim_line.position = _fighter.position + Vector3(middle.x, 0.04, middle.y)
 	_aim_line.rotation = Vector3(0.0, Movement.facing_yaw(unit), 0.0)
 
 
 func _wanted_camera_target() -> Vector3:
-	return _fighter.position + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
+	var target: Vector3 = _fighter.position + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
+	target.z = minf(target.z, _camera_max_z)
+	return target
 
 
+## Places the camera for the view in use, part of the way there during a switch.
 func _place_camera() -> void:
-	var pitch: float = deg_to_rad(CAMERA_PITCH_DEGREES)
-	var backwards: Vector3 = Vector3(0.0, sin(pitch), cos(pitch))
-	_camera.look_at_from_position(_camera_target + backwards * _camera_distance, _camera_target)
+	var pose: Transform3D = view_pose(_view)
+	if _blend_left > 0.0:
+		var share: float = smoothstep(0.0, 1.0, 1.0 - _blend_left / VIEW_BLEND_SECONDS)
+		pose = _blend_from.interpolate_with(pose, share)
+	_camera.global_transform = pose
+
+
+## Where the camera stands and looks in the view `view_id` (D25, D51): Classic, Close, Behind,
+## Overview and Low look north; Side and Diagonal are turned by their yaw, Cinematic swings.
+func view_pose(view_id: String) -> Transform3D:
+	var view_data: Dictionary = CameraViews.get_view(view_id)
+	var pitch: float = view_data["pitch_degrees"]
+	var yaw: float = CameraViews.view_yaw_degrees(view_id, _swing_time)
+	match view_id:
+		CameraViews.CLOSE:
+			var target: Vector3 = _follow_point + Vector3(0.0, 0.0, -CAMERA_LOOK_AHEAD)
+			# Like Classic, it does not look so far south that the near wall fills the screen.
+			target.z = minf(target.z, _close_max_z)
+			return _orbit_pose(target, pitch, _close_distance())
+		CameraViews.BEHIND:
+			# `distance` behind the fighter, as high as the pitch towards the look-ahead point.
+			var ahead: float = view_data["look_ahead"]
+			var behind: float = view_data["distance"]
+			var height: float = (ahead + behind) * tan(deg_to_rad(pitch))
+			return _looking_pose(Vector3(0.0, height, behind), Vector3(0.0, 0.0, -ahead))
+		CameraViews.OVERVIEW:
+			var center: Vector2 = ArenaLayout.bounds().get_center()
+			return _orbit_pose(Vector3(center.x, 0.0, center.y), pitch, _overview_distance)
+		CameraViews.LOW:
+			# Not farther south than just over the camera-side wall, so it does not fill the
+			# bottom of the screen when the fighter stands near it.
+			var low_back: float = minf(
+				view_data["distance"], near_wall_z() + LOW_WALL_CLEARANCE - _follow_point.z
+			)
+			# Nearer, it goes lower, so the fighter's feet stay on the screen.
+			var low_height: float = minf(
+				view_data["height"], low_back * tan(deg_to_rad(LOW_FEET_DEGREES))
+			)
+			return _looking_pose(
+				Vector3(0.0, low_height, low_back),
+				Vector3(0.0, view_data["look_height"], -view_data["look_ahead"])
+			)
+		CameraViews.SIDE, CameraViews.CINEMATIC, CameraViews.DIAGONAL:
+			var distance: float = view_data.get("distance", _diagonal_distance)
+			return _orbit_pose(_follow_point, pitch, distance, yaw)
+	return _orbit_pose(_camera_target, CAMERA_PITCH_DEGREES, _camera_distance)
+
+
+# The camera at `eye_offset` from the followed fighter, looking at `look_offset` from it.
+func _looking_pose(eye_offset: Vector3, look_offset: Vector3) -> Transform3D:
+	var eye: Vector3 = _follow_point + eye_offset
+	var look: Vector3 = _follow_point + look_offset
+	return Transform3D(Basis.looking_at(look - eye, Vector3.UP), eye)
+
+
+# The camera `distance` metres from `target`, south of it turned by `yaw_degrees` (as
+# `rotation.y`), looking `pitch_degrees` down at it.
+static func _orbit_pose(
+	target: Vector3, pitch_degrees: float, distance: float, yaw_degrees: float = 0.0
+) -> Transform3D:
+	var pitch: float = deg_to_rad(pitch_degrees)
+	var turn: Basis = Basis(Vector3.UP, deg_to_rad(yaw_degrees))
+	var eye: Vector3 = target + turn * Vector3(0.0, sin(pitch), cos(pitch)) * distance
+	return Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
+
+
+# How far the Close camera is from its target: a share of Classic's distance, not too near.
+func _close_distance() -> float:
+	var close: Dictionary = CameraViews.get_view(CameraViews.CLOSE)
+	return maxf(_camera_distance * float(close["distance_share"]), float(close["min_distance"]))
+
+
+## The z of the camera-side border wall's inner face (the border wall farthest south).
+static func near_wall_z() -> float:
+	var nearest: float = -INF
+	for index: int in ArenaLayout.border_count():
+		nearest = maxf(nearest, ArenaLayout.walls()[index].position.y)
+	return nearest
 
 
 ## Moves the camera back until the box around the fighter fits the screen, so it works in
-## landscape and portrait.
+## landscape and portrait; then finds how far south the camera may look.
 func _frame_camera() -> void:
 	var view_size: Vector2 = get_viewport().get_visible_rect().size
 	var allowed: Rect2 = Rect2(
@@ -249,20 +516,80 @@ func _frame_camera() -> void:
 	)
 	_camera_distance = CAMERA_MIN_DISTANCE
 	while _camera_distance < CAMERA_MAX_DISTANCE:
-		_place_camera()
-		if _box_inside(allowed):
-			return
+		_camera.global_transform = view_pose(CameraViews.CLASSIC)
+		if _box_inside(allowed, _camera_target):
+			break
 		_camera_distance += CAMERA_DISTANCE_STEP
+	# Diagonal fits a square box around the fighter, without the near-wall rule (D51).
+	_diagonal_distance = CAMERA_MIN_DISTANCE
+	while _diagonal_distance < CAMERA_MAX_DISTANCE:
+		_camera.global_transform = view_pose(CameraViews.DIAGONAL)
+		if _box_inside(allowed, _follow_point, DIAGONAL_HALF_SIZE):
+			break
+		_diagonal_distance += CAMERA_DISTANCE_STEP
+	_camera_max_z = (
+		near_wall_z() - _near_wall_offset(view_size.y, CAMERA_PITCH_DEGREES, _camera_distance)
+	)
+	var close: Dictionary = CameraViews.get_view(CameraViews.CLOSE)
+	_close_max_z = (
+		near_wall_z() - _near_wall_offset(view_size.y, close["pitch_degrees"], _close_distance())
+	)
+	_frame_overview(view_size)
+	_place_camera()
 
 
-func _box_inside(allowed: Rect2) -> bool:
+# Moves the Overview camera back until the whole arena, border walls included, fits the screen
+# (V5), below the top margin of the Back button and the match's chips.
+func _frame_overview(view_size: Vector2) -> void:
+	var allowed: Rect2 = Rect2(
+		view_size * Vector2(OVERVIEW_MARGIN, FRAME_TOP_MARGIN),
+		view_size * Vector2(1.0 - 2.0 * OVERVIEW_MARGIN, 1.0 - FRAME_TOP_MARGIN - OVERVIEW_MARGIN)
+	)
+	var bounds: Rect2 = ArenaLayout.bounds()
+	var corners: Array[Vector3] = []
+	for x: float in [bounds.position.x, bounds.end.x]:
+		for z: float in [bounds.position.y, bounds.end.y]:
+			for height: float in [0.0, Canyon.WALL_HEIGHT + WALL_CAP_HEIGHT]:
+				corners.append(Vector3(x, height, z))
+	_overview_distance = CAMERA_MIN_DISTANCE
+	while _overview_distance < CAMERA_MAX_DISTANCE:
+		_camera.global_transform = view_pose(CameraViews.OVERVIEW)
+		var inside: bool = true
+		for corner: Vector3 in corners:
+			inside = inside and allowed.has_point(_camera.unproject_position(corner))
+		if inside:
+			return
+		_overview_distance += CAMERA_DISTANCE_STEP
+
+
+# How far south of the camera target the near wall's top edge may be, so that the wall covers
+# at most `NEAR_WALL_SHARE` of the screen height, for a camera `distance` metres from its target
+# at `pitch_degrees`. The camera moves with its target, so the answer does not depend on where
+# the target is.
+func _near_wall_offset(view_height: float, pitch_degrees: float, distance: float) -> float:
+	_camera.global_transform = _orbit_pose(Vector3.ZERO, pitch_degrees, distance)
+	var wall_top: float = Canyon.CAMERA_SIDE_WALL_HEIGHT + WALL_CAP_HEIGHT
+	var wanted_y: float = view_height * (1.0 - NEAR_WALL_SHARE)
+	var near: float = 0.0
+	# Not past the camera itself, where a point would be behind it.
+	var far: float = distance * cos(deg_to_rad(pitch_degrees))
+	for _step: int in 40:
+		var offset: float = (near + far) / 2.0
+		var edge: Vector3 = Vector3(0.0, wall_top, offset)
+		if _camera.unproject_position(edge).y < wanted_y:
+			near = offset
+		else:
+			far = offset
+	return near
+
+
+func _box_inside(allowed: Rect2, center: Vector3, half_size: Vector2 = VIEW_HALF_SIZE) -> bool:
 	var heights: Array[float] = [0.0, FIGHTER_HEIGHT]
 	for sign_x: float in [-1.0, 1.0]:
 		for sign_z: float in [-1.0, 1.0]:
 			for height: float in heights:
 				var corner: Vector3 = (
-					_camera_target
-					+ Vector3(sign_x * VIEW_HALF_SIZE.x, height, sign_z * VIEW_HALF_SIZE.y)
+					center + Vector3(sign_x * half_size.x, height, sign_z * half_size.y)
 				)
 				if not allowed.has_point(_camera.unproject_position(corner)):
 					return false

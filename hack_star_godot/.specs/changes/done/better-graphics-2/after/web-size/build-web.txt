@@ -1,0 +1,13 @@
+tools/export_web.ps1 exit 0 in a clean worktree of the revision (no untracked files)
+index.apple-touch-icon.png                11,944 bytes
+index.audio.position.worklet.js            2,973 bytes
+index.audio.worklet.js                     7,298 bytes
+index.html                                 5,507 bytes
+index.icon.png                             5,700 bytes
+index.js                                 279,815 bytes
+index.pck                              1,123,292 bytes
+index.png                                 21,443 bytes
+index.wasm                            39,514,754 bytes
+jsQR.js                                  267,296 bytes
+qr_scanner.js                              4,401 bytes
+total                                 41,244,423 bytes

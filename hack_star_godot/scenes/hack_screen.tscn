@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/hack_screen.gd" id="1_hack"]
 [ext_resource type="PackedScene" path="res://scenes/ui/back_button.tscn" id="2_back"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu_background.tscn" id="9_background"]
 
 [sub_resource type="StyleBoxFlat" id="Dialog_panel"]
 content_margin_left = 16.0
@@ -19,14 +20,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hack")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" parent="." instance=ExtResource("9_background")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"BackgroundPanel"
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -64,6 +59,7 @@ layout_mode = 2
 [node name="Scroll" type="ScrollContainer" parent="Margin/Column"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_type_variation = &"ContentScroll"
 horizontal_scroll_mode = 0
 
 [node name="Content" type="VBoxContainer" parent="Margin/Column/Scroll"]
@@ -85,11 +81,13 @@ max_length = 100
 [node name="UseButton" type="Button" parent="Margin/Column/Scroll/Content/CodeRow"]
 custom_minimum_size = Vector2(260, 80)
 layout_mode = 2
+theme_type_variation = &"GreenButton"
 text = "Use code"
 
 [node name="ScanButton" type="Button" parent="Margin/Column/Scroll/Content"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_type_variation = &"BlueButton"
 text = "Scan QR code"
 
 [node name="ScanHint" type="Label" parent="Margin/Column/Scroll/Content"]
@@ -109,6 +107,7 @@ autowrap_mode = 3
 
 [node name="ActiveTitle" type="Label" parent="Margin/Column/Scroll/Content"]
 layout_mode = 2
+theme_type_variation = &"SubheadingLabel"
 text = "Active hacks"
 horizontal_alignment = 1
 
@@ -119,6 +118,7 @@ theme_override_constants/separation = 8
 [node name="ResetButton" type="Button" parent="Margin/Column/Scroll/Content"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_type_variation = &"PinkButton"
 disabled = true
 text = "Turn all hacks off"
 

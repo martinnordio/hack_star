@@ -27,8 +27,9 @@
   and call `game/` rules, they do not hold the rules.
 - **Tests in `tests/`**, one file per rule or scene (`test_movement.gd` checks
   `game/movement.gd`), GUT 9.7.1, headless through `tools/test.ps1`.
-- Art is built in code from primitive meshes and plain materials; no imported models,
-  textures or fonts (see `LICENSES.md`).
+- Art is built in code from primitive meshes and plain materials; no imported models or
+  textures. The only files are the display font in `assets/fonts/` and the icons in
+  `assets/icons/` (free licences, pinned; see `LICENSES.md`).
 
 ## Checks
 

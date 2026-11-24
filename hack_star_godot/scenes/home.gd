@@ -1,6 +1,7 @@
 extends Control
 ## The home screen: the chosen fighter and skin, the player's trophies and credits, the
-## fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**.
+## fighter's Prestige, **Play** (a match), **Training**, **Fighters**, **Info** and **Hack**, and
+## the world button that opens the world choice (`WorldChoice`) for Play and Training.
 ## At each game start it first plays the entrance: the fighter drops in with a bounce, a light
 ## burst and sparkles, the title pops in; a click, a touch or a key skips to the end state.
 
@@ -13,6 +14,15 @@ const DROP_SCALE: float = 0.3
 const TITLE_POP: float = 1.0
 const UI_FADE_IN: float = 1.5
 const BURST_COLOR: Color = Color(1.0, 0.9, 0.55)
+## The icon of each home button (`Icons`), by the button's node name.
+const BUTTON_ICONS: Dictionary[String, String] = {
+	"PlayButton": "play",
+	"TrainingButton": "training",
+	"FightersButton": "fighters",
+	"InfoButton": "info",
+	"HackButton": "hack",
+	"WorldButton": "world",
+}
 
 ## True while the entrance plays.
 var entrance_playing: bool = false
@@ -20,10 +30,10 @@ var entrance_playing: bool = false
 var _tween: Tween
 var _effects: Node3D
 
-@onready var _trophies_label: Label = $Margin/Column/TopBar/TrophiesLabel
-@onready var _credits_label: Label = $Margin/Column/TopBar/CreditsLabel
+@onready var _trophies_chip: IconChip = $Margin/Column/TopBar/TrophiesChip
+@onready var _credits_chip: IconChip = $Margin/Column/TopBar/CreditsChip
 @onready var _top_bar: Control = $Margin/Column/TopBar
-@onready var _title: Label = $Margin/Column/Title
+@onready var _title: Control = $Margin/Column/Title
 @onready var _stage: FighterStage = $Margin/Column/Body/FighterStage
 @onready var _name_label: Label = $Margin/Column/Body/Controls/NameRow/NameLabel
 @onready var _badge: PrestigeBadge = $Margin/Column/Body/Controls/NameRow/PrestigeBadge
@@ -34,6 +44,8 @@ var _effects: Node3D
 @onready var _fighters_button: Button = $Margin/Column/Body/Controls/MoreRow/FightersButton
 @onready var _info_button: Button = $Margin/Column/Body/Controls/MoreRow/InfoButton
 @onready var _hack_button: Button = $Margin/Column/Body/Controls/MoreRow/HackButton
+@onready var _world_button: Button = $Margin/Column/TopBar/WorldButton
+@onready var _world_choice: WorldChoice = $WorldChoice
 @onready var _flash: ColorRect = $Flash
 @onready var _skip_hint: Label = $SkipHint
 
@@ -48,6 +60,12 @@ func _ready() -> void:
 	_fighters_button.pressed.connect(_on_fighters_pressed)
 	_info_button.pressed.connect(_on_info_pressed)
 	_hack_button.pressed.connect(_on_hack_pressed)
+	_world_button.pressed.connect(_world_choice.open)
+	_world_choice.chosen.connect(_on_world_chosen)
+	for button: Button in [
+		_play_button, _training_button, _fighters_button, _info_button, _hack_button, _world_button
+	]:
+		button.icon = Icons.get_icon(BUTTON_ICONS[button.name])
 	GameState.progress_changed.connect(_refresh)
 	resized.connect(_arrange)
 	_title.resized.connect(_center_title_pivot)
@@ -73,20 +91,23 @@ func skip_entrance() -> void:
 	_finish_entrance()
 
 
-# Wide: the fighter on the left, the buttons on the right. Tall: one column.
+# Wide: the fighter on the left, the buttons on the right and Play in the bottom-right corner.
+# Tall: one column with Play across the bottom.
 func _arrange() -> void:
 	var wide: bool = size.x > size.y
 	_body.vertical = not wide
 	_controls.size_flags_vertical = Control.SIZE_EXPAND_FILL if wide else Control.SIZE_FILL
+	_play_button.size_flags_horizontal = Control.SIZE_SHRINK_END if wide else Control.SIZE_FILL
 
 
 func _refresh() -> void:
 	var fighter_id: String = GameState.selected_fighter
-	_trophies_label.text = "Trophies: %d" % GameState.total_trophies()
-	_credits_label.text = Hacks.credits_text(GameState.credits, GameState.active_hacks)
+	_trophies_chip.text = str(GameState.total_trophies())
+	_credits_chip.text = Hacks.credits_amount(GameState.credits, GameState.active_hacks)
 	_name_label.text = Fighters.get_fighter(fighter_id)["name"]
 	_badge.show_for_trophies(GameState.trophies[fighter_id])
 	_stage.show_fighter(fighter_id, GameState.selected_skin())
+	_world_button.text = Worlds.get_world(GameState.world)["name"]
 
 
 func _center_title_pivot() -> void:
@@ -113,6 +134,10 @@ func _on_hack_pressed() -> void:
 	Screens.go_to(Screens.HACK)
 
 
+func _on_world_chosen(_world_id: String) -> void:
+	_refresh()
+
+
 static func _is_skip(event: InputEvent) -> bool:
 	var press: bool = (
 		event is InputEventMouseButton
@@ -131,6 +156,8 @@ func _play_entrance() -> void:
 	entrance_playing = true
 	var model: FighterModel = _stage.model
 	_effects = _build_effects()
+	# The stage's reveal plays at the landing, without its own pop (the drop is the pop).
+	_stage.hide_reveal()
 	# Small and high, so the fighter falls in from the sky inside the stage, not cut by its edge.
 	model.position.y = DROP_HEIGHT
 	model.rotation.y = -TAU
@@ -177,6 +204,7 @@ func _play_entrance() -> void:
 		. set_ease(Tween.EASE_OUT)
 	)
 	_tween.tween_callback(_burst).set_delay(LANDING)
+	_tween.tween_callback(_stage.reveal.bind(false)).set_delay(LANDING)
 	_tween_burst(_effects)
 	_tween.tween_property(_flash, "color:a", 0.3, 0.05).set_delay(LANDING)
 	_tween.tween_property(_flash, "color:a", 0.0, 0.25).set_delay(LANDING + 0.05)
@@ -202,6 +230,7 @@ func _finish_entrance() -> void:
 	model.position.y = 0.0
 	model.rotation.y = 0.0
 	model.scale = Vector3.ONE
+	_stage.finish_reveal()
 	_title.scale = Vector2.ONE
 	_title.modulate.a = 1.0
 	_top_bar.modulate.a = 1.0
