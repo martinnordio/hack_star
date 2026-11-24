@@ -5,6 +5,8 @@ extends Node
 ## saturation, with `K`'s boost), and glow where the preset has it. It keeps the world's own
 ## light as it was built (`setup`), so **Classic** brings it back and every other preset keeps
 ## `LightPresets.WORLD_SHARE` of the world's colours: the canyon stays warm, Glimmer Isles violet.
+## Where the world is lit by the pack as delivered (Glimmer Isles in Glimmer), a preset with
+## `pack_sky` (Bright day) shows the pack's sky instead of its own (D58); Classic has no fog (D59).
 
 ## Glow of the presets that have it: only the brightest parts (shots, crystals, flashes) bloom.
 const GLOW_INTENSITY: float = 1.2
@@ -16,6 +18,10 @@ const SUN_PROPERTIES: Array[String] = ["light_color", "light_energy", "rotation"
 ## The author's lighting scene (spec 09 P4, D47): its environment and sun light Glimmer Isles in
 ## Glimmer, and with other sky and light colours both worlds in Lagoon and Glow night (D49).
 const PACK_LIGHTING: PackedScene = preload("res://scenes/glimmer_isles/glimmer_isles_lighting.tscn")
+## The pack's environment (the lighting scene's); its sky is the pack's sky as delivered.
+const PACK_ENVIRONMENT: Environment = preload(
+	"res://scenes/glimmer_isles/glimmer_isles_environment.tres"
+)
 
 var _holder: WorldEnvironment
 var _sun: DirectionalLight3D
@@ -27,6 +33,8 @@ var _sun_rotation: Vector3
 var _sky: Array[Color] = []
 var _preset: String = LightPresets.CLASSIC
 var _boost: bool = false
+# Whether the world is lit by the pack as delivered, so its sky is the pack's sky (D58).
+var _pack_sky: bool = false
 
 
 ## Remembers the world's own light (the environment and the sun as the world built them).
@@ -37,6 +45,7 @@ func setup(holder: WorldEnvironment, sun: DirectionalLight3D) -> void:
 	_sun_color = sun.light_color
 	_sun_energy = sun.light_energy
 	_sun_rotation = sun.rotation
+	_pack_sky = _base.sky != null and _base.sky == PACK_ENVIRONMENT.sky
 	var gradient: ProceduralSkyMaterial = null
 	if _base.background_mode == Environment.BG_SKY and _base.sky != null:
 		gradient = _base.sky.sky_material as ProceduralSkyMaterial
@@ -72,7 +81,10 @@ func apply(preset_id: String, boost: bool) -> void:
 		environment.ambient_light_color = _tint(preset["ambient_color"], _base.ambient_light_color)
 		environment.ambient_light_energy = preset["ambient_energy"]
 		environment.background_mode = Environment.BG_SKY
-		environment.sky = _preset_sky(preset)
+		if _pack_sky and preset.get("pack_sky", false):
+			environment.sky = _base.sky
+		else:
+			environment.sky = _preset_sky(preset)
 	var balance: Vector3 = Vector3(
 		preset["brightness"], preset["contrast"], LightPresets.saturation(_preset, boost)
 	)
@@ -89,7 +101,9 @@ func apply(preset_id: String, boost: bool) -> void:
 	environment.adjustment_contrast = balance.y
 	environment.adjustment_saturation = balance.z
 	if world_own:
-		# Classic shows the world's own environment as it was built: its glow, fog and tone map.
+		# Classic shows the world's own environment as it was built (its glow and tone map), but
+		# never fog: Classic is the look from before the palette, which had none (D59).
+		environment.fog_enabled = false
 		_holder.environment = environment
 		return
 	environment.fog_enabled = false

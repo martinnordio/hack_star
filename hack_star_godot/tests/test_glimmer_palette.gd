@@ -283,13 +283,11 @@ func test_the_pack_lights_the_world_through_copies_and_classic_shows_it_as_deliv
 		"glow_enabled",
 		"glow_intensity",
 		"glow_hdr_threshold",
-		"fog_enabled",
-		"fog_light_color",
-		"fog_density",
 		"adjustment_enabled",
 		"adjustment_saturation",
 	]:
 		assert_eq(environment.get(property), pack.get(property), "Classic keeps %s" % property)
+	assert_false(environment.fog_enabled, "Classic has no fog, the look before the palette (D59)")
 	# The fill light's violet is folded into the ambient light, by the two energies (D47).
 	var fill: OmniLight3D = lighting.get_node("MagicFill")
 	var share: float = fill.light_energy / (fill.light_energy + pack.ambient_light_energy)
@@ -311,6 +309,38 @@ func test_the_pack_lights_the_world_through_copies_and_classic_shows_it_as_deliv
 	assert_true(pack.glow_enabled and pack.fog_enabled, "the pack's environment is unchanged")
 	assert_almost_eq(pack.adjustment_saturation, 1.18, 0.001)
 	assert_eq(pack_sky.sky_top_color, GlimmerPalette.DREAM_VIOLET)
+
+
+func test_bright_day_shows_the_packs_sky_only_over_the_packs_light_as_delivered() -> void:
+	var pack_sky: Sky = (load(PACK_DIR + "glimmer_isles_environment.tres") as Environment).sky
+	var arena: Arena = await _glimmer_arena()
+	assert_eq(arena.lighting().preset(), LightPresets.BRIGHT_DAY, "the default preset")
+	var environment: Environment = (
+		(arena.get_node("WorldEnvironment") as WorldEnvironment).environment
+	)
+	assert_eq(environment.sky, pack_sky, "Glimmer in Bright day: the pack's sky as delivered (D58)")
+	assert_false(environment.fog_enabled, "and no fog")
+	for preset_id: String in [LightPresets.GOLDEN_SUNSET, LightPresets.NEON_NIGHT]:
+		arena.set_light_preset(preset_id)
+		environment = (arena.get_node("WorldEnvironment") as WorldEnvironment).environment
+		assert_ne(environment.sky, pack_sky, "%s keeps its own sky" % preset_id)
+	arena.set_light_preset(LightPresets.BRIGHT_DAY)
+	arena.set_colour_variation(ColourVariations.LAGOON)
+	environment = (arena.get_node("WorldEnvironment") as WorldEnvironment).environment
+	assert_ne(environment.sky, pack_sky, "Lagoon has its own sky, so Bright day's shows")
+	arena.set_colour_variation(GlimmerLooks.GLIMMER)
+	environment = (arena.get_node("WorldEnvironment") as WorldEnvironment).environment
+	assert_eq(environment.sky, pack_sky, "back to Glimmer: the pack's sky again")
+
+
+func test_the_light_floor_and_border_tops_cannot_wash_to_white() -> void:
+	# Bright day lifts a surface about 1.4 times (PEBBLE 8790b0 came out b8c8ff on the review's
+	# screenshot), so a colour whose darkest channel is over 0.6 would turn all white (STONE_LIGHT
+	# b9c2d9, SHELL fff0c9 did: the third review's finding 1).
+	for variation: String in [GlimmerLooks.GLIMMER, ColourVariations.LAGOON]:
+		for role: String in ["ground", "ground_alt", "border_top", "crystal_cluster/Rock"]:
+			var albedo: Color = GlimmerLooks.color(role, variation)
+			assert_lt(minf(albedo.r, minf(albedo.g, albedo.b)), 0.6, "%s %s" % [variation, role])
 
 
 func test_the_presets_keep_their_own_look_over_the_packs_light() -> void:

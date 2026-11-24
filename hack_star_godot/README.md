@@ -160,7 +160,8 @@ Since the reopening of spec 09:
   in `scenes/glimmer_isles/` (a 66-colour palette, 11 materials, a sky and lighting scene; its UI
   theme is not used): crystals, ferns, mushrooms, islands, a lagoon under the island and the
   waterfalls in the pack's colours and materials, still cel-shaded with the dark outline, lit by
-  the pack's sky and sun (as delivered in the **Classic** preset).
+  the pack's sky and sun (as delivered in the **Classic** preset, without the pack's fog; the
+  default **Bright day** shows the pack's sky too).
 - **Colour variations:** `C` switches both worlds between **1 Original** (the look before the
   palette, to compare), **2 Glimmer** (the default: the palette in Glimmer Isles; the canyon as
   in Original), **3 Lagoon** (a bright lagoon day; the canyon an oasis) and **4 Glow night** (a

@@ -44,6 +44,14 @@ func _sun(arena: Arena) -> DirectionalLight3D:
 	return arena.get_node("Sun")
 
 
+func _shows_pack_sky(world: String, preset_id: String) -> bool:
+	return (
+		world == Worlds.GLIMMER_ISLES
+		and GameState.colour_variation == GlimmerLooks.GLIMMER
+		and LightPresets.get_preset(preset_id).get("pack_sky", false)
+	)
+
+
 # What a preset sets: the sun, the ambient light, the sky and the colour balance.
 func _look(arena: Arena) -> Dictionary:
 	var environment: Environment = _environment(arena)
@@ -141,6 +149,12 @@ func test_every_preset_changes_the_sun_the_sky_and_the_colour_balance_in_both_wo
 			arena.set_light_preset(preset_id)
 			var look: Dictionary = _look(arena)
 			for part: String in ["sun", "ambient", "sky", "balance"]:
+				if part == "sky" and _shows_pack_sky(world, preset_id):
+					# Glimmer Isles in Glimmer keeps the pack's sky in Bright day (D58).
+					assert_eq(
+						look[part], classic[part], "%s in %s: the pack's sky" % [preset_id, world]
+					)
+					continue
 				assert_ne(
 					look[part], classic[part], "%s changes the %s in %s" % [preset_id, part, world]
 				)

@@ -74,18 +74,19 @@ const ORIGINAL_LOOKS: Dictionary[String, Dictionary] = {
 	"sun": {"albedo": Color("fff0ff")},
 }
 
-## The author's palette pack: the floor in calm mid-tones (the least saturated surface, G10),
-## stone walls, glowing crystals and mushrooms, the pack's materials where one matches; only the
-## glowing parts glow, in Glow Mushrooms and Glimmer Gold colours. Its sky and light are the
-## pack's lighting scene (`PACK_LIGHTING`), so it has no sky roles.
+## The author's palette pack: the floor in calm mid-tones (the least saturated surface, G10) — a
+## pebble and stone pair with pebble border tops, as lighter stone washed to white under Bright
+## day —, stone walls, glowing crystals and mushrooms, the pack's materials where one matches;
+## only the glowing parts glow, in Glow Mushrooms and Glimmer Gold colours. Its sky and light are
+## the pack's lighting scene (`PACK_LIGHTING`), so it has no sky roles.
 const GLIMMER_LOOKS: Dictionary[String, Dictionary] = {
 	"ground": {"albedo": GlimmerPalette.PEBBLE},
-	"ground_alt": {"albedo": GlimmerPalette.STONE_LIGHT},
+	"ground_alt": {"albedo": GlimmerPalette.STONE},
 	"path": {"material": "sand"},
 	"rim": {"material": "leaf"},
 	"underside": {"albedo": GlimmerPalette.CLIFF},
 	"border": {"material": "stone"},
-	"border_top": {"albedo": GlimmerPalette.STONE_LIGHT},
+	"border_top": {"albedo": GlimmerPalette.PEBBLE},
 	"plinth": {"albedo": GlimmerPalette.STONE_SHADOW},
 	"fern_ground": {"albedo": GlimmerPalette.FERN},
 	"lagoon": {"material": "water"},
@@ -118,23 +119,25 @@ const GLIMMER_LOOKS: Dictionary[String, Dictionary] = {
 	"waterfall_light": {"albedo": GlimmerPalette.FOAM},
 }
 
-## **Lagoon** (spec 09 H4, D49): a bright day over lagoon water — mint and pale stone tiles, a
+## **Lagoon** (spec 09 H4, D49): a bright day over lagoon water — mint and pebble tiles, a
 ## sand path and sandy walls, turquoise and shallow-water crystals, jade ferns, bubblegum
 ## mushrooms on shell stems, the lagoon in shallow water; nothing glows much. (Dew and pale mint
-## tiles, D49's first choice, washed to white under the bright presets on Step 42's screenshots.)
+## tiles, D49's first choice, washed to white under the bright presets on Step 42's screenshots;
+## so did the pale stone tiles and crystal rocks and the shell border tops after it — the third
+## review's finding 1.)
 const LAGOON_LOOKS: Dictionary[String, Dictionary] = {
 	"ground": {"albedo": GlimmerPalette.MINT},
-	"ground_alt": {"albedo": GlimmerPalette.STONE_LIGHT},
+	"ground_alt": {"albedo": GlimmerPalette.PEBBLE},
 	"path": {"material": "sand"},
 	"rim": {"albedo": GlimmerPalette.JADE},
 	"underside": {"albedo": GlimmerPalette.STONE},
 	"border": {"material": "sand"},
-	"border_top": {"albedo": GlimmerPalette.SHELL},
+	"border_top": {"albedo": GlimmerPalette.STEM},
 	"plinth": {"albedo": GlimmerPalette.PATH},
 	"fern_ground": {"albedo": GlimmerPalette.FERN},
 	"lagoon": {"albedo": Color(GlimmerPalette.SHALLOW_WATER, 0.85)},
 	"lagoon_light": {"albedo": GlimmerPalette.FOAM},
-	"crystal_cluster/Rock": {"albedo": GlimmerPalette.STONE_LIGHT},
+	"crystal_cluster/Rock": {"albedo": GlimmerPalette.PEBBLE},
 	"crystal_cluster/Spike":
 	{"albedo": GlimmerPalette.TURQUOISE, "glow": GlimmerPalette.GLOW_CYAN, "glow_strength": 0.3},
 	"crystal_cluster/SpikeLeft":

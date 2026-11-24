@@ -7,7 +7,9 @@ extends RefCounted
 ##
 ## Per preset: `sun_color`, `sun_energy`, `sun_pitch_degrees` (how high the sun stands);
 ## `ambient_color`, `ambient_energy`; the sky's `sky_top`, `sky_horizon` and `sky_ground`; the
-## colour balance `brightness`, `contrast`, `saturation`; `glow` (bloom of the brightest parts).
+## colour balance `brightness`, `contrast`, `saturation`; `glow` (bloom of the brightest parts);
+## `pack_sky` (only Bright day): over the pack's light as delivered (Glimmer Isles in Glimmer) the
+## pack's sky shows instead of the preset's (spec 09 P4, D58).
 
 const BRIGHT_DAY: String = "bright_day"
 const GOLDEN_SUNSET: String = "golden_sunset"
@@ -36,6 +38,7 @@ const LIST: Array[Dictionary] = [
 		"contrast": 1.08,
 		"saturation": 1.2,
 		"glow": false,
+		"pack_sky": true,
 	},
 	{
 		"id": GOLDEN_SUNSET,
