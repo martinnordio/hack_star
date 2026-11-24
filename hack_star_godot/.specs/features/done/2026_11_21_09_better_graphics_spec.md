@@ -94,11 +94,11 @@
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 265 k (103 k in · 154 k cached · 8 k out) | CHF 0.60 (71 credits) | spec runner (coordination) of the third review and close (`usage.ps1 -AgentName s09g-runner6` from 2026-11-23 16:46:00) |
 | 2026-11-23 | implementation | `IMPLEMENT:` | Claude Opus 5.5 | 626 k (624 k in · 0 k cached · 2 k out) | CHF 2.65 (316 credits) | orchestrator (main chat) of the third review and close (`usage.ps1 -Agent main` from 2026-11-23 16:46:00) |
 | 2026-11-23 | implementation | `CLOSE:` | Claude Opus 5.5 | 4.46 M (44 k in · 4.40 M cached · 19 k out) | CHF 1.24 (148 credits) | spec closed again after the third review; web export 43,477,947 bytes (`usage.ps1 -AgentName s09g-close4` from 2026-11-24 07:26:59) |
----
+| 2026-11-23 | pr | `PR:` | Claude Opus 5.5 | 1.55 M (69 k in · 1.47 M cached · 15 k out) | CHF 0.79 (94 credits) | pull request updated (#36: summary with the second and third reopenings and the new Cost summary, the kit commits `325b5a1`, `a268200` named as tooling (D62), the third semantic diff appended to the earlier two; branch pushed; issue #35 updated; `usage.ps1 -AgentName s09g-pr4` from 2026-11-23 16:46:00) |---
 
 ## Cost summary
 
-This feature used 644.39 M tokens, CHF 221.99 (26479 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md). It covers the first run (Steps 1–20, its review, close and pull request), the reopening (Steps 21–29, its review, close and the pull request update), the animated characters (Steps 30–37) and the palette, colour variations, views and Beatbolt2 (Steps 38–49), with their review, the review fixes and this close.
+This feature used 645.94 M tokens, CHF 222.78 (26573 credits) — measured, see [COSTS.md](../../../../.specs/kit/COSTS.md). It covers the first run (Steps 1–20, its review, close and pull request), the reopening (Steps 21–29, its review, close and the pull request update), the animated characters (Steps 30–37) and the palette, colour variations, views and Beatbolt2 (Steps 38–49), with their review, the review fixes, this close and the pull request update.
 
 | Stage | Models | Tokens | Cost (CHF) | Share of Copilot Business |
 |-------|--------|--------|------------|---------------------------|
@@ -106,8 +106,8 @@ This feature used 644.39 M tokens, CHF 221.99 (26479 credits) — measured, see 
 | plan | Claude Opus 5.5 | 12.41 M | CHF 5.82 (694 credits) | 36.5 % |
 | implementation | Claude Opus 5.5 | 539.08 M | CHF 183.55 (21896 credits) | 1152.4 % |
 | review | Claude Opus 5.5 | 76.42 M | CHF 25.29 (3016 credits) | 158.7 % |
-| pr | Claude Opus 5.5 | 2.80 M | CHF 1.34 (159 credits) | 8.4 % |
-| **Total** | | **644.39 M** | **CHF 221.99 (26479 credits)** | **1393.6 %** |
+| pr | Claude Opus 5.5 | 4.35 M | CHF 2.13 (253 credits) | 13.3 % |
+| **Total** | | **645.94 M** | **CHF 222.78 (26573 credits)** | **1398.6 %** |
 
 **Implementation by Step**
 

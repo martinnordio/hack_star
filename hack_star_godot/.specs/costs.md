@@ -3,7 +3,7 @@
 > Estimate — see [COSTS.md](../../.specs/kit/COSTS.md). **All costs are estimates and may be wrong.** Rebuilt by
 > `costs_ledger` from the Stage logs on 2026-11-24; do not edit by hand.
 
-**All specs: 964.75 M · CHF 345.16 (41165 credits)**
+**All specs: 966.30 M · CHF 345.95 (41259 credits)**
 
 | Spec | Status | Requirements | Plan | Implementation | Review | PR | Other | Total |
 |------|--------|--------------|------|----------------|--------|----|-------|-------|
@@ -15,7 +15,7 @@
 | [Graphics Demo](features/done/2026_11_21_06_graphics_demo_spec.md) | ✅ Complete | included | 3.35 M · CHF 1.76 | 26.39 M · CHF 7.46 | 7.43 M · CHF 3.04 | included | — | 37.17 M · CHF 12.26 |
 | [First Match](features/done/2026_11_21_07_first_match_spec.md) | ✅ Complete | included | 2.48 M · CHF 1.46 | 20.30 M · CHF 5.70 | 8.22 M · CHF 3.06 | included | — | 31.00 M · CHF 10.22 |
 | [Trophies and Prestige](features/done/2026_11_21_08_trophies_spec.md) | ✅ Complete | included | 2.40 M · CHF 1.32 | 14.72 M · CHF 7.36 | 12.77 M · CHF 5.59 | included | — | 29.89 M · CHF 14.27 |
-| [Better Graphics](features/done/2026_11_21_09_better_graphics_spec.md) | ✅ Complete | 13.68 M · CHF 5.99 | 12.41 M · CHF 5.82 | 539.08 M · CHF 183.55 | 76.42 M · CHF 25.29 | 2.80 M · CHF 1.34 | — | 644.39 M · CHF 221.99 |
+| [Better Graphics](features/done/2026_11_21_09_better_graphics_spec.md) | ✅ Complete | 13.68 M · CHF 5.99 | 12.41 M · CHF 5.82 | 539.08 M · CHF 183.55 | 76.42 M · CHF 25.29 | 4.35 M · CHF 2.13 | — | 645.94 M · CHF 222.78 |
 | [Bug Fixes](features/done/2026_11_21_16_bug_fixes_spec.md) | ✅ Complete | included | 5.72 M · CHF 3.30 | 31.95 M · CHF 7.31 | 18.93 M · CHF 6.71 | 1.76 M · CHF 0.05 | — | 58.36 M · CHF 17.37 |
 | [Unlock and Upgrade](features/2026_11_22_09_unlock_and_upgrade_spec.md) | ⬜ Requirements in progress | included | — | — | — | — | — | included |
 | [Skins Shop](features/2026_11_22_10_skins_shop_spec.md) | ⬜ Requirements in progress | included | — | — | — | — | — | included |
@@ -26,7 +26,7 @@
 | [Accounts, Create a Fighter, New Fighters and Languages](features/2026_11_22_15_accounts_fighters_and_languages_spec.md) | ⬜ Requirements in progress | included | — | — | — | — | — | included |
 | [Fighter Studio, Saves and Music](features/2026_11_22_17_fighter_studio_saves_and_music_spec.md) | ⬜ Requirements in progress | included | — | — | — | — | — | included |
 | [Worlds and World Coins](features/2026_11_22_18_worlds_and_world_coins_spec.md) | ⬜ Requirements in progress | included | — | — | — | — | — | included |
-| **All specs** | | | | | | | | **964.75 M · CHF 345.16** |
+| **All specs** | | | | | | | | **966.30 M · CHF 345.95** |
 
 ## Implementation by Step
 
